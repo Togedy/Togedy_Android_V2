@@ -12,15 +12,13 @@ body:
     validations:
       required: true
 
-  - type: checkboxes
+  - type: textarea
     id: tasks
     attributes:
       label: 📋 상세 할 일
-      description: 이 이슈를 해결하기 위해 필요한 작업을 체크리스트로 작성해주세요.
-      options:
-        - label: 작업 1
-        - label: 작업 2
-        - label: 작업 3
+      description: 해결을 위한 작업 목록을 마크다운 체크박스로 작성해주세요.
+      placeholder: |
+        - [ ] 작업 1
 
   - type: dropdown
     id: issue_type
