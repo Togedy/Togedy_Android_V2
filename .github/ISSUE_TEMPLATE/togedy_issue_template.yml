@@ -1,0 +1,36 @@
+name: Togedy Android ISSUE Template
+description: 이슈 개요와 해야 할 일 목록, 유형을 입력해주세요.
+title: "[TYPE] 제목을 입력해주세요"
+labels: [needs-triage]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: 📌 이슈 개요
+      description: 이 이슈가 무엇인지 간단하게 설명해주세요.
+      placeholder: 예) 사용자가 로그인할 수 없음
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: tasks
+    attributes:
+      label: 📋 상세 할 일
+      description: 이 이슈를 해결하기 위해 필요한 작업을 체크리스트로 작성해주세요.
+      options:
+        - label: 작업 1
+        - label: 작업 2
+        - label: 작업 3
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: 🏷️ 이슈 유형
+      description: 이 이슈의 성격을 선택해주세요.
+      options:
+        - 기능 구현
+        - 기능 수정
+        - 오류 해결
+        - 리팩토링
+    validations:
+      required: true
