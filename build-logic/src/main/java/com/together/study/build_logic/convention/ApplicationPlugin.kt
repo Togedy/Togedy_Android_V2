@@ -1,20 +1,16 @@
 package com.together.study.build_logic.convention
 
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
 import com.together.study.build_logic.dsl.libs
 import com.together.study.build_logic.dsl.androidApplicationExtension
 import com.together.study.build_logic.dsl.configureAndroidLibrary
 import com.together.study.build_logic.dsl.version
 import com.together.study.build_logic.primitive.CommonAndroidPlugin
 import com.together.study.build_logic.primitive.ComposePlugin
-import com.together.study.build_logic.primitive.HiltPlugin
 import com.together.study.build_logic.primitive.KotlinPlugin
 import com.together.study.build_logic.primitive.TestPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.getByType
 
 class ApplicationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
