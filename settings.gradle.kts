@@ -21,4 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Togedy_Android_V2"
 include(":app")
- 
+include(
+    ":core:common",
+    ":core:designsystem",
+    ":core:util",
+)
