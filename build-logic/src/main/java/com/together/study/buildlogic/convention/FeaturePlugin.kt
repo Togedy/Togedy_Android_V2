@@ -1,10 +1,10 @@
-package com.together.study.build_logic.convention
+package com.together.study.buildlogic.convention
 
 import com.android.build.api.dsl.LibraryExtension
-import com.together.study.build_logic.dsl.configureAndroidLibrary
-import com.together.study.build_logic.primitive.CommonAndroidPlugin
-import com.together.study.build_logic.primitive.KotlinPlugin
-import com.together.study.build_logic.primitive.TestPlugin
+import com.together.study.buildlogic.dsl.configureAndroidLibrary
+import com.together.study.buildlogic.primitive.CommonAndroidPlugin
+import com.together.study.buildlogic.primitive.KotlinPlugin
+import com.together.study.buildlogic.primitive.TestPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply

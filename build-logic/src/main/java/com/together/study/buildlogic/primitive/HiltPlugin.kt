@@ -1,10 +1,10 @@
-package com.together.study.build_logic.primitive
+package com.together.study.buildlogic.primitive
 
-import com.together.study.build_logic.dsl.implementation
-import com.together.study.build_logic.dsl.ksp
-import com.together.study.build_logic.dsl.library
-import com.together.study.build_logic.dsl.libs
-import com.together.study.build_logic.dsl.testImplementation
+import com.together.study.buildlogic.dsl.implementation
+import com.together.study.buildlogic.dsl.ksp
+import com.together.study.buildlogic.dsl.library
+import com.together.study.buildlogic.dsl.libs
+import com.together.study.buildlogic.dsl.testImplementation
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies

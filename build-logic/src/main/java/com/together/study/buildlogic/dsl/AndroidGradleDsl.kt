@@ -1,4 +1,4 @@
-package com.together.study.build_logic.dsl
+package com.together.study.buildlogic.dsl
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension

@@ -1,4 +1,4 @@
-package com.together.study.build_logic.dsl
+package com.together.study.buildlogic.dsl
 
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.MinimalExternalModuleDependency

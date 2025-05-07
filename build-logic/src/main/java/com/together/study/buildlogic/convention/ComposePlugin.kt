@@ -1,7 +1,7 @@
-package com.together.study.build_logic.convention
+package com.together.study.buildlogic.convention
 
-import com.together.study.build_logic.dsl.androidExtension
-import com.together.study.build_logic.primitive.ComposePlugin
+import com.together.study.buildlogic.dsl.androidExtension
+import com.together.study.buildlogic.primitive.ComposePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
