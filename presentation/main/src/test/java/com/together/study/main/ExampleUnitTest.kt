@@ -1,4 +1,4 @@
-package com.together.study.build_logic
+package com.together.study.main
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.together.study.build_logic
+package com.together.study.main
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.together.study.build_logic.test", appContext.packageName)
+        assertEquals("com.together.study.main.test", appContext.packageName)
     }
 }

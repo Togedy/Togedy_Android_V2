@@ -1,4 +1,4 @@
-package com.together.study
+package com.together.study.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,14 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import com.together.study.ui.theme.Togedy_Android_V2Theme
+import com.together.study.designsystem.theme.TogedyTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Togedy_Android_V2Theme {
+            TogedyTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Text(
                         text = "Togedy",

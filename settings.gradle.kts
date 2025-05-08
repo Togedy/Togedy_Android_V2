@@ -28,3 +28,6 @@ include(
     ":core:designsystem",
     ":core:util",
 )
+include(
+    ":presentation:main"
+)
