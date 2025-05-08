@@ -1,5 +1,6 @@
 package com.together.study.util
 
+import android.R.attr.clickable
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
