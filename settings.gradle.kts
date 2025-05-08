@@ -29,5 +29,8 @@ include(
     ":core:util",
 )
 include(
+    ":data:local"
+)
+include(
     ":presentation:main"
 )
