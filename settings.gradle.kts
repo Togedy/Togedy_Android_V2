@@ -31,10 +31,11 @@ include(
 include(
     ":data:local",
     ":data:remote",
+    ":data:dummy",
 )
 include(
-    ":domain:dummy"
+    ":domain:dummy",
 )
 include(
-    ":presentation:main"
+    ":presentation:main",
 )
