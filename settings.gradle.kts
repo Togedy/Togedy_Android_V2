@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -11,6 +12,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -20,5 +22,21 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Togedy_Android_V2"
-include(":app")
- 
+include(
+    ":app",
+    ":core:common",
+    ":core:designsystem",
+    ":core:util",
+)
+include(
+    ":data:local",
+    ":data:remote",
+    ":data:dummy",
+)
+include(
+    ":domain:dummy",
+)
+include(
+    ":presentation:main",
+    ":presentation:dummy",
+)
