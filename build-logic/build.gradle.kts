@@ -66,5 +66,10 @@ gradlePlugin {
             id = "com.together.study.buildlogic.convention.feature"
             implementationClass = "com.together.study.buildlogic.convention.FeaturePlugin"
         }
+
+        register("com.together.study.buildlogic.convention.KotlinJvmPlugin") {
+            id = "com.together.study.buildlogic.convention.kotlin"
+            implementationClass = "com.together.study.buildlogic.convention.KotlinJvmPlugin"
+        }
     }
 }
