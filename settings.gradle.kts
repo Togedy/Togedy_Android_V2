@@ -29,7 +29,8 @@ include(
     ":core:util",
 )
 include(
-    ":data:local"
+    ":data:local",
+    ":data:remote",
 )
 include(
     ":presentation:main"
