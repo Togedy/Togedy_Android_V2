@@ -38,4 +38,5 @@ include(
 )
 include(
     ":presentation:main",
+    ":presentation:dummy",
 )
