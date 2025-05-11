@@ -9,5 +9,11 @@ android {
 
 dependencies {
 
+    implementation(projects.data.remote)
+    implementation(projects.data.local)
+    implementation(projects.data.dummy)
     implementation(projects.presentation.main)
+
+    implementation(libs.androidx.appcompat)
+    implementation(libs.timber)
 }
