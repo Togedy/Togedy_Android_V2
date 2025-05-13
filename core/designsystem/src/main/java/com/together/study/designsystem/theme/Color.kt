@@ -20,7 +20,7 @@ val BLACK = Color(0x00000000)
 @Stable
 class TogedyColors(
     green: Color,
-    green_bg: Color,
+    greenBg: Color,
     white: Color,
     gray100: Color,
     gray200: Color,
@@ -33,7 +33,7 @@ class TogedyColors(
 ) {
     var green by mutableStateOf(green)
         private set
-    var green_bg by mutableStateOf(green_bg)
+    var greenBg by mutableStateOf(greenBg)
         private set
     var white by mutableStateOf(white)
         private set
@@ -56,7 +56,7 @@ class TogedyColors(
 
     fun copy(): TogedyColors = TogedyColors(
         green,
-        green_bg,
+        greenBg,
         white,
         gray100,
         gray200,
@@ -65,12 +65,12 @@ class TogedyColors(
         gray500,
         gray600,
         gray700,
-        black
+        black,
     )
 
     fun update(other: TogedyColors) {
         green = other.green
-        green_bg = other.green_bg
+        greenBg = other.greenBg
         white = other.white
         gray100 = other.gray100
         gray200 = other.gray200
@@ -85,7 +85,7 @@ class TogedyColors(
 
 fun TogedyLightColors(
     green: Color = GREEN,
-    green_bg: Color = GREEN_BG,
+    greenBg: Color = GREEN_BG,
     white: Color = WHITE,
     gray100: Color = GRAY100,
     gray200: Color = GRAY200,
@@ -97,7 +97,7 @@ fun TogedyLightColors(
     black: Color = BLACK,
 ) = TogedyColors(
     green,
-    green_bg,
+    greenBg,
     white,
     gray100,
     gray200,
