@@ -84,31 +84,31 @@ fun TogedyTypographyPreview() {
     TogedyTheme {
         Column {
             Text(
-                "NapzakMarketTheme",
+                "TogedyTheme",
                 style = TogedyTheme.typography.title16sb
             )
             Text(
-                "NapzakMarketTheme",
+                "TogedyTheme",
                 style = TogedyTheme.typography.body14m
             )
             Text(
-                "NapzakMarketTheme",
+                "TogedyTheme",
                 style = TogedyTheme.typography.body12m
             )
             Text(
-                "NapzakMarketTheme",
+                "TogedyTheme",
                 style = TogedyTheme.typography.toast12sb
             )
             Text(
-                "NapzakMarketTheme",
+                "TogedyTheme",
                 style = TogedyTheme.typography.toast12r
             )
             Text(
-                "NapzakMarketTheme",
+                "TogedyTheme",
                 style = TogedyTheme.typography.chip14b
             )
             Text(
-                "NapzakMarketTheme",
+                "TogedyTheme",
                 style = TogedyTheme.typography.chip10sb
             )
         }
