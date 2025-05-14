@@ -9,12 +9,12 @@ val GREEN_BG = Color(0xFFEEFAF6)
 
 val WHITE = Color(0xFFFFFFFF)
 val GRAY100 = Color(0xFFF8F8FA)
-val GRAY200 = Color(0xFFF2F3F5)
+val GRAY200 = Color(0xFFF2F3F5) //button-bg
 val GRAY300 = Color(0xFFD5D9DF)
 val GRAY400 = Color(0xFFB4B8BF)
-val GRAY500 = Color(0xFF8E9197)
+val GRAY500 = Color(0xFF8E9197) //gray/picker_text
 val GRAY600 = Color(0xFF5D626B)
-val GRAY700 = Color(0xFF4B525E)
+val GRAY700 = Color(0xFF4B525E) //gray/TEXT
 val BLACK = Color(0x00000000)
 
 @Stable

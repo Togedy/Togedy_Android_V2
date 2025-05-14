@@ -1,3 +1,4 @@
+import com.together.study.buildlogic.dsl.implementation
 import com.together.study.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -10,6 +11,8 @@ android {
 }
 
 dependencies {
+
+    implementation(projects.core.util)
 
     // Miscellaneous libraries
     implementation(libs.coil.compose)
