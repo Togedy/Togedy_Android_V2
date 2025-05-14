@@ -20,6 +20,13 @@ import com.together.study.designsystem.R.drawable.ic_add_24
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 
+/**
+ * plus icon이 있는 추가 버튼 컴포넌트입니다.
+ *
+ * @param title 버튼 제목
+ * @param onClick 버튼 클릭 시 실행되는 콜백함수
+ * @param modifier 수정자
+ */
 @Composable
 fun AddButton(
     title: String,
