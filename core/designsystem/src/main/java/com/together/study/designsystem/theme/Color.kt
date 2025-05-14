@@ -1,110 +1,110 @@
 package com.together.study.designsystem.theme
 
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.*
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 
-val green = Color(0xFF11BC78)
-val green_bg = Color(0xFFEEFAF6)
+val GREEN = Color(0xFF11BC78)
+val GREEN_BG = Color(0xFFEEFAF6)
 
-val white = Color(0xFFFFFFFF)
-val bg = Color(0xFFF8F8FA)
-val button_bg = Color(0xFFF2F3F5)
-val text = Color(0xFF4B525E)
-val button_text = Color(0xFF5D626B)
-val picker_text = Color(0xFF8E9197)
-val sub_text = Color(0xFFB4B8BF)
-val icon = Color(0xFFD5D9Df)
-val black = Color(0x00000000)
+val WHITE = Color(0xFFFFFFFF)
+val GRAY100 = Color(0xFFF8F8FA)
+val GRAY200 = Color(0xFFF2F3F5)
+val GRAY300 = Color(0xFFD5D9DF)
+val GRAY400 = Color(0xFFB4B8BF)
+val GRAY500 = Color(0xFF8E9197)
+val GRAY600 = Color(0xFF5D626B)
+val GRAY700 = Color(0xFF4B525E)
+val BLACK = Color(0x00000000)
 
 @Stable
 class TogedyColors(
     green: Color,
-    green_bg: Color,
-    white : Color,
-    bg: Color,
-    button_bg: Color,
-    text: Color,
-    button_text: Color,
-    picker_text: Color,
-    sub_text: Color,
-    icon: Color,
-    black: Color
+    greenBg: Color,
+    white: Color,
+    gray100: Color,
+    gray200: Color,
+    gray300: Color,
+    gray400: Color,
+    gray500: Color,
+    gray600: Color,
+    gray700: Color,
+    black: Color,
 ) {
     var green by mutableStateOf(green)
         private set
-    var green_bg by mutableStateOf(green_bg)
+    var greenBg by mutableStateOf(greenBg)
         private set
     var white by mutableStateOf(white)
         private set
-    var bg by mutableStateOf(bg)
+    var gray100 by mutableStateOf(gray100)
         private set
-    var button_bg by mutableStateOf(button_bg)
+    var gray200 by mutableStateOf(gray200)
         private set
-    var text by mutableStateOf(text)
+    var gray300 by mutableStateOf(gray300)
         private set
-    var button_text by mutableStateOf(button_text)
+    var gray400 by mutableStateOf(gray400)
         private set
-    var picker_text by mutableStateOf(picker_text)
+    var gray500 by mutableStateOf(gray500)
         private set
-    var sub_text by mutableStateOf(sub_text)
+    var gray600 by mutableStateOf(gray600)
         private set
-    var icon by mutableStateOf(icon)
+    var gray700 by mutableStateOf(gray700)
         private set
     var black by mutableStateOf(black)
         private set
 
     fun copy(): TogedyColors = TogedyColors(
         green,
-        green_bg,
+        greenBg,
         white,
-        bg,
-        button_bg,
-        text,
-        button_text,
-        picker_text,
-        sub_text,
-        icon,
-        black
+        gray100,
+        gray200,
+        gray300,
+        gray400,
+        gray500,
+        gray600,
+        gray700,
+        black,
     )
 
     fun update(other: TogedyColors) {
         green = other.green
-        green_bg = other.green_bg
+        greenBg = other.greenBg
         white = other.white
-        bg = other.bg
-        button_bg = other.button_bg
-        text = other.text
-        button_text = other.button_text
-        picker_text = other.picker_text
-        sub_text = other.sub_text
-        icon = other.icon
+        gray100 = other.gray100
+        gray200 = other.gray200
+        gray300 = other.gray300
+        gray400 = other.gray400
+        gray500 = other.gray500
+        gray600 = other.gray600
+        gray700 = other.gray700
         black = other.black
     }
 }
 
 fun TogedyLightColors(
-    Green: Color = green,
-    GREEN_BG: Color = green_bg,
-    WHITE: Color = white,
-    BG: Color = bg,
-    BUTTON_BG: Color = button_bg,
-    TEXT: Color = text,
-    BUTTON_TEXT: Color = button_text,
-    PICKER_TEXT: Color = picker_text,
-    SUB_TEXT: Color = sub_text,
-    ICON: Color = icon,
-    BLACK: Color = black
+    green: Color = GREEN,
+    greenBg: Color = GREEN_BG,
+    white: Color = WHITE,
+    gray100: Color = GRAY100,
+    gray200: Color = GRAY200,
+    gray300: Color = GRAY300,
+    gray400: Color = GRAY400,
+    gray500: Color = GRAY500,
+    gray600: Color = GRAY600,
+    gray700: Color = GRAY700,
+    black: Color = BLACK,
 ) = TogedyColors(
-    Green,
-    GREEN_BG,
-    WHITE,
-    BG,
-    BUTTON_BG,
-    TEXT,
-    BUTTON_TEXT,
-    PICKER_TEXT,
-    SUB_TEXT,
-    ICON,
-    BLACK
+    green,
+    greenBg,
+    white,
+    gray100,
+    gray200,
+    gray300,
+    gray400,
+    gray500,
+    gray600,
+    gray700,
+    black,
 )
