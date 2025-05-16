@@ -1,4 +1,4 @@
-package com.together.study.calendar.component
+package com.together.study.calendar.maincalendar.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
