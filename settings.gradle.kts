@@ -40,4 +40,5 @@ include(
 include(
     ":presentation:main",
     ":presentation:dummy",
+    ":presentation:calendar",
 )
