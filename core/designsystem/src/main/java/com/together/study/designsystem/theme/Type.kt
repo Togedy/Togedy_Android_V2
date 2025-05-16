@@ -51,35 +51,43 @@ private fun TogedyTextStyle(
 fun TogedyTypography() = TogedyTypography(
     title16sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        lineHeight = 26.sp,
     ),
     body14m = TogedyTextStyle(
         fontFamily = PretendardMedium,
-        fontSize = 14.sp
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
     ),
     body12m = TogedyTextStyle(
         fontFamily = PretendardMedium,
-        fontSize = 12.sp
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
     ),
     body10m = TogedyTextStyle(
         fontFamily = PretendardMedium,
-        fontSize = 10.sp
+        fontSize = 10.sp,
+        lineHeight = 12.sp,
     ),
     toast12sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
-        fontSize = 12.sp
+        fontSize = 12.sp,
+        lineHeight = 14.sp,
     ),
     toast12r = TogedyTextStyle(
         fontFamily = PretendardRegular,
-        fontSize = 12.sp
+        fontSize = 12.sp,
+        lineHeight = 14.sp,
     ),
     chip14b = TogedyTextStyle(
         fontFamily = PretendardBold,
-        fontSize = 14.sp
+        fontSize = 14.sp,
+        lineHeight = 18.sp,
     ),
     chip10sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
-        fontSize = 10.sp
+        fontSize = 10.sp,
+        lineHeight = 12.sp,
     ),
 )
 
