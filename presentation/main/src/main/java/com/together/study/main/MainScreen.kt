@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.composable
+import com.together.study.calendar.CalendarScreen
 import com.together.study.main.component.MainBottomBar
 import kotlinx.collections.immutable.toImmutableList
 
@@ -60,6 +61,10 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination
     ) {
+        composable<CalendarRoute> {
+            CalendarScreen()
+        }
+
         composable<Dummy> {
             // TODO: Dummy 추가
         }
