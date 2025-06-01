@@ -82,7 +82,7 @@ fun SearchScreen() {
             )
             TogedySearchBar(
                 value = searchValue,
-                onValueChange = {
+                onValueChange = { it ->
                     searchValue = it
 
                     searchJob?.cancel()
