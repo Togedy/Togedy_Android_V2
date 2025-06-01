@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -24,7 +25,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.calendar.generateCalendarWeeks
+import com.together.study.calendar.maincalendar.component.DayOfWeek
+import com.together.study.calendar.maincalendar.component.WeekSchedule
 import com.together.study.calendar.model.DDay
+import com.together.study.calendar.model.Schedule
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_volume_16
@@ -48,6 +53,7 @@ private fun CalendarScreen(
         notice = "알림을 알립니다!",
         date = LocalDate.now(),
         dDay = DDay(hasDday = true, userScheduleName = "건국대학교 면접날", remainingDays = 30),
+        schedules = Schedule.mock,
         modifier = modifier,
     )
 }
@@ -58,8 +64,11 @@ private fun CalendarSuccessScreen(
     notice: String,
     date: LocalDate,
     dDay: DDay,
+    schedules: List<Schedule>,
     modifier: Modifier = Modifier,
 ) {
+    var weeks = generateCalendarWeeks(date)
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -82,6 +91,20 @@ private fun CalendarSuccessScreen(
 
                 if (dDay.hasDday) DDaySection(dDay = dDay)
             }
+
+            Spacer(Modifier.height(20.dp))
+
+            DayOfWeek()
+
+            Spacer(Modifier.height(8.dp))
+        }
+
+        itemsIndexed(weeks) { index, week ->
+            WeekSchedule(
+                weekDates = week,
+                schedules = schedules,
+                currentMonth = date.month,
+            )
         }
     }
 }
@@ -113,8 +136,7 @@ private fun NoticeSection(
 
             Text(
                 text = notice,
-                style = TogedyTheme.typography.chip10sb,
-                color = TogedyTheme.colors.greenBg,
+                style = TogedyTheme.typography.chip10sb.copy(TogedyTheme.colors.greenBg),
                 modifier = Modifier.padding(vertical = 6.dp),
             )
         }
@@ -132,8 +154,7 @@ private fun YearMonthSection(
     ) {
         Text(
             text = stringResource(calendar_year_month, date.year, date.month.value),
-            style = TogedyTheme.typography.title16sb,
-            color = TogedyTheme.colors.gray700,
+            style = TogedyTheme.typography.title16sb.copy(TogedyTheme.colors.gray700),
         )
 
         Spacer(Modifier.width(2.dp))
@@ -151,9 +172,8 @@ private fun DDaySection(
     dDay: DDay,
     modifier: Modifier = Modifier,
 ) {
-    val dDayTextStyle = TogedyTheme.typography.body14m.copy(
-        color = TogedyTheme.colors.gray500,
-    )
+    val dDayTextStyle = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray500)
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.End,
@@ -186,6 +206,7 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             notice = "알림을 알립니다!",
             date = LocalDate.now(),
             dDay = DDay.mock,
+            schedules = Schedule.mock,
             modifier = modifier,
         )
     }
