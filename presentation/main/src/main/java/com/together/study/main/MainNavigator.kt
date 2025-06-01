@@ -48,6 +48,10 @@ class MainNavigator(
         navController.navigateUp()
     }
 
+    fun navigateToSearch(){
+        navController.navigate(SearchRoute)
+    }
+
     @Composable
     fun showBottomBar() = MainTab.contains {
         currentDestination?.hasRoute(it::class) == true

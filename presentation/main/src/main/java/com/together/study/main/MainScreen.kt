@@ -64,7 +64,9 @@ private fun MainNavHost(
     ) {
         composable<CalendarRoute> {
             CalendarScreen(
-                onSearchClicked = {}
+                onSearchClicked = {
+                    navigator.navigateToSearch()
+                }
             )
         }
 
