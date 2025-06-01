@@ -10,7 +10,9 @@ import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.component.TogedySearchBar
 
 @Composable
-fun CalendarScreen() {
+fun CalendarScreen(
+    onSearchClicked: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -19,6 +21,7 @@ fun CalendarScreen() {
     ) {
         TogedySearchBar(
             isShowSearch = true,
+            onSearchClicked = onSearchClicked
         )
     }
 }
@@ -26,5 +29,7 @@ fun CalendarScreen() {
 @Preview
 @Composable
 fun CalendarScreenPreview(){
-    CalendarScreen()
+    CalendarScreen(
+        onSearchClicked = {}
+    )
 }

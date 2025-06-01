@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarSearchScreen() {
+fun SearchScreen() {
     var searchValue by remember { mutableStateOf("") }
 
     val allList = remember { dummyScheduleList() }
