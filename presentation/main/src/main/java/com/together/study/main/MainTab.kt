@@ -61,3 +61,6 @@ data object Dummy: MainTabRoute
 
 @Serializable
 data object CalendarRoute : MainTabRoute
+
+@Serializable
+data object SearchRoute : MainTabRoute

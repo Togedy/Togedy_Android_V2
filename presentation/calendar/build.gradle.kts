@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    setNameSpace("main")
+    setNameSpace("presentation.calendar")
 }
 
 dependencies {

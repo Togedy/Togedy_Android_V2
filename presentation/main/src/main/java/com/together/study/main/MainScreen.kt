@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.composable
 import com.together.study.calendar.CalendarScreen
+import com.together.study.calendar.SearchScreen
 import com.together.study.main.component.MainBottomBar
 import kotlinx.collections.immutable.toImmutableList
 
@@ -62,7 +63,13 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         composable<CalendarRoute> {
-            CalendarScreen()
+            CalendarScreen(
+                onSearchClicked = {}
+            )
+        }
+
+        composable<SearchRoute> {
+            SearchScreen()
         }
 
         composable<Dummy> {

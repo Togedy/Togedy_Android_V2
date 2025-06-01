@@ -78,7 +78,7 @@ private fun MainBottomBarPreview() {
     MainBottomBar(
         isVisible = true,
         tabs = MainTab.entries.toImmutableList(),
-        currentTab = MainTab.DUMMY1,
+        currentTab = MainTab.CALENDAR,
         onTabSelected = {}
     )
 }
