@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,7 +25,7 @@ import com.together.study.presentation.calendar.R.string.university_schedule_nam
 import java.time.LocalDate
 
 @Composable
-internal fun MonthlyScheduleItem(
+fun MonthlyScheduleItem(
     schedule: Schedule,
     modifier: Modifier = Modifier,
 ) {
@@ -70,15 +71,16 @@ private fun UserSchedule(
                 .background(
                     color = categoryColor,
                     shape = RoundedCornerShape(2.dp),
-                )
+                ),
         )
 
         Spacer(Modifier.width(2.dp))
 
         Text(
             text = scheduleName,
-            style = TogedyTheme.typography.body10m,
-            color = categoryColor,
+            style = TogedyTheme.typography.body10m.copy(categoryColor),
+            maxLines = 1,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -104,14 +106,13 @@ private fun UnivSchedule(
                 .size(12.dp)
                 .background(
                     color = TogedyTheme.colors.green,
-                    shape = RoundedCornerShape(2.dp)
+                    shape = RoundedCornerShape(2.dp),
                 ),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = universityAdmissionStage.take(1),
-                style = TogedyTheme.typography.body10m,
-                color = TogedyTheme.colors.white,
+                style = TogedyTheme.typography.body10m.copy(TogedyTheme.colors.white),
             )
         }
 
@@ -124,8 +125,9 @@ private fun UnivSchedule(
                 universityAdmissionStage,
                 universityAdmissionType
             ),
-            style = TogedyTheme.typography.body10m,
-            color = universityScheduleColor,
+            style = TogedyTheme.typography.body10m.copy(universityScheduleColor),
+            maxLines = 1,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
