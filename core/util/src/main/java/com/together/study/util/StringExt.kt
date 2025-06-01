@@ -1,0 +1,14 @@
+package com.together.study.util
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+fun String?.toLocalDate(): LocalDate? {
+    return try {
+        this?.let {
+            LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        }
+    } catch (e: Exception) {
+        null
+    }
+}
