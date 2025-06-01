@@ -61,20 +61,20 @@ fun SearchSelectorChip(
                 Text(
                     text = data.admissionType,
                     style = TogedyTheme.typography.chip10sb.copy(
-                        color = if (data.isAdded)
+                        color = if (data.admissionType == "수시")
                             TogedyTheme.colors.gray700
                         else
                             TogedyTheme.colors.white
                     ),
                     modifier = Modifier
                         .background(
-                            color = if (data.isAdded)
+                            color = if (data.admissionType == "수시")
                                 TogedyTheme.colors.gray100
                             else
                                 TogedyTheme.colors.black,
                             shape = RoundedCornerShape(4.dp)
                         )
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                        .padding(all = 4.dp)
                 )
 
 
