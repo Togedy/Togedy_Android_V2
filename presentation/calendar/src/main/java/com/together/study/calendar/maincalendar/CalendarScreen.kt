@@ -47,7 +47,8 @@ private fun CalendarScreen(
     CalendarSuccessScreen(
         notice = "알림을 알립니다!",
         date = LocalDate.now(),
-        dDay = DDay(hasDday = true, userScheduleName = "건국대학교 면접날", remainingDays = 30)
+        dDay = DDay(hasDday = true, userScheduleName = "건국대학교 면접날", remainingDays = 30),
+        modifier = modifier,
     )
 }
 
@@ -75,6 +76,7 @@ private fun CalendarSuccessScreen(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 YearMonthSection(date = date)
 
