@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.together.study.calendar.maincalendar.navigation.Calendar
 import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
 import kotlinx.serialization.Serializable
@@ -15,10 +16,10 @@ enum class MainTab(
     val contentDescription: String,
     val route: MainTabRoute,
 ) {
-    DUMMY1(
+    CALENDAR(
         icon = Icons.Filled.Home,
-        contentDescription = "더미1",
-        route = Dummy,
+        contentDescription = "캘린더",
+        route = Calendar,
     ),
     DUMMY2(
         icon = Icons.Filled.Search,
