@@ -1,5 +1,6 @@
 package com.together.study.calendar.maincalendar
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,37 +28,72 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.generateCalendarWeeks
 import com.together.study.calendar.maincalendar.component.DayOfWeek
 import com.together.study.calendar.maincalendar.component.WeekSchedule
+import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_volume_16
 import com.together.study.presentation.calendar.R.string.calendar_year_month
 import java.time.LocalDate
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 internal fun CalendarRoute(
     modifier: Modifier = Modifier,
+    viewModel: CalendarViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.calendarUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.currentDate) {
+        // TODO: 스케줄 업데이트
+        viewModel.getCalendarInfo()
+    }
+
     CalendarScreen(
+        uiState = uiState,
+        currentDate = viewModel.currentDate.value,
+        onDateClick = viewModel::updateDailyDialog,
         modifier = modifier,
     )
 }
 
 @Composable
 private fun CalendarScreen(
+    uiState: CalendarUiState,
+    currentDate: LocalDate,
+    onDateClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    CalendarSuccessScreen(
-        notice = "알림을 알립니다!",
-        date = LocalDate.now(),
-        dDay = DDay(hasDday = true, userScheduleName = "건국대학교 면접날", remainingDays = 30),
-        schedules = Schedule.mock,
-        modifier = modifier,
-    )
+    when (uiState.isLoaded) {
+        is UiState.Loading -> {
+        }
+
+        is UiState.Empty -> {
+        }
+
+        is UiState.Failure -> {
+        }
+
+        is UiState.Success -> {
+            with(uiState) {
+                CalendarSuccessScreen(
+                    notice = (uiState.noticeState as UiState.Success<String>).data,
+                    date = currentDate,
+                    dDay = (uiState.dDayState as UiState.Success<DDay>).data,
+                    schedules = (uiState.scheduleState as UiState.Success<List<Schedule>>).data,
+                    onDateClick = onDateClick,
+                    modifier = modifier,
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -65,6 +103,7 @@ private fun CalendarSuccessScreen(
     date: LocalDate,
     dDay: DDay,
     schedules: List<Schedule>,
+    onDateClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var weeks = generateCalendarWeeks(date)
@@ -104,6 +143,7 @@ private fun CalendarSuccessScreen(
                 weekDates = week,
                 schedules = schedules,
                 currentMonth = date.month,
+                onDateClick = onDateClick,
             )
         }
     }
@@ -207,6 +247,7 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             date = LocalDate.now(),
             dDay = DDay.mock,
             schedules = Schedule.mock,
+            onDateClick = {},
             modifier = modifier,
         )
     }
