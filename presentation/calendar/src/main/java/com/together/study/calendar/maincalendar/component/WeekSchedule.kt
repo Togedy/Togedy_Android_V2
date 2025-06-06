@@ -1,9 +1,11 @@
 package com.together.study.calendar.maincalendar.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,7 @@ internal fun WeekSchedule(
     weekDates: List<LocalDate>,
     schedules: List<Schedule>,
     currentMonth: Month,
+    onDateClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val weekStart = weekDates.first()
@@ -38,91 +41,110 @@ internal fun WeekSchedule(
         !(endDate < weekStart || startDate > weekEnd)
     }
 
-    Column(
-        modifier = Modifier.heightIn(min = 120.dp),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 120.dp),
     ) {
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = TogedyTheme.colors.gray200,
-        )
-
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(bottom = 2.dp),
+        Column(
+            modifier = Modifier,
         ) {
-            weekDates.forEachIndexed { index, date ->
-                val isCurrentMonth = date.month == currentMonth
-                val dayOfWeek = date.dayOfWeek
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = TogedyTheme.colors.gray200,
+            )
 
-                val textColor = when {
-                    !isCurrentMonth -> TogedyTheme.colors.gray400
-                    dayOfWeek == DayOfWeek.SUNDAY -> TogedyTheme.colors.red
-                    dayOfWeek == DayOfWeek.SATURDAY -> TogedyTheme.colors.blue
-                    else -> TogedyTheme.colors.gray700
-                }
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 2.dp),
+            ) {
+                weekDates.forEachIndexed { index, date ->
+                    val isCurrentMonth = date.month == currentMonth
+                    val dayOfWeek = date.dayOfWeek
 
-                Box(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = date.dayOfMonth.toString(),
-                        style = TogedyTheme.typography.body10m,
-                        color = textColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+                    val textColor = when {
+                        !isCurrentMonth -> TogedyTheme.colors.gray400
+                        dayOfWeek == DayOfWeek.SUNDAY -> TogedyTheme.colors.red
+                        dayOfWeek == DayOfWeek.SATURDAY -> TogedyTheme.colors.blue
+                        else -> TogedyTheme.colors.gray700
+                    }
 
-                if (index < weekDates.lastIndex) {
-                    Spacer(modifier = Modifier.width(4.dp))
-                }
-            }
-        }
-
-        val placed = mutableListOf<MutableList<Schedule?>>()
-
-        filteredSchedules.forEach { schedule ->
-            val start = schedule.startDate.toLocalDate()?.coerceAtLeast(weekStart)
-            val end = (schedule.endDate.toLocalDate() ?: schedule.startDate.toLocalDate())
-                ?.coerceAtMost(weekEnd)
-
-            val startIdx = weekDates.indexOfFirst { it == start }
-            val endIdx = weekDates.indexOfLast { it == end }
-
-            val rowIndex = placed.indexOfFirst { row ->
-                (startIdx..endIdx).all { row[it] == null }
-            }.takeIf { it >= 0 } ?: run {
-                placed.add(MutableList(7) { null })
-                placed.lastIndex
-            }
-
-            for (i in startIdx..endIdx) {
-                placed[rowIndex][i] = schedule
-            }
-        }
-
-        placed.forEachIndexed { index, row ->
-            Row(modifier = Modifier.fillMaxWidth()) {
-                var i = 0
-                while (i < 7) {
-                    val schedule = row[i]
-                    if (schedule != null) {
-                        var j = i
-                        while (j + 1 < 7 && row[j + 1] == schedule) {
-                            j++
-                        }
-                        val span = j - i + 1
-
-                        MonthlyScheduleItem(
-                            schedule = schedule,
-                            modifier = Modifier.weight(span.toFloat())
+                    Box(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = date.dayOfMonth.toString(),
+                            style = TogedyTheme.typography.body10m,
+                            color = textColor,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
                         )
+                    }
 
-                        i = j + 1
-                    } else {
-                        Box(modifier = Modifier.weight(1f))
-                        i++
+                    if (index < weekDates.lastIndex) {
+                        Spacer(modifier = Modifier.width(4.dp))
                     }
                 }
+            }
+
+            val placed = mutableListOf<MutableList<Schedule?>>()
+
+            filteredSchedules.forEach { schedule ->
+                val start = schedule.startDate.toLocalDate()?.coerceAtLeast(weekStart)
+                val end = (schedule.endDate.toLocalDate() ?: schedule.startDate.toLocalDate())
+                    ?.coerceAtMost(weekEnd)
+
+                val startIdx = weekDates.indexOfFirst { it == start }
+                val endIdx = weekDates.indexOfLast { it == end }
+
+                val rowIndex = placed.indexOfFirst { row ->
+                    (startIdx..endIdx).all { row[it] == null }
+                }.takeIf { it >= 0 } ?: run {
+                    placed.add(MutableList(7) { null })
+                    placed.lastIndex
+                }
+
+                for (i in startIdx..endIdx) {
+                    placed[rowIndex][i] = schedule
+                }
+            }
+
+            placed.forEachIndexed { index, row ->
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    var i = 0
+                    while (i < 7) {
+                        val schedule = row[i]
+                        if (schedule != null) {
+                            var j = i
+                            while (j + 1 < 7 && row[j + 1] == schedule) {
+                                j++
+                            }
+                            val span = j - i + 1
+
+                            MonthlyScheduleItem(
+                                schedule = schedule,
+                                modifier = Modifier.weight(span.toFloat())
+                            )
+
+                            i = j + 1
+                        } else {
+                            Box(modifier = Modifier.weight(1f))
+                            i++
+                        }
+                    }
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier.matchParentSize()
+        ) {
+            weekDates.forEachIndexed { index, date ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                        .clickable { onDateClick(date) },
+                )
             }
         }
     }
@@ -139,6 +161,7 @@ fun WeekSchedulePreview(modifier: Modifier = Modifier) {
                 weekDates = weekDates,
                 schedules = Schedule.mock,
                 currentMonth = Month.JUNE,
+                onDateClick = { },
                 modifier = modifier
             )
         }
