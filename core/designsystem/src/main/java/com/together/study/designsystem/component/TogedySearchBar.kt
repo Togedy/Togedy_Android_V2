@@ -2,6 +2,7 @@ package com.together.study.designsystem.component
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,16 +53,29 @@ fun TogedySearchBar(
     var isFocused by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.then(
-            if (isShowSearch) {
-                Modifier.noRippleClickable {
-                    onSearchClicked()
-                }
-            } else Modifier
-        )
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = if (isTextFieldMode && isFocused) TogedyTheme.colors.gray700
+                else if (!isTextFieldMode) TogedyTheme.colors.gray400
+                else TogedyTheme.colors.white,
+                shape = RoundedCornerShape(4.dp)
+            )
+            .background(
+                color = if (isTextFieldMode) TogedyTheme.colors.white else TogedyTheme.colors.gray200,
+            )
+            .padding(horizontal = 7.dp)
+            .then(
+                if (isShowSearch) {
+                    Modifier.noRippleClickable {
+                        onSearchClicked()
+                    }
+                } else Modifier
+            )
     ) {
         Row(
-            verticalAlignment = Alignment.Companion.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
