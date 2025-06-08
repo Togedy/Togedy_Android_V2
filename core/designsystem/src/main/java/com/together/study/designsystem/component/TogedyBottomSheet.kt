@@ -19,6 +19,7 @@ import com.together.study.util.noRippleClickable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TogedyBottomSheet(
+    modifier: Modifier = Modifier,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     title: String = "",
@@ -33,7 +34,8 @@ fun TogedyBottomSheet(
         containerColor = TogedyTheme.colors.white,
         dragHandle = null
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth()
+            .then(modifier)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -43,6 +45,9 @@ fun TogedyBottomSheet(
                     text = title,
                     modifier = Modifier.align(
                         alignment = Alignment.Companion.Center
+                    ),
+                    style = TogedyTheme.typography.title16sb.copy(
+                        color = TogedyTheme.colors.black
                     )
                 )
 
