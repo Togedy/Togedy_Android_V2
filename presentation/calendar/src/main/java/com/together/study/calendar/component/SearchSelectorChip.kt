@@ -54,64 +54,11 @@ fun SearchSelectorChip(
                     onSelectorClicked()
                 }
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = data.admissionType,
-                    style = TogedyTheme.typography.chip10sb.copy(
-                        color = if (data.admissionType == "수시")
-                            TogedyTheme.colors.gray700
-                        else
-                            TogedyTheme.colors.white
-                    ),
-                    modifier = Modifier
-                        .background(
-                            color = if (data.admissionType == "수시")
-                                TogedyTheme.colors.gray100
-                            else
-                                TogedyTheme.colors.black,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(all = 4.dp)
-                )
-
-
-                Text(
-                    text = data.universityName,
-                    style = TogedyTheme.typography.title16sb.copy(
-                        color = TogedyTheme.colors.green
-                    ),
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = "캘린더 삭제",
-                    style = TogedyTheme.typography.body12m.copy(
-                        color = TogedyTheme.colors.green
-                    ),
-                    modifier = Modifier
-                        .background(
-                            color = if (data.isAdded)
-                                TogedyTheme.colors.white
-                            else
-                                TogedyTheme.colors.greenBg,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .then(
-                            if (data.isAdded) Modifier.border(
-                                width = 1.dp,
-                                color = TogedyTheme.colors.green,
-                                shape = RoundedCornerShape(4.dp)
-                            ) else Modifier
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                )
-
-            }
+            SearchSelectorHeader(
+                admissionType = data.admissionType,
+                universityName = data.universityName,
+                isAdded = data.isAdded
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
