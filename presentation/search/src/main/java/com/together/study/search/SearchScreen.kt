@@ -1,4 +1,4 @@
-package com.together.study.calendar
+package com.together.study.search
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -33,16 +32,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.together.study.calendar.component.SearchSelectorChip
-import com.together.study.calendar.component.SearchSelectorHeader
-import com.together.study.designsystem.component.TogedyBottomSheet
-import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.R
+import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.TogedyScheduleChip
+import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.search.component.SearchSelectorChip
+import com.together.study.search.component.SearchSelectorHeader
 import com.together.study.util.noRippleClickable
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -174,7 +171,8 @@ fun BottomSheetContent(data: SearchScheduleData?) {
                     )
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(vertical = 8.dp, horizontal = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

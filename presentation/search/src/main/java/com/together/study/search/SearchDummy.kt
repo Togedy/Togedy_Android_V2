@@ -1,4 +1,4 @@
-package com.together.study.calendar
+package com.together.study.search
 
 data class SearchScheduleData(
     val universityName: String,

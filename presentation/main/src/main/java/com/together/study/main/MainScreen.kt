@@ -5,14 +5,14 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.navigation.compose.NavHost
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.together.study.calendar.CalendarScreen
-import com.together.study.calendar.SearchScreen
 import com.together.study.main.component.MainBottomBar
+import com.together.study.search.SearchScreen
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable

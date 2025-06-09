@@ -1,4 +1,4 @@
-package com.together.study.calendar
+package com.together.study.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
