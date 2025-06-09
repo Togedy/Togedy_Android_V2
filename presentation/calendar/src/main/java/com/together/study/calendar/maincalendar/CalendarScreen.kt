@@ -41,6 +41,7 @@ import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_volume_16
 import com.together.study.presentation.calendar.R.string.calendar_year_month
+import com.together.study.util.noRippleClickable
 import java.time.LocalDate
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -89,6 +90,7 @@ private fun CalendarScreen(
                     dDay = (uiState.dDayState as UiState.Success<DDay>).data,
                     schedules = (uiState.scheduleState as UiState.Success<List<Schedule>>).data,
                     onDateClick = onDateClick,
+                    onYearMonthSectionClick = { /* TODO : 연도,월 선택 다이얼로그 */ },
                     modifier = modifier,
                 )
             }
@@ -104,6 +106,7 @@ private fun CalendarSuccessScreen(
     dDay: DDay,
     schedules: List<Schedule>,
     onDateClick: (LocalDate) -> Unit,
+    onYearMonthSectionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var weeks = generateCalendarWeeks(date)
@@ -126,7 +129,10 @@ private fun CalendarSuccessScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                YearMonthSection(date = date)
+                YearMonthSection(
+                    date = date,
+                    onClick = onYearMonthSectionClick
+                )
 
                 if (dDay.hasDday) DDaySection(dDay = dDay)
             }
@@ -186,10 +192,12 @@ private fun NoticeSection(
 @Composable
 private fun YearMonthSection(
     date: LocalDate,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .noRippleClickable(onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -248,6 +256,7 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             dDay = DDay.mock,
             schedules = Schedule.mock,
             onDateClick = {},
+            onYearMonthSectionClick = {},
             modifier = modifier,
         )
     }
