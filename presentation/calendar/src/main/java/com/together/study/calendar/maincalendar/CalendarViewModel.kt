@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
@@ -65,16 +66,18 @@ internal class CalendarViewModel @Inject constructor(
         _dDayState.value = UiState.Success(DDay.mock)
     }
 
-    suspend fun getSchedule() {
+    fun getSchedule() = viewModelScope.launch {
         // TODO: 추후 API 연결
         _scheduleState.value = UiState.Success(Schedule.mock)
     }
 
     fun updateCurrentDate(newDate: LocalDate) {
         _currentDate.update { newDate }
+        getSchedule()
     }
 
     fun updateDailyDialog(date: LocalDate) {
+        // TODO: 일별 상세 다이얼로그 open
         Timber.tag("chrin").d("$date 클릭됨")
     }
 }
