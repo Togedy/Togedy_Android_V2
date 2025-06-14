@@ -34,9 +34,10 @@ fun TogedyBottomSheet(
         containerColor = TogedyTheme.colors.white,
         dragHandle = null
     ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier)) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
