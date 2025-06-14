@@ -19,13 +19,13 @@ import com.together.study.util.noRippleClickable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TogedyBottomSheet(
-    modifier: Modifier = Modifier,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     title: String = "",
     showDone: Boolean = false,
     onDoneClick: () -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
@@ -34,7 +34,8 @@ fun TogedyBottomSheet(
         containerColor = TogedyTheme.colors.white,
         dragHandle = null
     ) {
-        Column(modifier = Modifier.fillMaxWidth()
+        Column(modifier = Modifier
+            .fillMaxWidth()
             .then(modifier)) {
             Box(
                 modifier = Modifier

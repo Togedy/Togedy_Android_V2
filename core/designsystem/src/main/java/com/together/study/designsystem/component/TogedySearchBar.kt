@@ -43,11 +43,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TogedySearchBar(
-    modifier: Modifier = Modifier,
     isShowSearch: Boolean = false,
     value: String = "",
     onValueChange: (String) -> Unit = {},
-    onSearchClicked: () -> Unit = {}
+    onSearchClicked: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     val isTextFieldMode = !isShowSearch
     var isFocused by remember { mutableStateOf(false) }

@@ -27,8 +27,8 @@ fun TogedyScheduleChip(
     typeStatus: Int,
     scheduleName: String,
     scheduleType: String,
+    scheduleEndTime: String,
     scheduleStartTime: String? = null,
-    scheduleEndTime: String
 ) {
     Row(
         modifier = Modifier
