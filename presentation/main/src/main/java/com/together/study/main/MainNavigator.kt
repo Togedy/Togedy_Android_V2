@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.together.study.calendar.maincalendar.navigation.Calendar
 import com.together.study.calendar.maincalendar.navigation.navigateToCalendar
 
 class MainNavigator(
@@ -17,7 +18,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = CalendarRoute
+    val startDestination = Calendar
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
@@ -47,10 +48,6 @@ class MainNavigator(
 
     fun navigateUp() {
         navController.navigateUp()
-    }
-
-    fun navigateToSearch(){
-        navController.navigate(SearchRoute)
     }
 
     @Composable
