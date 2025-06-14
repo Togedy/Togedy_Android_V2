@@ -24,8 +24,8 @@ fun TogedyBottomSheet(
     title: String = "",
     showDone: Boolean = false,
     onDoneClick: () -> Unit = {},
-    content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
