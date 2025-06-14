@@ -1,5 +1,6 @@
 package com.together.study.calendar.maincalendar.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +34,7 @@ internal fun WeekSchedule(
     onDateClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val today = LocalDate.now()
     val weekStart = weekDates.first()
     val weekEnd = weekDates.last()
 
@@ -61,16 +64,29 @@ internal fun WeekSchedule(
             ) {
                 weekDates.forEachIndexed { index, date ->
                     val isCurrentMonth = date.month == currentMonth
+                    val isToday = date == today
                     val dayOfWeek = date.dayOfWeek
 
                     val textColor = when {
+                        isToday -> TogedyTheme.colors.white
                         !isCurrentMonth -> TogedyTheme.colors.gray400
                         dayOfWeek == DayOfWeek.SUNDAY -> TogedyTheme.colors.red
                         dayOfWeek == DayOfWeek.SATURDAY -> TogedyTheme.colors.blue
                         else -> TogedyTheme.colors.gray700
                     }
 
-                    Box(modifier = Modifier.weight(1f)) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .then(
+                                if (isToday) Modifier
+                                    .background(
+                                        TogedyTheme.colors.black,
+                                        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                                    )
+                                else Modifier
+                            )
+                    ) {
                         Text(
                             text = date.dayOfMonth.toString(),
                             style = TogedyTheme.typography.body10m,
@@ -122,6 +138,8 @@ internal fun WeekSchedule(
 
                             MonthlyScheduleItem(
                                 schedule = schedule,
+                                isStartOfMultiWeek = schedule.startDate.toLocalDate()
+                                    ?.isAfter(weekStart) == true,
                                 modifier = Modifier.weight(span.toFloat())
                             )
 

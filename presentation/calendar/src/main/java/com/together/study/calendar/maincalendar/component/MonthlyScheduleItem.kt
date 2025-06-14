@@ -27,6 +27,7 @@ import java.time.LocalDate
 @Composable
 fun MonthlyScheduleItem(
     schedule: Schedule,
+    isStartOfMultiWeek: Boolean,
     modifier: Modifier = Modifier,
 ) {
     with(schedule) {
@@ -36,6 +37,7 @@ fun MonthlyScheduleItem(
             UserSchedule(
                 scheduleName = scheduleName,
                 categoryColor = category?.categoryColor.toString(),
+                isStartOfMultiWeek = isStartOfMultiWeek,
                 modifier = modifier,
             )
         } else {
@@ -43,6 +45,7 @@ fun MonthlyScheduleItem(
                 scheduleName = scheduleName,
                 universityAdmissionType = universityAdmissionType,
                 universityAdmissionStage = universityAdmissionStage,
+                isStartOfMultiWeek = isStartOfMultiWeek,
                 modifier = modifier,
             )
         }
@@ -53,6 +56,7 @@ fun MonthlyScheduleItem(
 private fun UserSchedule(
     scheduleName: String,
     categoryColor: String,
+    isStartOfMultiWeek: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val categoryColor = categoryColor.toCategoryColorOrDefault()
@@ -64,15 +68,17 @@ private fun UserSchedule(
                 shape = RoundedCornerShape(2.dp),
             ),
     ) {
-        Box(
-            modifier = Modifier
-                .width(2.dp)
-                .height(12.dp)
-                .background(
-                    color = categoryColor,
-                    shape = RoundedCornerShape(2.dp),
-                ),
-        )
+        if (isStartOfMultiWeek) {
+            Box(
+                modifier = Modifier
+                    .width(2.dp)
+                    .height(12.dp)
+                    .background(
+                        color = categoryColor,
+                        shape = RoundedCornerShape(2.dp),
+                    ),
+            )
+        }
 
         Spacer(Modifier.width(2.dp))
 
@@ -90,6 +96,7 @@ private fun UnivSchedule(
     scheduleName: String,
     universityAdmissionType: String,
     universityAdmissionStage: String,
+    isStartOfMultiWeek: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val universityScheduleColor = TogedyTheme.colors.green
@@ -101,19 +108,21 @@ private fun UnivSchedule(
                 shape = RoundedCornerShape(2.dp),
             ),
     ) {
-        Box(
-            modifier = Modifier
-                .size(12.dp)
-                .background(
-                    color = TogedyTheme.colors.green,
-                    shape = RoundedCornerShape(2.dp),
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = universityAdmissionStage.take(1),
-                style = TogedyTheme.typography.body10m.copy(TogedyTheme.colors.white),
-            )
+        if (isStartOfMultiWeek) {
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .background(
+                        color = TogedyTheme.colors.green,
+                        shape = RoundedCornerShape(2.dp),
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = universityAdmissionStage.take(1),
+                    style = TogedyTheme.typography.body10m.copy(TogedyTheme.colors.white),
+                )
+            }
         }
 
         Spacer(Modifier.width(2.dp))
@@ -151,6 +160,7 @@ private fun UserSchedulePreview(modifier: Modifier = Modifier) {
                     categoryColor = "CATEGORY_COLOR1",
                 )
             ),
+            isStartOfMultiWeek = true,
             modifier = modifier,
         )
     }
@@ -175,6 +185,32 @@ private fun UniversitySchedulePreview(modifier: Modifier = Modifier) {
                     categoryColor = "CATEGORY_COLOR1",
                 )
             ),
+            isStartOfMultiWeek = true,
+            modifier = modifier,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UniversityScheduleMultiWeekPreview(modifier: Modifier = Modifier) {
+    TogedyTheme {
+        MonthlyScheduleItem(
+            schedule = Schedule(
+                scheduleId = null,
+                scheduleType = "university",
+                scheduleName = "건국대학교",
+                startDate = LocalDate.now().toString(),
+                endDate = null,
+                universityAdmissionType = "수시",
+                universityAdmissionStage = "원서접수",
+                category = Category(
+                    categoryId = null,
+                    categoryName = "국어",
+                    categoryColor = "CATEGORY_COLOR1",
+                )
+            ),
+            isStartOfMultiWeek = false,
             modifier = modifier,
         )
     }
