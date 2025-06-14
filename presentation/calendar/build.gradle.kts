@@ -19,7 +19,6 @@ dependencies {
     implementation(projects.domain.calendar)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
