@@ -35,10 +35,12 @@ include(
 )
 include(
     ":domain:dummy",
+    ":domain:calendar",
 )
 include(
     ":presentation:main",
     ":presentation:dummy",
+    ":presentation:calendar",
 )
 include(":presentation:calendar")
 include(":presentation:search")
