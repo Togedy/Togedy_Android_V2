@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
 
-    private val allList = dummyScheduleList()
+    private val allList = dummyScheduleList().toMutableList()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
@@ -35,6 +35,24 @@ class SearchViewModel : ViewModel() {
                     it.universityName.contains(query, ignoreCase = true)
                 }
                 .sortedByDescending { it.isAdded }
+        }
+    }
+
+    fun toggleScheduleStatus(data: SearchScheduleData) {
+        val currentList = _filteredList.value.toMutableList()
+        val index = currentList.indexOfFirst { it.universityName == data.universityName }
+
+        if (index != -1) {
+            val updatedData = data.copy(isAdded = !data.isAdded)
+            currentList[index] = updatedData
+
+            // allList도 업데이트
+            val allListIndex = allList.indexOfFirst { it.universityName == data.universityName }
+            if (allListIndex != -1) {
+                allList[allListIndex] = updatedData
+            }
+
+            _filteredList.value = currentList.sortedByDescending { it.isAdded }
         }
     }
 }
