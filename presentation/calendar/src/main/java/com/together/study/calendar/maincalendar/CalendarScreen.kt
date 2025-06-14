@@ -38,6 +38,7 @@ import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
+import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_volume_16
 import com.together.study.presentation.calendar.R.string.calendar_year_month
@@ -47,6 +48,7 @@ import java.time.LocalDate
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 internal fun CalendarRoute(
+    onSearchBoxClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
@@ -60,6 +62,7 @@ internal fun CalendarRoute(
     CalendarScreen(
         uiState = uiState,
         currentDate = viewModel.currentDate.value,
+        onSearchBoxClick = onSearchBoxClick,
         onDateClick = viewModel::updateDailyDialog,
         modifier = modifier,
     )
@@ -69,6 +72,7 @@ internal fun CalendarRoute(
 private fun CalendarScreen(
     uiState: CalendarUiState,
     currentDate: LocalDate,
+    onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -89,6 +93,7 @@ private fun CalendarScreen(
                     date = currentDate,
                     dDay = (uiState.dDayState as UiState.Success<DDay>).data,
                     schedules = (uiState.scheduleState as UiState.Success<List<Schedule>>).data,
+                    onSearchBoxClick = onSearchBoxClick,
                     onDateClick = onDateClick,
                     onYearMonthSectionClick = { /* TODO : 연도,월 선택 다이얼로그 */ },
                     modifier = modifier,
@@ -105,6 +110,7 @@ private fun CalendarSuccessScreen(
     date: LocalDate,
     dDay: DDay,
     schedules: List<Schedule>,
+    onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
     onYearMonthSectionClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -121,6 +127,13 @@ private fun CalendarSuccessScreen(
             NoticeSection(
                 notice = notice,
                 modifier = Modifier,
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            TogedySearchBar(
+                isShowSearch = true,
+                onSearchClicked = onSearchBoxClick
             )
 
             Spacer(Modifier.height(12.dp))
@@ -255,6 +268,7 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             date = LocalDate.now(),
             dDay = DDay.mock,
             schedules = Schedule.mock,
+            onSearchBoxClick = {},
             onDateClick = {},
             onYearMonthSectionClick = {},
             modifier = modifier,

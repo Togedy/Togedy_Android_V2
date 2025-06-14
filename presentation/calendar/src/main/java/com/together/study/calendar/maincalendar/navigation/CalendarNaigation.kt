@@ -14,10 +14,12 @@ fun NavController.navigateToCalendar(
 ) = navigate(Calendar, navOptions)
 
 fun NavGraphBuilder.calendarGraph(
+    navigateToUnivSearch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Calendar> {
         CalendarRoute(
+            onSearchBoxClick = navigateToUnivSearch,
             modifier = modifier,
         )
     }

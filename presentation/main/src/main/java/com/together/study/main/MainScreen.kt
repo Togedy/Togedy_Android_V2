@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.main.component.MainBottomBar
+import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
 import kotlinx.collections.immutable.toImmutableList
 
@@ -63,6 +64,7 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         calendarGraph(
+            navigateToUnivSearch = navigator.navController::navigateToUnivSearch,
             modifier = modifier,
         )
 
