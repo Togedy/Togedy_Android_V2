@@ -15,9 +15,9 @@ val GRAY200 = Color(0xFFF2F3F5) //button-bg
 val GRAY300 = Color(0xFFD5D9DF)
 val GRAY400 = Color(0xFFB4B8BF)
 val GRAY500 = Color(0xFF8E9197) //gray/picker_text
-val GRAY600 = Color(0xFF5D626B)
+val GRAY600 = Color(0xFF5D626B) //gray/button_text
 val GRAY700 = Color(0xFF4B525E) //gray/TEXT
-val BLACK = Color(0x00000000)
+val BLACK = Color(0xFF000000)
 
 @Stable
 class TogedyColors(

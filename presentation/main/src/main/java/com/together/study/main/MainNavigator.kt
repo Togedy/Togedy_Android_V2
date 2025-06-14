@@ -17,7 +17,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Dummy
+    val startDestination = CalendarRoute
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
@@ -47,6 +47,10 @@ class MainNavigator(
 
     fun navigateUp() {
         navController.navigateUp()
+    }
+
+    fun navigateToSearch(){
+        navController.navigate(SearchRoute)
     }
 
     @Composable
