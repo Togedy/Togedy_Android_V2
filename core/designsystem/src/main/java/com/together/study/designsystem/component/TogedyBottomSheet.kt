@@ -58,9 +58,7 @@ fun TogedyBottomSheet(
                         text = "완료",
                         modifier = Modifier
                             .align(alignment = Alignment.Companion.CenterEnd)
-                            .noRippleClickable {
-                                onDoneClick()
-                            }
+                            .noRippleClickable(onDoneClick)
                     )
                 }
             }

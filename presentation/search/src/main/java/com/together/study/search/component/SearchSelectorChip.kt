@@ -49,9 +49,7 @@ fun SearchSelectorChip(
                         ) else Modifier
                 )
                 .padding(horizontal = 14.dp, vertical = 10.dp)
-                .noRippleClickable {
-                    onSelectorClicked()
-                }
+                .noRippleClickable(onSelectorClicked)
         ) {
             SearchSelectorHeader(
                 admissionType = data.admissionType,

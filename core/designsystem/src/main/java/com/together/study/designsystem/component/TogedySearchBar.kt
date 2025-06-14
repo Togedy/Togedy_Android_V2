@@ -68,9 +68,7 @@ fun TogedySearchBar(
             .padding(horizontal = 7.dp)
             .then(
                 if (isShowSearch) {
-                    Modifier.noRippleClickable {
-                        onSearchClicked()
-                    }
+                    Modifier.noRippleClickable(onSearchClicked)
                 } else Modifier
             )
     ) {
