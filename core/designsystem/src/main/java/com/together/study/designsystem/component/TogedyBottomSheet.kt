@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
@@ -22,6 +23,10 @@ fun TogedyBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     title: String = "",
+    titleStyle: TextStyle =
+        TogedyTheme.typography.title16sb.copy(
+            color = TogedyTheme.colors.black
+        ),
     showDone: Boolean = false,
     onDoneClick: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -48,9 +53,7 @@ fun TogedyBottomSheet(
                     modifier = Modifier.align(
                         alignment = Alignment.Companion.Center
                     ),
-                    style = TogedyTheme.typography.title16sb.copy(
-                        color = TogedyTheme.colors.black
-                    )
+                    style = titleStyle
                 )
 
                 if (showDone) {
