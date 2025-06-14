@@ -196,10 +196,20 @@ fun BottomSheetContent(data: SearchScheduleData?) {
                 onDismissRequest = {
                     isExpanded = false
                 },
+                containerColor = TogedyTheme.colors.white,
+                shadowElevation = 1.dp
+
             ) {
                 admissionList.forEachIndexed { index, admission ->
                     DropdownMenuItem(
-                        text = { Text(admission.admissionMethod) },
+                        text = {
+                            Text(
+                                text = admission.admissionMethod,
+                                style = TogedyTheme.typography.toast12sb.copy(
+                                    TogedyTheme.colors.gray600
+                                )
+                            )
+                        },
                         onClick = {
                             selectedIndex = index
                             isExpanded = false
