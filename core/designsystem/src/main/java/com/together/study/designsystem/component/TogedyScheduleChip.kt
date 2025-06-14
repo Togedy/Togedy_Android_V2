@@ -17,7 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyTheme
@@ -87,12 +88,12 @@ fun TogedyScheduleChip(
                 modifier = Modifier
                     .background(
                         color = TogedyTheme.colors.gray200,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp)
+                        shape = RoundedCornerShape(6.dp)
                     )
                     .padding(horizontal = 8.dp, vertical = 3.dp)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_search_cancel_16),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_search_cancel_16),
                     contentDescription = null,
                     modifier = Modifier
                         .size(16.dp)
