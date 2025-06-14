@@ -15,10 +15,10 @@ enum class MainTab(
     val contentDescription: String,
     val route: MainTabRoute,
 ) {
-    DUMMY1(
+    CALENDAR(
         icon = Icons.Filled.Home,
-        contentDescription = "더미1",
-        route = Dummy,
+        contentDescription = "캘린더",
+        route = CalendarRoute,
     ),
     DUMMY2(
         icon = Icons.Filled.Search,
@@ -58,3 +58,9 @@ enum class MainTab(
 // TODO: 더미 추가 후 삭제
 @Serializable
 data object Dummy: MainTabRoute
+
+@Serializable
+data object CalendarRoute : MainTabRoute
+
+@Serializable
+data object SearchRoute : MainTabRoute

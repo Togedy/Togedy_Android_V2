@@ -16,7 +16,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Dummy
+    val startDestination = CalendarRoute
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
@@ -36,7 +36,7 @@ class MainNavigator(
         }
 
         when (tab) {
-            MainTab.DUMMY1 -> { } //TODO: 더미 추가 예정
+            MainTab.CALENDAR -> { } //TODO: 더미 추가 예정
             MainTab.DUMMY2 -> { } //TODO: 더미 추가 예정
             MainTab.DUMMY3 -> { } //TODO: 더미 추가 예정
             MainTab.DUMMY4 -> { } //TODO: 더미 추가 예정
@@ -46,6 +46,10 @@ class MainNavigator(
 
     fun navigateUp() {
         navController.navigateUp()
+    }
+
+    fun navigateToSearch(){
+        navController.navigate(SearchRoute)
     }
 
     @Composable

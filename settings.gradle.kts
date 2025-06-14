@@ -40,3 +40,5 @@ include(
     ":presentation:main",
     ":presentation:dummy",
 )
+include(":presentation:calendar")
+include(":presentation:search")
