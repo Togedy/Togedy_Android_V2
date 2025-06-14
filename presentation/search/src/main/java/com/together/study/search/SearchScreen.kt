@@ -45,8 +45,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel = viewModel()
-
+    modifier: Modifier,
+    viewModel: SearchViewModel = viewModel(),
 ) {
     val searchValue by viewModel.searchQuery.collectAsStateWithLifecycle()
     val filteredList by viewModel.filteredList.collectAsStateWithLifecycle()
@@ -72,7 +72,7 @@ fun SearchScreen(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(top = 20.dp)
             .padding(horizontal = 16.dp)
