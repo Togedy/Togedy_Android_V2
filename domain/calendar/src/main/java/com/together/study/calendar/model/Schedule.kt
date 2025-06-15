@@ -1,7 +1,7 @@
 package com.together.study.calendar.model
 
 data class Schedule(
-    val scheduleId: Long? = null,
+    val scheduleId: Long,
     val scheduleType: String,
     val scheduleName: String,
     val startDate: String,
