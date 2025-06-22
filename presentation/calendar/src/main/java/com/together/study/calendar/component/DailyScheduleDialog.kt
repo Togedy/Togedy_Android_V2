@@ -23,7 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,6 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.calendar.maincalendar.DailyDialogViewModel
 import com.together.study.calendar.model.Schedule
 import com.together.study.common.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_delete_24
@@ -57,13 +59,14 @@ import kotlin.math.roundToInt
 internal fun DailyScheduleDialog(
     date: LocalDate,
     dDay: Int?,
-    schedules: List<Schedule>,
     onDismissRequest: () -> Unit,
     onScheduleItemClick: (ScheduleType, Long) -> Unit,
-    onDeleteClick: (Long) -> Unit,
     onAddScheduleClick: () -> Unit,
+    dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val dailySchedules = dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
+
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -71,6 +74,10 @@ internal fun DailyScheduleDialog(
 
     val dialogWidth = screenWidth * 0.8667f
     val dialogHeight = screenHeight * 0.65f
+
+    LaunchedEffect(Unit) {
+        dailyDialogViewModel.fetchDailySchedules(date)
+    }
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -99,12 +106,12 @@ internal fun DailyScheduleDialog(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        schedules.forEach {
+                        dailySchedules.value.forEach { schedule ->
                             DailyScheduleItem(
                                 coroutineScope = coroutineScope,
-                                schedule = it,
+                                schedule = schedule,
                                 onScheduleItemClick = onScheduleItemClick,
-                                onDeleteClick = onDeleteClick,
+                                onDeleteClick = dailyDialogViewModel::deleteSchedule,
                             )
                         }
                     }
@@ -259,8 +266,6 @@ fun DailyScheduleItem(
 @Composable
 private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
-        val schedules = remember { mutableStateListOf<Schedule>().apply { addAll(Schedule.mock) } }
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -269,11 +274,10 @@ private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
             DailyScheduleDialog(
                 date = LocalDate.now(),
                 dDay = 10,
-                schedules = schedules,
                 onScheduleItemClick = { type, id -> },
-                onDeleteClick = { id -> schedules.removeIf { it.scheduleId == id } },
                 onAddScheduleClick = {},
                 onDismissRequest = {},
+                dailyDialogViewModel = DailyDialogViewModel(),
                 modifier = modifier,
             )
         }
