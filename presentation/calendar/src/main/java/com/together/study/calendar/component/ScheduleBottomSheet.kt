@@ -107,7 +107,7 @@ internal fun ScheduleBottomSheet(
 
             ScheduleCategorySection(
                 category = category,
-                onCategoryClick = { },
+                onCategoryClick = { isCategoryOpen = true },
             )
 
             Spacer(Modifier.height(24.dp))
@@ -134,9 +134,52 @@ internal fun ScheduleBottomSheet(
                 onDismissRequest = { isCategoryOpen = false },
                 onAddCategoryClick = {},
                 onEditCategoryClick = {},
-                onDoneClick = { category = it },
+                onDoneClick = {
+                    category = it
+                    isCategoryOpen = false
+                },
             )
         }
+    }
+}
+
+@Composable
+private fun ScheduleNameSection(
+    scheduleName: String,
+    categoryColor: Color,
+    onNameChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val textStyle = TogedyTheme.typography.body14m
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .height(32.dp)
+                .background(color = categoryColor, shape = RoundedCornerShape(16.dp)),
+        )
+
+        Spacer(Modifier.width(8.dp))
+
+        BasicTextField( // TODO: 추후 컴포넌트로 분리
+            value = scheduleName,
+            onValueChange = onNameChange,
+            textStyle = textStyle,
+            singleLine = true,
+            decorationBox = { innerTextField ->
+                if (scheduleName.isEmpty()) {
+                    Text(
+                        text = "일정...",
+                        style = textStyle.copy(color = TogedyTheme.colors.gray300)
+                    )
+                }
+                innerTextField()
+            }
+        )
     }
 }
 
@@ -180,46 +223,6 @@ private fun ScheduleCategorySection(
                 textColor = category.categoryColor.toCategoryColorOrDefault(),
             )
         }
-    }
-}
-
-@Composable
-private fun ScheduleNameSection(
-    scheduleName: String,
-    categoryColor: Color,
-    onNameChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val textStyle = TogedyTheme.typography.body14m
-
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .width(3.dp)
-                .height(32.dp)
-                .background(color = categoryColor, shape = RoundedCornerShape(16.dp)),
-        )
-
-        Spacer(Modifier.width(8.dp))
-
-        BasicTextField( // TODO: 추후 컴포넌트로 분리
-            value = scheduleName,
-            onValueChange = onNameChange,
-            textStyle = textStyle,
-            singleLine = true,
-            decorationBox = { innerTextField ->
-                if (scheduleName.isEmpty()) {
-                    Text(
-                        text = "일정...",
-                        style = textStyle.copy(color = TogedyTheme.colors.gray300)
-                    )
-                }
-                innerTextField()
-            }
-        )
     }
 }
 
