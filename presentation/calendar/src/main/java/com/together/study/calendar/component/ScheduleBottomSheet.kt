@@ -116,7 +116,12 @@ internal fun ScheduleBottomSheet(
             ) {
                 BasicTextField(
                     value = scheduleMemo,
-                    onValueChange = { if (it.length < 30) scheduleMemo = it },
+                    onValueChange = {
+                        if (it.length < 30) scheduleMemo = it
+                        else {
+                            // TODO : 토스트 띄우기
+                        }
+                    },
                     textStyle = TogedyTheme.typography.body14m,
                     decorationBox = { innerTextField ->
                         if (scheduleMemo.isEmpty()) {
