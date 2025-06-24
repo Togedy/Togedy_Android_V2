@@ -28,17 +28,24 @@ import com.together.study.util.noRippleClickable
 @Composable
 internal fun CategoryItem(
     category: Category,
-    isCategorySelected: Boolean,
     onCategoryClick: () -> Unit,
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    isCategorySelected: Boolean = false,
+    isCategoryEditMode: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val categoryColor = category.categoryColor.toCategoryColorOrDefault()
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(TogedyTheme.colors.gray50, RoundedCornerShape(8.dp))
             .padding(16.dp)
-            .noRippleClickable(onCategoryClick),
+            .noRippleClickable {
+                if (isCategoryEditMode) onEditClick()
+                else onCategoryClick()
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -66,10 +73,19 @@ internal fun CategoryItem(
 //            )
             Spacer(Modifier.width(4.dp))
             Box(
-                // TODO: 추후 icon 으로 변경
+                // TODO: 추후 체크 icon 으로 변경
                 modifier = Modifier
                     .size(24.dp)
                     .background(TogedyTheme.colors.gray500),
+            )
+        } else if (isCategoryEditMode) {
+            Spacer(Modifier.width(4.dp))
+            Box(
+                // TODO: 추후 삭제 icon 으로 변경
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(TogedyTheme.colors.gray300)
+                    .noRippleClickable(onDeleteClick),
             )
         } else {
             Spacer(Modifier.width(28.dp))
