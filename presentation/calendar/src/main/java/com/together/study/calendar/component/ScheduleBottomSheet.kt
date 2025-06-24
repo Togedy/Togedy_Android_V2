@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.calendar.model.Category
@@ -115,9 +116,8 @@ internal fun ScheduleBottomSheet(
             ) {
                 BasicTextField(
                     value = scheduleMemo,
-                    onValueChange = { scheduleMemo = it },
+                    onValueChange = { if (it.length < 30) scheduleMemo = it },
                     textStyle = TogedyTheme.typography.body14m,
-                    singleLine = true,
                     decorationBox = { innerTextField ->
                         if (scheduleMemo.isEmpty()) {
                             Text(
@@ -244,12 +244,29 @@ private fun ScheduleMemoSection(
             )
         }
     } else {
-        Column(
+        Box(
             modifier = modifier
                 .fillMaxWidth()
-                .noRippleClickable(onMemoClick),
+                .height(100.dp)
+                .background(TogedyTheme.colors.gray200, RoundedCornerShape(6.dp))
+                .padding(12.dp),
+            contentAlignment = Alignment.TopStart,
         ) {
+            Text(
+                text = memo,
+                style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray700),
+            )
 
+            Text(
+                text = "편집",
+                style = TogedyTheme.typography.body12m.copy(TogedyTheme.colors.gray700),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .background(TogedyTheme.colors.gray300, RoundedCornerShape(8.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .noRippleClickable(onMemoClick),
+            )
         }
     }
 }
