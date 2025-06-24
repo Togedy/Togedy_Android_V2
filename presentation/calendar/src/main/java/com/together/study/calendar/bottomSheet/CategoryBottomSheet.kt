@@ -32,9 +32,9 @@ import com.together.study.util.noRippleClickable
 @Composable
 internal fun CategoryBottomSheet(
     sheetState: SheetState,
-    categoryId: Long?,
+    category: Category?,
     onDismissRequest: () -> Unit,
-    onDoneClick: (Long) -> Unit,
+    onDoneClick: (Category) -> Unit,
     onAddCategoryClick: () -> Unit,
     onEditCategoryClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -42,7 +42,7 @@ internal fun CategoryBottomSheet(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val bottomSheetHeight = screenHeight * 0.5275f
 
-    var selectedCategoryId by remember { mutableStateOf(categoryId) }
+    var selectedCategory by remember { mutableStateOf(category) }
     val categoryList = Category.mockList
 
     TogedyBottomSheet(
@@ -50,8 +50,8 @@ internal fun CategoryBottomSheet(
         onDismissRequest = onDismissRequest,
         title = "카테고리",
         showDone = true,
-        isDoneActivate = selectedCategoryId != null,
-        onDoneClick = { onDoneClick(selectedCategoryId!!) },
+        isDoneActivate = selectedCategory != null,
+        onDoneClick = { onDoneClick(selectedCategory!!) },
         modifier = modifier
             .fillMaxWidth()
             .height(bottomSheetHeight),
@@ -86,8 +86,8 @@ internal fun CategoryBottomSheet(
             items(categoryList) { categoryItem ->
                 CategoryItem(
                     category = categoryItem,
-                    isCategorySelected = categoryItem.categoryId == selectedCategoryId,
-                    onCategoryClick = { selectedCategoryId = categoryItem.categoryId },
+                    isCategorySelected = categoryItem.categoryId == selectedCategory?.categoryId,
+                    onCategoryClick = { selectedCategory = categoryItem },
                 )
             }
 
@@ -107,7 +107,7 @@ private fun CategoryBottomSheetPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         CategoryBottomSheet(
             sheetState = sheetState,
-            categoryId = null,
+            category = null,
             onDismissRequest = {},
             onDoneClick = {},
             onAddCategoryClick = {},

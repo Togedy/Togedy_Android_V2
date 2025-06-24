@@ -31,6 +31,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.calendar.bottomSheet.CategoryBottomSheet
 import com.together.study.calendar.bottomSheet.MemoBottomSheet
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.type.toCategoryColorOrDefault
@@ -65,7 +66,11 @@ internal fun ScheduleBottomSheet(
     var startTime by remember { mutableStateOf(startTime) }
     var endDate by remember { mutableStateOf(endDate) }
     var endTime by remember { mutableStateOf(endTime) }
+
     var category by remember { mutableStateOf(category) }
+    var isCategoryOpen by remember { mutableStateOf(false) }
+    var categorySheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     var scheduleMemo by remember { mutableStateOf("") }
     var isMemoOpen by remember { mutableStateOf(false) }
     var memoSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -119,6 +124,17 @@ internal fun ScheduleBottomSheet(
                 scheduleMemo = scheduleMemo,
                 onValueChange = { scheduleMemo = it },
                 onDismissRequest = { isMemoOpen = false },
+            )
+        }
+
+        if (isCategoryOpen) {
+            CategoryBottomSheet(
+                sheetState = categorySheetState,
+                category = category,
+                onDismissRequest = { isCategoryOpen = false },
+                onAddCategoryClick = {},
+                onEditCategoryClick = {},
+                onDoneClick = { category = it },
             )
         }
     }
