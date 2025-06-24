@@ -107,18 +107,19 @@ internal fun ScheduleBottomSheet(
                 onDismissRequest = { isMemoOpen = false },
                 title = "메모",
                 showDone = true,
+                isDoneActivate = true,
                 onDoneClick = { isMemoOpen = false },
                 modifier = modifier
                     .fillMaxWidth()
                     .height(bottomSheetHeight),
             ) {
-                BasicTextField( // TODO: 추후 컴포넌트로 분리
+                BasicTextField(
                     value = scheduleMemo,
                     onValueChange = { scheduleMemo = it },
                     textStyle = TogedyTheme.typography.body14m,
                     singleLine = true,
                     decorationBox = { innerTextField ->
-                        if (scheduleName.isEmpty()) {
+                        if (scheduleMemo.isEmpty()) {
                             Text(
                                 text = "메모를 입력하세요.(최대 30자)",
                                 style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray300)

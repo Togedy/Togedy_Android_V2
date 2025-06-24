@@ -33,7 +33,7 @@ fun TogedyBottomSheet(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val doneColor = if (isDoneActivate) TogedyTheme.colors.gray300 else TogedyTheme.colors.green
+    val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
 
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
