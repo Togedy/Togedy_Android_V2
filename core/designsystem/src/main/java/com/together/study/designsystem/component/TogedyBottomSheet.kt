@@ -65,7 +65,10 @@ fun TogedyBottomSheet(
                         style = TogedyTheme.typography.title16sb.copy(doneColor),
                         modifier = Modifier
                             .align(alignment = Alignment.Companion.CenterEnd)
-                            .noRippleClickable(onDoneClick)
+                            .then(
+                                if (isDoneActivate) Modifier.noRippleClickable(onDoneClick)
+                                else Modifier
+                            )
                     )
                 }
             }
