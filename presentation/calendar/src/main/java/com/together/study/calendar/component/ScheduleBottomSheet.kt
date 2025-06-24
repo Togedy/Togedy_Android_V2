@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -49,8 +50,13 @@ internal fun ScheduleBottomSheet(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val bottomSheetHeight = screenHeight * 0.63f
 
-    var scheduleName by remember { mutableStateOf("") }
+
     val title = if (scheduleId == null) "일정추가" else "일정수정"
+
+    var scheduleName by remember { mutableStateOf("") }
+    var scheduleMemo by remember { mutableStateOf("") }
+    var isMemoOpen by remember { mutableStateOf(false) }
+    var memoSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     TogedyBottomSheet(
         sheetState = sheetState,
@@ -88,6 +94,41 @@ internal fun ScheduleBottomSheet(
             )
 
             Spacer(Modifier.height(24.dp))
+
+            ScheduleMemoSection(
+                memo = scheduleMemo,
+                onMemoClick = { isMemoOpen = true },
+            )
+        }
+
+        if (isMemoOpen) {
+            TogedyBottomSheet(
+                sheetState = memoSheetState,
+                onDismissRequest = { isMemoOpen = false },
+                title = "메모",
+                showDone = true,
+                onDoneClick = { isMemoOpen = false },
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(bottomSheetHeight),
+            ) {
+                BasicTextField( // TODO: 추후 컴포넌트로 분리
+                    value = scheduleMemo,
+                    onValueChange = { scheduleMemo = it },
+                    textStyle = TogedyTheme.typography.body14m,
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        if (scheduleName.isEmpty()) {
+                            Text(
+                                text = "메모를 입력하세요.(최대 30자)",
+                                style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray300)
+                            )
+                        }
+                        innerTextField()
+                    },
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
     }
 }
@@ -172,6 +213,43 @@ private fun ScheduleNameSection(
                 innerTextField()
             }
         )
+    }
+}
+
+@Composable
+private fun ScheduleMemoSection(
+    memo: String,
+    onMemoClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (memo.isEmpty()) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .noRippleClickable(onMemoClick),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(TogedyTheme.colors.gray500),
+            )
+
+            Spacer(Modifier.width(8.dp))
+
+            Text(
+                text = "메모...",
+                style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray500),
+            )
+        }
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .noRippleClickable(onMemoClick),
+        ) {
+
+        }
     }
 }
 
