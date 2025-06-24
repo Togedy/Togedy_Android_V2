@@ -26,7 +26,20 @@ enum class CategoryColor(val color: Color) {
                 UNKNOWN_COLOR
             }
         }
+
+        fun fromStringToCategoryColorEnum(name: String?): CategoryColor {
+            return try {
+                valueOf(name ?: "CATEGORY_COLOR1")
+            } catch (e: IllegalArgumentException) {
+                CATEGORY_COLOR1
+            }
+        }
     }
+}
+
+@Composable
+fun String?.toCategoryColorEnum(): CategoryColor {
+    return CategoryColor.fromStringToCategoryColorEnum(this)
 }
 
 @Composable
