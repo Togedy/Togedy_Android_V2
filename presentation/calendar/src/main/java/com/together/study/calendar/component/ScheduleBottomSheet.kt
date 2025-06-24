@@ -31,6 +31,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.calendar.bottomSheet.MemoBottomSheet
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.type.toCategoryColorOrDefault
 import com.together.study.designsystem.component.TogedyBottomSheet
@@ -43,18 +44,28 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ScheduleBottomSheet(
-    scheduleId: Long? = null,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
+    scheduleId: Long? = null,
+    scheduleName: String = "",
+    startDate: LocalDate = LocalDate.now(),
+    startTime: String? = null,
+    endDate: LocalDate? = null,
+    endTime: String? = null,
+    category: Category? = null,
     modifier: Modifier = Modifier,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val bottomSheetHeight = screenHeight * 0.63f
 
-
     val title = if (scheduleId == null) "일정추가" else "일정수정"
 
-    var scheduleName by remember { mutableStateOf("") }
+    var scheduleName by remember { mutableStateOf(scheduleName) }
+    var startDate by remember { mutableStateOf(startDate) }
+    var startTime by remember { mutableStateOf(startTime) }
+    var endDate by remember { mutableStateOf(endDate) }
+    var endTime by remember { mutableStateOf(endTime) }
+    var category by remember { mutableStateOf(category) }
     var scheduleMemo by remember { mutableStateOf("") }
     var isMemoOpen by remember { mutableStateOf(false) }
     var memoSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -81,8 +92,8 @@ internal fun ScheduleBottomSheet(
             Spacer(Modifier.height(24.dp))
 
             ScheduleDateTimeSection(
-                startDateTime = Pair(LocalDate.now(), "오후 12:00"),
-                endDateTime = Pair(LocalDate.now(), null),
+                startDateTime = Pair(startDate, startTime),
+                endDateTime = Pair(endDate, endTime),
                 onCalendarOpen = { },
                 onClockOpen = { },
             )
@@ -90,7 +101,7 @@ internal fun ScheduleBottomSheet(
             Spacer(Modifier.height(24.dp))
 
             ScheduleCategorySection(
-                category = Category(1, "국어학원", "CATEGORY_COLOR11"),
+                category = category,
                 onCategoryClick = { },
             )
 
@@ -103,38 +114,12 @@ internal fun ScheduleBottomSheet(
         }
 
         if (isMemoOpen) {
-            TogedyBottomSheet(
+            MemoBottomSheet(
                 sheetState = memoSheetState,
+                scheduleMemo = scheduleMemo,
+                onValueChange = { scheduleMemo = it },
                 onDismissRequest = { isMemoOpen = false },
-                title = "메모",
-                showDone = true,
-                isDoneActivate = true,
-                onDoneClick = { isMemoOpen = false },
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(bottomSheetHeight),
-            ) {
-                BasicTextField(
-                    value = scheduleMemo,
-                    onValueChange = {
-                        if (it.length < 30) scheduleMemo = it
-                        else {
-                            // TODO : 토스트 띄우기
-                        }
-                    },
-                    textStyle = TogedyTheme.typography.body14m,
-                    decorationBox = { innerTextField ->
-                        if (scheduleMemo.isEmpty()) {
-                            Text(
-                                text = "메모를 입력하세요.(최대 30자)",
-                                style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray300)
-                            )
-                        }
-                        innerTextField()
-                    },
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+            )
         }
     }
 }
