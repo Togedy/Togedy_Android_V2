@@ -65,7 +65,10 @@ internal fun CategoryDetailBottomSheet(
         title = title,
         showDone = true,
         isDoneActivate = categoryName.isNotEmpty(),
-        onDoneClick = { },
+        onDoneClick = {
+            if (category == null) onDoneClick(Category(null, categoryName, selectedColor))
+            else onDoneClick(Category(category.categoryId, categoryName, selectedColor))
+        },
         modifier = modifier
             .fillMaxWidth()
             .height(bottomSheetHeight),
