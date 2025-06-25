@@ -34,7 +34,9 @@ import androidx.compose.ui.unit.dp
 import com.together.study.calendar.component.GrayBoxText
 import com.together.study.calendar.component.ScheduleDateTimeSection
 import com.together.study.calendar.model.Category
+import com.together.study.calendar.model.Schedule
 import com.together.study.calendar.type.toCategoryColorOrDefault
+import com.together.study.common.ScheduleType
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_category_box
@@ -47,6 +49,7 @@ import java.time.LocalDate
 internal fun ScheduleBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
+    onDoneClick: (Schedule) -> Unit,
     scheduleId: Long? = null,
     scheduleName: String = "",
     startDate: LocalDate = LocalDate.now(),
@@ -54,11 +57,11 @@ internal fun ScheduleBottomSheet(
     endDate: LocalDate? = null,
     endTime: String? = null,
     category: Category? = null,
+    onEditCategoryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val bottomSheetHeight = screenHeight * 0.63f
-
     val title = if (scheduleId == null) "일정추가" else "일정수정"
 
     var scheduleName by remember { mutableStateOf(scheduleName) }
@@ -80,7 +83,25 @@ internal fun ScheduleBottomSheet(
         onDismissRequest = onDismissRequest,
         title = title,
         showDone = true,
-        onDoneClick = { /*TODO: API 연결 및 바텀시트 종료*/ },
+        onDoneClick = {
+            val startDateTime =
+                if (startTime != null) startDate.toString() + startTime
+                else startDate.toString()
+            val endDateTime =
+                if (endTime != null) endDate.toString() + endTime
+                else endDate.toString()
+
+            onDoneClick(
+                Schedule(
+                    scheduleId = scheduleId ?: -1,
+                    scheduleType = ScheduleType.USER.label,
+                    scheduleName = scheduleName,
+                    startDate = startDateTime,
+                    endDate = endDateTime,
+                    category = category,
+                )
+            )
+        },
         modifier = modifier
             .fillMaxWidth()
             .height(bottomSheetHeight),
@@ -133,7 +154,7 @@ internal fun ScheduleBottomSheet(
                 category = category,
                 onDismissRequest = { isCategoryOpen = false },
                 onAddCategoryClick = {},
-                onEditCategoryClick = {},
+                onEditCategoryClick = onEditCategoryClick,
                 onDoneClick = {
                     category = it
                     isCategoryOpen = false
@@ -291,6 +312,8 @@ private fun ScheduleBottomSheetPreview(modifier: Modifier = Modifier) {
             scheduleId = null,
             sheetState = sheetState,
             onDismissRequest = {},
+            onDoneClick = {},
+            onEditCategoryClick = {},
             modifier = modifier,
         )
     }

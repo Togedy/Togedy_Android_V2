@@ -22,11 +22,13 @@ fun NavController.navigateToCategoryDetail(
 fun NavGraphBuilder.calendarGraph(
     navigateToUp: () -> Unit,
     navigateToUnivSearch: () -> Unit,
+    navigateToCategoryDetail: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Calendar> {
         CalendarRoute(
             onSearchBoxClick = navigateToUnivSearch,
+            onCategoryDetailNavigate = navigateToCategoryDetail,
             modifier = modifier,
         )
     }
