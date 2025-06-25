@@ -112,7 +112,7 @@ internal fun ScheduleBottomSheet(
         ) {
             ScheduleNameSection(
                 scheduleName = scheduleName,
-                categoryColor = TogedyTheme.colors.gray300,
+                categoryColor = category?.categoryColor.toCategoryColorOrDefault(),
                 onNameChange = { scheduleName = it },
             )
 
