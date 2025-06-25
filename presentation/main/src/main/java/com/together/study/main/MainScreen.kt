@@ -64,6 +64,7 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         calendarGraph(
+            navigateToUp = navigator::navigateUp,
             navigateToUnivSearch = navigator.navController::navigateToUnivSearch,
             modifier = modifier,
         )
