@@ -83,6 +83,7 @@ internal fun ScheduleBottomSheet(
         onDismissRequest = onDismissRequest,
         title = title,
         showDone = true,
+        isDoneActivate = scheduleName.isNotEmpty() && category != null,
         onDoneClick = {
             val startDateTime =
                 if (startTime != null) startDate.toString() + startTime
