@@ -69,7 +69,9 @@ fun CategoryDetailScreen(
     var isDeleteDialogOpen by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(TogedyTheme.colors.white),
     ) {
         CategoryTopSection(
             onBackButtonClick = onBackButtonClick,
@@ -77,13 +79,17 @@ fun CategoryDetailScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        AddButton(
-            title = "카테고리 추가",
-            onClick = {
-                selectedCategory = null
-                isAddBottomSheetOpen = true
-            },
-        )
+        Box(
+            modifier = Modifier.padding(horizontal = 16.dp),
+        ) {
+            AddButton(
+                title = "카테고리 추가",
+                onClick = {
+                    selectedCategory = null
+                    isAddBottomSheetOpen = true
+                },
+            )
+        }
 
         when (categoryState) {
             is UiState.Loading -> {}
