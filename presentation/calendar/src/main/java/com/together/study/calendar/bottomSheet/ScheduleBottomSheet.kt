@@ -1,4 +1,4 @@
-package com.together.study.calendar.component
+package com.together.study.calendar.bottomSheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,8 +31,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.together.study.calendar.bottomSheet.CategoryBottomSheet
-import com.together.study.calendar.bottomSheet.MemoBottomSheet
+import com.together.study.calendar.component.GrayBoxText
+import com.together.study.calendar.component.ScheduleDateTimeSection
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.type.toCategoryColorOrDefault
 import com.together.study.designsystem.component.TogedyBottomSheet
