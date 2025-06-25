@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +48,6 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ScheduleBottomSheet(
-    sheetState: SheetState,
     onDismissRequest: () -> Unit,
     onDoneClick: (Schedule) -> Unit,
     scheduleId: Long? = null,
@@ -58,10 +58,9 @@ internal fun ScheduleBottomSheet(
     endTime: String? = null,
     category: Category? = null,
     onEditCategoryClick: () -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val bottomSheetHeight = screenHeight * 0.63f
     val title = if (scheduleId == null) "일정추가" else "일정수정"
 
     var scheduleName by remember { mutableStateOf(scheduleName) }
@@ -72,11 +71,11 @@ internal fun ScheduleBottomSheet(
 
     var category by remember { mutableStateOf(category) }
     var isCategoryOpen by remember { mutableStateOf(false) }
-    var categorySheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var scheduleMemo by remember { mutableStateOf("") }
     var isMemoOpen by remember { mutableStateOf(false) }
-    var memoSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    LaunchedEffect(Unit) { sheetState.expand() }
 
     TogedyBottomSheet(
         sheetState = sheetState,
@@ -103,9 +102,7 @@ internal fun ScheduleBottomSheet(
                 )
             )
         },
-        modifier = modifier
-            .fillMaxWidth()
-            .height(bottomSheetHeight),
+        modifier = modifier.fillMaxHeight(0.62f),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -142,7 +139,6 @@ internal fun ScheduleBottomSheet(
 
         if (isMemoOpen) {
             MemoBottomSheet(
-                sheetState = memoSheetState,
                 scheduleMemo = scheduleMemo,
                 onValueChange = { scheduleMemo = it },
                 onDismissRequest = { isMemoOpen = false },
@@ -151,7 +147,6 @@ internal fun ScheduleBottomSheet(
 
         if (isCategoryOpen) {
             CategoryBottomSheet(
-                sheetState = categorySheetState,
                 category = category,
                 onDismissRequest = { isCategoryOpen = false },
                 onAddCategoryClick = {},

@@ -3,6 +3,7 @@ package com.together.study.calendar.bottomSheet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,12 +14,12 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.calendar.component.CategoryItem
@@ -31,19 +32,18 @@ import com.together.study.util.noRippleClickable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CategoryBottomSheet(
-    sheetState: SheetState,
     category: Category?,
     onDismissRequest: () -> Unit,
     onDoneClick: (Category) -> Unit,
     onAddCategoryClick: () -> Unit,
     onEditCategoryClick: () -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val bottomSheetHeight = screenHeight * 0.5275f
-
     var selectedCategory by remember { mutableStateOf(category) }
     val categoryList = Category.mockList
+
+    LaunchedEffect(Unit) { sheetState.expand() }
 
     TogedyBottomSheet(
         sheetState = sheetState,
@@ -52,9 +52,7 @@ internal fun CategoryBottomSheet(
         showDone = true,
         isDoneActivate = selectedCategory != null,
         onDoneClick = { onDoneClick(selectedCategory!!) },
-        modifier = modifier
-            .fillMaxWidth()
-            .height(bottomSheetHeight),
+        modifier = modifier.fillMaxHeight(0.528f),
     ) {
         LazyColumn(
             modifier = Modifier
