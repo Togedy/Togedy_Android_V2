@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 val GREEN = Color(0xFF11BC78)
 val GREEN_BG = Color(0xFFEEFAF6)
 val RED = Color(0xFFD13E3E)
+val RED30 = Color(0x4DFF6363)
 val BLUE = Color(0xFF677BFF)
 
 val WHITE = Color(0xFFFFFFFF)
@@ -24,6 +25,7 @@ class TogedyColors(
     green: Color,
     greenBg: Color,
     red: Color,
+    red30: Color,
     blue: Color,
     white: Color,
     gray100: Color,
@@ -40,6 +42,8 @@ class TogedyColors(
     var greenBg by mutableStateOf(greenBg)
         private set
     var red by mutableStateOf(red)
+        private set
+    var red30 by mutableStateOf(red30)
         private set
     var blue by mutableStateOf(blue)
         private set
@@ -66,6 +70,7 @@ class TogedyColors(
         green,
         greenBg,
         red,
+        red30,
         blue,
         white,
         gray100,
@@ -82,6 +87,7 @@ class TogedyColors(
         green = other.green
         greenBg = other.greenBg
         red = other.red
+        red30 = other.red30
         blue = other.blue
         white = other.white
         gray100 = other.gray100
@@ -99,6 +105,7 @@ fun TogedyLightColors(
     green: Color = GREEN,
     greenBg: Color = GREEN_BG,
     red: Color = RED,
+    red30: Color = RED30,
     blue: Color = BLUE,
     white: Color = WHITE,
     gray100: Color = GRAY100,
@@ -113,6 +120,7 @@ fun TogedyLightColors(
     green,
     greenBg,
     red,
+    red30,
     blue,
     white,
     gray100,
