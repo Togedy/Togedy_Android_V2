@@ -74,7 +74,10 @@ class TogedyToast(
         message: String,
         yOffset: Int,
     ) = setView(yOffset = yOffset) {
-//        WarningSnackBar(message = message)
+        WarningToast(
+            message = message,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 
     private fun setView(

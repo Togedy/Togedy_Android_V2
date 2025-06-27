@@ -23,6 +23,16 @@ import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.theme.TogedyTheme
 
+/**
+ * 경고 토스트 메시지
+ *
+ * @param message 토스트 메세지 내용
+ * @param textColor 토스트 메시지 글자색
+ * @param textStyle 토스트 메시지 텍스트 스타일
+ * @param backgroundColor 토스트 배경색
+ * @param shape 토스트 RoundedCornerShape값
+ * @param modifier 수정자
+ */
 @Composable
 fun WarningToast(
     message: String,
