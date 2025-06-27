@@ -1,4 +1,4 @@
-package com.together.study.designsystem.component
+package com.together.study.designsystem.component.button
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
