@@ -33,7 +33,7 @@ import com.together.study.calendar.component.CategoryItem
 import com.together.study.calendar.model.Category
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
-import com.together.study.designsystem.component.AddButton
+import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 

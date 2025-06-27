@@ -42,8 +42,8 @@ import com.together.study.calendar.maincalendar.DailyDialogViewModel
 import com.together.study.calendar.model.Schedule
 import com.together.study.common.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_delete_24
-import com.together.study.designsystem.component.AddButton
 import com.together.study.designsystem.component.TogedyScheduleChip
+import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.CoroutineScope

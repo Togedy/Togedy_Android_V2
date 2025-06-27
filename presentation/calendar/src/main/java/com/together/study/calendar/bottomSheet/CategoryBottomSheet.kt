@@ -24,8 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.calendar.component.CategoryItem
 import com.together.study.calendar.model.Category
-import com.together.study.designsystem.component.AddButton
 import com.together.study.designsystem.component.TogedyBottomSheet
+import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 
