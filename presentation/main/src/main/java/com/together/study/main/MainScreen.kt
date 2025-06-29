@@ -68,7 +68,7 @@ private fun MainNavHost(
             modifier = modifier,
         )
 
-        univSearchGraph()
+        univSearchGraph(modifier)
 
         composable<Dummy> {
             // TODO: Dummy 추가
