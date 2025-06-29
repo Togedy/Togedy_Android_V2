@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(
     modifier: Modifier,
+    onBackButtonClicked: () -> Unit = {},
     viewModel: SearchViewModel = viewModel(),
 ) {
     val searchValue by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -87,6 +88,7 @@ fun SearchScreen(
                 painter = painterResource(R.drawable.ic_arrow_left_24),
                 contentDescription = null,
                 modifier = Modifier.padding(end = 4.dp)
+                    .noRippleClickable (onBackButtonClicked)
             )
             TogedySearchBar(
                 value = searchValue,
@@ -164,7 +166,7 @@ fun BottomSheetContent(
         ) {
             Box(
                 modifier = Modifier
-                    .menuAnchor()
+                    .menuAnchor(type, enabled)
                     .fillMaxWidth()
                     .padding(top = 12.dp)
                     .noRippleClickable {

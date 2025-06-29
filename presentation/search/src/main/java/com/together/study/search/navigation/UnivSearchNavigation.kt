@@ -14,12 +14,14 @@ fun NavController.navigateToUnivSearch(
 ) = navigate(UnivSearch, navOptions)
 
 fun NavGraphBuilder.univSearchGraph(
+    navigateUp: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     composable<UnivSearch> {
         SearchScreen(
             modifier = modifier,
-        )
+            onBackButtonClicked = navigateUp,
+            )
     }
 }
 
