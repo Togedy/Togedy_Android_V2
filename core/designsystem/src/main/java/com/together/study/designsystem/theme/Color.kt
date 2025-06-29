@@ -11,6 +11,7 @@ val RED30 = Color(0x4DFF6363)
 val BLUE = Color(0xFF677BFF)
 
 val WHITE = Color(0xFFFFFFFF)
+val GRAY50 = Color(0xFFF8F8FA) // bg
 val GRAY100 = Color(0xFFF8F8FA)
 val GRAY200 = Color(0xFFF2F3F5) //button-bg
 val GRAY300 = Color(0xFFD5D9DF)
@@ -28,6 +29,7 @@ class TogedyColors(
     red30: Color,
     blue: Color,
     white: Color,
+    gray50: Color,
     gray100: Color,
     gray200: Color,
     gray300: Color,
@@ -48,6 +50,8 @@ class TogedyColors(
     var blue by mutableStateOf(blue)
         private set
     var white by mutableStateOf(white)
+        private set
+    var gray50 by mutableStateOf(gray50)
         private set
     var gray100 by mutableStateOf(gray100)
         private set
@@ -73,6 +77,7 @@ class TogedyColors(
         red30,
         blue,
         white,
+        gray50,
         gray100,
         gray200,
         gray300,
@@ -90,6 +95,7 @@ class TogedyColors(
         red30 = other.red30
         blue = other.blue
         white = other.white
+        gray50 = other.gray50
         gray100 = other.gray100
         gray200 = other.gray200
         gray300 = other.gray300
@@ -108,6 +114,7 @@ fun TogedyLightColors(
     red30: Color = RED30,
     blue: Color = BLUE,
     white: Color = WHITE,
+    gray50: Color = GRAY50,
     gray100: Color = GRAY100,
     gray200: Color = GRAY200,
     gray300: Color = GRAY300,
@@ -123,6 +130,7 @@ fun TogedyLightColors(
     red30,
     blue,
     white,
+    gray50,
     gray100,
     gray200,
     gray300,
