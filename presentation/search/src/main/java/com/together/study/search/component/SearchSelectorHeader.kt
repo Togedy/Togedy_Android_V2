@@ -13,12 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.util.noRippleClickable
 
 @Composable
 fun SearchSelectorHeader(
     admissionType: String,
     universityName: String,
     isAdded: Boolean,
+    onClickScheduleAdd: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -74,6 +76,7 @@ fun SearchSelectorHeader(
                         shape = RoundedCornerShape(4.dp)
                     ) else Modifier
                 )
+                .noRippleClickable(onClickScheduleAdd)
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }

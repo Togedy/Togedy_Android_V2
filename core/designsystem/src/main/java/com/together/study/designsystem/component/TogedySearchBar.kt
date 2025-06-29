@@ -58,8 +58,7 @@ fun TogedySearchBar(
             .border(
                 width = 1.dp,
                 color = if (isTextFieldMode && isFocused) TogedyTheme.colors.gray700
-                else if (!isTextFieldMode) TogedyTheme.colors.gray400
-                else TogedyTheme.colors.white,
+                else TogedyTheme.colors.gray400,
                 shape = RoundedCornerShape(4.dp)
             )
             .background(
