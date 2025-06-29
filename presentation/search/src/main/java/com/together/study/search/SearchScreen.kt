@@ -1,5 +1,6 @@
 package com.together.study.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,6 +75,7 @@ fun SearchScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(color = TogedyTheme.colors.gray50)
             .padding(top = 20.dp)
             .padding(horizontal = 16.dp)
     ) {
@@ -132,7 +134,10 @@ fun SearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetContent(data: SearchScheduleData?) {
+fun BottomSheetContent(
+    data: SearchScheduleData?,
+    onclickScheduleAdd: (Int) -> Unit = {}
+) {
     if (data == null) return
 
     val admissionList = data.admissionList
@@ -149,7 +154,8 @@ fun BottomSheetContent(data: SearchScheduleData?) {
         SearchSelectorHeader(
             admissionType = data.admissionType,
             universityName = data.universityName,
-            isAdded = data.isAdded
+            isAdded = data.isAdded,
+            onClickScheduleAdd = { onclickScheduleAdd(selectedIndex) }
         )
 
         ExposedDropdownMenuBox(
