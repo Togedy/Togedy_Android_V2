@@ -166,7 +166,7 @@ fun BottomSheetContent(
         ) {
             Box(
                 modifier = Modifier
-                    .menuAnchor(type, enabled)
+                    .menuAnchor()
                     .fillMaxWidth()
                     .padding(top = 12.dp)
                     .noRippleClickable {
