@@ -1,0 +1,273 @@
+package com.together.study.calendar.bottomSheet
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.component.button.TogedyToggleButton
+import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.util.noRippleClickable
+import java.time.LocalDate
+import java.time.YearMonth
+import kotlin.math.ceil
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun CalendarBottomSheet(
+    startDate: LocalDate,
+    onDismissRequest: () -> Unit,
+    onDoneClick: (LocalDate, LocalDate?) -> Unit,
+    endDate: LocalDate? = null,
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    modifier: Modifier = Modifier,
+) {
+    var isToggleOn by remember { mutableStateOf(endDate != null) }
+    var selectedStartDate by remember { mutableStateOf(startDate) }
+    var selectedEndDate by remember { mutableStateOf(endDate) }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        containerColor = TogedyTheme.colors.white,
+        dragHandle = null,
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxHeight(0.468f)
+                .padding(16.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                YearMonthSection(
+                    year = selectedStartDate.year,
+                    month = selectedStartDate.monthValue,
+                    onDateChange = { }
+                )
+
+                Spacer(Modifier.width(4.dp))
+
+                Text(
+                    text = "종료일",
+                    style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray400),
+                )
+
+                Spacer(Modifier.width(4.dp))
+
+                TogedyToggleButton(
+                    isToggleOn = isToggleOn,
+                    onToggleClick = {
+                        isToggleOn = !isToggleOn
+                        if (!isToggleOn) selectedEndDate = null
+                    },
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                Text(
+                    text = "완료",
+                    style = TogedyTheme.typography.title16sb.copy(TogedyTheme.colors.green),
+                    modifier = Modifier.noRippleClickable {
+                        onDoneClick(
+                            selectedStartDate,
+                            selectedEndDate
+                        )
+                    },
+                )
+            }
+
+            CalendarSection(
+                currentMonth = YearMonth.of(selectedStartDate.year, selectedStartDate.monthValue),
+                selectedStartDate = selectedStartDate,
+                selectedEndDate = selectedEndDate,
+                onDateSelected = { newDate ->
+                    if (isToggleOn) {
+                        selectedStartDate =
+                            if (newDate <= selectedStartDate || selectedEndDate != null) newDate
+                            else selectedStartDate
+                        selectedEndDate =
+                            if (newDate <= selectedStartDate || selectedEndDate != null) null
+                            else newDate
+                    } else {
+                        selectedStartDate = newDate
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun YearMonthSection(
+    year: Int,
+    month: Int,
+    onDateChange: (YearMonth) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_left_chevron),
+            contentDescription = null,
+            modifier = Modifier.noRippleClickable { onDateChange(YearMonth.of(year, month - 1)) },
+        )
+
+        Spacer(Modifier.width(4.dp))
+
+        Text(
+            text = "$year ${month}월",
+            style = TogedyTheme.typography.chip14b.copy(TogedyTheme.colors.gray700),
+        )
+
+        Spacer(Modifier.width(4.dp))
+
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_left_chevron),
+            contentDescription = null,
+            modifier = Modifier.noRippleClickable { onDateChange(YearMonth.of(year, month + 1)) },
+        )
+    }
+}
+
+@Composable
+private fun CalendarSection(
+    currentMonth: YearMonth = YearMonth.now(),
+    selectedStartDate: LocalDate,
+    selectedEndDate: LocalDate?,
+    onDateSelected: (LocalDate) -> Unit,
+) {
+    val firstOfMonth = currentMonth.atDay(1)
+    val firstDayOfWeek = firstOfMonth.dayOfWeek.value % 7
+
+    val daysInMonth = currentMonth.lengthOfMonth()
+    val totalDays = firstDayOfWeek + daysInMonth
+    val totalCells = ceil(totalDays / 7.0).toInt() * 7
+    val startDate = firstOfMonth.minusDays(firstDayOfWeek.toLong())
+
+    val dateList = remember(currentMonth) {
+        List(totalCells) { index -> startDate.plusDays(index.toLong()) }
+    }
+
+    Column {
+        dateList.chunked(7).forEach { week ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 14.dp),
+            ) {
+                week.forEach { date ->
+                    val isSelected = date == selectedStartDate || date == selectedEndDate
+                    val isInCurrentMonth = date.month == currentMonth.month
+
+                    val textColor = when {
+                        isSelected -> TogedyTheme.colors.white
+                        !isInCurrentMonth -> TogedyTheme.colors.gray400
+                        else -> TogedyTheme.colors.gray700
+                    }
+                    val backgroundColor =
+                        if (isSelected) TogedyTheme.colors.green
+                        else Color.Transparent
+
+                    val hasRange = selectedEndDate != null
+
+                    val leftBg =
+                        if (hasRange && selectedStartDate < date && selectedEndDate >= date)
+                            TogedyTheme.colors.greenBg else Color.Transparent
+
+                    val rightBg =
+                        if (hasRange && selectedStartDate <= date && selectedEndDate > date)
+                            TogedyTheme.colors.greenBg else Color.Transparent
+
+                    Box(
+                        modifier = Modifier
+                            .height(32.dp)
+                            .weight(1f),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .background(leftBg),
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .background(rightBg),
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(backgroundColor)
+                                .clickable { onDateSelected(date) },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = date.dayOfMonth.toString(),
+                                style = TogedyTheme.typography.body14m.copy(textColor),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+internal fun CalendarBottomSheetPreview(modifier: Modifier = Modifier) {
+    TogedyTheme {
+        CalendarBottomSheet(
+            startDate = LocalDate.now(),
+            endDate = null,
+            onDismissRequest = {},
+            onDoneClick = { start, end -> },
+            modifier = modifier,
+        )
+    }
+}
