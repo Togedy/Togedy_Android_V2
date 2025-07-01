@@ -52,6 +52,7 @@ internal fun CalendarBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier,
 ) {
+    var currentYM by remember { mutableStateOf(YearMonth.of(startDate.year, startDate.month)) }
     var isToggleOn by remember { mutableStateOf(endDate != null) }
     var selectedStartDate by remember { mutableStateOf(startDate) }
     var selectedEndDate by remember { mutableStateOf(endDate) }
@@ -73,9 +74,9 @@ internal fun CalendarBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 YearMonthSection(
-                    year = selectedStartDate.year,
-                    month = selectedStartDate.monthValue,
-                    onDateChange = { }
+                    year = currentYM.year,
+                    month = currentYM.monthValue,
+                    onDateChange = { currentYM = it }
                 )
 
                 Spacer(Modifier.width(4.dp))
@@ -110,7 +111,7 @@ internal fun CalendarBottomSheet(
             }
 
             CalendarSection(
-                currentMonth = YearMonth.of(selectedStartDate.year, selectedStartDate.monthValue),
+                currentMonth = YearMonth.of(currentYM.year, currentYM.monthValue),
                 selectedStartDate = selectedStartDate,
                 selectedEndDate = selectedEndDate,
                 onDateSelected = { newDate ->
@@ -144,7 +145,10 @@ private fun YearMonthSection(
         Icon(
             imageVector = ImageVector.vectorResource(ic_left_chevron),
             contentDescription = null,
-            modifier = Modifier.noRippleClickable { onDateChange(YearMonth.of(year, month - 1)) },
+            modifier = Modifier.noRippleClickable {
+                if (month == 1) onDateChange(YearMonth.of(year - 1, 12))
+                else onDateChange(YearMonth.of(year, month - 1))
+            },
         )
 
         Spacer(Modifier.width(4.dp))
@@ -159,7 +163,10 @@ private fun YearMonthSection(
         Icon(
             imageVector = ImageVector.vectorResource(ic_left_chevron),
             contentDescription = null,
-            modifier = Modifier.noRippleClickable { onDateChange(YearMonth.of(year, month + 1)) },
+            modifier = Modifier.noRippleClickable {
+                if (month == 12) onDateChange(YearMonth.of(year + 1, 1))
+                else onDateChange(YearMonth.of(year, month + 1))
+            },
         )
     }
 }
@@ -188,7 +195,7 @@ private fun CalendarSection(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 14.dp),
+                    .padding(vertical = 12.dp),
             ) {
                 week.forEach { date ->
                     val isSelected = date == selectedStartDate || date == selectedEndDate
