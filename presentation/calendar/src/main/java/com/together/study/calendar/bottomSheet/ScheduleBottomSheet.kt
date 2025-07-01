@@ -68,6 +68,7 @@ internal fun ScheduleBottomSheet(
     var startTime by remember { mutableStateOf(startTime) }
     var endDate by remember { mutableStateOf(endDate) }
     var endTime by remember { mutableStateOf(endTime) }
+    var isCalendarOpen by remember { mutableStateOf(false) }
 
     var category by remember { mutableStateOf(category) }
     var isCategoryOpen by remember { mutableStateOf(false) }
@@ -118,7 +119,7 @@ internal fun ScheduleBottomSheet(
             ScheduleDateTimeSection(
                 startDateTime = Pair(startDate, startTime),
                 endDateTime = Pair(endDate, endTime),
-                onCalendarOpen = { },
+                onCalendarOpen = { isCalendarOpen = true },
                 onClockOpen = { },
             )
 
@@ -155,6 +156,19 @@ internal fun ScheduleBottomSheet(
                     category = it
                     isCategoryOpen = false
                 },
+            )
+        }
+
+        if (isCalendarOpen) {
+            CalendarBottomSheet(
+                startDate = startDate,
+                endDate = endDate,
+                onDismissRequest = { isCalendarOpen = false },
+                onDoneClick = { start, end ->
+                    isCalendarOpen = false
+                    startDate = start
+                    endDate = end
+                }
             )
         }
     }
