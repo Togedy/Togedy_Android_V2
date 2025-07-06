@@ -76,6 +76,14 @@ internal class CalendarViewModel @Inject constructor(
         getSchedule()
     }
 
+    fun saveNewSchedule(new: Schedule) = viewModelScope.launch {
+        // TODO: API
+    }
+
+    fun updateSchedule(new: Schedule) = viewModelScope.launch {
+        // TODO: API
+    }
+
     fun updateDailyDialog(date: LocalDate) {
         // TODO: 일별 상세 다이얼로그 open
         Timber.tag("chrin").d("$date 클릭됨")
