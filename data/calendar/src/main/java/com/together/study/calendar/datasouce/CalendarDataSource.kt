@@ -9,12 +9,9 @@ class CalendarDataSource @Inject constructor(
     suspend fun getMonthlySchedule(month: String) =
         calendarService.getMonthlySchedule(month = month)
 
-    suspend fun getDailySchedule(date: String) =
-        calendarService.getDailySchedule(date = date)
+    suspend fun getDailySchedule(date: String) = calendarService.getDailySchedule(date = date)
 
-    suspend fun getDDay() =
-        calendarService.getDDay()
+    suspend fun getDDay() = calendarService.getDDay()
 
-    suspend fun getAnnouncement() =
-        calendarService.getAnnouncement()
+    suspend fun getAnnouncement() = calendarService.getAnnouncement()
 }
