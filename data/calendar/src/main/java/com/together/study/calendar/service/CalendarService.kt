@@ -1,5 +1,6 @@
 package com.together.study.calendar.service
 
+import com.together.study.calendar.dto.AnnouncementResponse
 import com.together.study.calendar.dto.DDayResponse
 import com.together.study.calendar.dto.ScheduleResponse
 import com.together.study.remote.model.BaseResponse
@@ -21,5 +22,5 @@ interface CalendarService {
     suspend fun getDDay(): BaseResponse<DDayResponse>
 
     @GET("calendars/announcement")
-    suspend fun getAnnouncement(): BaseResponse<Pair<Boolean, String>>
+    suspend fun getAnnouncement(): BaseResponse<AnnouncementResponse>
 }
