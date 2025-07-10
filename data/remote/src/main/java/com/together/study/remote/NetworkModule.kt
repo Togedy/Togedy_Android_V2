@@ -1,6 +1,7 @@
 package com.together.study.remote
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.together.study.local.TokenDataStore
 import com.together.study.remote.qualifier.JWT
 import dagger.Module
 import dagger.Provides
@@ -27,7 +28,9 @@ object NetworkModule {
     @JWT
     @Provides
     @Singleton
-    fun providerHeaderInterceptor(): Interceptor = HeaderInterceptor()
+    fun providerHeaderInterceptor(
+        tokenDataStore: TokenDataStore,
+    ): Interceptor = HeaderInterceptor(tokenDataStore)
 
     @Provides
     @Singleton
