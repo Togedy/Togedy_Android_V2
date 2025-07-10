@@ -1,6 +1,7 @@
 package com.together.study.remote
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.together.study.remote.qualifier.JWT
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +23,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private const val APPLICATION_JSON = "application/json"
+
+    @JWT
+    @Provides
+    @Singleton
+    fun providerHeaderInterceptor(): Interceptor = HeaderInterceptor()
 
     @Provides
     @Singleton
@@ -60,14 +66,15 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        loggingInterceptor: Interceptor
+        loggingInterceptor: Interceptor,
+        @JWT headerInterceptor: Interceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(headerInterceptor)
         .build()
 
-
-    // TODO: 더미 레트로핏, 삭제 예정
     @Provides
+    @Singleton
     fun provideRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
