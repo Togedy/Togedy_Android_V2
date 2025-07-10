@@ -8,7 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface CalendarService {
-    @GET("calendars/monthly?")
+    @GET("calendars/monthly")
     suspend fun getMonthlySchedule(
         @Path("month") month: String,
     ): BaseResponse<List<ScheduleResponse>>
