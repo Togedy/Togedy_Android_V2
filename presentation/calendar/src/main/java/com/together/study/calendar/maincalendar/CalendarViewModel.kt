@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
+import com.together.study.calendar.repository.CalendarRepository
 import com.together.study.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,9 +20,11 @@ import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
+const val TAG = "CalendarViewModel"
+
 @HiltViewModel
 internal class CalendarViewModel @Inject constructor(
-
+    private val calendarRepository: CalendarRepository,
 ) : ViewModel() {
     private val _currentDate = MutableStateFlow(LocalDate.now())
     val currentDate = _currentDate.asStateFlow()
@@ -57,18 +60,25 @@ internal class CalendarViewModel @Inject constructor(
     }
 
     suspend fun getNotice() {
-        // TODO: 추후 API 연결
-        _noticeState.value = UiState.Success("알림입니다! 공지사항입니다!")
+        calendarRepository.getAnnouncement()
+            .onSuccess {
+                _noticeState.value =
+                    if (it.hasAnnouncement) UiState.Success(it.announcement)
+                    else UiState.Success("")
+            }
+            .onFailure { _noticeState.value = UiState.Failure(it.message.toString()) }
     }
 
     suspend fun getDDay() {
-        // TODO: 추후 API 연결
-        _dDayState.value = UiState.Success(DDay.mock)
+        calendarRepository.getDDay()
+            .onSuccess { _dDayState.value = UiState.Success(it) }
+            .onFailure { _dDayState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun getSchedule() = viewModelScope.launch {
-        // TODO: 추후 API 연결
-        _scheduleState.value = UiState.Success(Schedule.mock)
+        calendarRepository.getMonthlySchedule(month = "2025-01")
+            .onSuccess { _scheduleState.value = UiState.Success(it) }
+            .onFailure { _scheduleState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun updateCurrentDate(newDate: LocalDate) {

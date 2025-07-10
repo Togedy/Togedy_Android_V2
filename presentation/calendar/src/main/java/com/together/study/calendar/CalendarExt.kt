@@ -29,3 +29,5 @@ fun generateCalendarWeeks(currentDate: LocalDate): List<List<LocalDate>> {
 
     return weeks
 }
+
+fun LocalDate.toYearMonth(): String = "${this.year}-${this.monthValue}"
