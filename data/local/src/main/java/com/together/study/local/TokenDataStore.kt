@@ -32,6 +32,7 @@ class TokenDataStore @Inject constructor(
         private val preferencesTokenKey = stringPreferencesKey(TOKEN_KEY)
 
         // TODO: 엑세스 토큰 추가
-        private const val TEMPORARY_TOKEN = "temporary_token"
+        private const val TEMPORARY_TOKEN =
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJjaHJpbjEwNUBuYXZlci5jb20iLCJpYXQiOjE3NTIxNjExNzYsImV4cCI6MTc1MjE2ODM3Nn0.VZ1Ml2oSs0iMmEvH-uAMlfdl1hh6dP0l_HylqmUahYc"
     }
 }

@@ -6,7 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import data.remote.BuildConfig
-import data.remote.BuildConfig.DUMMY_URL
+import data.remote.BuildConfig.BASE_URL
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -72,7 +72,7 @@ object NetworkModule {
         client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(DUMMY_URL)
+        .baseUrl(BASE_URL)
         .client(client)
         .addConverterFactory(factory)
         .build()
