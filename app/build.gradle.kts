@@ -12,6 +12,7 @@ dependencies {
     implementation(projects.data.remote)
     implementation(projects.data.local)
     implementation(projects.data.dummy)
+    implementation(projects.data.calendar)
     implementation(projects.presentation.main)
 
     implementation(libs.androidx.appcompat)
