@@ -192,7 +192,7 @@ fun DailyScheduleItem(
             modifier = Modifier
                 .fillMaxSize()
                 .background(TogedyTheme.colors.red, RoundedCornerShape(6.dp))
-                .noRippleClickable { onDeleteClick(schedule.scheduleId) },
+                .noRippleClickable { onDeleteClick(schedule.scheduleId ?: -1) },
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -248,7 +248,7 @@ fun DailyScheduleItem(
                         UserScheduleItem(
                             schedule = schedule,
                             onScheduleItemClick = {
-                                onScheduleItemClick(ScheduleType.USER, schedule.scheduleId)
+                                onScheduleItemClick(ScheduleType.USER, schedule.scheduleId ?: -1)
                             },
                         )
                     }
@@ -277,7 +277,7 @@ private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
                 onScheduleItemClick = { type, id -> },
                 onAddScheduleClick = {},
                 onDismissRequest = {},
-                dailyDialogViewModel = DailyDialogViewModel(),
+                dailyDialogViewModel = TODO(),
                 modifier = modifier,
             )
         }

@@ -35,9 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.together.study.calendar.component.GrayBoxText
 import com.together.study.calendar.component.ScheduleDateTimeSection
 import com.together.study.calendar.model.Category
-import com.together.study.calendar.model.Schedule
+import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.type.toCategoryColorOrDefault
-import com.together.study.common.ScheduleType
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_category_box
@@ -49,7 +48,7 @@ import java.time.LocalDate
 @Composable
 internal fun ScheduleBottomSheet(
     onDismissRequest: () -> Unit,
-    onDoneClick: (Schedule) -> Unit,
+    onDoneClick: (UserSchedule) -> Unit,
     scheduleId: Long? = null,
     scheduleName: String = "",
     startDate: LocalDate = LocalDate.now(),
@@ -85,21 +84,16 @@ internal fun ScheduleBottomSheet(
         showDone = true,
         isDoneActivate = scheduleName.isNotEmpty() && category != null,
         onDoneClick = {
-            val startDateTime =
-                if (startTime != null) startDate.toString() + startTime
-                else startDate.toString()
-            val endDateTime =
-                if (endTime != null) endDate.toString() + endTime
-                else endDate.toString()
-
             onDoneClick(
-                Schedule(
-                    scheduleId = scheduleId ?: -1,
-                    scheduleType = ScheduleType.USER.label,
-                    scheduleName = scheduleName,
-                    startDate = startDateTime,
-                    endDate = endDateTime,
-                    category = category,
+                UserSchedule(
+                    userScheduleName = scheduleName,
+                    startDate = startDate.toString(),
+                    startTime = startTime,
+                    endDate = endDate.toString(),
+                    endTime = endTime,
+                    memo = scheduleMemo,
+                    categoryId = category!!.categoryId!!,
+                    dDay = false,
                 )
             )
         },

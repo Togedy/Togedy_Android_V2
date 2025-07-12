@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
+import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.repository.CalendarRepository
+import com.together.study.calendar.repository.UserScheduleRepository
 import com.together.study.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +27,7 @@ const val TAG = "CalendarViewModel"
 @HiltViewModel
 internal class CalendarViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
+    private val userScheduleRepository: UserScheduleRepository,
 ) : ViewModel() {
     private val _currentDate = MutableStateFlow(LocalDate.now())
     val currentDate = _currentDate.asStateFlow()
@@ -86,12 +89,16 @@ internal class CalendarViewModel @Inject constructor(
         getSchedule()
     }
 
-    fun saveNewSchedule(new: Schedule) = viewModelScope.launch {
-        // TODO: API
+    fun saveNewSchedule(new: UserSchedule) = viewModelScope.launch {
+        userScheduleRepository.postUserSchedule(userSchedule = new)
+            .onSuccess { }
+            .onFailure { UiState.Failure(it.message.toString()) }
     }
 
-    fun updateSchedule(new: Schedule) = viewModelScope.launch {
-        // TODO: API
+    fun updateSchedule(id: Long, new: UserSchedule) = viewModelScope.launch {
+        userScheduleRepository.patchUserSchedule(userScheduleId = id, request = new)
+            .onSuccess { }
+            .onFailure { UiState.Failure(it.message.toString()) }
     }
 
     fun updateDailyDialog(date: LocalDate) {

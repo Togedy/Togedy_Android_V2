@@ -42,6 +42,7 @@ import com.together.study.calendar.maincalendar.component.WeekSchedule
 import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
+import com.together.study.calendar.model.UserSchedule
 import com.together.study.common.ScheduleType
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
@@ -87,8 +88,8 @@ private fun CalendarScreen(
     currentDate: LocalDate,
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
-    onAddBtnClick: (Schedule) -> Unit,
-    onEditBtnClick: (Schedule) -> Unit,
+    onAddBtnClick: (UserSchedule) -> Unit,
+    onEditBtnClick: (Long, UserSchedule) -> Unit,
     onCategoryDetailNavigate: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
@@ -134,8 +135,8 @@ private fun CalendarSuccessScreen(
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
     onYearMonthSectionClick: () -> Unit,
-    onAddBtnClick: (Schedule) -> Unit,
-    onEditBtnClick: (Schedule) -> Unit,
+    onAddBtnClick: (UserSchedule) -> Unit,
+    onEditBtnClick: (Long, UserSchedule) -> Unit,
     onCategoryDetailNavigate: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
@@ -218,8 +219,8 @@ private fun CalendarSuccessScreen(
         ScheduleBottomSheet(
             onDismissRequest = { isScheduleBottomSheetVisible = false },
             onDoneClick = { schedule ->
-                if (schedule.scheduleId?.toInt() == -1) onAddBtnClick(schedule)
-                else onEditBtnClick(schedule)
+                if (selectedScheduleId != null) onEditBtnClick(selectedScheduleId!!, schedule)
+                else onAddBtnClick(schedule)
                 isScheduleBottomSheetVisible = false
                 selectedScheduleId = null
             },
@@ -333,9 +334,11 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             onDateClick = {},
             onYearMonthSectionClick = {},
             onAddBtnClick = {},
-            onEditBtnClick = {},
+            onEditBtnClick = { id, request -> },
             onCategoryDetailNavigate = {},
-            dailyDialogViewModel = DailyDialogViewModel(),
+            dailyDialogViewModel = DailyDialogViewModel(
+                userScheduleRepository = TODO()
+            ),
             modifier = modifier,
         )
     }
