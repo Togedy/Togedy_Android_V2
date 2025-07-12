@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -145,7 +144,6 @@ private fun CalendarSuccessScreen(
     var isDailyDialogVisible by remember { mutableStateOf(false) }
     var selectedScheduleId by remember { mutableStateOf<Long?>(null) }
     var isScheduleBottomSheetVisible by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     LazyColumn(
         modifier = modifier
@@ -220,7 +218,7 @@ private fun CalendarSuccessScreen(
         ScheduleBottomSheet(
             onDismissRequest = { isScheduleBottomSheetVisible = false },
             onDoneClick = { schedule ->
-                if (schedule.scheduleId.toInt() == -1) onAddBtnClick(schedule)
+                if (schedule.scheduleId?.toInt() == -1) onAddBtnClick(schedule)
                 else onEditBtnClick(schedule)
                 isScheduleBottomSheetVisible = false
                 selectedScheduleId = null
