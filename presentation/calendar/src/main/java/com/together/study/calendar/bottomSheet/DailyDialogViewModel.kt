@@ -1,4 +1,4 @@
-package com.together.study.calendar.maincalendar
+package com.together.study.calendar.bottomSheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
