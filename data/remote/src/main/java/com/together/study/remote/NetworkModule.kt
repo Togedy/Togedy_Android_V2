@@ -1,12 +1,14 @@
 package com.together.study.remote
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.together.study.local.TokenDataStore
+import com.together.study.remote.qualifier.JWT
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import data.remote.BuildConfig
-import data.remote.BuildConfig.DUMMY_URL
+import data.remote.BuildConfig.BASE_URL
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -22,6 +24,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private const val APPLICATION_JSON = "application/json"
+
+    @JWT
+    @Provides
+    @Singleton
+    fun providerHeaderInterceptor(
+        tokenDataStore: TokenDataStore,
+    ): Interceptor = HeaderInterceptor(tokenDataStore)
 
     @Provides
     @Singleton
@@ -60,19 +69,20 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        loggingInterceptor: Interceptor
+        loggingInterceptor: Interceptor,
+        @JWT headerInterceptor: Interceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(headerInterceptor)
         .build()
 
-
-    // TODO: 더미 레트로핏, 삭제 예정
     @Provides
+    @Singleton
     fun provideRetrofit(
         client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(DUMMY_URL)
+        .baseUrl(BASE_URL)
         .client(client)
         .addConverterFactory(factory)
         .build()
