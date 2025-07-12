@@ -34,8 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.calendar.bottomSheet.DailyDialogViewModel
+import com.together.study.calendar.bottomSheet.DailyScheduleDialog
 import com.together.study.calendar.bottomSheet.ScheduleBottomSheet
-import com.together.study.calendar.component.DailyScheduleDialog
 import com.together.study.calendar.generateCalendarWeeks
 import com.together.study.calendar.maincalendar.component.DayOfWeek
 import com.together.study.calendar.maincalendar.component.WeekSchedule
