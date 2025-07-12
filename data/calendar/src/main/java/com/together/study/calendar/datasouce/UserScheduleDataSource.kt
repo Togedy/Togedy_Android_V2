@@ -13,10 +13,10 @@ class UserScheduleDataSource @Inject constructor(
     suspend fun getUserSchedule(request: Long) =
         userScheduleService.getUserSchedule(request)
 
-    suspend fun patchUserSchedule(request: Pair<Long, UserScheduleRequest>) =
+    suspend fun patchUserSchedule(userScheduleId: Long, request: UserScheduleRequest) =
         userScheduleService.patchUserSchedule(
-            userScheduleId = request.first,
-            userScheduleRequest = request.second
+            userScheduleId = userScheduleId,
+            userScheduleRequest = request
         )
 
     suspend fun deleteUserSchedule(request: Long) =
