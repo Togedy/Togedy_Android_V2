@@ -215,6 +215,7 @@ private fun ScheduleNameSection(
             onValueChange = onNameChange,
             textStyle = textStyle,
             singleLine = true,
+            modifier = Modifier.weight(1f),
             decorationBox = { innerTextField ->
                 if (scheduleName.isEmpty()) {
                     Text(
@@ -252,6 +253,7 @@ private fun ScheduleCategorySection(
                 text = "카테고리",
                 textStyle = TogedyTheme.typography.chip14b,
                 textColor = TogedyTheme.colors.gray400,
+                onTextClick = onCategoryClick,
             )
         } else {
             Icon(
@@ -266,6 +268,7 @@ private fun ScheduleCategorySection(
                 text = category.categoryName.toString(),
                 textStyle = TogedyTheme.typography.chip14b,
                 textColor = category.categoryColor.toCategoryColorOrDefault(),
+                onTextClick = onCategoryClick,
             )
         }
     }
