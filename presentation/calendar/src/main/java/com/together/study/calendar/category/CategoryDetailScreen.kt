@@ -48,8 +48,9 @@ internal fun CategoryDetailRoute(
     CategoryDetailScreen(
         categoryState = categoryState.value,
         onBackButtonClick = onBackButtonClick,
-        onAddDoneBtnClick = viewModel::saveNewCategory,
-        onEditDoneBtnClick = viewModel::updateCategory,
+//        onAddDoneBtnClick = viewModel::saveNewCategory,
+//        onEditDoneBtnClick = viewModel::updateCategory,
+        onDeleteClick = viewModel::deleteCategory,
         modifier = modifier,
     )
 }
@@ -59,8 +60,9 @@ internal fun CategoryDetailRoute(
 fun CategoryDetailScreen(
     categoryState: UiState<List<Category>>,
     onBackButtonClick: () -> Unit,
-    onAddDoneBtnClick: (Category) -> Unit,
-    onEditDoneBtnClick: (Category) -> Unit,
+//    onAddDoneBtnClick: (Category) -> Unit,
+//    onEditDoneBtnClick: (Category) -> Unit,
+    onDeleteClick: (Long) -> Unit,
     modifier: Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -101,7 +103,7 @@ fun CategoryDetailScreen(
                         isAddBottomSheetOpen = true
                     },
                     onDeleteClick = { id ->
-                        selectedCategory = Category(id, null, null)
+                        onDeleteClick(id)
                         isDeleteDialogOpen = true
                     },
                 )
@@ -139,7 +141,7 @@ fun CategoryDetailScreen(
 internal fun CategoryItems(
     categoryItems: List<Category>,
     onEditClick: (Category) -> Unit,
-    onDeleteClick: (Long?) -> Unit,
+    onDeleteClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -154,7 +156,7 @@ internal fun CategoryItems(
             CategoryItem(
                 category = categoryItem,
                 onEditClick = { onEditClick(categoryItem) },
-                onCategoryClick = { onDeleteClick(categoryItem.categoryId) },
+                onCategoryClick = { onDeleteClick(categoryItem.categoryId!!) },
                 isCategoryEditMode = true,
             )
         }
