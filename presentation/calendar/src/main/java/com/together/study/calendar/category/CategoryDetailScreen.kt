@@ -195,8 +195,9 @@ private fun CategoryDetailPreview(modifier: Modifier = Modifier) {
         CategoryDetailScreen(
             categoryState = UiState.Success(Category.mockList),
             onBackButtonClick = {},
-            onAddDoneBtnClick = {},
-            onEditDoneBtnClick = {},
+//            onAddDoneBtnClick = {},
+//            onEditDoneBtnClick = {},
+            onDeleteClick = {},
             modifier = modifier,
         )
     }
