@@ -64,9 +64,9 @@ internal fun CalendarRoute(
     dailyDialogViewModel: DailyDialogViewModel = hiltViewModel(),
 ) {
     val uiState by calendarViewModel.calendarUiState.collectAsStateWithLifecycle()
+    val currentDate by calendarViewModel.currentDate.collectAsStateWithLifecycle()
 
-    LaunchedEffect(calendarViewModel.currentDate) {
-        // TODO: 스케줄 업데이트
+    LaunchedEffect(currentDate) {
         calendarViewModel.getCalendarInfo()
     }
 
@@ -75,8 +75,8 @@ internal fun CalendarRoute(
         currentDate = calendarViewModel.currentDate.value,
         onSearchBoxClick = onSearchBoxClick,
         onDateClick = calendarViewModel::updateDailyDialog,
-        onAddBtnClick = calendarViewModel::saveNewSchedule,
-        onEditBtnClick = calendarViewModel::updateSchedule,
+        onAddBtnClick = {},
+        onEditBtnClick = { id, value -> },
         dailyDialogViewModel = dailyDialogViewModel,
         onCategoryDetailNavigate = onCategoryDetailNavigate,
         modifier = modifier,

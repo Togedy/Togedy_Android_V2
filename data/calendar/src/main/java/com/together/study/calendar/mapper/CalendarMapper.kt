@@ -2,13 +2,18 @@ package com.together.study.calendar.mapper
 
 import com.together.study.calendar.dto.AnnouncementResponse
 import com.together.study.calendar.dto.DDayResponse
+import com.together.study.calendar.dto.DailyScheduleListResponse
+import com.together.study.calendar.dto.MonthlyScheduleListResponse
 import com.together.study.calendar.dto.ScheduleResponse
 import com.together.study.calendar.model.Announcement
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 
-fun List<ScheduleResponse>.toDomain(): List<Schedule> =
-    this.map { it.toSchedule() }
+fun MonthlyScheduleListResponse.toDomain(): List<Schedule> =
+    this.monthlyScheduleList.map { it.toSchedule() }
+
+fun DailyScheduleListResponse.toDomain(): List<Schedule> =
+    this.dailyScheduleList.map { it.toSchedule() }
 
 fun ScheduleResponse.toSchedule() =
     Schedule(
