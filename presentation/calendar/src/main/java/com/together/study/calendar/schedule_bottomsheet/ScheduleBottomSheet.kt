@@ -89,7 +89,7 @@ internal fun ScheduleBottomSheet(
                 ScheduleNameSection(
                     scheduleName = userScheduleName,
                     categoryColor = "category.categoryColor".toCategoryColorOrDefault(),
-                    onNameChange = viewModel::updateScheduleName,
+                    onNameChange = { viewModel.updateScheduleName(it) },
                 )
 
                 Spacer(Modifier.height(24.dp))
@@ -131,14 +131,14 @@ internal fun ScheduleBottomSheet(
 
                 DDaySection(
                     dDay = dDayValue,
-                    onClick = viewModel.updateDDay()
+                    onClick = { viewModel.updateDDay() }
                 )
             }
 
             if (bottomSheetState.isMemoOpen) {
                 MemoBottomSheet(
                     scheduleMemo = memoValue ?: "",
-                    onValueChange = viewModel::updateMemo,
+                    onValueChange = { viewModel.updateMemo(it) },
                     onDismissRequest = {
                         viewModel.updateBottomSheetVisibility(
                             ScheduleSubBottomSheetType.MEMO

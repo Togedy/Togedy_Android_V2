@@ -51,14 +51,37 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
                 .onFailure { UiState.Failure(it.message.toString()) }
         }
 
-    fun updateScheduleName(new: String) = { _uiState.value.newInfo.userScheduleName = new }
-    fun updateStartDate(new: LocalDate) = { _uiState.value.newInfo.startDateValue = new }
-    fun updateStartTime(new: String?) = { _uiState.value.newInfo.startTimeValue = new }
-    fun updateEndDate(new: LocalDate?) = { _uiState.value.newInfo.endDateValue = new }
-    fun updateEndTime(new: String?) = { _uiState.value.newInfo.endTimeValue = new }
-    fun updateCategory(new: Category) = { _uiState.value.newInfo.categoryIdValue = new.categoryId }
-    fun updateMemo(new: String?) = { _uiState.value.newInfo.memoValue = new }
-    fun updateDDay() = { _uiState.value.newInfo.dDayValue = !_uiState.value.newInfo.dDayValue }
+    fun updateScheduleName(new: String) {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(userScheduleName = new)) }
+    }
+
+    fun updateStartDate(new: LocalDate) {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(startDateValue = new)) }
+    }
+
+    fun updateStartTime(new: String?) {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(startTimeValue = new)) }
+    }
+
+    fun updateEndDate(new: LocalDate?) {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(endDateValue = new)) }
+    }
+
+    fun updateEndTime(new: String?) {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(endTimeValue = new)) }
+    }
+
+    fun updateCategory(new: Category) {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(categoryIdValue = new.categoryId)) }
+    }
+
+    fun updateMemo(new: String?) {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(memoValue = new)) }
+    }
+
+    fun updateDDay() {
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(dDayValue = !_uiState.value.newInfo.dDayValue)) }
+    }
 
     fun checkDoneActivated() {
         _uiState.update {
