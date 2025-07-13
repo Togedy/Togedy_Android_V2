@@ -124,8 +124,8 @@ fun CategoryDetailScreen(
             },
             onDoneClick = { category ->
                 isAddBottomSheetOpen = false
-                if (selectedCategory == null) onAddDoneBtnClick(category)
-                else onEditDoneBtnClick(category)
+//                if (selectedCategory == null) onAddDoneBtnClick(category)
+//                else onEditDoneBtnClick(category)
                 selectedCategory = null
             },
         )
