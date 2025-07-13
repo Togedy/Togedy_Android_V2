@@ -121,6 +121,12 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
                 }
             }
 
+            ScheduleSubBottomSheetType.CATEGORY_ADD -> {
+                _bottomSheetState.update {
+                    it.copy(isCategoryAddOpen = !_bottomSheetState.value.isCategoryAddOpen)
+                }
+            }
+
             ScheduleSubBottomSheetType.MEMO -> {
                 _bottomSheetState.update {
                     it.copy(isMemoOpen = !_bottomSheetState.value.isMemoOpen)

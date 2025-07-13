@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.calendar.category.CategoryDetailBottomSheet
 import com.together.study.calendar.component.GrayBoxText
 import com.together.study.calendar.component.ScheduleDateTimeSection
 import com.together.study.calendar.model.Category
@@ -135,54 +136,69 @@ internal fun ScheduleBottomSheet(
                 )
             }
 
-            if (bottomSheetState.isMemoOpen) {
-                MemoBottomSheet(
-                    scheduleMemo = memoValue ?: "",
-                    onValueChange = { viewModel.updateMemo(it) },
-                    onDismissRequest = {
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.MEMO
-                        )
-                    },
-                )
-            }
+            with(bottomSheetState) {
+                if (isMemoOpen) {
+                    MemoBottomSheet(
+                        scheduleMemo = memoValue ?: "",
+                        onValueChange = { viewModel.updateMemo(it) },
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.MEMO
+                            )
+                        },
+                    )
+                }
 
-            if (bottomSheetState.isCategoryOpen) {
-                CategoryBottomSheet(
-                    category = null,
-                    onDismissRequest = {
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.CATEGORY
-                        )
-                    },
-                    onAddCategoryClick = {},
-                    onEditCategoryClick = onEditCategoryClick,
-                    onDoneClick = {
-                        viewModel::updateCategory
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.CATEGORY
-                        )
-                    },
-                )
-            }
+                if (isCategoryOpen) {
+                    CategoryBottomSheet(
+                        category = null,
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CATEGORY
+                            )
+                        },
+                        onAddCategoryClick = {},
+                        onEditCategoryClick = onEditCategoryClick,
+                        onDoneClick = {
+                            viewModel::updateCategory
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CATEGORY
+                            )
+                        },
+                    )
+                }
 
-            if (bottomSheetState.isCalendarOpen) {
-                CalendarBottomSheet(
-                    startDate = startDateValue,
-                    endDate = endDateValue,
-                    onDismissRequest = {
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.CALENDAR
-                        )
-                    },
-                    onDoneClick = { start, end ->
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.CALENDAR
-                        )
-                        viewModel.updateStartDate(start)
-                        viewModel.updateEndDate(end)
-                    }
-                )
+                if (isCategoryAddOpen) {
+                    CategoryDetailBottomSheet(
+                        sheetState = sheetState,
+                        category = null,
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
+                        },
+                        onDoneClick = { category ->
+                            viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
+                        },
+                    )
+                }
+
+                if (isCalendarOpen) {
+                    CalendarBottomSheet(
+                        startDate = startDateValue,
+                        endDate = endDateValue,
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CALENDAR
+                            )
+                        },
+                        onDoneClick = { start, end ->
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CALENDAR
+                            )
+                            viewModel.updateStartDate(start)
+                            viewModel.updateEndDate(end)
+                        }
+                    )
+                }
             }
         }
     }
