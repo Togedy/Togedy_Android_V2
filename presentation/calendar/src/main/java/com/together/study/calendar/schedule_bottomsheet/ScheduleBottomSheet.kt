@@ -1,4 +1,4 @@
-package com.together.study.calendar.bottomSheet
+package com.together.study.calendar.schedule_bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +36,7 @@ import com.together.study.calendar.component.GrayBoxText
 import com.together.study.calendar.component.ScheduleDateTimeSection
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.model.UserSchedule
-import com.together.study.calendar.state.ScheduleSubBottomSheetType
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
 import com.together.study.calendar.type.toCategoryColorOrDefault
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.TogedyToggleButton

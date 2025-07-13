@@ -1,4 +1,4 @@
-package com.together.study.calendar.state
+package com.together.study.calendar.schedule_bottomsheet.state
 
 import androidx.compose.runtime.Immutable
 import java.time.LocalDate

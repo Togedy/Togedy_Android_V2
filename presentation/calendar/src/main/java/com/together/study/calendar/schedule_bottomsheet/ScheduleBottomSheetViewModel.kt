@@ -1,14 +1,14 @@
-package com.together.study.calendar.bottomSheet
+package com.together.study.calendar.schedule_bottomsheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.repository.UserScheduleRepository
-import com.together.study.calendar.state.ScheduleBottomSheetUiState
-import com.together.study.calendar.state.ScheduleSubBottomSheetState
-import com.together.study.calendar.state.ScheduleSubBottomSheetType
-import com.together.study.calendar.state.UserScheduleInfo
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleBottomSheetUiState
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetState
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
+import com.together.study.calendar.schedule_bottomsheet.state.UserScheduleInfo
 import com.together.study.common.state.UiState
 import com.together.study.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
