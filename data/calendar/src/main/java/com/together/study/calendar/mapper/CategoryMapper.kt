@@ -9,3 +9,6 @@ fun CategoryResponse.toDomain(): Category =
         categoryName = categoryName,
         categoryColor = categoryColor,
     )
+
+fun List<CategoryResponse>.toDomain(): List<Category> =
+    this.map { it.toDomain() }
