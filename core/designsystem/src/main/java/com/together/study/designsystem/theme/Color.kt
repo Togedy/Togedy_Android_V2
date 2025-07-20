@@ -1,7 +1,9 @@
 package com.together.study.designsystem.theme
 
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 
 val GREEN = Color(0xFF11BC78)
@@ -95,7 +97,6 @@ class TogedyColors(
         red30 = other.red30
         blue = other.blue
         white = other.white
-        gray50 = other.gray50
         gray100 = other.gray100
         gray200 = other.gray200
         gray300 = other.gray300

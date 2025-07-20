@@ -2,7 +2,6 @@ package com.together.study.calendar.type
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.together.study.designsystem.theme.TogedyTheme
 
 enum class CategoryColor(val color: Color) {
     CATEGORY_COLOR1(Color(0xFFD9A398)),
@@ -16,22 +15,36 @@ enum class CategoryColor(val color: Color) {
     CATEGORY_COLOR9(Color(0xFFFF875C)),
     CATEGORY_COLOR10(Color(0xFFF0A5BE)),
     CATEGORY_COLOR11(Color(0xFFE77283)),
-    CATEGORY_COLOR12(Color(0xFF6F72A0));
+    CATEGORY_COLOR12(Color(0xFF6F72A0)),
+    UNKNOWN_COLOR(Color.LightGray);
 
     companion object {
-        fun fromString(name: String): CategoryColor? {
+        fun fromString(name: String?): CategoryColor {
             return try {
-                valueOf(name)
+                valueOf(name ?: "UNKNOWN_COLOR")
             } catch (e: IllegalArgumentException) {
-                null
+                UNKNOWN_COLOR
+            }
+        }
+
+        fun fromStringToCategoryColorEnum(name: String?): CategoryColor {
+            return try {
+                valueOf(name ?: "CATEGORY_COLOR1")
+            } catch (e: IllegalArgumentException) {
+                CATEGORY_COLOR1
             }
         }
     }
 }
 
 @Composable
-fun String.toCategoryColorOrDefault(defaultColor: Color = TogedyTheme.colors.gray500): Color {
-    return CategoryColor.fromString(this)?.color ?: defaultColor
+fun String?.toCategoryColorEnum(): CategoryColor {
+    return CategoryColor.fromStringToCategoryColorEnum(this)
+}
+
+@Composable
+fun String?.toCategoryColorOrDefault(): Color {
+    return CategoryColor.fromString(this).color
 }
 
 @Composable

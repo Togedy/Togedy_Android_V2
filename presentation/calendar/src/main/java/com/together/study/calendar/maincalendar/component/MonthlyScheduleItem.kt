@@ -147,7 +147,7 @@ private fun UserSchedulePreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         MonthlyScheduleItem(
             schedule = Schedule(
-                scheduleId = null,
+                scheduleId = 0,
                 scheduleType = "user",
                 scheduleName = "국어학원",
                 startDate = LocalDate.now().toString(),
@@ -172,7 +172,7 @@ private fun UniversitySchedulePreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         MonthlyScheduleItem(
             schedule = Schedule(
-                scheduleId = null,
+                scheduleId = 1,
                 scheduleType = "university",
                 scheduleName = "건국대학교",
                 startDate = LocalDate.now().toString(),
@@ -197,7 +197,7 @@ private fun UniversityScheduleMultiWeekPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         MonthlyScheduleItem(
             schedule = Schedule(
-                scheduleId = null,
+                scheduleId = 2,
                 scheduleType = "university",
                 scheduleName = "건국대학교",
                 startDate = LocalDate.now().toString(),

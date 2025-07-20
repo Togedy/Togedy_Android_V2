@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
+import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.main.component.MainBottomBar
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
@@ -64,7 +65,9 @@ private fun MainNavHost(
         startDestination = navigator.startDestination
     ) {
         calendarGraph(
+            navigateToUp = navigator.navController::popBackStack,
             navigateToUnivSearch = navigator.navController::navigateToUnivSearch,
+            navigateToCategoryDetail = navigator.navController::navigateToCategoryDetail,
             modifier = modifier,
         )
 

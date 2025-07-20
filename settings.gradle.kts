@@ -31,6 +31,7 @@ include(
 include(
     ":data:local",
     ":data:remote",
+    ":data:calendar",
     ":data:dummy",
 )
 include(
@@ -41,6 +42,5 @@ include(
     ":presentation:main",
     ":presentation:dummy",
     ":presentation:calendar",
+    ":presentation:search",
 )
-include(":presentation:calendar")
-include(":presentation:search")

@@ -1,14 +1,16 @@
 package com.together.study.calendar.model
 
 data class Schedule(
-    val scheduleId: Long? = null,
+    val scheduleId: Long,
     val scheduleType: String,
     val scheduleName: String,
     val startDate: String,
+    val startTime: String? = null,
+    val endTime: String? = null,
     val endDate: String? = null,
     val universityAdmissionType: String = "",
     val universityAdmissionStage: String = "",
-    val category: Category? = null,
+    val category: Category,
 ) {
     companion object { /* TODO: 추후 삭제 예정 */
         val mock = listOf(

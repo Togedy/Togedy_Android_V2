@@ -28,10 +28,13 @@ fun TogedyBottomSheet(
             color = TogedyTheme.colors.black
         ),
     showDone: Boolean = false,
+    isDoneActivate: Boolean = true,
     onDoneClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
+
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
         sheetState = sheetState,
@@ -59,9 +62,13 @@ fun TogedyBottomSheet(
                 if (showDone) {
                     Text(
                         text = "완료",
+                        style = TogedyTheme.typography.title16sb.copy(doneColor),
                         modifier = Modifier
                             .align(alignment = Alignment.Companion.CenterEnd)
-                            .noRippleClickable(onDoneClick)
+                            .then(
+                                if (isDoneActivate) Modifier.noRippleClickable(onDoneClick)
+                                else Modifier
+                            )
                     )
                 }
             }
