@@ -38,6 +38,7 @@ import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.TogedyScheduleChip
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.search.component.SearchSelectorAdmissionType
 import com.together.study.search.component.SearchSelectorChip
 import com.together.study.search.component.SearchSelectorHeader
 import com.together.study.util.noRippleClickable
@@ -51,6 +52,7 @@ fun SearchScreen(
     viewModel: SearchViewModel = viewModel(),
 ) {
     val searchValue by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val admissionType by viewModel.admissionType.collectAsStateWithLifecycle()
     val filteredList by viewModel.filteredList.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
@@ -87,14 +89,21 @@ fun SearchScreen(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_left_24),
                 contentDescription = null,
-                modifier = Modifier.padding(end = 4.dp)
-                    .noRippleClickable (onBackButtonClicked)
+                modifier = Modifier
+                    .padding(end = 4.dp)
+                    .noRippleClickable(onBackButtonClicked)
             )
             TogedySearchBar(
                 value = searchValue,
                 onValueChange = { viewModel.onSearchQueryChanged(it) }
             )
         }
+
+        SearchSelectorAdmissionType(
+            selectedType = admissionType,
+            onSelect = { viewModel.onAdmissionTypeChanged(it) },
+            modifier = Modifier.padding(top = 8.dp)
+        )
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),

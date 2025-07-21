@@ -2,6 +2,7 @@ package com.together.study.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.together.study.search.type.AdmissionType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,9 @@ class SearchViewModel : ViewModel() {
 
     private val _filteredList = MutableStateFlow<List<SearchScheduleData>>(emptyList())
     val filteredList: StateFlow<List<SearchScheduleData>> = _filteredList
+
+    private val _admissionType = MutableStateFlow(AdmissionType.ALL)
+    val admissionType: StateFlow<AdmissionType> = _admissionType
 
     private var searchJob: Job? = null
 
@@ -54,5 +58,9 @@ class SearchViewModel : ViewModel() {
 
             _filteredList.value = currentList.sortedByDescending { it.isAdded }
         }
+    }
+
+    fun onAdmissionTypeChanged(type: AdmissionType) {
+        _admissionType.value = type
     }
 }
