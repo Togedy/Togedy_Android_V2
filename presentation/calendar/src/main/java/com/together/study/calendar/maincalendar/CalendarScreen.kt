@@ -220,7 +220,7 @@ private fun CalendarSuccessScreen(
         ScheduleBottomSheet(
             onDismissRequest = { isScheduleBottomSheetVisible = false },
             onDoneClick = { schedule ->
-                if (schedule.scheduleId.toInt() == -1) onAddBtnClick(schedule)
+                if (schedule.scheduleId?.toInt() == -1) onAddBtnClick(schedule)
                 else onEditBtnClick(schedule)
                 isScheduleBottomSheetVisible = false
                 selectedScheduleId = null
