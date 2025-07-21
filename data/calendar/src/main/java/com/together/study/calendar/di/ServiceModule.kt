@@ -1,7 +1,6 @@
 package com.together.study.calendar.di
 
 import com.together.study.calendar.service.CalendarService
-import com.together.study.calendar.service.UserScheduleService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +20,10 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideUserScheduleService(retrofit: Retrofit): UserScheduleService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideCategoryService(retrofit: Retrofit): CategoryService =
         retrofit.create()
 }

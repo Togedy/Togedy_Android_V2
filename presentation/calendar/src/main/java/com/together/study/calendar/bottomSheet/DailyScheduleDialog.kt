@@ -192,7 +192,7 @@ fun DailyScheduleItem(
             modifier = Modifier
                 .fillMaxSize()
                 .background(TogedyTheme.colors.red, RoundedCornerShape(6.dp))
-                .noRippleClickable { onDeleteClick(schedule.scheduleId ?: -1) },
+                .noRippleClickable { onDeleteClick(schedule.scheduleId!!) },
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -248,7 +248,7 @@ fun DailyScheduleItem(
                         UserScheduleItem(
                             schedule = schedule,
                             onScheduleItemClick = {
-                                onScheduleItemClick(ScheduleType.USER, schedule.scheduleId ?: -1)
+                                onScheduleItemClick(ScheduleType.USER, schedule.scheduleId!!)
                             },
                         )
                     }

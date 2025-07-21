@@ -1,8 +1,10 @@
 package com.together.study.calendar.di
 
 import com.together.study.calendar.repository.CalendarRepository
+import com.together.study.calendar.repository.CategoryRepository
 import com.together.study.calendar.repository.UserScheduleRepository
 import com.together.study.calendar.repositoryimpl.CalendarRepositoryImpl
+import com.together.study.calendar.repositoryimpl.CategoryRepositoryImpl
 import com.together.study.calendar.repositoryimpl.UserScheduleRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -24,4 +26,10 @@ abstract class RepositoryModule {
     abstract fun bindUserScheduleRepository(
         userScheduleRepositoryImpl: UserScheduleRepositoryImpl,
     ): UserScheduleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoryRepository(
+        categoryRepositoryImpl: CategoryRepositoryImpl,
+    ): CategoryRepository
 }
