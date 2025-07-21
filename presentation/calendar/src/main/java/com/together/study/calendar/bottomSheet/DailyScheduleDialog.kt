@@ -1,4 +1,4 @@
-package com.together.study.calendar.component
+package com.together.study.calendar.bottomSheet
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.calendar.maincalendar.DailyDialogViewModel
+import com.together.study.calendar.component.UserScheduleItem
 import com.together.study.calendar.model.Schedule
 import com.together.study.common.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_delete_24
@@ -192,7 +192,7 @@ fun DailyScheduleItem(
             modifier = Modifier
                 .fillMaxSize()
                 .background(TogedyTheme.colors.red, RoundedCornerShape(6.dp))
-                .noRippleClickable { onDeleteClick(schedule.scheduleId) },
+                .noRippleClickable { onDeleteClick(schedule.scheduleId!!) },
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -248,7 +248,7 @@ fun DailyScheduleItem(
                         UserScheduleItem(
                             schedule = schedule,
                             onScheduleItemClick = {
-                                onScheduleItemClick(ScheduleType.USER, schedule.scheduleId)
+                                onScheduleItemClick(ScheduleType.USER, schedule.scheduleId!!)
                             },
                         )
                     }
@@ -277,7 +277,7 @@ private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
                 onScheduleItemClick = { type, id -> },
                 onAddScheduleClick = {},
                 onDismissRequest = {},
-                dailyDialogViewModel = DailyDialogViewModel(),
+                dailyDialogViewModel = TODO(),
                 modifier = modifier,
             )
         }

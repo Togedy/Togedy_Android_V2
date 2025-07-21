@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,14 +34,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.calendar.bottomSheet.ScheduleBottomSheet
-import com.together.study.calendar.component.DailyScheduleDialog
+import com.together.study.calendar.bottomSheet.DailyDialogViewModel
+import com.together.study.calendar.bottomSheet.DailyScheduleDialog
 import com.together.study.calendar.generateCalendarWeeks
 import com.together.study.calendar.maincalendar.component.DayOfWeek
 import com.together.study.calendar.maincalendar.component.WeekSchedule
 import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
+import com.together.study.calendar.model.UserSchedule
+import com.together.study.calendar.schedule_bottomsheet.ScheduleBottomSheet
 import com.together.study.common.ScheduleType
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
@@ -63,9 +64,9 @@ internal fun CalendarRoute(
     dailyDialogViewModel: DailyDialogViewModel = hiltViewModel(),
 ) {
     val uiState by calendarViewModel.calendarUiState.collectAsStateWithLifecycle()
+    val currentDate by calendarViewModel.currentDate.collectAsStateWithLifecycle()
 
-    LaunchedEffect(calendarViewModel.currentDate) {
-        // TODO: 스케줄 업데이트
+    LaunchedEffect(currentDate) {
         calendarViewModel.getCalendarInfo()
     }
 
@@ -74,8 +75,8 @@ internal fun CalendarRoute(
         currentDate = calendarViewModel.currentDate.value,
         onSearchBoxClick = onSearchBoxClick,
         onDateClick = calendarViewModel::updateDailyDialog,
-        onAddBtnClick = calendarViewModel::saveNewSchedule,
-        onEditBtnClick = calendarViewModel::updateSchedule,
+        onAddBtnClick = {},
+        onEditBtnClick = { i, j -> },
         dailyDialogViewModel = dailyDialogViewModel,
         onCategoryDetailNavigate = onCategoryDetailNavigate,
         modifier = modifier,
@@ -88,8 +89,8 @@ private fun CalendarScreen(
     currentDate: LocalDate,
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
-    onAddBtnClick: (Schedule) -> Unit,
-    onEditBtnClick: (Schedule) -> Unit,
+    onAddBtnClick: (UserSchedule) -> Unit,
+    onEditBtnClick: (Long, UserSchedule) -> Unit,
     onCategoryDetailNavigate: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
@@ -135,8 +136,8 @@ private fun CalendarSuccessScreen(
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
     onYearMonthSectionClick: () -> Unit,
-    onAddBtnClick: (Schedule) -> Unit,
-    onEditBtnClick: (Schedule) -> Unit,
+    onAddBtnClick: (UserSchedule) -> Unit,
+    onEditBtnClick: (Long, UserSchedule) -> Unit,
     onCategoryDetailNavigate: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
@@ -145,7 +146,6 @@ private fun CalendarSuccessScreen(
     var isDailyDialogVisible by remember { mutableStateOf(false) }
     var selectedScheduleId by remember { mutableStateOf<Long?>(null) }
     var isScheduleBottomSheetVisible by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     LazyColumn(
         modifier = modifier
@@ -220,8 +220,8 @@ private fun CalendarSuccessScreen(
         ScheduleBottomSheet(
             onDismissRequest = { isScheduleBottomSheetVisible = false },
             onDoneClick = { schedule ->
-                if (schedule.scheduleId.toInt() == -1) onAddBtnClick(schedule)
-                else onEditBtnClick(schedule)
+                if (selectedScheduleId != null) onEditBtnClick(selectedScheduleId!!, schedule)
+                else onAddBtnClick(schedule)
                 isScheduleBottomSheetVisible = false
                 selectedScheduleId = null
             },
@@ -335,9 +335,11 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             onDateClick = {},
             onYearMonthSectionClick = {},
             onAddBtnClick = {},
-            onEditBtnClick = {},
+            onEditBtnClick = { id, request -> },
             onCategoryDetailNavigate = {},
-            dailyDialogViewModel = DailyDialogViewModel(),
+            dailyDialogViewModel = DailyDialogViewModel(
+                userScheduleRepository = TODO()
+            ),
             modifier = modifier,
         )
     }

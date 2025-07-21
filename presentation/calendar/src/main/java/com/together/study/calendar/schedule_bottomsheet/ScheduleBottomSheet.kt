@@ -1,6 +1,7 @@
-package com.together.study.calendar.bottomSheet
+package com.together.study.calendar.schedule_bottomsheet
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,13 +33,18 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.calendar.category.CategoryDetailBottomSheet
 import com.together.study.calendar.component.GrayBoxText
 import com.together.study.calendar.component.ScheduleDateTimeSection
 import com.together.study.calendar.model.Category
-import com.together.study.calendar.model.Schedule
+import com.together.study.calendar.model.UserSchedule
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
 import com.together.study.calendar.type.toCategoryColorOrDefault
 import com.together.study.common.ScheduleType
 import com.together.study.designsystem.component.TogedyBottomSheet
+import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_category_box
 import com.together.study.presentation.calendar.R.drawable.ic_empty_category_box
@@ -49,127 +55,155 @@ import java.time.LocalDate
 @Composable
 internal fun ScheduleBottomSheet(
     onDismissRequest: () -> Unit,
-    onDoneClick: (Schedule) -> Unit,
+    onDoneClick: (UserSchedule) -> Unit,
     scheduleId: Long? = null,
-    scheduleName: String = "",
     startDate: LocalDate = LocalDate.now(),
-    startTime: String? = null,
-    endDate: LocalDate? = null,
-    endTime: String? = null,
-    category: Category? = null,
     onEditCategoryClick: () -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier,
+    viewModel: ScheduleBottomSheetViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
     val title = if (scheduleId == null) "일정추가" else "일정수정"
 
-    var scheduleName by remember { mutableStateOf(scheduleName) }
-    var startDate by remember { mutableStateOf(startDate) }
-    var startTime by remember { mutableStateOf(startTime) }
-    var endDate by remember { mutableStateOf(endDate) }
-    var endTime by remember { mutableStateOf(endTime) }
-    var isCalendarOpen by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (scheduleId != null) viewModel.getUserSchedule(scheduleId, startDate)
+        sheetState.expand()
+    }
 
-    var category by remember { mutableStateOf(category) }
-    var isCategoryOpen by remember { mutableStateOf(false) }
+    LaunchedEffect(uiState.newInfo) { viewModel.checkDoneActivated() }
 
-    var scheduleMemo by remember { mutableStateOf("") }
-    var isMemoOpen by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) { sheetState.expand() }
-
-    TogedyBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = onDismissRequest,
-        title = title,
-        showDone = true,
-        isDoneActivate = scheduleName.isNotEmpty() && category != null,
-        onDoneClick = {
-            val startDateTime =
-                if (startTime != null) startDate.toString() + startTime
-                else startDate.toString()
-            val endDateTime =
-                if (endTime != null) endDate.toString() + endTime
-                else endDate.toString()
-
-            onDoneClick(
-                Schedule(
-                    scheduleId = scheduleId ?: -1,
-                    scheduleType = ScheduleType.USER.label,
-                    scheduleName = scheduleName,
-                    startDate = startDateTime,
-                    endDate = endDateTime,
-                    category = category,
-                )
-            )
-        },
-        modifier = modifier.fillMaxHeight(0.62f),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
+    with(uiState.newInfo) {
+        TogedyBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = onDismissRequest,
+            title = title,
+            showDone = true,
+            isDoneActivate = uiState.isDoneActivated,
+            onDoneClick = {
+                if (scheduleId == null) viewModel.postUserSchedule()
+                else viewModel.patchUserSchedule(scheduleId)
+                onDoneClick(viewModel.toUserSchedule())
+            },
+            modifier = modifier.fillMaxHeight(0.62f),
         ) {
-            ScheduleNameSection(
-                scheduleName = scheduleName,
-                categoryColor = category?.categoryColor.toCategoryColorOrDefault(),
-                onNameChange = { scheduleName = it },
-            )
+            Column(
+                modifier = Modifier.padding(16.dp),
+            ) {
+                ScheduleNameSection(
+                    scheduleName = userScheduleName,
+                    categoryColor = categoryValue?.categoryColor.toCategoryColorOrDefault(),
+                    onNameChange = { viewModel.updateScheduleName(it) },
+                )
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
 
-            ScheduleDateTimeSection(
-                startDateTime = Pair(startDate, startTime),
-                endDateTime = Pair(endDate, endTime),
-                onCalendarOpen = { isCalendarOpen = true },
-                onClockOpen = { },
-            )
+                ScheduleDateTimeSection(
+                    startDateTime = Pair(startDateValue, startTimeValue),
+                    endDateTime = Pair(endDateValue, endTimeValue),
+                    onCalendarOpen = {
+                        viewModel.updateBottomSheetVisibility(
+                            ScheduleSubBottomSheetType.CALENDAR
+                        )
+                    },
+                    onClockOpen = { },
+                )
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
 
-            ScheduleCategorySection(
-                category = category,
-                onCategoryClick = { isCategoryOpen = true },
-            )
+                ScheduleCategorySection(
+                    category = categoryValue,
+                    onCategoryClick = {
+                        viewModel.updateBottomSheetVisibility(
+                            ScheduleSubBottomSheetType.CATEGORY
+                        )
+                    },
+                )
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
 
-            ScheduleMemoSection(
-                memo = scheduleMemo,
-                onMemoClick = { isMemoOpen = true },
-            )
-        }
+                ScheduleMemoSection(
+                    memo = memoValue ?: "",
+                    onMemoClick = {
+                        viewModel.updateBottomSheetVisibility(
+                            ScheduleSubBottomSheetType.MEMO
+                        )
+                    },
+                )
 
-        if (isMemoOpen) {
-            MemoBottomSheet(
-                scheduleMemo = scheduleMemo,
-                onValueChange = { scheduleMemo = it },
-                onDismissRequest = { isMemoOpen = false },
-            )
-        }
+                Spacer(Modifier.height(24.dp))
 
-        if (isCategoryOpen) {
-            CategoryBottomSheet(
-                category = category,
-                onDismissRequest = { isCategoryOpen = false },
-                onAddCategoryClick = {},
-                onEditCategoryClick = onEditCategoryClick,
-                onDoneClick = {
-                    category = it
-                    isCategoryOpen = false
-                },
-            )
-        }
+                DDaySection(
+                    dDay = dDayValue,
+                    onClick = { viewModel.updateDDay() }
+                )
+            }
 
-        if (isCalendarOpen) {
-            CalendarBottomSheet(
-                startDate = startDate,
-                endDate = endDate,
-                onDismissRequest = { isCalendarOpen = false },
-                onDoneClick = { start, end ->
-                    isCalendarOpen = false
-                    startDate = start
-                    endDate = end
+            with(bottomSheetState) {
+                if (isMemoOpen) {
+                    MemoBottomSheet(
+                        scheduleMemo = memoValue ?: "",
+                        onValueChange = { viewModel.updateMemo(it) },
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.MEMO
+                            )
+                        },
+                    )
                 }
-            )
+
+                if (isCategoryOpen) {
+                    CategoryBottomSheet(
+                        category = null,
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CATEGORY
+                            )
+                        },
+                        onAddCategoryClick = {},
+                        onEditCategoryClick = onEditCategoryClick,
+                        onDoneClick = {
+                            viewModel::updateCategory
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CATEGORY
+                            )
+                        },
+                    )
+                }
+
+                if (isCategoryAddOpen) {
+                    CategoryDetailBottomSheet(
+                        sheetState = sheetState,
+                        category = null,
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
+                        },
+                        onDoneClick = { category ->
+                            viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
+                        },
+                    )
+                }
+
+                if (isCalendarOpen) {
+                    CalendarBottomSheet(
+                        startDate = startDateValue,
+                        endDate = endDateValue,
+                        onDismissRequest = {
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CALENDAR
+                            )
+                        },
+                        onDoneClick = { start, end ->
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CALENDAR
+                            )
+                            viewModel.updateStartDate(start)
+                            viewModel.updateEndDate(end)
+                        }
+                    )
+                }
+            }
         }
     }
 }
@@ -201,6 +235,7 @@ private fun ScheduleNameSection(
             onValueChange = onNameChange,
             textStyle = textStyle,
             singleLine = true,
+            modifier = Modifier.weight(1f),
             decorationBox = { innerTextField ->
                 if (scheduleName.isEmpty()) {
                     Text(
@@ -238,6 +273,7 @@ private fun ScheduleCategorySection(
                 text = "카테고리",
                 textStyle = TogedyTheme.typography.chip14b,
                 textColor = TogedyTheme.colors.gray400,
+                onTextClick = onCategoryClick,
             )
         } else {
             Icon(
@@ -252,6 +288,7 @@ private fun ScheduleCategorySection(
                 text = category.categoryName.toString(),
                 textStyle = TogedyTheme.typography.chip14b,
                 textColor = category.categoryColor.toCategoryColorOrDefault(),
+                onTextClick = onCategoryClick,
             )
         }
     }
@@ -308,6 +345,29 @@ private fun ScheduleMemoSection(
                     .noRippleClickable(onMemoClick),
             )
         }
+    }
+}
+
+@Composable
+private fun DDaySection(
+    dDay: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        Text(
+            text = "디데이로 설정하기",
+            style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray500)
+        )
+
+        Spacer(Modifier.width(4.dp))
+
+        TogedyToggleButton(
+            isToggleOn = dDay,
+            onToggleClick = onClick,
+        )
     }
 }
 

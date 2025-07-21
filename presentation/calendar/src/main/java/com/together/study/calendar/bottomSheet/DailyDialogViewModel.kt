@@ -1,8 +1,10 @@
-package com.together.study.calendar.maincalendar
+package com.together.study.calendar.bottomSheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.calendar.model.Schedule
+import com.together.study.calendar.repository.UserScheduleRepository
+import com.together.study.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class DailyDialogViewModel @Inject constructor(
-
+    private val userScheduleRepository: UserScheduleRepository,
 ) : ViewModel() {
     private val _dailySchedules = MutableStateFlow<List<Schedule>>(emptyList())
     val dailySchedules = _dailySchedules.asStateFlow()
@@ -26,9 +28,12 @@ internal class DailyDialogViewModel @Inject constructor(
     }
 
     fun deleteSchedule(scheduleId: Long) = viewModelScope.launch {
-        _dailySchedules.update {
-            lastDailySchedules.filterNot { it.scheduleId == scheduleId }
-        }
-        // TODO: 추후 API 연결
+        userScheduleRepository.deleteUserSchedule(scheduleId)
+            .onSuccess {
+                _dailySchedules.update {
+                    lastDailySchedules.filterNot { it.scheduleId == scheduleId }
+                }
+            }
+            .onFailure { UiState.Failure(it.message.toString()) }
     }
 }
