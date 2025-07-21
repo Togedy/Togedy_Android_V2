@@ -1,6 +1,8 @@
 package com.together.study.calendar.di
 
 import com.together.study.calendar.service.CalendarService
+import com.together.study.calendar.service.CategoryService
+import com.together.study.calendar.service.UserScheduleService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
