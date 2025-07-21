@@ -89,7 +89,7 @@ internal fun ScheduleBottomSheet(
             ) {
                 ScheduleNameSection(
                     scheduleName = userScheduleName,
-                    categoryColor = "category.categoryColor".toCategoryColorOrDefault(),
+                    categoryColor = categoryValue?.categoryColor.toCategoryColorOrDefault(),
                     onNameChange = { viewModel.updateScheduleName(it) },
                 )
 
@@ -109,7 +109,7 @@ internal fun ScheduleBottomSheet(
                 Spacer(Modifier.height(24.dp))
 
                 ScheduleCategorySection(
-                    category = null,
+                    category = categoryValue,
                     onCategoryClick = {
                         viewModel.updateBottomSheetVisibility(
                             ScheduleSubBottomSheetType.CATEGORY

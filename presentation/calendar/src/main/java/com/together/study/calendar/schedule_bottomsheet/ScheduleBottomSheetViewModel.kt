@@ -43,7 +43,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
                         endDateValue = it.endDate.toLocalDate() ?: date,
                         endTimeValue = it.endTime,
                         memoValue = it.memo,
-                        categoryIdValue = it.categoryId,
+                        categoryValue = it.category,
                         dDayValue = it.dDay,
                     )
                     _uiState.update { it.copy(originalInfo = response, newInfo = response) }
@@ -72,7 +72,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
     }
 
     fun updateCategory(new: Category) {
-        _uiState.update { it.copy(newInfo = it.newInfo.copy(categoryIdValue = new.categoryId)) }
+        _uiState.update { it.copy(newInfo = it.newInfo.copy(categoryValue = new)) }
     }
 
     fun updateMemo(new: String?) {
@@ -88,7 +88,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
             it.copy(
                 isDoneActivated = _uiState.value.originalInfo != _uiState.value.newInfo
                         && _uiState.value.newInfo.userScheduleName.isNotEmpty()
-                        && _uiState.value.newInfo.categoryIdValue != null
+                        && _uiState.value.newInfo.categoryValue != null
             )
         }
     }
@@ -146,7 +146,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
                 endDate = endDateValue.toString(),
                 endTime = endTimeValue,
                 memo = memoValue,
-                categoryId = categoryIdValue!!,
+                category = categoryValue!!,
                 dDay = dDayValue,
             )
         }

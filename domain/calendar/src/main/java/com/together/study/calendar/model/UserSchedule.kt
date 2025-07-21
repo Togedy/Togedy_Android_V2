@@ -6,7 +6,7 @@ data class UserSchedule(
     val startTime: String? = null,
     val endDate: String? = null,
     val endTime: String? = null,
-    val categoryId: Long,
+    val category: Category,
     val memo: String? = null,
     val dDay: Boolean,
 )

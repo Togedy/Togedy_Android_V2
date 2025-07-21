@@ -11,7 +11,7 @@ fun UserSchedule.toData(): UserScheduleRequest =
         startTime = startTime,
         endDate = endDate,
         endTime = endTime,
-        categoryId = categoryId,
+        categoryId = category.categoryId!!,
         memo = memo,
         dDay = dDay,
     )
@@ -23,7 +23,7 @@ fun UserScheduleResponse.toDomain(): UserSchedule =
         startTime = startTime,
         endDate = endDate,
         endTime = endTime,
-        categoryId = categoryId,
+        category = category.toDomain(),
         memo = memo,
         dDay = dDay,
     )

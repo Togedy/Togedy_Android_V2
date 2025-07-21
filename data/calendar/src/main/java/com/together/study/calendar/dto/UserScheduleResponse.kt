@@ -10,7 +10,7 @@ data class UserScheduleResponse(
     @SerialName("startTime") val startTime: String? = null,
     @SerialName("endDate") val endDate: String? = null,
     @SerialName("endTime") val endTime: String? = null,
-    @SerialName("categoryId") val categoryId: Long,
+    @SerialName("category") val category: CategoryResponse,
     @SerialName("memo") val memo: String? = null,
     @SerialName("d-day") val dDay: Boolean,
 )
