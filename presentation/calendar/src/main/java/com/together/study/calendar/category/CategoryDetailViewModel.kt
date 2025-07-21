@@ -34,7 +34,6 @@ internal class CategoryDetailViewModel @Inject constructor(
 
     fun saveNewCategory(new: Category) = viewModelScope.launch {
         categoryRepository.postCategory(new.categoryName!!, new.categoryColor!!)
-            .onSuccess { Timber.tag("[okhttp] Category API - SUCCESS").d("$it") }
             .onFailure { Timber.tag("[okhttp] Category API - FAILURE").d("${it.message}") }
 
         val updatedList = lastedCategoryItems + new
@@ -43,7 +42,6 @@ internal class CategoryDetailViewModel @Inject constructor(
 
     fun updateCategory(new: Category) = viewModelScope.launch {
         categoryRepository.patchCategory(category = new)
-            .onSuccess { Timber.tag("[okhttp] Category API - SUCCESS").d("$it") }
             .onFailure { Timber.tag("[okhttp] Category API - FAILURE").d("${it.message}") }
 
         val updatedList = lastedCategoryItems.map { category ->
@@ -56,7 +54,6 @@ internal class CategoryDetailViewModel @Inject constructor(
 
     fun deleteCategory(categoryId: Long) = viewModelScope.launch {
         categoryRepository.deleteCategory(categoryId)
-            .onSuccess { Timber.tag("[okhttp] Category API - SUCCESS").d("$it") }
             .onFailure { Timber.tag("[okhttp] Category API - FAILURE").d("${it.message}") }
 
         val updatedList = lastedCategoryItems.filter { it.categoryId != categoryId }

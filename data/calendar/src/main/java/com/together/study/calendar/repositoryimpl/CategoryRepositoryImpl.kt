@@ -10,12 +10,9 @@ import javax.inject.Inject
 class CategoryRepositoryImpl @Inject constructor(
     private val categoryDataSource: CategoryDataSource,
 ) : CategoryRepository {
-    override suspend fun postCategory(
-        name: String,
-        color: String,
-    ): Result<Boolean> =
+    override suspend fun postCategory(name: String, color: String): Result<Unit> =
         runCatching {
-            categoryDataSource.postCategory(CategoryRequest(name, color)).response
+            categoryDataSource.postCategory(CategoryRequest(name, color))
         }
 
     override suspend fun getCategoryItems(): Result<List<Category>> =
@@ -24,18 +21,19 @@ class CategoryRepositoryImpl @Inject constructor(
             response.toDomain()
         }
 
-    override suspend fun patchCategory(category: Category): Result<Boolean> =
+    override suspend fun patchCategory(category: Category): Result<Unit> =
         runCatching {
             with(category) {
                 categoryDataSource.patchCategory(
                     categoryId = categoryId!!,
                     request = CategoryRequest(categoryName!!, categoryColor!!)
-                ).response
+                )
             }
         }
 
-    override suspend fun deleteCategory(categoryId: Long): Result<Boolean> =
+    override suspend fun deleteCategory(categoryId: Long): Result<Unit> =
         runCatching {
-            categoryDataSource.deleteCategory(categoryId).response
+            categoryDataSource.deleteCategory(categoryId)
         }
 }
+

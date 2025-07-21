@@ -99,7 +99,7 @@ internal fun ScheduleBottomSheet(
                     scheduleName = scheduleName,
                     startDate = startDateTime,
                     endDate = endDateTime,
-                    category = category,
+                    category = category!!,
                 )
             )
         },

@@ -3,6 +3,7 @@ package com.together.study.calendar.service
 import com.together.study.calendar.dto.CategoryRequest
 import com.together.study.calendar.dto.CategoryResponse
 import com.together.study.remote.model.BaseResponse
+import com.together.study.remote.model.EmptyDataResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -14,7 +15,7 @@ interface CategoryService {
     @POST("calendars/categories")
     suspend fun postCategory(
         @Body category: CategoryRequest,
-    ): BaseResponse<Boolean>
+    ): EmptyDataResponse
 
     @GET("calendars/categories")
     suspend fun getCategoryItems(): BaseResponse<List<CategoryResponse>>
@@ -23,10 +24,10 @@ interface CategoryService {
     suspend fun patchCategory(
         @Path("categoryId") categoryId: Long,
         @Body category: CategoryRequest,
-    ): BaseResponse<Boolean>
+    ): EmptyDataResponse
 
     @DELETE("calendars/categories/{categoryId}")
     suspend fun deleteCategory(
         @Path("categoryId") categoryId: Long,
-    ): BaseResponse<Boolean>
+    ): EmptyDataResponse
 }
