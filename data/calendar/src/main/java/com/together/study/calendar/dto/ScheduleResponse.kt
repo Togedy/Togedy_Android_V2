@@ -4,6 +4,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class MonthlyScheduleListResponse(
+    @SerialName("monthlyScheduleList") val monthlyScheduleList: List<ScheduleResponse>,
+)
+
+@Serializable
+data class DailyScheduleListResponse(
+    @SerialName("dailyScheduleList") val dailyScheduleList: List<ScheduleResponse>,
+)
+
+@Serializable
 data class ScheduleResponse(
     @SerialName("scheduleId") val scheduleId: Long? = null,
     @SerialName("scheduleType") val scheduleType: String,

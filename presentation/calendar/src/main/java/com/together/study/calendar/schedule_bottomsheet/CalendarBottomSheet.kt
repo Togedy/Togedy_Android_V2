@@ -1,4 +1,4 @@
-package com.together.study.calendar.bottomSheet
+package com.together.study.calendar.schedule_bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
