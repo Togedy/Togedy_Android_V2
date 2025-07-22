@@ -13,14 +13,16 @@ val RED30 = Color(0x4DFF6363)
 val BLUE = Color(0xFF677BFF)
 
 val WHITE = Color(0xFFFFFFFF)
-val GRAY50 = Color(0xFFF8F8FA) // bg
-val GRAY100 = Color(0xFFF8F8FA)
-val GRAY200 = Color(0xFFF2F3F5) //button-bg
+val GRAY50 = Color(0xFFF8F8FA)
+val GRAY100 = Color(0xFFF2F3F5)
+val GRAY200 = Color(0xFFEBEDF0) //button-bg
 val GRAY300 = Color(0xFFD5D9DF)
-val GRAY400 = Color(0xFFB4B8BF)
-val GRAY500 = Color(0xFF8E9197) //gray/picker_text
-val GRAY600 = Color(0xFF5D626B) //gray/button_text
-val GRAY700 = Color(0xFF4B525E) //gray/TEXT
+val GRAY400 = Color(0xFFC4C8CC)
+val GRAY500 = Color(0xFFA8AEB4) //gray/picker_text
+val GRAY600 = Color(0xFF5F6773) //gray/button_text
+val GRAY700 = Color(0xFF49505C) //gray/TEXT
+val GRAY800 = Color(0xFF393E47)
+val GRAY900 = Color(0xFF4B525E)
 val BLACK = Color(0xFF000000)
 
 @Stable
@@ -39,6 +41,8 @@ class TogedyColors(
     gray500: Color,
     gray600: Color,
     gray700: Color,
+    gray800: Color,
+    gray900: Color,
     black: Color,
 ) {
     var green by mutableStateOf(green)
@@ -69,6 +73,10 @@ class TogedyColors(
         private set
     var gray700 by mutableStateOf(gray700)
         private set
+    var gray800 by mutableStateOf(gray800)
+        private set
+    var gray900 by mutableStateOf(gray900)
+        private set
     var black by mutableStateOf(black)
         private set
 
@@ -87,6 +95,8 @@ class TogedyColors(
         gray500,
         gray600,
         gray700,
+        gray800,
+        gray900,
         black,
     )
 
@@ -97,6 +107,7 @@ class TogedyColors(
         red30 = other.red30
         blue = other.blue
         white = other.white
+        gray50 = other.gray50
         gray100 = other.gray100
         gray200 = other.gray200
         gray300 = other.gray300
@@ -104,6 +115,8 @@ class TogedyColors(
         gray500 = other.gray500
         gray600 = other.gray600
         gray700 = other.gray700
+        gray800 = other.gray800
+        gray900 = other.gray900
         black = other.black
     }
 }
@@ -123,6 +136,8 @@ fun TogedyLightColors(
     gray500: Color = GRAY500,
     gray600: Color = GRAY600,
     gray700: Color = GRAY700,
+    gray800: Color = GRAY800,
+    gray900: Color = GRAY900,
     black: Color = BLACK,
 ) = TogedyColors(
     green,
@@ -139,5 +154,7 @@ fun TogedyLightColors(
     gray500,
     gray600,
     gray700,
+    gray800,
+    gray900,
     black,
 )
