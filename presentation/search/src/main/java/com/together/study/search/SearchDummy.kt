@@ -1,124 +1,86 @@
 package com.together.study.search
 
-data class SearchScheduleData(
+data class SearchDummy(
+    val universityId: Int,
     val universityName: String,
-    val admissionType: String,
-    val admissionList: List<SearchAdmissionData>,
-    val isAdded: Boolean = false
+    val universityAdmissionType: String,
+    val universityAdmissionMethodCount: Int,
+    val addedAdmissionMethodList: List<String>
 )
 
-data class SearchAdmissionData(
-    val admissionMethod: String,
-    val universityScheduleList: List<SearchUniversityData>
-)
-
-
-data class SearchUniversityData(
-    val universityScheduleId: Int,
-    val startDate: String,
-    val endDate: String,
-    val admissionStage: String
-)
-
-fun dummyScheduleList(): List<SearchScheduleData> {
+// 더미 데이터 생성 함수
+fun dummyScheduleList(): List<SearchDummy> {
     return listOf(
-        SearchScheduleData(
+        SearchDummy(
+            universityId = 1,
             universityName = "건국대학교(서울캠퍼스)",
-            admissionType = "수시",
-            isAdded = true,
-            admissionList = listOf(
-                SearchAdmissionData(
-                    admissionMethod = "학생부 종합 전형",
-                    universityScheduleList = listOf(
-                        SearchUniversityData(1, "2024-09-09 10:00:00", "2024-09-12 17:00:00", "원서접수"),
-                        SearchUniversityData(2, "2024-09-12 17:00:00", "2024-09-12 17:00:00", "서류제출"),
-                        SearchUniversityData(3, "2024-09-01", "2024-09-15", "합격발표")
-                    )
-                ),
-                SearchAdmissionData(
-                    admissionMethod = "학생부 교과 전형",
-                    universityScheduleList = listOf(
-                        SearchUniversityData(4, "2024-09-01", "2024-09-10", "원서접수"),
-                        SearchUniversityData(5, "2024-09-10", "2024-09-15", "서류제출"),
-                        SearchUniversityData(6, "2024-09-20", "2024-09-25", "합격발표")
-                    )
-                )
-            )
+            universityAdmissionType = "수시",
+            universityAdmissionMethodCount = 4,
+            addedAdmissionMethodList = listOf("학생부종합전형", "학생부교과전형")
         ),
-        SearchScheduleData(
+        SearchDummy(
+            universityId = 2,
+            universityName = "건국대학교(서울캠퍼스)",
+            universityAdmissionType = "수시",
+            universityAdmissionMethodCount = 4,
+            addedAdmissionMethodList = emptyList()
+        ),
+        SearchDummy(
+            universityId = 3,
             universityName = "서울대학교(서울캠퍼스)",
-            admissionType = "정시",
-            isAdded = false,
-            admissionList = listOf(
-                SearchAdmissionData(
-                    admissionMethod = "정시 일반 전형",
-                    universityScheduleList = listOf(
-                        SearchUniversityData(7, "2024-10-01", "2024-10-05", "원서접수"),
-                        SearchUniversityData(8, "2024-10-06", "2024-10-10", "서류제출"),
-                        SearchUniversityData(9, "2024-10-15", "2024-10-20", "합격발표")
-                    )
-                )
-            )
+            universityAdmissionType = "정시",
+            universityAdmissionMethodCount = 3,
+            addedAdmissionMethodList = listOf("정시 일반 전형")
         ),
-        SearchScheduleData(
+        SearchDummy(
+            universityId = 4,
             universityName = "고려대학교(서울캠퍼스)",
-            admissionType = "정시",
-            isAdded = true,
-            admissionList = listOf(
-                SearchAdmissionData(
-                    admissionMethod = "정시 일반 전형",
-                    universityScheduleList = listOf(
-                        SearchUniversityData(10, "2024-09-01", "2024-09-05", "원서접수"),
-                        SearchUniversityData(11, "2024-09-06", "2024-09-10", "서류제출"),
-                        SearchUniversityData(12, "2024-09-15", "2024-09-20", "합격발표")
-                    )
-                )
-            )
+            universityAdmissionType = "정시",
+            universityAdmissionMethodCount = 2,
+            addedAdmissionMethodList = emptyList()
         ),
-        SearchScheduleData(
+        // Additional dummy data
+        SearchDummy(
+            universityId = 5,
             universityName = "연세대학교(서울캠퍼스)",
-            admissionType = "정시",
-            isAdded = false,
-            admissionList = listOf(
-                SearchAdmissionData(
-                    admissionMethod = "정시 일반 전형",
-                    universityScheduleList = listOf(
-                        SearchUniversityData(13, "2024-09-01", "2024-09-05", "원서접수"),
-                        SearchUniversityData(14, "2024-09-06", "2024-09-10", "서류제출"),
-                        SearchUniversityData(15, "2024-09-15", "2024-09-20", "합격발표")
-                    )
-                )
-            )
+            universityAdmissionType = "정시",
+            universityAdmissionMethodCount = 3,
+            addedAdmissionMethodList = listOf("정시 일반 전형")
         ),
-        SearchScheduleData(
+        SearchDummy(
+            universityId = 6,
+            universityName = "한양대학교(서울캠퍼스)",
+            universityAdmissionType = "수시",
+            universityAdmissionMethodCount = 2,
+            addedAdmissionMethodList = listOf("정보콘텐츠학과 전형", "글로벌융합공학부 전형")
+        ),
+        SearchDummy(
+            universityId = 7,
+            universityName = "성균관대학교(서울캠퍼스)",
+            universityAdmissionType = "수시",
+            universityAdmissionMethodCount = 4,
+            addedAdmissionMethodList = listOf("대학입학전형", "일반전형")
+        ),
+        SearchDummy(
+            universityId = 8,
             universityName = "중앙대학교(서울캠퍼스)",
-            admissionType = "정시",
-            isAdded = true,
-            admissionList = listOf(
-                SearchAdmissionData(
-                    admissionMethod = "정시 일반 전형",
-                    universityScheduleList = listOf(
-                        SearchUniversityData(16, "2024-09-01", "2024-09-05", "원서접수"),
-                        SearchUniversityData(17, "2024-09-06", "2024-09-10", "서류제출"),
-                        SearchUniversityData(18, "2024-09-15", "2024-09-20", "합격발표")
-                    )
-                )
-            )
+            universityAdmissionType = "정시",
+            universityAdmissionMethodCount = 3,
+            addedAdmissionMethodList = listOf("정시 일반 전형")
         ),
-        SearchScheduleData(
+        SearchDummy(
+            universityId = 9,
             universityName = "경희대학교(서울캠퍼스)",
-            admissionType = "정시",
-            isAdded = false,
-            admissionList = listOf(
-                SearchAdmissionData(
-                    admissionMethod = "정시 일반 전형",
-                    universityScheduleList = listOf(
-                        SearchUniversityData(19, "2024-09-01", "2024-09-05", "원서접수"),
-                        SearchUniversityData(20, "2024-09-06", "2024-09-10", "서류제출"),
-                        SearchUniversityData(21, "2024-09-15", "2024-09-20", "합격발표")
-                    )
-                )
-            )
+            universityAdmissionType = "정시",
+            universityAdmissionMethodCount = 2,
+            addedAdmissionMethodList = listOf("정시 일반 전형")
+        ),
+        SearchDummy(
+            universityId = 10,
+            universityName = "한국외국어대학교(서울캠퍼스)",
+            universityAdmissionType = "정시",
+            universityAdmissionMethodCount = 2,
+            addedAdmissionMethodList = emptyList()
         )
     )
 }
