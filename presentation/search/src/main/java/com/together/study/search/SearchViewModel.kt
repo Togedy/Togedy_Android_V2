@@ -16,8 +16,8 @@ class SearchViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    private val _filteredList = MutableStateFlow<List<SearchScheduleData>>(emptyList())
-    val filteredList: StateFlow<List<SearchScheduleData>> = _filteredList
+    private val _filteredList = MutableStateFlow<List<SearchDummy>>(emptyList())
+    val filteredList: StateFlow<List<SearchDummy>> = _filteredList
 
     private val _admissionType = MutableStateFlow(AdmissionType.ALL)
     val admissionType: StateFlow<AdmissionType> = _admissionType
@@ -26,7 +26,8 @@ class SearchViewModel : ViewModel() {
 
     init {
         // 초기 데이터 로드
-        _filteredList.value = allList.sortedByDescending { it.isAdded }
+        _filteredList.value =
+            allList.sortedByDescending { it.addedAdmissionMethodList.isNotEmpty() }
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -38,27 +39,10 @@ class SearchViewModel : ViewModel() {
                 .filter {
                     it.universityName.contains(query, ignoreCase = true)
                 }
-                .sortedByDescending { it.isAdded }
+                .sortedByDescending { it.addedAdmissionMethodList.isNotEmpty() }
         }
     }
 
-    fun toggleScheduleStatus(data: SearchScheduleData) {
-        val currentList = _filteredList.value.toMutableList()
-        val index = currentList.indexOfFirst { it.universityName == data.universityName }
-
-        if (index != -1) {
-            val updatedData = data.copy(isAdded = !data.isAdded)
-            currentList[index] = updatedData
-
-            // allList도 업데이트
-            val allListIndex = allList.indexOfFirst { it.universityName == data.universityName }
-            if (allListIndex != -1) {
-                allList[allListIndex] = updatedData
-            }
-
-            _filteredList.value = currentList.sortedByDescending { it.isAdded }
-        }
-    }
 
     fun onAdmissionTypeChanged(type: AdmissionType) {
         _admissionType.value = type
