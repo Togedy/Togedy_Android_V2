@@ -76,9 +76,14 @@ internal class CalendarViewModel @Inject constructor(
     }
 
     fun getSchedule() = viewModelScope.launch {
-        calendarRepository.getMonthlySchedule(month = "2025-01")
-            .onSuccess { _scheduleState.value = UiState.Success(it) }
-            .onFailure { _scheduleState.value = UiState.Failure(it.message.toString()) }
+        calendarRepository.getMonthlySchedule(month = "2025-07")
+            .onSuccess {
+                _scheduleState.value = UiState.Success(it)
+            }
+            .onFailure {
+                _scheduleState.value = UiState.Failure(it.message.toString())
+                Timber.tag(TAG).d("getSchedule: ${it.message.toString()}")
+            }
     }
 
     fun updateCurrentDate(newDate: LocalDate) {

@@ -43,8 +43,8 @@ fun MonthlyScheduleItem(
         } else {
             UnivSchedule(
                 scheduleName = scheduleName,
-                universityAdmissionType = universityAdmissionType,
                 universityAdmissionStage = universityAdmissionStage,
+                universityAdmissionMethod = universityAdmissionMethod,
                 isStartOfMultiWeek = isStartOfMultiWeek,
                 modifier = modifier,
             )
@@ -94,8 +94,8 @@ private fun UserSchedule(
 @Composable
 private fun UnivSchedule(
     scheduleName: String,
-    universityAdmissionType: String,
     universityAdmissionStage: String,
+    universityAdmissionMethod: String,
     isStartOfMultiWeek: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -128,12 +128,21 @@ private fun UnivSchedule(
         Spacer(Modifier.width(2.dp))
 
         Text(
-            text = stringResource(
-                university_schedule_name,
-                scheduleName,
-                universityAdmissionStage,
-                universityAdmissionType
-            ),
+            text = if (universityAdmissionMethod != "") {
+                stringResource(
+                    university_schedule_name,
+                    scheduleName,
+                    universityAdmissionStage,
+                    universityAdmissionMethod,
+                )
+            } else {
+                stringResource(
+                    university_schedule_name,
+                    scheduleName,
+                    universityAdmissionStage,
+                    ""
+                )
+            },
             style = TogedyTheme.typography.body10m.copy(universityScheduleColor),
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
