@@ -57,24 +57,64 @@ class TogedyColors(
         private set
     var white by mutableStateOf(white)
         private set
+
+    /**
+     * @param gray50  BG
+     */
     var gray50 by mutableStateOf(gray50)
         private set
+
+    /**
+     * @param gray100  Card_BG
+     */
     var gray100 by mutableStateOf(gray100)
         private set
+
+    /**
+     * @param gray200  Btn_BG
+     */
     var gray200 by mutableStateOf(gray200)
         private set
+
+    /**
+     * @param gray300  Icon_Disabled
+     */
     var gray300 by mutableStateOf(gray300)
         private set
+
+    /**
+     * @param gray400  Text_Disabled
+     */
     var gray400 by mutableStateOf(gray400)
         private set
+
+    /**
+     * @param gray500  Text_Sub
+     */
     var gray500 by mutableStateOf(gray500)
         private set
+
+    /**
+     * @param gray600  Text_Chip
+     */
     var gray600 by mutableStateOf(gray600)
         private set
+
+    /**
+     * @param gray700  Text_Body
+     */
     var gray700 by mutableStateOf(gray700)
         private set
+
+    /**
+     * @param gray800  Text_Default / Icon_Default
+     */
     var gray800 by mutableStateOf(gray800)
         private set
+
+    /**
+     * @param gray900  Text_Title
+     */
     var gray900 by mutableStateOf(gray900)
         private set
     var black by mutableStateOf(black)
