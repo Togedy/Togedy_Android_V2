@@ -3,7 +3,7 @@ package com.together.study.calendar.service
 import com.together.study.calendar.dto.AnnouncementResponse
 import com.together.study.calendar.dto.DDayResponse
 import com.together.study.calendar.dto.DailyScheduleListResponse
-import com.together.study.calendar.dto.MonthlyScheduleListResponse
+import com.together.study.calendar.dto.ScheduleListResponse
 import com.together.study.remote.model.BaseResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -12,7 +12,7 @@ interface CalendarService {
     @GET("calendars/monthly")
     suspend fun getMonthlySchedule(
         @Query("month") month: String,
-    ): BaseResponse<MonthlyScheduleListResponse>
+    ): BaseResponse<ScheduleListResponse>
 
     @GET("calendars/daily")
     suspend fun getDailySchedule(

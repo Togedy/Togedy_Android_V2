@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MonthlyScheduleListResponse(
+data class ScheduleListResponse(
     @SerialName("monthlyScheduleList") val monthlyScheduleList: List<ScheduleResponse>,
 )
 
@@ -22,7 +22,8 @@ data class ScheduleResponse(
     @SerialName("startTime") val startTime: String? = null,
     @SerialName("endTime") val endTime: String? = null,
     @SerialName("endDate") val endDate: String? = null,
-    @SerialName("universityAdmissionType") val universityAdmissionType: String = "",
-    @SerialName("universityAdmissionStage") val universityAdmissionStage: String = "",
+    @SerialName("universityAdmissionType") val universityAdmissionType: String? = null,
+    @SerialName("universityAdmissionStage") val universityAdmissionStage: String? = null,
+    @SerialName("universityAdmissionMethod") val universityAdmissionMethod: String? = null,
     @SerialName("category") val category: CategoryResponse,
 )

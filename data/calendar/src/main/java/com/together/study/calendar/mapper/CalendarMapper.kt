@@ -3,19 +3,19 @@ package com.together.study.calendar.mapper
 import com.together.study.calendar.dto.AnnouncementResponse
 import com.together.study.calendar.dto.DDayResponse
 import com.together.study.calendar.dto.DailyScheduleListResponse
-import com.together.study.calendar.dto.MonthlyScheduleListResponse
+import com.together.study.calendar.dto.ScheduleListResponse
 import com.together.study.calendar.dto.ScheduleResponse
 import com.together.study.calendar.model.Announcement
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 
-fun MonthlyScheduleListResponse.toDomain(): List<Schedule> =
-    this.monthlyScheduleList.map { it.toSchedule() }
+fun ScheduleListResponse.toDomain(): List<Schedule> =
+    monthlyScheduleList.map { it.toSchedule() }
 
 fun DailyScheduleListResponse.toDomain(): List<Schedule> =
-    this.dailyScheduleList.map { it.toSchedule() }
+    dailyScheduleList.map { it.toSchedule() }
 
-fun ScheduleResponse.toSchedule() =
+fun ScheduleResponse.toSchedule(): Schedule =
     Schedule(
         scheduleId = scheduleId,
         scheduleType = scheduleType,
@@ -24,8 +24,9 @@ fun ScheduleResponse.toSchedule() =
         startTime = startTime,
         endTime = endTime,
         endDate = endDate,
-        universityAdmissionType = universityAdmissionType,
-        universityAdmissionStage = universityAdmissionStage,
+        universityAdmissionType = universityAdmissionType ?: "",
+        universityAdmissionStage = universityAdmissionStage ?: "",
+        universityAdmissionMethod = universityAdmissionMethod ?: "",
         category = category.toDomain(),
     )
 

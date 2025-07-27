@@ -177,7 +177,7 @@ fun WeekSchedulePreview(modifier: Modifier = Modifier) {
         Column {
             WeekSchedule(
                 weekDates = weekDates,
-                schedules = Schedule.mock,
+                schedules = emptyList(),
                 currentMonth = Month.JUNE,
                 onDateClick = { },
                 modifier = modifier

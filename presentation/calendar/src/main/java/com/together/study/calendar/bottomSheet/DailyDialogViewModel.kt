@@ -24,7 +24,7 @@ internal class DailyDialogViewModel @Inject constructor(
 
     fun fetchDailySchedules(date: LocalDate) = viewModelScope.launch {
         // TODO: 추후 API 연결
-        lastDailySchedules = Schedule.mock
+        lastDailySchedules = emptyList()
     }
 
     fun deleteSchedule(scheduleId: Long) = viewModelScope.launch {
