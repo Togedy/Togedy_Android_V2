@@ -9,7 +9,7 @@ data class SearchDummy(
 )
 
 // 더미 데이터 생성 함수
-fun dummyScheduleList(): List<SearchDummy> {
+fun dummySearchList(): List<SearchDummy> {
     return listOf(
         SearchDummy(
             universityId = 1,
