@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
 
-    private val allList = dummyScheduleList().toMutableList()
+    private val allList = dummySearchList().toMutableList()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
@@ -26,8 +26,7 @@ class SearchViewModel : ViewModel() {
 
     init {
         // 초기 데이터 로드
-        _filteredList.value =
-            allList.sortedByDescending { it.addedAdmissionMethodList.isNotEmpty() }
+        updateFilteredList()
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -35,16 +34,35 @@ class SearchViewModel : ViewModel() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(300)
-            _filteredList.value = allList
-                .filter {
-                    it.universityName.contains(query, ignoreCase = true)
-                }
-                .sortedByDescending { it.addedAdmissionMethodList.isNotEmpty() }
+            updateFilteredList()
         }
     }
 
-
     fun onAdmissionTypeChanged(type: AdmissionType) {
         _admissionType.value = type
+        updateFilteredList()
+    }
+
+    private fun updateFilteredList() {
+        val query = _searchQuery.value
+        val type = _admissionType.value
+        
+        _filteredList.value = allList
+            .filter { searchDummy ->
+                // 검색어 필터링
+                val filteredQuery = query.isEmpty() ||
+                    searchDummy.universityName.contains(query, ignoreCase = true)
+                
+                // 입학 전형 타입 필터링
+                val filteredAdmissionType = when (type) {
+                    AdmissionType.ALL -> true
+                    AdmissionType.EARLY -> searchDummy.universityAdmissionType == "수시"
+                    AdmissionType.REGULAR -> searchDummy.universityAdmissionType == "정시"
+                }
+
+                // 검색어, 전형 일치하는 값 반환
+                filteredQuery && filteredAdmissionType
+            }
+            .sortedByDescending { it.addedAdmissionMethodList.isNotEmpty() }
     }
 }

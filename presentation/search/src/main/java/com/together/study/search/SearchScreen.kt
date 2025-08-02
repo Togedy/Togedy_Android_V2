@@ -1,19 +1,28 @@
 package com.together.study.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,6 +39,7 @@ import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.search.component.SearchSelectorAdmissionType
 import com.together.study.search.component.SearchSelectorChip
+import com.together.study.search.component.SearchSelectorChipHeader
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 
@@ -124,109 +134,109 @@ fun SearchScreen(
                 onCloseBottomSheet()
             }
         ) {
-//            BottomSheetContent(
-//                data = selectedData
-//            )
-
+            selectedData?.let { data ->
+                SearchSelectorChipHeader(
+                    admissionType = data.universityAdmissionType,
+                    universityName = data.universityName,
+                    isAdded = data.addedAdmissionMethodList.isNotEmpty()
+                )
+                BottomSheetContent(
+                    data = selectedData
+                )
+            }
         }
     }
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun BottomSheetContent(
-//    data: SearchDummy?,
-//    onclickScheduleAdd: (Int) -> Unit = {}
-//) {
-//    if (data == null) return
-//
-//    val admissionList = data.admissionList
-//    var selectedIndex by remember { mutableIntStateOf(0) }
-//    val selectedAdmission = admissionList.getOrNull(selectedIndex)
-//
-//    var isExpanded by remember { mutableStateOf(false) }
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 16.dp)
-//    ) {
-//        SearchSelectorHeader(
-//            admissionType = data.admissionType,
-//            universityName = data.universityName,
-//            isAdded = data.isAdded,
-//            onClickScheduleAdd = { onclickScheduleAdd(selectedIndex) }
-//        )
-//
-//        ExposedDropdownMenuBox(
-//            expanded = isExpanded,
-//            onExpandedChange = { isExpanded = !isExpanded }
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .menuAnchor()
-//                    .fillMaxWidth()
-//                    .padding(top = 12.dp)
-//                    .noRippleClickable {
-//                        isExpanded = true
-//                    }
-//                    .border(
-//                        width = 1.dp,
-//                        color = TogedyTheme.colors.gray300,
-//                        shape = RoundedCornerShape(8.dp)
-//                    )
-//            ) {
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(vertical = 8.dp, horizontal = 10.dp),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Text(
-//                        text = selectedAdmission?.admissionMethod ?: "전형 선택",
-//                        style = TogedyTheme.typography.body14m.copy(
-//                            color = TogedyTheme.colors.gray300
-//                        ),
-//                        modifier = Modifier.weight(1f)
-//                    )
-//
-//                    Icon(
-//                        painter = painterResource(R.drawable.ic_drop_down_24),
-//                        contentDescription = "드롭다운 이미지"
-//                    )
-//                }
-//            }
-//
-//            ExposedDropdownMenu(
-//                expanded = isExpanded,
-//                onDismissRequest = {
-//                    isExpanded = false
-//                },
-//                containerColor = TogedyTheme.colors.white,
-//                shadowElevation = 1.dp
-//
-//            ) {
-//                admissionList.forEachIndexed { index, admission ->
-//                    DropdownMenuItem(
-//                        text = {
-//                            Text(
-//                                text = admission.admissionMethod,
-//                                style = TogedyTheme.typography.toast12sb.copy(
-//                                    TogedyTheme.colors.gray600
-//                                )
-//                            )
-//                        },
-//                        onClick = {
-//                            selectedIndex = index
-//                            isExpanded = false
-//                        },
-//                    )
-//                }
-//            }
-//        }
-//
-//        Spacer(modifier = Modifier.height(12.dp))
-//
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheetContent(
+    data: SearchDummy?,
+    onclickScheduleAdd: (Int) -> Unit = {}
+) {
+    if (data == null) return
+
+    val admissionList = data.addedAdmissionMethodList
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val selectedAdmission = admissionList.getOrNull(selectedIndex)
+
+    var isExpanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+
+        ExposedDropdownMenuBox(
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = !isExpanded }
+        ) {
+            Box(
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .noRippleClickable {
+                        isExpanded = true
+                    }
+                    .border(
+                        width = 1.dp,
+                        color = TogedyTheme.colors.gray300,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text ="전형 선택",
+                        style = TogedyTheme.typography.body14m.copy(
+                            color = TogedyTheme.colors.gray300
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    Icon(
+                        painter = painterResource(R.drawable.ic_drop_down_24),
+                        contentDescription = "드롭다운 이미지"
+                    )
+                }
+            }
+
+            ExposedDropdownMenu(
+                expanded = isExpanded,
+                onDismissRequest = {
+                    isExpanded = false
+                },
+                containerColor = TogedyTheme.colors.white,
+                shadowElevation = 1.dp
+
+            ) {
+                admissionList.forEachIndexed { index, admission ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = admission,
+                                style = TogedyTheme.typography.toast12sb.copy(
+                                    TogedyTheme.colors.gray600
+                                )
+                            )
+                        },
+                        onClick = {
+                            selectedIndex = index
+                            isExpanded = false
+                        },
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
 //        LazyColumn(
 //            modifier = Modifier
 //                .fillMaxWidth()
@@ -251,5 +261,5 @@ fun SearchScreen(
 //                }
 //            }
 //        }
-//    }
-//}
+    }
+}

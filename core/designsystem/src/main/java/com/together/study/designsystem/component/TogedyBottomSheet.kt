@@ -31,6 +31,7 @@ fun TogedyBottomSheet(
     isDoneActivate: Boolean = true,
     onDoneClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    searchContent: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
@@ -51,6 +52,7 @@ fun TogedyBottomSheet(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
+                searchContent()
                 Text(
                     text = title,
                     modifier = Modifier.align(
