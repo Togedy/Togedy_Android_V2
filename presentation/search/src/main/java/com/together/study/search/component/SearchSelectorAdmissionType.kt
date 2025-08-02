@@ -32,7 +32,7 @@ fun SearchSelectorAdmissionType(
                 color = TogedyTheme.colors.gray100,
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(vertical = 4.dp, horizontal = 6.dp),
+            .padding(vertical = 5.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
@@ -42,7 +42,7 @@ fun SearchSelectorAdmissionType(
                 modifier = Modifier
                     .weight(1f)
                     .shadow(
-                        elevation = if (isSelected) 4.dp else 0.dp,
+                        elevation = if (isSelected) 2.dp else 0.dp,
                         shape = RoundedCornerShape(8.dp),
                     )
                     .background(
