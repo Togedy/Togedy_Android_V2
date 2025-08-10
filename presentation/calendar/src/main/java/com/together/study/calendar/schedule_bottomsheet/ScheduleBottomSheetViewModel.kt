@@ -32,8 +32,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
     val bottomSheetState: StateFlow<ScheduleSubBottomSheetState> = _bottomSheetState.asStateFlow()
 
 
-    fun getUserSchedule(scheduleId: Long, date: LocalDate) =
-        viewModelScope.launch {
+    fun getUserSchedule(scheduleId: Long, date: LocalDate) = viewModelScope.launch {
             userScheduleRepository.getUserSchedule(scheduleId)
                 .onSuccess { it ->
                     val response = UserScheduleInfo(

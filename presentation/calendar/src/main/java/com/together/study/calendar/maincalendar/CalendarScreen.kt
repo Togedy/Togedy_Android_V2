@@ -65,6 +65,7 @@ internal fun CalendarRoute(
 ) {
     val uiState by calendarViewModel.calendarUiState.collectAsStateWithLifecycle()
     val currentDate by calendarViewModel.currentDate.collectAsStateWithLifecycle()
+    val currentDialogDate by calendarViewModel.currentDialogDate.collectAsStateWithLifecycle()
 
     LaunchedEffect(currentDate) {
         calendarViewModel.getCalendarInfo()
@@ -72,7 +73,8 @@ internal fun CalendarRoute(
 
     CalendarScreen(
         uiState = uiState,
-        currentDate = calendarViewModel.currentDate.value,
+        currentDate = currentDate,
+        currentDialogDate = currentDialogDate,
         onSearchBoxClick = onSearchBoxClick,
         onDateClick = calendarViewModel::updateDailyDialog,
         onAddBtnClick = {},
@@ -87,6 +89,7 @@ internal fun CalendarRoute(
 private fun CalendarScreen(
     uiState: CalendarUiState,
     currentDate: LocalDate,
+    currentDialogDate: LocalDate,
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
     onAddBtnClick: (UserSchedule) -> Unit,
@@ -109,6 +112,7 @@ private fun CalendarScreen(
             with(uiState) {
                 CalendarSuccessScreen(
                     notice = (uiState.noticeState as UiState.Success<String>).data,
+                    currentDialogDate = currentDialogDate,
                     date = currentDate,
                     dDay = (uiState.dDayState as UiState.Success<DDay>).data,
                     schedules = (uiState.scheduleState as UiState.Success<List<Schedule>>).data,
@@ -130,6 +134,7 @@ private fun CalendarScreen(
 @Composable
 private fun CalendarSuccessScreen(
     notice: String,
+    currentDialogDate: LocalDate,
     date: LocalDate,
     dDay: DDay,
     schedules: List<Schedule>,
@@ -202,7 +207,7 @@ private fun CalendarSuccessScreen(
 
     if (isDailyDialogVisible) {
         DailyScheduleDialog(
-            date = date,
+            date = currentDialogDate,
             dDay = null,
             onDismissRequest = { isDailyDialogVisible = false },
             onScheduleItemClick = { scheduleType, id ->
@@ -226,6 +231,7 @@ private fun CalendarSuccessScreen(
                 selectedScheduleId = null
             },
             scheduleId = selectedScheduleId,
+            startDate = currentDialogDate,
             onEditCategoryClick = onCategoryDetailNavigate,
         )
     }
@@ -328,6 +334,7 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         CalendarSuccessScreen(
             notice = "알림을 알립니다!",
+            currentDialogDate = LocalDate.now(),
             date = LocalDate.now(),
             dDay = DDay.mock,
             schedules = emptyList(),

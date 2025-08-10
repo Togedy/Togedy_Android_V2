@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -30,6 +29,8 @@ internal class CalendarViewModel @Inject constructor(
 ) : ViewModel() {
     private val _currentDate = MutableStateFlow(LocalDate.now())
     val currentDate = _currentDate.asStateFlow()
+    private val _currentDialogDate = MutableStateFlow(LocalDate.now())
+    val currentDialogDate = _currentDialogDate.asStateFlow()
 
     private val _noticeState = MutableStateFlow<UiState<String?>>(UiState.Loading)
     private val _dDayState = MutableStateFlow<UiState<DDay>>(UiState.Loading)
@@ -100,8 +101,7 @@ internal class CalendarViewModel @Inject constructor(
 //            .onFailure { UiState.Failure(it.message.toString()) }
 //    }
 
-    fun updateDailyDialog(date: LocalDate) {
-        // TODO: 일별 상세 다이얼로그 open
-        Timber.tag("chrin").d("$date 클릭됨")
+    fun updateDailyDialog(selectedDate: LocalDate) {
+        _currentDialogDate.update { selectedDate }
     }
 }

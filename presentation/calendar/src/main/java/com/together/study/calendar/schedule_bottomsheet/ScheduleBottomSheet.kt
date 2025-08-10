@@ -22,9 +22,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,7 +39,6 @@ import com.together.study.calendar.model.Category
 import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
 import com.together.study.calendar.type.toCategoryColorOrDefault
-import com.together.study.common.ScheduleType
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.theme.TogedyTheme
@@ -55,10 +51,10 @@ import java.time.LocalDate
 @Composable
 internal fun ScheduleBottomSheet(
     onDismissRequest: () -> Unit,
+    startDate: LocalDate,
     onDoneClick: (UserSchedule) -> Unit,
-    scheduleId: Long? = null,
-    startDate: LocalDate = LocalDate.now(),
     onEditCategoryClick: () -> Unit,
+    scheduleId: Long? = null,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier,
     viewModel: ScheduleBottomSheetViewModel = hiltViewModel(),
@@ -69,6 +65,7 @@ internal fun ScheduleBottomSheet(
 
     LaunchedEffect(Unit) {
         if (scheduleId != null) viewModel.getUserSchedule(scheduleId, startDate)
+        viewModel.updateStartDate(startDate)
         sheetState.expand()
     }
 
@@ -380,6 +377,7 @@ private fun ScheduleBottomSheetPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         ScheduleBottomSheet(
             scheduleId = null,
+            startDate = LocalDate.now(),
             sheetState = sheetState,
             onDismissRequest = {},
             onDoneClick = {},
