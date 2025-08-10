@@ -49,6 +49,7 @@ fun SearchSelectorChip(
             SearchSelectorChipHeader(
                 admissionType = data.universityAdmissionType,
                 universityName = data.universityName,
+                isSearchDetail = false,
                 isAdded = isAdded
             )
 

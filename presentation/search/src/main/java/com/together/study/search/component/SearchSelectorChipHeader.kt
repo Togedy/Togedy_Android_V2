@@ -18,9 +18,12 @@ fun SearchSelectorChipHeader(
     admissionType: String,
     universityName: String,
     isAdded: Boolean,
+    isSearchDetail: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val univTextColor = if (isAdded) TogedyTheme.colors.green else TogedyTheme.colors.gray900
+    val univTextColor = if (isSearchDetail) TogedyTheme.colors.black else {
+        if (isAdded) TogedyTheme.colors.green else TogedyTheme.colors.gray900
+    }
     val typeTextColor =
         if (admissionType == "수시") TogedyTheme.colors.gray800 else TogedyTheme.colors.white
     val typeBackColor =
