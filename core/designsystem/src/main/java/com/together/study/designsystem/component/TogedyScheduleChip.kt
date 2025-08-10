@@ -28,8 +28,8 @@ fun TogedyScheduleChip(
     typeStatus: Int,
     scheduleName: String,
     scheduleType: String,
-    scheduleEndTime: String,
-    scheduleStartTime: String? = null,
+    scheduleStartTime: String,
+    scheduleEndTime: String? = null
 ) {
     Row(
         modifier = Modifier
@@ -101,10 +101,10 @@ fun TogedyScheduleChip(
                 )
 
                 Text(
-                    text = if (scheduleStartTime != null) {
+                    text = if (scheduleEndTime != null) {
                         "$scheduleStartTime - $scheduleEndTime"
                     } else {
-                        scheduleEndTime
+                        scheduleStartTime
                     },
                     style = TogedyTheme.typography.body12m.copy(
                         TogedyTheme.colors.gray500
