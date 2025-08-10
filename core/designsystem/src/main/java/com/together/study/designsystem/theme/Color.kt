@@ -71,7 +71,7 @@ class TogedyColors(
         private set
 
     /**
-     * @param gray200  Btn_BG
+     * @param gray200  Btn_BG, Divider Default
      */
     var gray200 by mutableStateOf(gray200)
         private set
