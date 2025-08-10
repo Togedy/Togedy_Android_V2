@@ -1,26 +1,23 @@
 package com.together.study.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,12 +28,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.together.study.designsystem.R
 import com.together.study.designsystem.component.TogedyBottomSheet
+import com.together.study.designsystem.component.TogedyScheduleChip
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.search.component.SearchDetailAdmissionAdd
+import com.together.study.search.component.SearchDetailAdmissionSelector
+import com.together.study.search.component.SearchDetailMyAdded
 import com.together.study.search.component.SearchSelectorAdmissionType
 import com.together.study.search.component.SearchSelectorChip
 import com.together.study.search.component.SearchSelectorChipHeader
@@ -57,8 +61,10 @@ fun SearchScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var selectedData by remember { mutableStateOf<SearchDummy?>(null) }
+    var selectedUniversityId by remember { mutableStateOf<Int?>(null) }
     var isSheetVisible by remember { mutableStateOf(false) }
+
+    val sheetViewModelStore = remember { ViewModelStore() }
 
     val onCloseBottomSheet: () -> Unit = {
         coroutineScope.launch {
@@ -67,7 +73,8 @@ fun SearchScreen(
         }
     }
 
-    val onOpenBottomSheet: () -> Unit = {
+    val onOpenBottomSheet: (Int) -> Unit = { universityId ->
+        selectedUniversityId = universityId
         coroutineScope.launch {
             isSheetVisible = true
             sheetState.show()
@@ -114,8 +121,7 @@ fun SearchScreen(
                 SearchSelectorChip(
                     data = data,
                     onSelectorClicked = {
-                        selectedData = data
-                        onOpenBottomSheet()
+                        onOpenBottomSheet(data.universityId)
                     }
                 )
             }
@@ -123,143 +129,138 @@ fun SearchScreen(
     }
 
     if (isSheetVisible) {
-        TogedyBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = {
-                onCloseBottomSheet()
-            },
-            title = "대학일정",
-            showDone = false,
-            onDoneClick = {
-                onCloseBottomSheet()
+        // 바텀 시트 스코프에 따라 뷰모델 생성 파괴
+        CompositionLocalProvider(
+            LocalViewModelStoreOwner provides object : ViewModelStoreOwner {
+                override val viewModelStore: ViewModelStore
+                    get() = sheetViewModelStore
             }
         ) {
-            selectedData?.let { data ->
-                SearchSelectorChipHeader(
-                    admissionType = data.universityAdmissionType,
-                    universityName = data.universityName,
-                    isAdded = data.addedAdmissionMethodList.isNotEmpty()
-                )
-                BottomSheetContent(
-                    data = selectedData
-                )
+            val detailViewModel: SearchDetailViewModel = viewModel()
+            
+            selectedUniversityId?.let { universityId ->
+                detailViewModel.loadUniversityDetail(universityId)
+            }
+            
+            val detailState by detailViewModel.searchDummy.collectAsStateWithLifecycle()
+
+            TogedyBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = {
+                    onCloseBottomSheet()
+                },
+                title = "대학 일정",
+                showDone = false,
+                onDoneClick = {
+                    onCloseBottomSheet()
+                },
+                modifier = Modifier.height(height = 604.dp),
+            ) {
+                detailState?.let { data ->
+                    SearchSelectorChipHeader(
+                        admissionType = data.universityAdmissionType,
+                        universityName = data.universityName,
+                        isAdded = data.addedAdmissionMethodList.isNotEmpty(),
+                        isSearchDetail = true,
+                        modifier = Modifier.padding(16.dp)
+                    )
+
+                    BottomSheetContent(
+                        detailState = data,
+                        onDeleteAdmission = { admissionMethodId ->
+                            detailViewModel.deleteAddedItem(admissionMethodId)
+                        },
+                        onAddAdmission = {admissionMethodId ->
+                            detailViewModel.addAdmissionMethod(admissionMethodId)
+                        }
+                    )
+                }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetContent(
-    data: SearchDummy?,
-    onclickScheduleAdd: (Int) -> Unit = {}
+    detailState: SearchDetailDummy,
+    onDeleteAdmission: (Int) -> Unit = {},
+    onAddAdmission: (Int) -> Unit = {}
 ) {
-    if (data == null) return
+    val admissionList = detailState.universityAdmissionMethodList
+    var selectedIndex by remember { mutableIntStateOf(-1) } // -1은 선택되지 않은 상태
+    val selectedAdmission = if (selectedIndex >= 0) admissionList.getOrNull(selectedIndex) else null
 
-    val admissionList = data.addedAdmissionMethodList
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    val selectedAdmission = admissionList.getOrNull(selectedIndex)
-
-    var isExpanded by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+    Box(
+        modifier = Modifier.fillMaxWidth()
     ) {
-
-        ExposedDropdownMenuBox(
-            expanded = isExpanded,
-            onExpandedChange = { isExpanded = !isExpanded }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Box(
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-                    .padding(top = 12.dp)
-                    .noRippleClickable {
-                        isExpanded = true
-                    }
-                    .border(
-                        width = 1.dp,
-                        color = TogedyTheme.colors.gray300,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp, horizontal = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text ="전형 선택",
-                        style = TogedyTheme.typography.body14m.copy(
-                            color = TogedyTheme.colors.gray300
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
+            HorizontalDivider(
+                modifier = Modifier.background(color = TogedyTheme.colors.gray100),
+                thickness = 1.dp
+            )
 
-                    Icon(
-                        painter = painterResource(R.drawable.ic_drop_down_24),
-                        contentDescription = "드롭다운 이미지"
-                    )
+            SearchDetailMyAdded(
+                addedData = detailState.addedAdmissionMethodList,
+                universityAdmissionMethodList = detailState.universityAdmissionMethodList,
+                onDeleteAdmission = onDeleteAdmission,
+                modifier = Modifier.padding(top = 26.dp)
+            )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 100.dp)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                selectedAdmission?.universityScheduleList?.let { scheduleList ->
+                    itemsIndexed(items = scheduleList) { index, schedule ->
+                        val startTime = "${schedule.startDate} ${schedule.startTime}"
+                        val endTime = if (schedule.endDate != null && schedule.endTime != null) {
+                            "${schedule.endDate} ${schedule.endTime}"
+                        } else null
+
+                        TogedyScheduleChip(
+                            typeStatus = when (schedule.universityAdmissionStage) {
+                                "원서접수" -> 1
+                                "서류제출" -> 2
+                                "합격발표" -> 3
+                                else -> 0
+                            },
+                            scheduleName = detailState.universityName,
+                            scheduleType = selectedAdmission.universityAdmissionMethod,
+                            scheduleStartTime = startTime,
+                            scheduleEndTime = endTime
+                        )
+                    }
                 }
             }
 
-            ExposedDropdownMenu(
-                expanded = isExpanded,
-                onDismissRequest = {
-                    isExpanded = false
-                },
-                containerColor = TogedyTheme.colors.white,
-                shadowElevation = 1.dp
-
-            ) {
-                admissionList.forEachIndexed { index, admission ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = admission,
-                                style = TogedyTheme.typography.toast12sb.copy(
-                                    TogedyTheme.colors.gray600
-                                )
-                            )
-                        },
-                        onClick = {
-                            selectedIndex = index
-                            isExpanded = false
-                        },
+            // 선택된 전형이 있고, 아직 추가되지 않은 경우에만 추가 버튼 표시
+            selectedAdmission?.let { admission ->
+                val isAlreadyAdded = detailState.addedAdmissionMethodList.contains(admission.universityAdmissionMethod)
+                if (!isAlreadyAdded) {
+                    SearchDetailAdmissionAdd(
+                        admissionMethodId = admission.universityAdmissionMethodId,
+                        onAddClick = onAddAdmission,
+                        modifier = Modifier.padding(top = 12.dp)
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-//        LazyColumn(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(bottom = 25.dp),
-//            verticalArrangement = Arrangement.spacedBy(12.dp)
-//        ) {
-//            selectedAdmission?.universityScheduleList?.let { scheduleList ->
-//                items(scheduleList.size) { index ->
-//                    val schedule = scheduleList[index]
-//                    TogedyScheduleChip(
-//                        typeStatus = when (schedule.admissionStage) {
-//                            "원서접수" -> 1
-//                            "서류제출" -> 2
-//                            "합격발표" -> 3
-//                            else -> 0
-//                        },
-//                        scheduleName = data.universityName,
-//                        scheduleType = selectedAdmission.admissionMethod,
-//                        scheduleStartTime = schedule.startDate,
-//                        scheduleEndTime = schedule.endDate
-//                    )
-//                }
-//            }
-//        }
+        SearchDetailAdmissionSelector(
+            admissionList = detailState.universityAdmissionMethodList,
+            selectedIndex = selectedIndex,
+            onSelectionChanged = { newIndex ->
+                selectedIndex = newIndex
+            },
+            modifier = Modifier
+                .padding(top = 96.dp)
+                .padding(horizontal = 16.dp)
+        )
     }
 }
