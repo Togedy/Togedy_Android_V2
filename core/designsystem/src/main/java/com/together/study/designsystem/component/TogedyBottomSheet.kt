@@ -3,7 +3,6 @@ package com.together.study.designsystem.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -35,6 +34,7 @@ fun TogedyBottomSheet(
     content: @Composable () -> Unit,
 ) {
     val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
+    val isSearchDetail = searchContent != {}
 
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
@@ -50,28 +50,30 @@ fun TogedyBottomSheet(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
             ) {
                 searchContent()
-                Text(
-                    text = title,
-                    modifier = Modifier.align(
-                        alignment = Alignment.Companion.Center
-                    ),
-                    style = titleStyle
-                )
 
-                if (showDone) {
+                if (!isSearchDetail) {
                     Text(
-                        text = "완료",
-                        style = TogedyTheme.typography.title16sb.copy(doneColor),
-                        modifier = Modifier
-                            .align(alignment = Alignment.Companion.CenterEnd)
-                            .then(
-                                if (isDoneActivate) Modifier.noRippleClickable(onDoneClick)
-                                else Modifier
-                            )
+                        text = title,
+                        modifier = Modifier.align(
+                            alignment = Alignment.Companion.Center
+                        ),
+                        style = titleStyle
                     )
+
+                    if (showDone) {
+                        Text(
+                            text = "완료",
+                            style = TogedyTheme.typography.title16sb.copy(doneColor),
+                            modifier = Modifier
+                                .align(alignment = Alignment.Companion.CenterEnd)
+                                .then(
+                                    if (isDoneActivate) Modifier.noRippleClickable(onDoneClick)
+                                    else Modifier
+                                )
+                        )
+                    }
                 }
             }
             content()
