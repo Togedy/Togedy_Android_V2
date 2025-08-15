@@ -154,7 +154,7 @@ fun SearchScreen(
                 onDoneClick = {
                     onCloseBottomSheet()
                 },
-                modifier = Modifier.height(height = 604.dp),
+                modifier = Modifier.height(height = 614.dp),
             ) {
                 detailState?.let { data ->
                     SearchSelectorChipHeader(
