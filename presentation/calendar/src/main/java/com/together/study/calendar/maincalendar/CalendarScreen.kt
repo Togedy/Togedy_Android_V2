@@ -368,6 +368,7 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             onEditBtnClick = { id, request -> },
             onCategoryDetailNavigate = {},
             dailyDialogViewModel = DailyDialogViewModel(
+                calendarRepository = TODO(),
                 userScheduleRepository = TODO()
             ),
             modifier = modifier,

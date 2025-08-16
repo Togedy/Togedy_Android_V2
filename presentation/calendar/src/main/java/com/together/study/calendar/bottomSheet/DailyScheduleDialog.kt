@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -65,7 +66,7 @@ internal fun DailyScheduleDialog(
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val dailySchedules = dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
+    val dailySchedules by dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
@@ -106,7 +107,7 @@ internal fun DailyScheduleDialog(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        dailySchedules.value.forEach { schedule ->
+                        dailySchedules.forEach { schedule ->
                             DailyScheduleItem(
                                 coroutineScope = coroutineScope,
                                 schedule = schedule,
