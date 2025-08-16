@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -159,37 +160,13 @@ private fun CalendarSuccessScreen(
             .padding(horizontal = 16.dp),
     ) {
         stickyHeader {
-            NoticeSection(
+            CalendarHeader(
                 notice = notice,
-                modifier = Modifier,
+                date = date,
+                dDay = dDay,
+                onSearchBoxClick = onSearchBoxClick,
+                onYearMonthSectionClick = onYearMonthSectionClick,
             )
-
-            Spacer(Modifier.height(16.dp))
-
-            TogedySearchBar(
-                isShowSearch = true,
-                onSearchClicked = onSearchBoxClick
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                YearMonthSection(
-                    date = date,
-                    onClick = onYearMonthSectionClick
-                )
-
-                if (dDay.hasDday) DDaySection(dDay = dDay)
-            }
-
-            Spacer(Modifier.height(20.dp))
-
-            DayOfWeek()
-
-            Spacer(Modifier.height(8.dp))
         }
 
         itemsIndexed(weeks) { index, week ->
@@ -234,6 +211,52 @@ private fun CalendarSuccessScreen(
             startDate = currentDialogDate,
             onEditCategoryClick = onCategoryDetailNavigate,
         )
+    }
+}
+
+@Composable
+private fun CalendarHeader(
+    notice: String,
+    date: LocalDate,
+    dDay: DDay,
+    onSearchBoxClick: () -> Unit,
+    onYearMonthSectionClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.background(TogedyTheme.colors.white)
+    ) {
+        NoticeSection(
+            notice = notice,
+            modifier = Modifier,
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        TogedySearchBar(
+            isShowSearch = true,
+            onSearchClicked = onSearchBoxClick
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            YearMonthSection(
+                date = date,
+                onClick = onYearMonthSectionClick
+            )
+
+            if (dDay.hasDday) DDaySection(dDay = dDay)
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        DayOfWeek()
+
+        Spacer(Modifier.height(8.dp))
     }
 }
 
