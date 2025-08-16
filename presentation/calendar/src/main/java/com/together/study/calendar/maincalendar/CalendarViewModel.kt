@@ -6,7 +6,6 @@ import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 import com.together.study.calendar.repository.CalendarRepository
-import com.together.study.calendar.repository.UserScheduleRepository
 import com.together.study.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,14 +17,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.YearMonth
 import javax.inject.Inject
-
-const val TAG = "CalendarViewModel"
 
 @HiltViewModel
 internal class CalendarViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
-    private val userScheduleRepository: UserScheduleRepository,
 ) : ViewModel() {
     private val _currentDate = MutableStateFlow(LocalDate.now())
     val currentDate = _currentDate.asStateFlow()
@@ -78,28 +75,16 @@ internal class CalendarViewModel @Inject constructor(
             .onFailure { _dDayState.value = UiState.Failure(it.message.toString()) }
     }
 
-    suspend fun getSchedule() {
-        calendarRepository.getMonthlySchedule(month = "2025-01")
+    suspend fun getSchedule(newDate: LocalDate = LocalDate.now()) {
+        calendarRepository.getMonthlySchedule(month = YearMonth.from(newDate).toString())
             .onSuccess { _scheduleState.value = UiState.Success(it) }
             .onFailure { _scheduleState.value = UiState.Failure(it.message.toString()) }
     }
 
-    fun updateCurrentDate(newDate: LocalDate) {
+    fun updateCurrentDate(newDate: LocalDate) = viewModelScope.launch {
         _currentDate.update { newDate }
-//        getSchedule()
+        getSchedule(newDate)
     }
-
-//    fun saveNewSchedule(new: UserSchedule) = viewModelScope.launch {
-//        userScheduleRepository.postUserSchedule(userSchedule = new)
-//            .onSuccess { }
-//            .onFailure { UiState.Failure(it.message.toString()) }
-//    }
-//
-//    fun updateSchedule(id: Long, new: UserSchedule) = viewModelScope.launch {
-//        userScheduleRepository.patchUserSchedule(userScheduleId = id, request = new)
-//            .onSuccess { }
-//            .onFailure { UiState.Failure(it.message.toString()) }
-//    }
 
     fun updateDailyDialog(selectedDate: LocalDate) {
         _currentDialogDate.update { selectedDate }
