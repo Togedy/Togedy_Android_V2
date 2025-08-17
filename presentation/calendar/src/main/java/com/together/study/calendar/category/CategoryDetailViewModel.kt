@@ -3,7 +3,10 @@ package com.together.study.calendar.category
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.calendar.model.Category
-import com.together.study.calendar.repository.CategoryRepository
+import com.together.study.calendar.usecase.DeleteCategoryUseCase
+import com.together.study.calendar.usecase.GetCategoryUseCase
+import com.together.study.calendar.usecase.PatchCategoryUseCase
+import com.together.study.calendar.usecase.PostCategoryUseCase
 import com.together.study.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class CategoryDetailViewModel @Inject constructor(
-    private val categoryRepository: CategoryRepository,
+    private val postCategoryUseCase: PostCategoryUseCase,
+    private val getCategoryUseCase: GetCategoryUseCase,
+    private val patchCategoryUseCase: PatchCategoryUseCase,
+    private val deleteCategoryUseCase: DeleteCategoryUseCase,
 ) : ViewModel() {
     private val _categoryState = MutableStateFlow<UiState<List<Category>>>(UiState.Loading)
     val categoryState = _categoryState.asStateFlow()
@@ -24,7 +30,7 @@ internal class CategoryDetailViewModel @Inject constructor(
 
 
     fun fetchCategoryItems() = viewModelScope.launch {
-        categoryRepository.getCategoryItems()
+        getCategoryUseCase()
             .onSuccess {
                 updateState(UiState.Success(it))
                 lastedCategoryItems = it
@@ -32,16 +38,16 @@ internal class CategoryDetailViewModel @Inject constructor(
             .onFailure { updateState(UiState.Failure(it.message.toString())) }
     }
 
-    fun saveNewCategory(new: Category) = viewModelScope.launch {
-        categoryRepository.postCategory(new.categoryName!!, new.categoryColor!!)
+    fun saveNewCategory(name: String, color: String) = viewModelScope.launch {
+        postCategoryUseCase(name, color)
             .onFailure { Timber.tag("[okhttp] Category API - FAILURE").d("${it.message}") }
 
-        val updatedList = lastedCategoryItems + new
+        val updatedList = lastedCategoryItems + Category(null, name, color)
         updateState(UiState.Success(updatedList))
     }
 
     fun updateCategory(new: Category) = viewModelScope.launch {
-        categoryRepository.patchCategory(category = new)
+        patchCategoryUseCase(new)
             .onFailure { Timber.tag("[okhttp] Category API - FAILURE").d("${it.message}") }
 
         val updatedList = lastedCategoryItems.map { category ->
@@ -53,7 +59,7 @@ internal class CategoryDetailViewModel @Inject constructor(
     }
 
     fun deleteCategory(categoryId: Long) = viewModelScope.launch {
-        categoryRepository.deleteCategory(categoryId)
+        deleteCategoryUseCase(categoryId)
             .onFailure { Timber.tag("[okhttp] Category API - FAILURE").d("${it.message}") }
 
         val updatedList = lastedCategoryItems.filter { it.categoryId != categoryId }

@@ -54,9 +54,9 @@ internal fun ScheduleBottomSheet(
     startDate: LocalDate,
     onDoneClick: (UserSchedule) -> Unit,
     onEditCategoryClick: () -> Unit,
+    modifier: Modifier = Modifier,
     scheduleId: Long? = null,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    modifier: Modifier = Modifier,
     viewModel: ScheduleBottomSheetViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -153,15 +153,20 @@ internal fun ScheduleBottomSheet(
                 if (isCategoryOpen) {
                     CategoryBottomSheet(
                         category = null,
+                        categories = uiState.categories,
                         onDismissRequest = {
                             viewModel.updateBottomSheetVisibility(
                                 ScheduleSubBottomSheetType.CATEGORY
                             )
                         },
-                        onAddCategoryClick = {},
+                        onAddCategoryClick = {
+                            viewModel.updateBottomSheetVisibility(
+                                ScheduleSubBottomSheetType.CATEGORY_ADD
+                            )
+                        },
                         onEditCategoryClick = onEditCategoryClick,
-                        onDoneClick = {
-                            viewModel::updateCategory
+                        onDoneClick = { category ->
+                            viewModel.updateCategory(category)
                             viewModel.updateBottomSheetVisibility(
                                 ScheduleSubBottomSheetType.CATEGORY
                             )
@@ -177,6 +182,10 @@ internal fun ScheduleBottomSheet(
                             viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
                         },
                         onDoneClick = { category ->
+                            viewModel.postCategory(
+                                category.categoryName!!,
+                                category.categoryColor!!
+                            )
                             viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
                         },
                     )

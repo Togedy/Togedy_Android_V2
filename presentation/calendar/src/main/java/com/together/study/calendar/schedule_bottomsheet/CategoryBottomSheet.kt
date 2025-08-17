@@ -33,6 +33,7 @@ import com.together.study.util.noRippleClickable
 @Composable
 internal fun CategoryBottomSheet(
     category: Category?,
+    categories: List<Category>,
     onDismissRequest: () -> Unit,
     onDoneClick: (Category) -> Unit,
     onAddCategoryClick: () -> Unit,
@@ -41,7 +42,6 @@ internal fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
 ) {
     var selectedCategory by remember { mutableStateOf(category) }
-    val categoryList = Category.mockList
 
     LaunchedEffect(Unit) { sheetState.expand() }
 
@@ -81,7 +81,7 @@ internal fun CategoryBottomSheet(
                 }
             }
 
-            items(categoryList) { categoryItem ->
+            items(categories) { categoryItem ->
                 CategoryItem(
                     category = categoryItem,
                     isCategorySelected = categoryItem.categoryId == selectedCategory?.categoryId,
@@ -100,12 +100,10 @@ internal fun CategoryBottomSheet(
 @Preview(showBackground = true)
 @Composable
 private fun CategoryBottomSheetPreview(modifier: Modifier = Modifier) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
     TogedyTheme {
         CategoryBottomSheet(
-            sheetState = sheetState,
             category = null,
+            categories = emptyList(),
             onDismissRequest = {},
             onDoneClick = {},
             onAddCategoryClick = {},

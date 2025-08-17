@@ -9,6 +9,8 @@ import com.together.study.calendar.schedule_bottomsheet.state.ScheduleBottomShee
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetState
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
 import com.together.study.calendar.schedule_bottomsheet.state.UserScheduleInfo
+import com.together.study.calendar.usecase.GetCategoryUseCase
+import com.together.study.calendar.usecase.PostCategoryUseCase
 import com.together.study.common.state.UiState
 import com.together.study.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class ScheduleBottomSheetViewModel @Inject constructor(
+    private val getCategoryUseCase: GetCategoryUseCase,
+    private val postCategoryUseCase: PostCategoryUseCase,
     private val userScheduleRepository: UserScheduleRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ScheduleBottomSheetUiState())
@@ -31,24 +35,23 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
         MutableStateFlow(ScheduleSubBottomSheetState())
     val bottomSheetState: StateFlow<ScheduleSubBottomSheetState> = _bottomSheetState.asStateFlow()
 
-
     fun getUserSchedule(scheduleId: Long, date: LocalDate) = viewModelScope.launch {
-            userScheduleRepository.getUserSchedule(scheduleId)
-                .onSuccess { it ->
-                    val response = UserScheduleInfo(
-                        userScheduleName = it.userScheduleName,
-                        startDateValue = it.startDate.toLocalDate() ?: date,
-                        startTimeValue = it.startTime,
-                        endDateValue = it.endDate.toLocalDate() ?: date,
-                        endTimeValue = it.endTime,
-                        memoValue = it.memo,
-                        categoryValue = it.category,
-                        dDayValue = it.dDay,
-                    )
-                    _uiState.update { it.copy(originalInfo = response, newInfo = response) }
-                }
-                .onFailure { UiState.Failure(it.message.toString()) }
-        }
+        userScheduleRepository.getUserSchedule(scheduleId)
+            .onSuccess { it ->
+                val response = UserScheduleInfo(
+                    userScheduleName = it.userScheduleName,
+                    startDateValue = it.startDate.toLocalDate() ?: date,
+                    startTimeValue = it.startTime,
+                    endDateValue = it.endDate.toLocalDate() ?: date,
+                    endTimeValue = it.endTime,
+                    memoValue = it.memo,
+                    categoryValue = it.category,
+                    dDayValue = it.dDay,
+                )
+                _uiState.update { it.copy(originalInfo = response, newInfo = response) }
+            }
+            .onFailure { UiState.Failure(it.message.toString()) }
+    }
 
     fun updateScheduleName(new: String) {
         _uiState.update { it.copy(newInfo = it.newInfo.copy(userScheduleName = new)) }
@@ -115,6 +118,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
             }
 
             ScheduleSubBottomSheetType.CATEGORY -> {
+                if (!_bottomSheetState.value.isCategoryOpen) viewModelScope.launch { getCategoryItems() }
                 _bottomSheetState.update {
                     it.copy(isCategoryOpen = !_bottomSheetState.value.isCategoryOpen)
                 }
@@ -149,5 +153,19 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
                 dDay = dDayValue,
             )
         }
+    }
+
+    private suspend fun getCategoryItems() {
+        getCategoryUseCase()
+            .onSuccess { result ->
+                _uiState.update { it.copy(categories = result) }
+            }
+            .onFailure(Timber::e)
+    }
+
+    fun postCategory(name: String, color: String) = viewModelScope.launch {
+        postCategoryUseCase(name, color)
+            .onSuccess { getCategoryItems() }
+            .onFailure(Timber::e)
     }
 }
