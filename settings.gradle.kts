@@ -32,6 +32,7 @@ include(
     ":data:local",
     ":data:remote",
     ":data:calendar",
+    ":data:search",
     ":data:dummy",
 )
 include(
