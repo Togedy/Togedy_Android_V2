@@ -104,7 +104,6 @@ internal fun ScheduleBottomSheet(
                             ScheduleSubBottomSheetType.CALENDAR
                         )
                     },
-                    onClockOpen = { },
                 )
 
                 Spacer(Modifier.height(24.dp))
@@ -152,7 +151,7 @@ internal fun ScheduleBottomSheet(
 
                 if (isCategoryOpen) {
                     CategoryBottomSheet(
-                        category = null,
+                        category = uiState.newInfo.categoryValue,
                         categories = uiState.categories,
                         onDismissRequest = {
                             viewModel.updateBottomSheetVisibility(
