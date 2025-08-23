@@ -6,15 +6,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,11 +32,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.TogedyScheduleChip
@@ -44,43 +49,42 @@ import com.together.study.search.component.SearchDetailMyAdded
 import com.together.study.search.component.SearchSelectorAdmissionType
 import com.together.study.search.component.SearchSelectorChip
 import com.together.study.search.component.SearchSelectorChipHeader
+import com.together.study.search.model.UnivSchedule
+import com.together.study.search.type.AdmissionType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+internal fun SearchRoute(
     modifier: Modifier,
     onBackButtonClicked: () -> Unit = {},
-    viewModel: SearchViewModel = viewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
 ) {
-    val searchValue by viewModel.searchQuery.collectAsStateWithLifecycle()
-    val admissionType by viewModel.admissionType.collectAsStateWithLifecycle()
-    val filteredList by viewModel.filteredList.collectAsStateWithLifecycle()
+    val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
+    val admissionType by searchViewModel.admissionType.collectAsStateWithLifecycle()
+    val univScheduleState by searchViewModel.univScheduleState.collectAsStateWithLifecycle()
 
-    val coroutineScope = rememberCoroutineScope()
+    SearchScreen(
+        searchQuery = searchQuery,
+        admissionType = admissionType,
+        univScheduleState = univScheduleState,
+        onBackButtonClicked = onBackButtonClicked,
+        onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
+        onAdmissionTypeChanged = searchViewModel::onAdmissionTypeChanged,
+        modifier = modifier
+    )
+}
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var selectedUniversityId by remember { mutableStateOf<Int?>(null) }
-    var isSheetVisible by remember { mutableStateOf(false) }
-
-    val sheetViewModelStore = remember { ViewModelStore() }
-
-    val onCloseBottomSheet: () -> Unit = {
-        coroutineScope.launch {
-            isSheetVisible = false
-            sheetState.hide()
-        }
-    }
-
-    val onOpenBottomSheet: (Int) -> Unit = { universityId ->
-        selectedUniversityId = universityId
-        coroutineScope.launch {
-            isSheetVisible = true
-            sheetState.show()
-        }
-    }
-
+@Composable
+private fun SearchScreen(
+    searchQuery: String,
+    admissionType: AdmissionType,
+    univScheduleState: UiState<List<UnivSchedule>>,
+    onBackButtonClicked: () -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
+    onAdmissionTypeChanged: (AdmissionType) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -100,28 +104,133 @@ fun SearchScreen(
                     .noRippleClickable(onBackButtonClicked)
             )
             TogedySearchBar(
-                value = searchValue,
-                onValueChange = { viewModel.onSearchQueryChanged(it) }
+                value = searchQuery,
+                onValueChange = onSearchQueryChanged
             )
         }
 
         SearchSelectorAdmissionType(
             selectedType = admissionType,
-            onSelect = { viewModel.onAdmissionTypeChanged(it) },
+            onSelect = onAdmissionTypeChanged,
             modifier = Modifier.padding(top = 8.dp)
         )
 
+        when (univScheduleState) {
+            is UiState.Loading -> {
+                SearchLoadingScreen()
+            }
+            is UiState.Failure -> {
+                SearchFailureScreen(
+                    errorMessage = univScheduleState.msg
+                )
+            }
+            is UiState.Empty -> {
+                SearchEmptyScreen()
+            }
+            is UiState.Success -> {
+                SearchSuccessScreen(
+                    univSchedules = univScheduleState.data
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchLoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(48.dp),
+            color = TogedyTheme.colors.green
+        )
+    }
+}
+
+@Composable
+private fun SearchFailureScreen(
+    errorMessage: String
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "데이터를 불러오는데 실패했습니다",
+                color = TogedyTheme.colors.gray600
+            )
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+            Text(
+                text = errorMessage,
+                color = TogedyTheme.colors.gray500,
+                style = TogedyTheme.typography.body12m
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchEmptyScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "검색어를 입력해주세요",
+            color = TogedyTheme.colors.gray600
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchSuccessScreen(
+    univSchedules: List<UnivSchedule>
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var selectedUniversityId by remember { mutableStateOf<Int?>(null) }
+    var isSheetVisible by remember { mutableStateOf(false) }
+    val sheetViewModelStore = remember { ViewModelStore() }
+
+    val onCloseBottomSheet: () -> Unit = {
+        coroutineScope.launch {
+            isSheetVisible = false
+            sheetState.hide()
+        }
+    }
+
+    val onOpenBottomSheetInternal: (Int) -> Unit = { universityId ->
+        selectedUniversityId = universityId
+        coroutineScope.launch {
+            isSheetVisible = true
+            sheetState.show()
+        }
+    }
+
+    with(univSchedules) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(filteredList.size) { index ->
-                val data = filteredList[index]
+            items(size) { index ->
+                val data = get(index)
                 SearchSelectorChip(
                     data = data,
                     onSelectorClicked = {
-                        onOpenBottomSheet(data.universityId)
+                        onOpenBottomSheetInternal(data.universityId)
                     }
                 )
             }
@@ -136,7 +245,7 @@ fun SearchScreen(
                     get() = sheetViewModelStore
             }
         ) {
-            val detailViewModel: SearchDetailViewModel = viewModel()
+            val detailViewModel: SearchDetailViewModel = hiltViewModel()
             
             selectedUniversityId?.let { universityId ->
                 detailViewModel.loadUniversityDetail(universityId)
