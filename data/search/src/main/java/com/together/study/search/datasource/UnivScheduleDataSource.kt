@@ -1,12 +1,11 @@
 package com.together.study.search.datasource
 
-import com.together.study.search.dto.UnivScheduleRequest
 import com.together.study.search.service.UnivScheduleService
 import javax.inject.Inject
 
-class UserScheduleDataSource @Inject constructor(
+class UnivScheduleDataSource @Inject constructor(
     private val univScheduleService: UnivScheduleService,
 ) {
-    suspend fun getUnivSchedule(request: UnivScheduleRequest) =
-        univScheduleService.getUserSchedule(request)
+    suspend fun getUnivSchedule(name: String, admissionType: String, page: Int, size: Int) =
+        univScheduleService.getUnivSchedule(name, admissionType, page, size)
 }
