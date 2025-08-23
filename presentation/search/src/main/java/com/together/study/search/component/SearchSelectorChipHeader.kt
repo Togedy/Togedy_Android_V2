@@ -1,7 +1,6 @@
 package com.together.study.search.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,12 +14,21 @@ import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
 
 @Composable
-fun SearchSelectorHeader(
+fun SearchSelectorChipHeader(
     admissionType: String,
     universityName: String,
     isAdded: Boolean,
+    isSearchDetail: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val univTextColor = if (isSearchDetail) TogedyTheme.colors.black else {
+        if (isAdded) TogedyTheme.colors.green else TogedyTheme.colors.gray900
+    }
+    val typeTextColor =
+        if (admissionType == "수시") TogedyTheme.colors.gray800 else TogedyTheme.colors.white
+    val typeBackColor =
+        if (admissionType == "수시") TogedyTheme.colors.gray300 else TogedyTheme.colors.gray800
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -28,17 +36,11 @@ fun SearchSelectorHeader(
         Text(
             text = admissionType,
             style = TogedyTheme.typography.chip10sb.copy(
-                color = if (admissionType == "수시")
-                    TogedyTheme.colors.gray700
-                else
-                    TogedyTheme.colors.white
+                color = typeTextColor
             ),
             modifier = Modifier
                 .background(
-                    color = if (admissionType == "수시")
-                        TogedyTheme.colors.gray100
-                    else
-                        TogedyTheme.colors.black,
+                    color = typeBackColor,
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(all = 4.dp)
@@ -47,34 +49,11 @@ fun SearchSelectorHeader(
         Text(
             text = universityName,
             style = TogedyTheme.typography.title16sb.copy(
-                color = TogedyTheme.colors.green
+                color = univTextColor
             ),
             modifier = Modifier.padding(start = 4.dp)
         )
 
         Spacer(modifier = Modifier.weight(1f))
-
-        Text(
-            text = if(isAdded) "캘린더 삭제" else "캘린더 추가",
-            style = TogedyTheme.typography.body12m.copy(
-                color = TogedyTheme.colors.green
-            ),
-            modifier = Modifier
-                .background(
-                    color = if (isAdded)
-                        TogedyTheme.colors.white
-                    else
-                        TogedyTheme.colors.greenBg,
-                    shape = RoundedCornerShape(4.dp)
-                )
-                .then(
-                    if (isAdded) Modifier.border(
-                        width = 1.dp,
-                        color = TogedyTheme.colors.green,
-                        shape = RoundedCornerShape(4.dp)
-                    ) else Modifier
-                )
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        )
     }
 }

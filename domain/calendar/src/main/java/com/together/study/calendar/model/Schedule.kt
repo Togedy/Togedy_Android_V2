@@ -11,5 +11,5 @@ data class Schedule(
     val universityAdmissionType: String = "",
     val universityAdmissionStage: String = "",
     val universityAdmissionMethod: String = "",
-    val category: Category,
+    val category: Category
 )

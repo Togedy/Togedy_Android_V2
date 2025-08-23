@@ -2,6 +2,7 @@ package com.together.study.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.together.study.search.type.AdmissionType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,19 +11,22 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
 
-    private val allList = dummyScheduleList().toMutableList()
+    private val allList = dummySearchList().toMutableList()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    private val _filteredList = MutableStateFlow<List<SearchScheduleData>>(emptyList())
-    val filteredList: StateFlow<List<SearchScheduleData>> = _filteredList
+    private val _filteredList = MutableStateFlow<List<SearchDummy>>(emptyList())
+    val filteredList: StateFlow<List<SearchDummy>> = _filteredList
+
+    private val _admissionType = MutableStateFlow(AdmissionType.ALL)
+    val admissionType: StateFlow<AdmissionType> = _admissionType
 
     private var searchJob: Job? = null
 
     init {
         // 초기 데이터 로드
-        _filteredList.value = allList.sortedByDescending { it.isAdded }
+        updateFilteredList()
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -30,29 +34,35 @@ class SearchViewModel : ViewModel() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(300)
-            _filteredList.value = allList
-                .filter {
-                    it.universityName.contains(query, ignoreCase = true)
-                }
-                .sortedByDescending { it.isAdded }
+            updateFilteredList()
         }
     }
 
-    fun toggleScheduleStatus(data: SearchScheduleData) {
-        val currentList = _filteredList.value.toMutableList()
-        val index = currentList.indexOfFirst { it.universityName == data.universityName }
+    fun onAdmissionTypeChanged(type: AdmissionType) {
+        _admissionType.value = type
+        updateFilteredList()
+    }
 
-        if (index != -1) {
-            val updatedData = data.copy(isAdded = !data.isAdded)
-            currentList[index] = updatedData
+    private fun updateFilteredList() {
+        val query = _searchQuery.value
+        val type = _admissionType.value
+        
+        _filteredList.value = allList
+            .filter { searchDummy ->
+                // 검색어 필터링
+                val filteredQuery = query.isEmpty() ||
+                    searchDummy.universityName.contains(query, ignoreCase = true)
+                
+                // 입학 전형 타입 필터링
+                val filteredAdmissionType = when (type) {
+                    AdmissionType.ALL -> true
+                    AdmissionType.EARLY -> searchDummy.universityAdmissionType == "수시"
+                    AdmissionType.REGULAR -> searchDummy.universityAdmissionType == "정시"
+                }
 
-            // allList도 업데이트
-            val allListIndex = allList.indexOfFirst { it.universityName == data.universityName }
-            if (allListIndex != -1) {
-                allList[allListIndex] = updatedData
+                // 검색어, 전형 일치하는 값 반환
+                filteredQuery && filteredAdmissionType
             }
-
-            _filteredList.value = currentList.sortedByDescending { it.isAdded }
-        }
+            .sortedByDescending { it.addedAdmissionMethodList.isNotEmpty() }
     }
 }
