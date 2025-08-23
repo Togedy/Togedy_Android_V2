@@ -2,31 +2,39 @@ package com.together.study.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.together.study.common.state.UiState
+import com.together.study.search.model.UnivSchedule
+import com.together.study.search.repository.UnivScheduleRepository
 import com.together.study.search.type.AdmissionType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel : ViewModel() {
+const val TAG = "SearchViewModel"
 
-    private val allList = dummySearchList().toMutableList()
-
+@HiltViewModel
+internal class SearchViewModel @Inject constructor(
+    private val univScheduleRepository: UnivScheduleRepository
+) : ViewModel() {
+    
     private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery
-
-    private val _filteredList = MutableStateFlow<List<SearchDummy>>(emptyList())
-    val filteredList: StateFlow<List<SearchDummy>> = _filteredList
-
+    val searchQuery = _searchQuery.asStateFlow()
+    
     private val _admissionType = MutableStateFlow(AdmissionType.ALL)
-    val admissionType: StateFlow<AdmissionType> = _admissionType
+    val admissionType = _admissionType.asStateFlow()
+    
+    private val _univScheduleState = MutableStateFlow<UiState<List<UnivSchedule>>>(UiState.Loading)
+    val univScheduleState = _univScheduleState.asStateFlow()
 
     private var searchJob: Job? = null
 
     init {
         // 초기 데이터 로드
-        updateFilteredList()
+        fetchUnivScheduleList()
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -34,35 +42,41 @@ class SearchViewModel : ViewModel() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(300)
-            updateFilteredList()
+            fetchUnivScheduleList()
         }
     }
 
     fun onAdmissionTypeChanged(type: AdmissionType) {
         _admissionType.value = type
-        updateFilteredList()
+        fetchUnivScheduleList()
     }
 
-    private fun updateFilteredList() {
-        val query = _searchQuery.value
-        val type = _admissionType.value
-        
-        _filteredList.value = allList
-            .filter { searchDummy ->
-                // 검색어 필터링
-                val filteredQuery = query.isEmpty() ||
-                    searchDummy.universityName.contains(query, ignoreCase = true)
-                
-                // 입학 전형 타입 필터링
-                val filteredAdmissionType = when (type) {
-                    AdmissionType.ALL -> true
-                    AdmissionType.EARLY -> searchDummy.universityAdmissionType == "수시"
-                    AdmissionType.REGULAR -> searchDummy.universityAdmissionType == "정시"
+    private fun fetchUnivScheduleList() {
+        viewModelScope.launch {
+            _univScheduleState.value = UiState.Loading
+            
+            univScheduleRepository.getUnivScheduleList(
+                name = _searchQuery.value,
+                admissionType = _admissionType.value.toApiString(),
+                page = 0,
+                size = 20
+            )
+                .onSuccess { schedules -> 
+                    _univScheduleState.value = UiState.Success(
+                        schedules.sortedByDescending { univSchedule -> 
+                            univSchedule.addedAdmissionMethodList.isNotEmpty() 
+                        }
+                    )
                 }
-
-                // 검색어, 전형 일치하는 값 반환
-                filteredQuery && filteredAdmissionType
-            }
-            .sortedByDescending { it.addedAdmissionMethodList.isNotEmpty() }
+                .onFailure { exception -> 
+                    _univScheduleState.value = UiState.Failure(exception.message.toString())
+                }
+        }
     }
+}
+
+private fun AdmissionType.toApiString(): String = when (this) {
+    AdmissionType.ALL -> ""
+    AdmissionType.EARLY -> "수시"
+    AdmissionType.REGULAR -> "정시"
 }
