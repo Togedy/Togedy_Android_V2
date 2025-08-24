@@ -1,8 +1,10 @@
 package com.together.study.search.repositoryimpl
 
-
 import com.together.study.search.datasource.UnivScheduleDataSource
+import com.together.study.search.mapper.toData
 import com.together.study.search.mapper.toDomain
+import com.together.study.search.model.AdmissionMethod
+import com.together.study.search.model.UnivDetailSchedule
 import com.together.study.search.model.UnivSchedule
 import com.together.study.search.repository.UnivScheduleRepository
 import javax.inject.Inject
@@ -21,4 +23,27 @@ class UnivScheduleRepositoryImpl @Inject constructor(
             response.map { it.toDomain() }
         }
 
+    override suspend fun getUnivDetailSchedule(universityId: Int): Result<UnivDetailSchedule> =
+        runCatching {
+            val response = univScheduleDataSource.getUnivDetailSchedule(
+                universityId = universityId
+            ).response
+            response.toDomain()
+        }
+
+    override suspend fun deleteUnivDetailSchedule(universityAdmissionMethodId: Int): Result<Unit> =
+        runCatching {
+            val response = univScheduleDataSource.deleteUnivDetailSchedule(
+                universityAdmissionMethodId = universityAdmissionMethodId
+            )
+            response.isSuccess
+        }
+
+    override suspend fun addUnivDetailSchedule(request: AdmissionMethod): Result<Unit> =
+        runCatching {
+            val response = univScheduleDataSource.addUnivDetailSchedule(
+                univDetailScheduleAddRequest = request.toData()
+            )
+            response.isSuccess
+        }
 }
