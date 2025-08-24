@@ -20,14 +20,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.search.UniversityAdmissionMethod
+import com.together.study.search.model.UnivDetailAdmissionMethod
 import com.together.study.util.noRippleClickable
 
 @Composable
 fun SearchDetailMyAdded(
     modifier: Modifier = Modifier,
     addedData: List<String>,
-    universityAdmissionMethodList: List<UniversityAdmissionMethod>,
+    universityAdmissionMethodList: List<UnivDetailAdmissionMethod>,
     onDeleteAdmission: (Int) -> Unit = {},
 ) {
     Column(
