@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EmptyDataResponse(
-    @SerialName("status")
-    val status: Int,
-    @SerialName("message")
-    val message: String,
+    @SerialName("isSuccess")
+    val isSuccess: Boolean,
 )
