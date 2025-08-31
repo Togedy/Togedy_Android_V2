@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -200,16 +201,21 @@ fun DailyScheduleItem(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .background(TogedyTheme.colors.red, RoundedCornerShape(6.dp))
-                .noRippleClickable { onDeleteClick(schedule.scheduleId!!) },
+                .background(TogedyTheme.colors.red, RoundedCornerShape(6.dp)),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_delete_24),
-                contentDescription = null,
-                tint = TogedyTheme.colors.white,
-            )
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .noRippleClickable { onDeleteClick(schedule.scheduleId!!) },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(ic_delete_24),
+                    contentDescription = null,
+                    tint = TogedyTheme.colors.white,
+                )
+            }
         }
 
         Box(
