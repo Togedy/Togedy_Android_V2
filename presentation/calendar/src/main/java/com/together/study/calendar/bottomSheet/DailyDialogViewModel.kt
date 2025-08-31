@@ -19,6 +19,7 @@ internal class DailyDialogViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val userScheduleRepository: UserScheduleRepository,
 ) : ViewModel() {
+    var isUpdateNeeded = MutableStateFlow(true)
     private val _dailySchedules = MutableStateFlow<List<Schedule>>(emptyList())
     val dailySchedules = _dailySchedules.asStateFlow()
 
@@ -31,6 +32,7 @@ internal class DailyDialogViewModel @Inject constructor(
                 lastDailySchedules = it
             }
             .onFailure(Timber::e)
+        changeIsUpdateNeeded(false)
     }
 
     fun deleteSchedule(scheduleId: Long) = viewModelScope.launch {
@@ -39,5 +41,10 @@ internal class DailyDialogViewModel @Inject constructor(
                 _dailySchedules.value = lastDailySchedules.filterNot { it.scheduleId == scheduleId }
             }
             .onFailure { UiState.Failure(it.message.toString()) }
+        changeIsUpdateNeeded(true)
+    }
+
+    fun changeIsUpdateNeeded(new: Boolean) {
+        isUpdateNeeded.value = new
     }
 }

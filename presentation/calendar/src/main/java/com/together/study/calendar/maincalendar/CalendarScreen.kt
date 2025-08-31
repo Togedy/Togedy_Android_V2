@@ -43,7 +43,6 @@ import com.together.study.calendar.maincalendar.component.WeekSchedule
 import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
-import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.schedule_bottomsheet.ScheduleBottomSheet
 import com.together.study.common.ScheduleType
 import com.together.study.common.state.UiState
@@ -67,8 +66,9 @@ internal fun CalendarRoute(
     val uiState by calendarViewModel.calendarUiState.collectAsStateWithLifecycle()
     val currentDate by calendarViewModel.currentDate.collectAsStateWithLifecycle()
     val currentDialogDate by calendarViewModel.currentDialogDate.collectAsStateWithLifecycle()
+    val isUpdateNeeded by calendarViewModel.isUpdateNeeded.collectAsStateWithLifecycle()
 
-    LaunchedEffect(currentDate) {
+    LaunchedEffect(isUpdateNeeded == true) {
         calendarViewModel.getCalendarInfo()
     }
 
@@ -78,10 +78,10 @@ internal fun CalendarRoute(
         currentDialogDate = currentDialogDate,
         onSearchBoxClick = onSearchBoxClick,
         onDateClick = calendarViewModel::updateDailyDialog,
-        onAddBtnClick = {},
-        onEditBtnClick = { i, j -> },
-        dailyDialogViewModel = dailyDialogViewModel,
         onCategoryDetailNavigate = onCategoryDetailNavigate,
+        updateMonthlyCalendar = { calendarViewModel.changeIsUpdateNeeded(true) },
+        updateDailySchedule = { dailyDialogViewModel.changeIsUpdateNeeded(true) },
+        dailyDialogViewModel = dailyDialogViewModel,
         modifier = modifier,
     )
 }
@@ -93,9 +93,9 @@ private fun CalendarScreen(
     currentDialogDate: LocalDate,
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
-    onAddBtnClick: (UserSchedule) -> Unit,
-    onEditBtnClick: (Long, UserSchedule) -> Unit,
     onCategoryDetailNavigate: () -> Unit,
+    updateMonthlyCalendar: () -> Unit,
+    updateDailySchedule: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -120,9 +120,9 @@ private fun CalendarScreen(
                     onSearchBoxClick = onSearchBoxClick,
                     onDateClick = onDateClick,
                     onYearMonthSectionClick = { /* TODO : 연도,월 선택 다이얼로그 */ },
-                    onAddBtnClick = onAddBtnClick,
-                    onEditBtnClick = onEditBtnClick,
                     onCategoryDetailNavigate = onCategoryDetailNavigate,
+                    updateMonthlyCalendar = updateMonthlyCalendar,
+                    updateDailySchedule = updateDailySchedule,
                     dailyDialogViewModel = dailyDialogViewModel,
                     modifier = modifier,
                 )
@@ -142,9 +142,9 @@ private fun CalendarSuccessScreen(
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
     onYearMonthSectionClick: () -> Unit,
-    onAddBtnClick: (UserSchedule) -> Unit,
-    onEditBtnClick: (Long, UserSchedule) -> Unit,
     onCategoryDetailNavigate: () -> Unit,
+    updateMonthlyCalendar: () -> Unit,
+    updateDailySchedule: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -194,6 +194,7 @@ private fun CalendarSuccessScreen(
                 }
             },
             onAddScheduleClick = { isScheduleBottomSheetVisible = true },
+            onUpdateNeeded = updateMonthlyCalendar,
             dailyDialogViewModel = dailyDialogViewModel,
         )
     }
@@ -201,11 +202,11 @@ private fun CalendarSuccessScreen(
     if (isScheduleBottomSheetVisible) {
         ScheduleBottomSheet(
             onDismissRequest = { isScheduleBottomSheetVisible = false },
-            onDoneClick = { schedule ->
-                if (selectedScheduleId != null) onEditBtnClick(selectedScheduleId!!, schedule)
-                else onAddBtnClick(schedule)
+            onDoneClick = {
                 isScheduleBottomSheetVisible = false
                 selectedScheduleId = null
+                updateMonthlyCalendar()
+                updateDailySchedule()
             },
             scheduleId = selectedScheduleId,
             startDate = currentDialogDate,
@@ -364,9 +365,9 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
             onSearchBoxClick = {},
             onDateClick = {},
             onYearMonthSectionClick = {},
-            onAddBtnClick = {},
-            onEditBtnClick = { id, request -> },
             onCategoryDetailNavigate = {},
+            updateMonthlyCalendar = {},
+            updateDailySchedule = {},
             dailyDialogViewModel = DailyDialogViewModel(
                 calendarRepository = TODO(),
                 userScheduleRepository = TODO()

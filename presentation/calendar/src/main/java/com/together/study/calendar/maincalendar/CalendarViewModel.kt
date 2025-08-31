@@ -24,6 +24,7 @@ import javax.inject.Inject
 internal class CalendarViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
 ) : ViewModel() {
+    var isUpdateNeeded = MutableStateFlow(true)
     private val _currentDate = MutableStateFlow(LocalDate.now())
     val currentDate = _currentDate.asStateFlow()
     private val _currentDialogDate = MutableStateFlow(LocalDate.now())
@@ -57,6 +58,7 @@ internal class CalendarViewModel @Inject constructor(
         getNotice()
         getDDay()
         getSchedule()
+        changeIsUpdateNeeded(false)
     }
 
     suspend fun getNotice() {
@@ -83,10 +85,14 @@ internal class CalendarViewModel @Inject constructor(
 
     fun updateCurrentDate(newDate: LocalDate) = viewModelScope.launch {
         _currentDate.update { newDate }
-        getSchedule(newDate)
+        changeIsUpdateNeeded(true)
     }
 
     fun updateDailyDialog(selectedDate: LocalDate) {
         _currentDialogDate.update { selectedDate }
+    }
+
+    fun changeIsUpdateNeeded(new: Boolean) {
+        isUpdateNeeded.value = new
     }
 }

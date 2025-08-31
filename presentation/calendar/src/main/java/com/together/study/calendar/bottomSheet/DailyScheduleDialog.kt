@@ -64,10 +64,12 @@ internal fun DailyScheduleDialog(
     onDismissRequest: () -> Unit,
     onScheduleItemClick: (ScheduleType, Long) -> Unit,
     onAddScheduleClick: () -> Unit,
+    onUpdateNeeded: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
     val dailySchedules by dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
+    val isUpdateNeeded by dailyDialogViewModel.isUpdateNeeded.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
@@ -77,8 +79,9 @@ internal fun DailyScheduleDialog(
     val dialogWidth = screenWidth * 0.8667f
     val dialogHeight = screenHeight * 0.65f
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isUpdateNeeded == true) {
         dailyDialogViewModel.fetchDailySchedules(date)
+        onUpdateNeeded()
     }
 
     Dialog(
@@ -283,6 +286,7 @@ private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
                 onScheduleItemClick = { type, id -> },
                 onAddScheduleClick = {},
                 onDismissRequest = {},
+                onUpdateNeeded = {},
                 dailyDialogViewModel = TODO(),
                 modifier = modifier,
             )
