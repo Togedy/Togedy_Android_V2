@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,80 +22,62 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.component.button.TogedyToggleButton
+import com.together.study.designsystem.component.wheelpicker.TogedyTimePicker
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.formatToDefaultLocalTime
+import com.together.study.util.formatToScheduleDate
 import com.together.study.util.toLocalTime
 import com.together.study.util.toScheduleFormat
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.YearMonth
 
 @Composable
 internal fun ScheduleDateTimeSection(
     startDateTime: Pair<LocalDate, String?>,
     endDateTime: Pair<LocalDate?, String?>,
     onCalendarOpen: () -> Unit,
+    onTimeChange: (LocalTime?, LocalTime?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isTimeExist = startDateTime.second == null
-    var timeToggleButton by remember { mutableStateOf(isTimeExist) }
-    
-    val currentTime = LocalTime.now()
+    val currentTime = LocalTime.of(LocalTime.now().hour, 0)
     var startDate by remember { mutableStateOf(startDateTime.first) }
-    val sTime =
-        if (startDateTime.second != null) startDateTime.second?.toLocalTime() else currentTime
-    var startTime by remember { mutableStateOf(sTime) }
-    val eDate = if (endDateTime.first == null) startDate else endDateTime.first
-    var endDate by remember { mutableStateOf(eDate) }
-    val eTime =
-        if (endDateTime.second != null) endDateTime.second?.toLocalTime() else currentTime.plusHours(
-            1
+    var startTime by remember { mutableStateOf(startDateTime.second?.toLocalTime() ?: currentTime) }
+
+    var endDate by remember { mutableStateOf(endDateTime.first ?: startDate) }
+    var endTime by remember {
+        mutableStateOf(
+            endDateTime.second?.toLocalTime() ?: currentTime.plusHours(1)
         )
-    var endTime by remember { mutableStateOf(eTime) }
+    }
 
-    Column(
-        modifier = modifier,
-    ) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(TogedyTheme.colors.gray500),
-            )
+    var isAllDay by remember { mutableStateOf(startTime == null) }
 
-            Spacer(Modifier.width(8.dp))
+    LaunchedEffect(startTime, endTime) {
+        onTimeChange(startTime, endTime)
+    }
 
-            Text(
-                text = "하루종일",
-                style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray700),
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            TogedyToggleButton(
-                isToggleOn = timeToggleButton,
-                onToggleClick = {
-                    timeToggleButton = !timeToggleButton
-                    if (timeToggleButton) {
-                        startTime = null
-                        endTime = null
-                    } else {
-                        val time = LocalTime.now().formatToDefaultLocalTime()
-                        startTime = time
-                        endTime = time
-                    }
-                },
-            )
-        }
+    Column(modifier = modifier) {
+        ToggleRow(
+            title = "하루종일",
+            isChecked = isAllDay,
+            onToggleChange = { checked ->
+                isAllDay = checked
+                if (checked) {
+                    startTime = null
+                    endTime = null
+                } else {
+                    val now = LocalTime.now().formatToDefaultLocalTime()
+                    startTime = LocalTime.of(now.hour, 0)
+                    endTime = LocalTime.of(now.hour + 1, 0)
+                }
+            }
+        )
 
         Spacer(Modifier.height(20.dp))
 
         Row(
-            modifier = modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
@@ -104,23 +87,29 @@ internal fun ScheduleDateTimeSection(
 
             Spacer(Modifier.width(8.dp))
 
-            Column(
-                verticalArrangement = Arrangement.Top
-            ) {
+            Column(verticalArrangement = Arrangement.Top) {
                 DateTimeSection(
-                    isStartSection = true,
+                    label = "시작",
                     date = startDate,
                     time = startTime,
                     onCalendarOpen = onCalendarOpen,
+                    onTimeChange = { hour, minute ->
+                        startTime =
+                            if (hour != null && minute != null) LocalTime.of(hour, minute) else null
+                    }
                 )
 
                 Spacer(Modifier.height(8.dp))
 
                 DateTimeSection(
-                    isStartSection = false,
-                    date = endDate!!,
+                    label = "종료",
+                    date = endDate,
                     time = endTime,
                     onCalendarOpen = onCalendarOpen,
+                    onTimeChange = { hour, minute ->
+                        endTime =
+                            if (hour != null && minute != null) LocalTime.of(hour, minute) else null
+                    }
                 )
             }
         }
@@ -128,51 +117,102 @@ internal fun ScheduleDateTimeSection(
 }
 
 @Composable
-private fun DateTimeSection(
-    isStartSection: Boolean,
-    date: LocalDate,
-    time: LocalTime?,
-    onCalendarOpen: () -> Unit,
-    modifier: Modifier = Modifier,
+private fun ToggleRow(
+    title: String,
+    isChecked: Boolean,
+    onToggleChange: (Boolean) -> Unit,
 ) {
-    val textValue = if (isStartSection) "시작" else "종료"
-
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .background(TogedyTheme.colors.gray500),
+        )
+
+        Spacer(Modifier.width(8.dp))
+
         Text(
-            text = textValue,
+            text = title,
             style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray700),
         )
 
         Spacer(Modifier.weight(1f))
 
-        GrayBoxText(
-            text = formatToDate(date),
-            onTextClick = onCalendarOpen,
+        TogedyToggleButton(
+            isToggleOn = isChecked,
+            onToggleClick = { onToggleChange(!isChecked) }
         )
+    }
+}
 
-        if (time != null) {
-            Spacer(Modifier.width(8.dp))
+@Composable
+private fun DateTimeSection(
+    label: String,
+    date: LocalDate,
+    time: LocalTime?,
+    onCalendarOpen: () -> Unit,
+    onTimeChange: (Int?, Int?) -> Unit,
+) {
+    var isTimePickerOpen by remember { mutableStateOf(false) }
+    var selectedHour by remember { mutableStateOf(time?.hour) }
+    var selectedMinute by remember { mutableStateOf(time?.minute) }
+
+    val timeTextColor =
+        if (isTimePickerOpen) TogedyTheme.colors.green
+        else TogedyTheme.colors.gray500
+
+    LaunchedEffect(selectedHour, selectedMinute) {
+        onTimeChange(selectedHour, selectedMinute)
+    }
+
+    Column {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = label,
+                style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray700),
+            )
+
+            Spacer(Modifier.weight(1f))
 
             GrayBoxText(
-                text = time.toScheduleFormat(),
-                onTextClick = {},
+                text = date.formatToScheduleDate(),
+                onTextClick = onCalendarOpen,
+            )
+
+            if (time != null) {
+                Spacer(Modifier.width(8.dp))
+
+                GrayBoxText(
+                    text = time.toScheduleFormat(),
+                    textColor = timeTextColor,
+                    onTextClick = { isTimePickerOpen = !isTimePickerOpen },
+                )
+            }
+        }
+
+        if (isTimePickerOpen) {
+            TogedyTimePicker(
+                initHour = selectedHour ?: 0,
+                initMinute = selectedMinute ?: 0,
+                onValueChange = { hour, minute ->
+                    selectedHour = hour
+                    selectedMinute = minute
+                }
             )
         }
     }
 }
 
-private fun formatToDate(date: LocalDate): String =
-    "${YearMonth.from(date).monthValue}.${date.dayOfMonth} ${date.dayOfWeek}"
-
 @Preview
 @Composable
-private fun ScheduleDateTimeSectionPreview(modifier: Modifier = Modifier) {
+private fun ScheduleDateTimeSectionPreview() {
     ScheduleDateTimeSection(
         startDateTime = Pair(LocalDate.now(), null),
         endDateTime = Pair(null, null),
         onCalendarOpen = {},
-        modifier = modifier
+        onTimeChange = { start, end -> }
     )
 }
