@@ -7,7 +7,7 @@ import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.repository.UserScheduleRepository
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleBottomSheetUiState
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetState
-import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubSheetType
 import com.together.study.calendar.schedule_bottomsheet.state.UserScheduleInfo
 import com.together.study.calendar.usecase.GetCategoryUseCase
 import com.together.study.calendar.usecase.PostCategoryUseCase
@@ -109,28 +109,28 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     }
 
-    fun updateBottomSheetVisibility(type: ScheduleSubBottomSheetType) {
+    fun updateBottomSheetVisibility(type: ScheduleSubSheetType) {
         when (type) {
-            ScheduleSubBottomSheetType.CALENDAR -> {
+            ScheduleSubSheetType.CALENDAR -> {
                 _bottomSheetState.update {
                     it.copy(isCalendarOpen = !_bottomSheetState.value.isCalendarOpen)
                 }
             }
 
-            ScheduleSubBottomSheetType.CATEGORY -> {
+            ScheduleSubSheetType.CATEGORY -> {
                 if (!_bottomSheetState.value.isCategoryOpen) viewModelScope.launch { getCategoryItems() }
                 _bottomSheetState.update {
                     it.copy(isCategoryOpen = !_bottomSheetState.value.isCategoryOpen)
                 }
             }
 
-            ScheduleSubBottomSheetType.CATEGORY_ADD -> {
+            ScheduleSubSheetType.CATEGORY_ADD -> {
                 _bottomSheetState.update {
                     it.copy(isCategoryAddOpen = !_bottomSheetState.value.isCategoryAddOpen)
                 }
             }
 
-            ScheduleSubBottomSheetType.MEMO -> {
+            ScheduleSubSheetType.MEMO -> {
                 _bottomSheetState.update {
                     it.copy(isMemoOpen = !_bottomSheetState.value.isMemoOpen)
                 }
