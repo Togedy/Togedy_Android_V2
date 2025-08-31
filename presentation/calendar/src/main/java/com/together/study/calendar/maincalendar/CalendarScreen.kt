@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.bottomSheet.DailyDialogViewModel
 import com.together.study.calendar.bottomSheet.DailyScheduleDialog
+import com.together.study.calendar.bottomSheet.YearMonthBottomSheet
 import com.together.study.calendar.generateCalendarWeeks
 import com.together.study.calendar.maincalendar.component.DayOfWeek
 import com.together.study.calendar.maincalendar.component.WeekSchedule
@@ -79,6 +80,7 @@ internal fun CalendarRoute(
         onSearchBoxClick = onSearchBoxClick,
         onDateClick = calendarViewModel::updateDailyDialog,
         onCategoryDetailNavigate = onCategoryDetailNavigate,
+        onYearMonthChange = calendarViewModel::updateCurrentDate,
         updateMonthlyCalendar = { calendarViewModel.changeIsUpdateNeeded(true) },
         updateDailySchedule = { dailyDialogViewModel.changeIsUpdateNeeded(true) },
         dailyDialogViewModel = dailyDialogViewModel,
@@ -93,6 +95,7 @@ private fun CalendarScreen(
     currentDialogDate: LocalDate,
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
+    onYearMonthChange: (LocalDate) -> Unit,
     onCategoryDetailNavigate: () -> Unit,
     updateMonthlyCalendar: () -> Unit,
     updateDailySchedule: () -> Unit,
@@ -113,14 +116,14 @@ private fun CalendarScreen(
             with(uiState) {
                 CalendarSuccessScreen(
                     notice = (uiState.noticeState as UiState.Success<String>).data,
-                    currentDialogDate = currentDialogDate,
+                    currentDate = currentDialogDate,
                     date = currentDate,
                     dDay = (uiState.dDayState as UiState.Success<DDay>).data,
                     schedules = (uiState.scheduleState as UiState.Success<List<Schedule>>).data,
                     onSearchBoxClick = onSearchBoxClick,
                     onDateClick = onDateClick,
-                    onYearMonthSectionClick = { /* TODO : 연도,월 선택 다이얼로그 */ },
                     onCategoryDetailNavigate = onCategoryDetailNavigate,
+                    onYearMonthChange = onYearMonthChange,
                     updateMonthlyCalendar = updateMonthlyCalendar,
                     updateDailySchedule = updateDailySchedule,
                     dailyDialogViewModel = dailyDialogViewModel,
@@ -135,20 +138,21 @@ private fun CalendarScreen(
 @Composable
 private fun CalendarSuccessScreen(
     notice: String,
-    currentDialogDate: LocalDate,
+    currentDate: LocalDate,
     date: LocalDate,
     dDay: DDay,
     schedules: List<Schedule>,
     onSearchBoxClick: () -> Unit,
     onDateClick: (LocalDate) -> Unit,
-    onYearMonthSectionClick: () -> Unit,
     onCategoryDetailNavigate: () -> Unit,
+    onYearMonthChange: (LocalDate) -> Unit,
     updateMonthlyCalendar: () -> Unit,
     updateDailySchedule: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
     var weeks = generateCalendarWeeks(date)
+    var isYearMonthBottomSheetVisible by remember { mutableStateOf(false) }
     var isDailyDialogVisible by remember { mutableStateOf(false) }
     var selectedScheduleId by remember { mutableStateOf<Long?>(null) }
     var isScheduleBottomSheetVisible by remember { mutableStateOf(false) }
@@ -165,7 +169,7 @@ private fun CalendarSuccessScreen(
                 date = date,
                 dDay = dDay,
                 onSearchBoxClick = onSearchBoxClick,
-                onYearMonthSectionClick = onYearMonthSectionClick,
+                onYearMonthSectionClick = { isYearMonthBottomSheetVisible = true },
             )
         }
 
@@ -182,9 +186,22 @@ private fun CalendarSuccessScreen(
         }
     }
 
+    if (isYearMonthBottomSheetVisible) {
+        YearMonthBottomSheet(
+            initDate = currentDate,
+            onDismissRequest = {
+                isYearMonthBottomSheetVisible = false
+            },
+            onDoneClick = { selectedDate ->
+                onYearMonthChange(selectedDate)
+                isYearMonthBottomSheetVisible = false
+            },
+        )
+    }
+
     if (isDailyDialogVisible) {
         DailyScheduleDialog(
-            date = currentDialogDate,
+            date = currentDate,
             dDay = dDay,
             onDismissRequest = { isDailyDialogVisible = false },
             onScheduleItemClick = { scheduleType, id ->
@@ -209,7 +226,7 @@ private fun CalendarSuccessScreen(
                 updateDailySchedule()
             },
             scheduleId = selectedScheduleId,
-            startDate = currentDialogDate,
+            startDate = currentDate,
             onEditCategoryClick = onCategoryDetailNavigate,
         )
     }
@@ -358,13 +375,13 @@ private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         CalendarSuccessScreen(
             notice = "알림을 알립니다!",
-            currentDialogDate = LocalDate.now(),
+            currentDate = LocalDate.now(),
             date = LocalDate.now(),
             dDay = DDay.mock,
             schedules = emptyList(),
             onSearchBoxClick = {},
             onDateClick = {},
-            onYearMonthSectionClick = {},
+            onYearMonthChange = {},
             onCategoryDetailNavigate = {},
             updateMonthlyCalendar = {},
             updateDailySchedule = {},
