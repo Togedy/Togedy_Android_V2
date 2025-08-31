@@ -185,7 +185,7 @@ private fun CalendarSuccessScreen(
     if (isDailyDialogVisible) {
         DailyScheduleDialog(
             date = currentDialogDate,
-            dDay = null,
+            dDay = dDay,
             onDismissRequest = { isDailyDialogVisible = false },
             onScheduleItemClick = { scheduleType, id ->
                 if (scheduleType == ScheduleType.USER) {

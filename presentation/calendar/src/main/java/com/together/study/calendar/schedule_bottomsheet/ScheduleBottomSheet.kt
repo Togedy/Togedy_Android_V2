@@ -64,6 +64,8 @@ internal fun ScheduleBottomSheet(
 
     LaunchedEffect(Unit) {
         if (scheduleId != null) viewModel.getUserSchedule(scheduleId, startDate)
+        else viewModel.initUserSchedule()
+
         viewModel.updateStartDate(startDate)
         sheetState.expand()
     }

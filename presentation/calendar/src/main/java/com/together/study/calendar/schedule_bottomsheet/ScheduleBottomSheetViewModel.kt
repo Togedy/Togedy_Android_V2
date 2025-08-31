@@ -53,6 +53,10 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
             .onFailure { UiState.Failure(it.message.toString()) }
     }
 
+    fun initUserSchedule() {
+        _uiState.update { it.copy(originalInfo = UserScheduleInfo(), newInfo = UserScheduleInfo()) }
+    }
+
     fun updateScheduleName(new: String) {
         _uiState.update { it.copy(newInfo = it.newInfo.copy(userScheduleName = new)) }
     }
@@ -142,11 +146,13 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     fun toUserSchedule(): UserSchedule {
         with(_uiState.value.newInfo) {
+            val endDate = if (endDateValue != null) endDateValue.toString() else null
+
             return UserSchedule(
                 userScheduleName = userScheduleName,
                 startDate = startDateValue.toString(),
                 startTime = startTimeValue,
-                endDate = endDateValue.toString(),
+                endDate = endDate,
                 endTime = endTimeValue,
                 memo = memoValue,
                 category = categoryValue!!,

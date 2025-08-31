@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.component.UserScheduleItem
+import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 import com.together.study.common.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_delete_24
@@ -59,7 +60,7 @@ import kotlin.math.roundToInt
 @Composable
 internal fun DailyScheduleDialog(
     date: LocalDate,
-    dDay: Int?,
+    dDay: DDay,
     onDismissRequest: () -> Unit,
     onScheduleItemClick: (ScheduleType, Long) -> Unit,
     onAddScheduleClick: () -> Unit,
@@ -132,11 +133,15 @@ internal fun DailyScheduleDialog(
 @Composable
 private fun TopDateInfoSection(
     date: LocalDate,
-    dDay: Int?,
+    dDay: DDay,
     modifier: Modifier = Modifier,
 ) {
-    val dDayColor = if (dDay == 0) TogedyTheme.colors.red else TogedyTheme.colors.gray500
-    val dDayText = if (dDay == 0) "D-DAY" else "D-$dDay"
+    val dDayColor = if (dDay.hasDday) TogedyTheme.colors.red else TogedyTheme.colors.gray500
+    val dDayText =
+        if (dDay.hasDday) {
+            if (dDay.remainingDays == 0) "D-DAY"
+            else "D-$dDay"
+        } else ""
 
     Row(
         modifier = modifier,
@@ -162,7 +167,7 @@ private fun TopDateInfoSection(
             )
         }
 
-        if (dDay != null) {
+        if (dDay.hasDday) {
             Spacer(Modifier.weight(1f))
 
             Text(
@@ -274,7 +279,7 @@ private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
         ) {
             DailyScheduleDialog(
                 date = LocalDate.now(),
-                dDay = 10,
+                dDay = DDay(hasDday = false, userScheduleName = null, remainingDays = 0),
                 onScheduleItemClick = { type, id -> },
                 onAddScheduleClick = {},
                 onDismissRequest = {},
