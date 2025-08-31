@@ -1,5 +1,6 @@
 package com.together.study.designsystem.component.wheelpicker
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -14,17 +15,32 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
 import java.time.Year
+
+private val PickerHeight = 140.dp
+private val ItemHeight = 32.dp
+private val VerticalPadding = 50.dp
+
+enum class PickerPosition {
+    START, MIDDLE, END;
+
+    fun toShape(corner: Dp): RoundedCornerShape = when (this) {
+        START -> RoundedCornerShape(topStart = corner, bottomStart = corner)
+        END -> RoundedCornerShape(topEnd = corner, bottomEnd = corner)
+        MIDDLE -> RoundedCornerShape(0.dp)
+    }
+}
 
 /**
  * Vertical Scroll Picker
@@ -35,53 +51,62 @@ import java.time.Year
  * @param position "start", "middle", "end" 로 box cornerShape를 결정
  * @param modifier 전체 박스 수정자
  * @param unit 단위 값 (생략 가능)
+ * @param isTimeValue 시간 관련 Picker인지 판단하는 값
+ * @param onValueChange 선택된 값을 반환하는 콜백 함수
  */
+@SuppressLint("DefaultLocale")
 @Composable
 fun TogedyScrollPicker(
     initValue: Int,
     minValue: Int,
     maxValue: Int,
-    position: String,
+    position: PickerPosition,
     modifier: Modifier = Modifier,
     unit: String = "",
+    isTimeValue: Boolean = false,
+    onValueChange: (Int) -> Unit = {},
 ) {
-    val init by remember { mutableIntStateOf(initValue) }
-    val listState = rememberLazyListState(init - minValue)
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initValue - minValue)
 
     val density = LocalDensity.current
     val threshold = remember { density.run { 16.dp.toPx() } }
-    val selectedValue by remember { derivedStateOf { (listState.firstVisibleItemIndex + if (listState.firstVisibleItemScrollOffset >= threshold) minValue + 1 else minValue) } }
 
-    val blockHeight = 32.dp
-    val shapeValue = 12.dp
-    val boxShape = when (position) {
-        "start" -> RoundedCornerShape(topStart = shapeValue, bottomStart = shapeValue)
-        "end" -> RoundedCornerShape(topEnd = shapeValue, bottomEnd = shapeValue)
-        else -> RoundedCornerShape(0.dp)
+    val selectedValue by remember {
+        derivedStateOf {
+            val index = listState.firstVisibleItemIndex +
+                    if (listState.firstVisibleItemScrollOffset >= threshold) 1 else 0
+            (minValue + index).coerceIn(minValue, maxValue)
+        }
+    }
+
+    LaunchedEffect(selectedValue) {
+        onValueChange(selectedValue)
     }
 
     Box(
-        modifier = modifier
-            .height(140.dp)
-            .background(TogedyTheme.colors.white),
+        modifier = modifier.height(PickerHeight),
         contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
-                .background(color = TogedyTheme.colors.gray300, shape = boxShape)
+                .background(
+                    color = TogedyTheme.colors.gray300,
+                    shape = position.toShape(12.dp)
+                )
                 .fillMaxWidth()
-                .height(blockHeight),
+                .height(ItemHeight)
         )
 
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(0.dp, 50.dp),
+            contentPadding = PaddingValues(vertical = VerticalPadding),
             flingBehavior = rememberSnapFlingBehavior(listState),
-            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+            modifier = Modifier.padding(vertical = 4.dp),
         ) {
             items((minValue..maxValue).toList()) { value ->
+                val isSelected = value == selectedValue
                 val textColor by animateColorAsState(
-                    if (value == selectedValue) TogedyTheme.colors.black else TogedyTheme.colors.gray500,
+                    if (isSelected) TogedyTheme.colors.black else TogedyTheme.colors.gray500,
                     label = "Color"
                 )
 
@@ -89,10 +114,10 @@ fun TogedyScrollPicker(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(blockHeight),
+                        .height(ItemHeight)
                 ) {
                     BasicText(
-                        text = "$value$unit",
+                        text = formatValue(value, isTimeValue) + unit,
                         style = TogedyTheme.typography.title16sb.copy(textColor),
                     )
                 }
@@ -101,16 +126,21 @@ fun TogedyScrollPicker(
     }
 }
 
+@SuppressLint("DefaultLocale")
+private fun formatValue(value: Int, isTimeValue: Boolean): String {
+    return if (isTimeValue) String.format("%02d", value) else value.toString()
+}
+
 @Preview
 @Composable
-fun TogedyTimePickerPreview(modifier: Modifier = Modifier) {
+private fun TogedyTimePickerPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         TogedyScrollPicker(
             initValue = Year.now().value,
             minValue = 2000,
             maxValue = Year.now().value + 1,
             unit = "년",
-            position = "start",
+            position = PickerPosition.START,
             modifier = modifier,
         )
     }
