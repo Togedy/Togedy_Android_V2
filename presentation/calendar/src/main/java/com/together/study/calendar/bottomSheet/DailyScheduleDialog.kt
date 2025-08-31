@@ -140,7 +140,7 @@ private fun TopDateInfoSection(
     val dDayText =
         if (dDay.hasDday) {
             if (dDay.remainingDays == 0) "D-DAY"
-            else "D-$dDay"
+            else "D${dDay.remainingDays}"
         } else ""
 
     Row(

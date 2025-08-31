@@ -344,7 +344,7 @@ private fun DDaySection(
         Spacer(Modifier.width(4.dp))
 
         Text(
-            text = "D-${dDay.remainingDays}",
+            text = "D${dDay.remainingDays}",
             style = dDayTextStyle,
         )
     }
