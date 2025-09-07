@@ -210,7 +210,10 @@ private fun CalendarSuccessScreen(
                     isScheduleBottomSheetVisible = true
                 }
             },
-            onAddScheduleClick = { isScheduleBottomSheetVisible = true },
+            onAddScheduleClick = {
+                isScheduleBottomSheetVisible = true
+                selectedScheduleId = null
+            },
             onUpdateNeeded = updateMonthlyCalendar,
             dailyDialogViewModel = dailyDialogViewModel,
         )
