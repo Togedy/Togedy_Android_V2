@@ -143,8 +143,11 @@ private fun TopDateInfoSection(
     val dDayColor = if (dDay.hasDday) TogedyTheme.colors.red else TogedyTheme.colors.gray500
     val dDayText =
         if (dDay.hasDday) {
-            if (dDay.remainingDays == 0) "D-DAY"
-            else "D${dDay.remainingDays}"
+            when {
+                dDay.remainingDays == 0 -> "D-DAY"
+                dDay.remainingDays!! < 0 -> "D${dDay.remainingDays}"
+                else -> "D+${dDay.remainingDays}"
+            }
         } else ""
 
     Row(

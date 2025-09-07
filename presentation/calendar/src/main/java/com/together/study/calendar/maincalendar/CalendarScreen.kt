@@ -344,6 +344,14 @@ private fun DDaySection(
     modifier: Modifier = Modifier,
 ) {
     val dDayTextStyle = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray500)
+    val dDayText =
+        if (dDay.hasDday) {
+            when {
+                dDay.remainingDays == 0 -> "D-DAY"
+                dDay.remainingDays!! < 0 -> "D${dDay.remainingDays}"
+                else -> "D+${dDay.remainingDays}"
+            }
+        } else ""
 
     Row(
         modifier = modifier,
@@ -362,7 +370,7 @@ private fun DDaySection(
         Spacer(Modifier.width(4.dp))
 
         Text(
-            text = "D${dDay.remainingDays}",
+            text = dDayText,
             style = dDayTextStyle,
         )
     }
