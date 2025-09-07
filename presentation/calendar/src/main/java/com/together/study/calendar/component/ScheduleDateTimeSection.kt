@@ -40,10 +40,10 @@ internal fun ScheduleDateTimeSection(
     modifier: Modifier = Modifier,
 ) {
     val currentTime = LocalTime.of(LocalTime.now().hour, 0)
-    var startDate by remember { mutableStateOf(startDateTime.first) }
-    var startTime by remember { mutableStateOf(startDateTime.second?.toLocalTime() ?: currentTime) }
+    val startDate = startDateTime.first
+    val endDate = endDateTime.first ?: startDate
 
-    var endDate by remember { mutableStateOf(endDateTime.first ?: startDate) }
+    var startTime by remember { mutableStateOf(startDateTime.second?.toLocalTime() ?: currentTime) }
     var endTime by remember {
         mutableStateOf(
             endDateTime.second?.toLocalTime() ?: currentTime.plusHours(1)
