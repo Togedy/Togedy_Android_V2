@@ -95,7 +95,7 @@ fun TogedyScrollPicker(
         Box(
             modifier = Modifier
                 .background(
-                    color = TogedyTheme.colors.gray300,
+                    color = TogedyTheme.colors.gray100,
                     shape = position.toShape(12.dp)
                 )
                 .fillMaxWidth()

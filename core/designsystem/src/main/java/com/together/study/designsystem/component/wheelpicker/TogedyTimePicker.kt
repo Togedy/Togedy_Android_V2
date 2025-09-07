@@ -48,7 +48,7 @@ fun TogedyTimePicker(
 
         Box(
             modifier = Modifier
-                .background(TogedyTheme.colors.gray300)
+                .background(TogedyTheme.colors.gray100)
                 .height(32.dp),
             contentAlignment = Alignment.Center,
         ) {
