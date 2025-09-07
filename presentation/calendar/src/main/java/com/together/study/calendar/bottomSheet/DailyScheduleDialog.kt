@@ -80,7 +80,7 @@ internal fun DailyScheduleDialog(
     val dialogWidth = screenWidth * 0.8667f
     val dialogHeight = screenHeight * 0.65f
 
-    LaunchedEffect(isUpdateNeeded == true) {
+    LaunchedEffect(isUpdateNeeded) {
         dailyDialogViewModel.fetchDailySchedules(date)
         onUpdateNeeded()
     }
