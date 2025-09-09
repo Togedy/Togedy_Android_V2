@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.calendar.model.Category
@@ -21,7 +20,6 @@ import com.together.study.calendar.model.Schedule
 import com.together.study.calendar.type.toBackgroundColorOrDefault
 import com.together.study.calendar.type.toCategoryColorOrDefault
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.presentation.calendar.R.string.university_schedule_name
 import java.time.LocalDate
 
 @Composable
@@ -31,18 +29,19 @@ fun MonthlyScheduleItem(
     modifier: Modifier = Modifier,
 ) {
     with(schedule) {
-        val isUserSchedule = scheduleType == "user"
+        val isUserSchedule = scheduleType == "USER"
 
         if (isUserSchedule) {
             UserSchedule(
                 scheduleName = scheduleName,
-                categoryColor = category?.categoryColor.toString(),
+                categoryColor = category.categoryColor.toString(),
                 isStartOfMultiWeek = isStartOfMultiWeek,
                 modifier = modifier,
             )
         } else {
             UnivSchedule(
                 scheduleName = scheduleName,
+                universityAdmissionType = universityAdmissionType,
                 universityAdmissionStage = universityAdmissionStage,
                 universityAdmissionMethod = universityAdmissionMethod,
                 isStartOfMultiWeek = isStartOfMultiWeek,
@@ -94,12 +93,15 @@ private fun UserSchedule(
 @Composable
 private fun UnivSchedule(
     scheduleName: String,
+    universityAdmissionType: String,
     universityAdmissionStage: String,
     universityAdmissionMethod: String,
     isStartOfMultiWeek: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val universityScheduleColor = TogedyTheme.colors.green
+    val universityScheduleColor =
+        if (universityAdmissionType == "수시") TogedyTheme.colors.green
+        else TogedyTheme.colors.black
 
     Row(
         modifier = modifier
@@ -128,21 +130,7 @@ private fun UnivSchedule(
         Spacer(Modifier.width(2.dp))
 
         Text(
-            text = if (universityAdmissionMethod != "") {
-                stringResource(
-                    university_schedule_name,
-                    scheduleName,
-                    universityAdmissionStage,
-                    universityAdmissionMethod,
-                )
-            } else {
-                stringResource(
-                    university_schedule_name,
-                    scheduleName,
-                    universityAdmissionStage,
-                    ""
-                )
-            },
+            text = "$scheduleName $universityAdmissionMethod",
             style = TogedyTheme.typography.body10m.copy(universityScheduleColor),
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
@@ -157,7 +145,7 @@ private fun UserSchedulePreview(modifier: Modifier = Modifier) {
         MonthlyScheduleItem(
             schedule = Schedule(
                 scheduleId = 0,
-                scheduleType = "user",
+                scheduleType = "USER",
                 scheduleName = "국어학원",
                 startDate = LocalDate.now().toString(),
                 endDate = null,
@@ -188,6 +176,7 @@ private fun UniversitySchedulePreview(modifier: Modifier = Modifier) {
                 endDate = null,
                 universityAdmissionType = "수시",
                 universityAdmissionStage = "원서접수",
+                universityAdmissionMethod = "논술전형",
                 category = Category(
                     categoryId = null,
                     categoryName = "국어",
@@ -213,6 +202,7 @@ private fun UniversityScheduleMultiWeekPreview(modifier: Modifier = Modifier) {
                 endDate = null,
                 universityAdmissionType = "수시",
                 universityAdmissionStage = "원서접수",
+                universityAdmissionMethod = "논술전형",
                 category = Category(
                     categoryId = null,
                     categoryName = "국어",

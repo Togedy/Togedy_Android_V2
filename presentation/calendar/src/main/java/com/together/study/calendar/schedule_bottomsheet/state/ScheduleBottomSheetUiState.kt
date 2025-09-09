@@ -9,6 +9,7 @@ data class ScheduleBottomSheetUiState(
     val originalInfo: UserScheduleInfo = UserScheduleInfo(),
     val newInfo: UserScheduleInfo = UserScheduleInfo(),
     val isDoneActivated: Boolean = false,
+    val categories: List<Category> = emptyList(),
 )
 
 data class UserScheduleInfo(

@@ -1,6 +1,7 @@
 package com.together.study.util
 
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 fun String?.toLocalDate(): LocalDate? {
@@ -11,4 +12,8 @@ fun String?.toLocalDate(): LocalDate? {
     } catch (e: Exception) {
         null
     }
+}
+
+fun String.toLocalTime(): LocalTime {
+    return LocalTime.parse(this, DateTimeFormatter.ofPattern("HH:mm"))
 }

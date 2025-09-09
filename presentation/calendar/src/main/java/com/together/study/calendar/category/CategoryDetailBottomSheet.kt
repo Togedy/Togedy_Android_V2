@@ -44,7 +44,7 @@ import com.together.study.util.noRippleClickable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CategoryDetailBottomSheet(
-    sheetState: SheetState,
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     category: Category? = null,
     onDismissRequest: () -> Unit,
     onDoneClick: (Category) -> Unit,

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.component.UserScheduleItem
+import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 import com.together.study.common.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_delete_24
@@ -58,14 +61,16 @@ import kotlin.math.roundToInt
 @Composable
 internal fun DailyScheduleDialog(
     date: LocalDate,
-    dDay: Int?,
+    dDay: DDay,
     onDismissRequest: () -> Unit,
     onScheduleItemClick: (ScheduleType, Long) -> Unit,
     onAddScheduleClick: () -> Unit,
+    onUpdateNeeded: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val dailySchedules = dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
+    val dailySchedules by dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
+    val isUpdateNeeded by dailyDialogViewModel.isUpdateNeeded.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
@@ -75,8 +80,9 @@ internal fun DailyScheduleDialog(
     val dialogWidth = screenWidth * 0.8667f
     val dialogHeight = screenHeight * 0.65f
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isUpdateNeeded) {
         dailyDialogViewModel.fetchDailySchedules(date)
+        onUpdateNeeded()
     }
 
     Dialog(
@@ -106,7 +112,7 @@ internal fun DailyScheduleDialog(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        dailySchedules.value.forEach { schedule ->
+                        dailySchedules.forEach { schedule ->
                             DailyScheduleItem(
                                 coroutineScope = coroutineScope,
                                 schedule = schedule,
@@ -131,11 +137,18 @@ internal fun DailyScheduleDialog(
 @Composable
 private fun TopDateInfoSection(
     date: LocalDate,
-    dDay: Int?,
+    dDay: DDay,
     modifier: Modifier = Modifier,
 ) {
-    val dDayColor = if (dDay == 0) TogedyTheme.colors.red else TogedyTheme.colors.gray500
-    val dDayText = if (dDay == 0) "D-DAY" else "D-$dDay"
+    val dDayColor = if (dDay.hasDday) TogedyTheme.colors.red else TogedyTheme.colors.gray500
+    val dDayText =
+        if (dDay.hasDday) {
+            when {
+                dDay.remainingDays == 0 -> "D-DAY"
+                dDay.remainingDays!! < 0 -> "D${dDay.remainingDays}"
+                else -> "D+${dDay.remainingDays}"
+            }
+        } else ""
 
     Row(
         modifier = modifier,
@@ -161,7 +174,7 @@ private fun TopDateInfoSection(
             )
         }
 
-        if (dDay != null) {
+        if (dDay.hasDday) {
             Spacer(Modifier.weight(1f))
 
             Text(
@@ -191,16 +204,21 @@ fun DailyScheduleItem(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .background(TogedyTheme.colors.red, RoundedCornerShape(6.dp))
-                .noRippleClickable { onDeleteClick(schedule.scheduleId!!) },
+                .background(TogedyTheme.colors.red, RoundedCornerShape(6.dp)),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_delete_24),
-                contentDescription = null,
-                tint = TogedyTheme.colors.white,
-            )
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .noRippleClickable { onDeleteClick(schedule.scheduleId!!) },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(ic_delete_24),
+                    contentDescription = null,
+                    tint = TogedyTheme.colors.white,
+                )
+            }
         }
 
         Box(
@@ -273,10 +291,11 @@ private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
         ) {
             DailyScheduleDialog(
                 date = LocalDate.now(),
-                dDay = 10,
+                dDay = DDay(hasDday = false, userScheduleName = null, remainingDays = 0),
                 onScheduleItemClick = { type, id -> },
                 onAddScheduleClick = {},
                 onDismissRequest = {},
+                onUpdateNeeded = {},
                 dailyDialogViewModel = TODO(),
                 modifier = modifier,
             )

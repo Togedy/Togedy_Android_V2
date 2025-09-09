@@ -22,6 +22,7 @@ val PretendardRegular = FontFamily(Font(R.font.pretendard_regular, FontWeight.No
 
 @Immutable
 class TogedyTypography(
+    val title18sb: TextStyle,
     val title16sb: TextStyle,
     val body14m: TextStyle,
     val body12m: TextStyle,
@@ -49,10 +50,15 @@ private fun TogedyTextStyle(
 )
 
 fun TogedyTypography() = TogedyTypography(
+    title18sb = TogedyTextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 18.sp,
+        lineHeight = 24.sp,
+    ),
     title16sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
-        lineHeight = 26.sp,
+        lineHeight = 22.sp,
     ),
     body14m = TogedyTextStyle(
         fontFamily = PretendardMedium,

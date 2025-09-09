@@ -21,7 +21,7 @@ val GRAY400 = Color(0xFFC4C8CC)
 val GRAY500 = Color(0xFFA8AEB4) //gray/picker_text
 val GRAY600 = Color(0xFF5F6773) //gray/button_text
 val GRAY700 = Color(0xFF49505C) //gray/TEXT
-val GRAY800 = Color(0xFF393E47)
+val GRAY800 = Color(0xFF393E47) //icon/default
 val GRAY900 = Color(0xFF4B525E)
 val BLACK = Color(0xFF000000)
 

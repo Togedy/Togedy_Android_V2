@@ -2,6 +2,7 @@ package com.together.study.calendar.schedule_bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -34,7 +36,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.calendar.maincalendar.component.DayOfWeek
+import com.together.study.designsystem.R.drawable.ic_left_chevron_green
+import com.together.study.designsystem.R.drawable.ic_replay
+import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
@@ -66,24 +71,37 @@ internal fun CalendarBottomSheet(
     ) {
         Column(
             modifier = modifier
-                .fillMaxHeight(0.468f)
                 .padding(16.dp),
         ) {
+            YearMonthSection(
+                year = currentYM.year,
+                month = currentYM.monthValue,
+                onDateChange = { currentYM = it }
+            )
+
+            Spacer(Modifier.height(10.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                YearMonthSection(
-                    year = currentYM.year,
-                    month = currentYM.monthValue,
-                    onDateChange = { currentYM = it }
+                Text(
+                    text = selectedStartDate.toString().replace('-', '.'),
+                    style = TogedyTheme.typography.body12m.copy(TogedyTheme.colors.gray600),
                 )
 
-                Spacer(Modifier.width(4.dp))
+                if (selectedEndDate != null) {
+                    Text(
+                        text = " → ${selectedEndDate.toString().replace('-', '.')}",
+                        style = TogedyTheme.typography.body12m.copy(TogedyTheme.colors.gray600),
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
 
                 Text(
-                    text = "종료일",
-                    style = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray400),
+                    text = "기간 설정",
+                    style = TogedyTheme.typography.body12m.copy(TogedyTheme.colors.gray600),
                 )
 
                 Spacer(Modifier.width(4.dp))
@@ -95,20 +113,9 @@ internal fun CalendarBottomSheet(
                         if (!isToggleOn) selectedEndDate = null
                     },
                 )
-
-                Spacer(Modifier.weight(1f))
-
-                Text(
-                    text = "완료",
-                    style = TogedyTheme.typography.title16sb.copy(TogedyTheme.colors.green),
-                    modifier = Modifier.noRippleClickable {
-                        onDoneClick(
-                            selectedStartDate,
-                            selectedEndDate
-                        )
-                    },
-                )
             }
+
+            Spacer(Modifier.height(8.dp))
 
             CalendarSection(
                 currentMonth = YearMonth.of(currentYM.year, currentYM.monthValue),
@@ -127,7 +134,17 @@ internal fun CalendarBottomSheet(
                     }
                 },
             )
+
+            BottomButtonSection(
+                onResetToTodayClick = {
+                    selectedStartDate = LocalDate.now()
+                    selectedEndDate = null
+                },
+                onDoneClick = { onDoneClick(selectedStartDate, selectedEndDate) }
+            )
         }
+
+        Spacer(Modifier.height(10.dp))
     }
 }
 
@@ -139,12 +156,13 @@ private fun YearMonthSection(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.padding(top = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(ic_left_chevron),
+            imageVector = ImageVector.vectorResource(ic_left_chevron_green),
             contentDescription = null,
+            tint = TogedyTheme.colors.green,
             modifier = Modifier.noRippleClickable {
                 if (month == 1) onDateChange(YearMonth.of(year - 1, 12))
                 else onDateChange(YearMonth.of(year, month - 1))
@@ -154,15 +172,16 @@ private fun YearMonthSection(
         Spacer(Modifier.width(4.dp))
 
         Text(
-            text = "$year ${month}월",
-            style = TogedyTheme.typography.chip14b.copy(TogedyTheme.colors.gray700),
+            text = "$year. ${month.toString().padStart(2, '0')}",
+            style = TogedyTheme.typography.title18sb.copy(TogedyTheme.colors.gray700),
         )
 
         Spacer(Modifier.width(4.dp))
 
         Icon(
-            imageVector = ImageVector.vectorResource(ic_left_chevron),
+            imageVector = ImageVector.vectorResource(ic_right_chevron_green),
             contentDescription = null,
+            tint = TogedyTheme.colors.green,
             modifier = Modifier.noRippleClickable {
                 if (month == 12) onDateChange(YearMonth.of(year + 1, 1))
                 else onDateChange(YearMonth.of(year, month + 1))
@@ -191,6 +210,10 @@ private fun CalendarSection(
     }
 
     Column {
+        DayOfWeek(modifier = Modifier.padding(vertical = 8.dp))
+
+        HorizontalDivider()
+
         dateList.chunked(7).forEach { week ->
             Row(
                 modifier = Modifier
@@ -224,6 +247,7 @@ private fun CalendarSection(
                         modifier = Modifier
                             .height(32.dp)
                             .weight(1f),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -260,6 +284,55 @@ private fun CalendarSection(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun BottomButtonSection(
+    onResetToTodayClick: () -> Unit,
+    onDoneClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier
+                .background(TogedyTheme.colors.gray200, RoundedCornerShape(8.dp))
+                .padding(10.dp)
+                .noRippleClickable(onResetToTodayClick),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_replay),
+                contentDescription = null,
+                tint = TogedyTheme.colors.gray800,
+            )
+
+            Spacer(Modifier.width(4.dp))
+
+            Text(
+                text = "오늘",
+                style = TogedyTheme.typography.title16sb.copy(TogedyTheme.colors.gray700),
+            )
+        }
+
+        Spacer(Modifier.width(8.dp))
+
+        Box(
+            modifier = Modifier
+                .background(TogedyTheme.colors.green, RoundedCornerShape(8.dp))
+                .padding(10.dp)
+                .weight(1f)
+                .noRippleClickable(onDoneClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "일정선택 완료",
+                style = TogedyTheme.typography.title16sb.copy(TogedyTheme.colors.white),
+            )
         }
     }
 }

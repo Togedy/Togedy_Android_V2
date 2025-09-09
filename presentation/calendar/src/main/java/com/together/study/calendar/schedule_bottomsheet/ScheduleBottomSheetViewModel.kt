@@ -7,8 +7,10 @@ import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.repository.UserScheduleRepository
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleBottomSheetUiState
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetState
-import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubSheetType
 import com.together.study.calendar.schedule_bottomsheet.state.UserScheduleInfo
+import com.together.study.calendar.usecase.GetCategoryUseCase
+import com.together.study.calendar.usecase.PostCategoryUseCase
 import com.together.study.common.state.UiState
 import com.together.study.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class ScheduleBottomSheetViewModel @Inject constructor(
+    private val getCategoryUseCase: GetCategoryUseCase,
+    private val postCategoryUseCase: PostCategoryUseCase,
     private val userScheduleRepository: UserScheduleRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ScheduleBottomSheetUiState())
@@ -31,25 +35,27 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
         MutableStateFlow(ScheduleSubBottomSheetState())
     val bottomSheetState: StateFlow<ScheduleSubBottomSheetState> = _bottomSheetState.asStateFlow()
 
+    fun getUserSchedule(scheduleId: Long, date: LocalDate) = viewModelScope.launch {
+        userScheduleRepository.getUserSchedule(scheduleId)
+            .onSuccess { it ->
+                val response = UserScheduleInfo(
+                    userScheduleName = it.userScheduleName,
+                    startDateValue = it.startDate.toLocalDate() ?: date,
+                    startTimeValue = it.startTime,
+                    endDateValue = it.endDate.toLocalDate() ?: date,
+                    endTimeValue = it.endTime,
+                    memoValue = it.memo,
+                    categoryValue = it.category,
+                    dDayValue = it.dDay,
+                )
+                _uiState.update { it.copy(originalInfo = response, newInfo = response) }
+            }
+            .onFailure { UiState.Failure(it.message.toString()) }
+    }
 
-    fun getUserSchedule(scheduleId: Long, date: LocalDate) =
-        viewModelScope.launch {
-            userScheduleRepository.getUserSchedule(scheduleId)
-                .onSuccess { it ->
-                    val response = UserScheduleInfo(
-                        userScheduleName = it.userScheduleName,
-                        startDateValue = it.startDate.toLocalDate() ?: date,
-                        startTimeValue = it.startTime,
-                        endDateValue = it.endDate.toLocalDate() ?: date,
-                        endTimeValue = it.endTime,
-                        memoValue = it.memo,
-                        categoryValue = it.category,
-                        dDayValue = it.dDay,
-                    )
-                    _uiState.update { it.copy(originalInfo = response, newInfo = response) }
-                }
-                .onFailure { UiState.Failure(it.message.toString()) }
-        }
+    fun initUserSchedule() {
+        _uiState.update { it.copy(originalInfo = UserScheduleInfo(), newInfo = UserScheduleInfo()) }
+    }
 
     fun updateScheduleName(new: String) {
         _uiState.update { it.copy(newInfo = it.newInfo.copy(userScheduleName = new)) }
@@ -107,27 +113,28 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     }
 
-    fun updateBottomSheetVisibility(type: ScheduleSubBottomSheetType) {
+    fun updateBottomSheetVisibility(type: ScheduleSubSheetType) {
         when (type) {
-            ScheduleSubBottomSheetType.CALENDAR -> {
+            ScheduleSubSheetType.CALENDAR -> {
                 _bottomSheetState.update {
                     it.copy(isCalendarOpen = !_bottomSheetState.value.isCalendarOpen)
                 }
             }
 
-            ScheduleSubBottomSheetType.CATEGORY -> {
+            ScheduleSubSheetType.CATEGORY -> {
+                if (!_bottomSheetState.value.isCategoryOpen) viewModelScope.launch { getCategoryItems() }
                 _bottomSheetState.update {
                     it.copy(isCategoryOpen = !_bottomSheetState.value.isCategoryOpen)
                 }
             }
 
-            ScheduleSubBottomSheetType.CATEGORY_ADD -> {
+            ScheduleSubSheetType.CATEGORY_ADD -> {
                 _bottomSheetState.update {
                     it.copy(isCategoryAddOpen = !_bottomSheetState.value.isCategoryAddOpen)
                 }
             }
 
-            ScheduleSubBottomSheetType.MEMO -> {
+            ScheduleSubSheetType.MEMO -> {
                 _bottomSheetState.update {
                     it.copy(isMemoOpen = !_bottomSheetState.value.isMemoOpen)
                 }
@@ -139,16 +146,32 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     fun toUserSchedule(): UserSchedule {
         with(_uiState.value.newInfo) {
+            val endDate = if (endDateValue != null) endDateValue.toString() else null
+
             return UserSchedule(
                 userScheduleName = userScheduleName,
                 startDate = startDateValue.toString(),
                 startTime = startTimeValue,
-                endDate = endDateValue.toString(),
+                endDate = endDate,
                 endTime = endTimeValue,
                 memo = memoValue,
                 category = categoryValue!!,
                 dDay = dDayValue,
             )
         }
+    }
+
+    private suspend fun getCategoryItems() {
+        getCategoryUseCase()
+            .onSuccess { result ->
+                _uiState.update { it.copy(categories = result) }
+            }
+            .onFailure(Timber::e)
+    }
+
+    fun postCategory(name: String, color: String) = viewModelScope.launch {
+        postCategoryUseCase(name, color)
+            .onSuccess { getCategoryItems() }
+            .onFailure(Timber::e)
     }
 }
