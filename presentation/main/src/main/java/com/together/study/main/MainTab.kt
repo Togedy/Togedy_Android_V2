@@ -1,44 +1,44 @@
 package com.together.study.main
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.together.study.calendar.maincalendar.navigation.Calendar
 import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
+import com.together.study.designsystem.R.drawable.ic_ai
+import com.together.study.designsystem.R.drawable.ic_calendar
+import com.together.study.designsystem.R.drawable.ic_my
+import com.together.study.designsystem.R.drawable.ic_planner
+import com.together.study.designsystem.R.drawable.ic_study
 import kotlinx.serialization.Serializable
 
-// TODO: 구현 시작 시 수정
 enum class MainTab(
-    val icon: ImageVector,
+    val icon: Int,
     val contentDescription: String,
     val route: MainTabRoute,
 ) {
     CALENDAR(
-        icon = Icons.Filled.Home,
+        icon = ic_calendar,
         contentDescription = "캘린더",
         route = Calendar,
     ),
     DUMMY2(
-        icon = Icons.Filled.Search,
-        contentDescription = "더미2",
+        icon = ic_ai,
+        contentDescription = "입시GPT",
         route = Dummy,
     ),
     DUMMY3(
-        icon = Icons.Filled.Home,
-        contentDescription = "더미3",
+        icon = ic_planner,
+        contentDescription = "플래너",
         route = Dummy,
     ),
     DUMMY4(
-        icon = Icons.Filled.Home,
-        contentDescription = "더미4",
+        icon = ic_study,
+        contentDescription = "스터디",
         route = Dummy,
     ),
     DUMMY5(
-        icon = Icons.Filled.Home,
-        contentDescription = "더미5",
+        icon = ic_my,
+        contentDescription = "MY",
         route = Dummy,
     );
 
@@ -58,4 +58,4 @@ enum class MainTab(
 
 // TODO: 더미 추가 후 삭제
 @Serializable
-data object Dummy: MainTabRoute
+data object Dummy : MainTabRoute
