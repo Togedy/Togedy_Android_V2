@@ -1,43 +1,55 @@
 package com.together.study.main
 
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import com.together.study.calendar.maincalendar.navigation.Calendar
 import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
 import com.together.study.designsystem.R.drawable.ic_ai
+import com.together.study.designsystem.R.drawable.ic_ai_selected
 import com.together.study.designsystem.R.drawable.ic_calendar
+import com.together.study.designsystem.R.drawable.ic_calendar_selected
 import com.together.study.designsystem.R.drawable.ic_my
+import com.together.study.designsystem.R.drawable.ic_my_selected
 import com.together.study.designsystem.R.drawable.ic_planner
+import com.together.study.designsystem.R.drawable.ic_planner_selected
 import com.together.study.designsystem.R.drawable.ic_study
+import com.together.study.designsystem.R.drawable.ic_study_selected
 import kotlinx.serialization.Serializable
 
 enum class MainTab(
-    val icon: Int,
+    @DrawableRes val defaultIcon: Int,
+    @DrawableRes val selectedIcon: Int,
     val contentDescription: String,
     val route: MainTabRoute,
 ) {
     CALENDAR(
-        icon = ic_calendar,
+        defaultIcon = ic_calendar,
+        selectedIcon = ic_calendar_selected,
         contentDescription = "캘린더",
         route = Calendar,
     ),
     DUMMY2(
-        icon = ic_ai,
+        defaultIcon = ic_ai,
+        selectedIcon = ic_ai_selected,
         contentDescription = "입시GPT",
         route = Dummy,
     ),
     DUMMY3(
-        icon = ic_planner,
+        defaultIcon = ic_planner,
+        selectedIcon = ic_planner_selected,
         contentDescription = "플래너",
         route = Dummy,
     ),
     DUMMY4(
-        icon = ic_study,
+        defaultIcon = ic_study,
+        selectedIcon = ic_study_selected,
         contentDescription = "스터디",
         route = Dummy,
     ),
     DUMMY5(
-        icon = ic_my,
+        defaultIcon = ic_my,
+        selectedIcon = ic_my_selected,
         contentDescription = "MY",
         route = Dummy,
     );
