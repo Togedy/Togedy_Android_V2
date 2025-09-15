@@ -13,13 +13,14 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.main.MainTab
 import com.together.study.util.NoRippleInteractionSource
 import kotlinx.collections.immutable.ImmutableList
@@ -42,28 +43,35 @@ fun MainBottomBar(
                 NavigationBarItem(
                     interactionSource = NoRippleInteractionSource,
                     selected = currentTab == itemType,
-                    onClick = {
-                        onTabSelected(itemType)
-                    },
+                    onClick = { onTabSelected(itemType) },
                     icon = {
+                        val icon =
+                            if (currentTab == itemType) itemType.selectedIcon
+                            else itemType.defaultIcon
+
                         Icon(
-                            imageVector = itemType.icon,
+                            imageVector = ImageVector.vectorResource(icon),
                             contentDescription = itemType.contentDescription,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(26.dp),
+                            tint = Color.Unspecified,
                         )
                     },
                     label = {
+                        val textColor =
+                            if (currentTab == itemType) TogedyTheme.colors.gray700
+                            else TogedyTheme.colors.gray500
+
                         Text(
                             text = itemType.contentDescription,
-                            fontSize = 9.sp
+                            style = TogedyTheme.typography.body10m.copy(textColor),
                         )
                     },
                     colors = NavigationBarItemDefaults
                         .colors(
-                            selectedIconColor = Black,
-                            selectedTextColor = Black,
-                            unselectedIconColor = Gray,
-                            unselectedTextColor = Gray,
+                            selectedIconColor = Color.Unspecified,
+                            selectedTextColor = Color.Unspecified,
+                            unselectedIconColor = Color.Unspecified,
+                            unselectedTextColor = Color.Unspecified,
                             indicatorColor = White
                         )
                 )
