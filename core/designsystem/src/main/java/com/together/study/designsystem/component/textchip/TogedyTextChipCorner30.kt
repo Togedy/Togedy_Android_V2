@@ -19,7 +19,7 @@ import com.together.study.designsystem.theme.TogedyTheme
  * @param backgroundColor 배경 색상(default : gray700)
  */
 @Composable
-fun TogedyBasicTextChip(
+fun TogedyTextChipCorner30(
     text: String,
     textColor: Color = TogedyTheme.colors.white,
     backgroundColor: Color = TogedyTheme.colors.gray700,
@@ -41,7 +41,7 @@ fun TogedyBasicTextChip(
 @Composable
 private fun TogedyBasicTextChipPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
-        TogedyBasicTextChip(
+        TogedyTextChipCorner30(
             text = "공부중",
             modifier = modifier,
         )
