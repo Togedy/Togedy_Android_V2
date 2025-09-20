@@ -1,11 +1,11 @@
 package com.together.study.designsystem.component.textchip
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,36 +37,27 @@ fun TogedyClickableTextChip(
         if (selected) TogedyTheme.colors.white
         else TogedyTheme.colors.gray600
 
-    Text(
+    TogedyBasicTextChip(
         text = text,
-        style = textStyle.copy(textColor),
-        modifier = modifier
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 4.dp)
-            .noRippleClickable(onClick),
+        textStyle = textStyle,
+        textColor = textColor,
+        backgroundColor = backgroundColor,
+        roundedCornerShape = RoundedCornerShape(20.dp),
+        horizontalPadding = 12.dp,
+        modifier = modifier.noRippleClickable(onClick),
     )
 }
 
 @Preview
 @Composable
 fun TogedyClickableTextChipPreview(modifier: Modifier = Modifier) {
+    var isSelected by remember { mutableStateOf(false) }
     TogedyTheme {
-        Column {
-            TogedyClickableTextChip(
-                text = "전체",
-                selected = true,
-                onClick = {},
-                modifier = modifier,
-            )
-            TogedyClickableTextChip(
-                text = "전체",
-                selected = false,
-                onClick = {},
-                modifier = modifier,
-            )
-        }
+        TogedyClickableTextChip(
+            text = "전체",
+            selected = isSelected,
+            onClick = { isSelected = !isSelected },
+            modifier = modifier,
+        )
     }
 }
