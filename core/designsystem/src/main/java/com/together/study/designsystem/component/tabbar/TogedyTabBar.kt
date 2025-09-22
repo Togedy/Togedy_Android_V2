@@ -59,7 +59,8 @@ private fun TabBlock(
         Box(modifier = Modifier.padding(vertical = 10.dp)) {
             Text(
                 text = tabName,
-                style = tabStyle.copy(tabColor),
+                style = tabStyle,
+                color = tabColor
             )
         }
 

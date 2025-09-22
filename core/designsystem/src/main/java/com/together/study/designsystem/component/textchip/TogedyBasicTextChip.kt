@@ -35,7 +35,8 @@ fun TogedyBasicTextChip(
 ) {
     Text(
         text = text,
-        style = textStyle.copy(textColor),
+        style = textStyle,
+        color = textColor,
         modifier = modifier
             .background(
                 color = backgroundColor,

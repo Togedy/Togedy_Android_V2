@@ -37,7 +37,8 @@ fun TogedyBorderTextChip(
 ) {
     Text(
         text = text,
-        style = textStyle.copy(lineColor),
+        style = textStyle,
+        color = lineColor,
         modifier = modifier
             .background(
                 color = TogedyTheme.colors.white,

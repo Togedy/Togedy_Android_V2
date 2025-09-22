@@ -55,7 +55,8 @@ fun TogedyBasicDialog(
         ) {
             Text(
                 text = title,
-                style = TogedyTheme.typography.title18b.copy(color = TogedyTheme.colors.gray900),
+                style = TogedyTheme.typography.title18b,
+                color = TogedyTheme.colors.gray900,
             )
 
             Spacer(Modifier.height(16.dp))
