@@ -1,6 +1,7 @@
 package com.together.study.study.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,11 +22,16 @@ import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.main.component.MainTabSection
+import com.together.study.study.main.component.TimerSection
+import com.together.study.study.main.state.TimerInfo
 import com.together.study.util.noRippleClickable
 
 @Composable
 fun StudyMainRoute(modifier: Modifier = Modifier) {
-
+    StudyMainScreen(
+        selectedTab = StudyMainTab.MAIN,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -64,6 +70,36 @@ private fun StudyMainScreen(
                 backgroundColor = backgroundColor,
                 onTabClick = {},
             )
+        }
+
+        when (selectedTab) {
+            StudyMainTab.MAIN -> {
+                item {
+                    Spacer(Modifier.height(32.dp))
+                    TimerSection(TimerInfo.mock1)
+                    Spacer(Modifier.height(32.dp))
+                }
+
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(TogedyTheme.colors.gray200)
+                            .padding(16.dp),
+                    ) {
+                        Text(
+                            text = "내 스터디",
+                            style = TogedyTheme.typography.title16sb,
+                            color = TogedyTheme.colors.gray800,
+                        )
+                    }
+                }
+            }
+
+            StudyMainTab.EXPLORE -> {}
+            StudyMainTab.BADGE -> {
+                TODO()
+            }
         }
 
     }
