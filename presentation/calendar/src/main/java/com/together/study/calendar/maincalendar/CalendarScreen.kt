@@ -45,8 +45,8 @@ import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 import com.together.study.calendar.schedule_bottomsheet.ScheduleBottomSheet
-import com.together.study.common.ScheduleType
 import com.together.study.common.state.UiState
+import com.together.study.common.type.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.theme.TogedyTheme
