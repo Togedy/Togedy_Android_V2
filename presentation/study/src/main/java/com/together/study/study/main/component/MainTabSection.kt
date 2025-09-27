@@ -25,7 +25,7 @@ internal fun MainTabSection(
     mainColor: Color,
     subColor: Color,
     backgroundColor: Color,
-    onTabClick: () -> Unit,
+    onTabClick: (StudyMainTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -45,7 +45,7 @@ internal fun MainTabSection(
                     isSelected = selectedTab == it,
                     textColor = textColor,
                     backgroundColor = backgroundColor,
-                    onTabClick = onTabClick,
+                    onTabClick = { onTabClick(it) },
                 )
             }
         }

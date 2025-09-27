@@ -15,43 +15,54 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
-import com.together.study.study.main.state.Study
-import com.together.study.study.main.state.TimerInfo
+import com.together.study.study.main.state.MyStudyInfo
+import com.together.study.study.main.state.StudyMainUiState
 import com.together.study.util.noRippleClickable
 
 @Composable
-fun StudyMainRoute(modifier: Modifier = Modifier) {
+internal fun StudyMainRoute(
+    modifier: Modifier = Modifier,
+    viewModel: StudyMainViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.studyMainUiState.collectAsStateWithLifecycle()
+    val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getStudyMainInfo()
+    }
+
     StudyMainScreen(
-        selectedTab = StudyMainTab.MAIN,
-        userStudies = listOf(
-            Study.mock1,
-            Study.mock1,
-            Study.mock1,
-            Study.mock1,
-            Study.mock1,
-            Study.mock1
-        ),
+        uiState = uiState,
+        selectedTab = selectedTab,
         modifier = modifier,
+        onTabClick = viewModel::updateSelectedTab,
+        onMyStudyItemClick = { },
     )
 }
 
 @Composable
 private fun StudyMainScreen(
+    uiState: StudyMainUiState,
     selectedTab: StudyMainTab,
-    userStudies: List<Study>,
     modifier: Modifier = Modifier,
+    onTabClick: (StudyMainTab) -> Unit,
+    onMyStudyItemClick: (Long) -> Unit,
 ) {
     val mainColor =
         if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.white
@@ -89,50 +100,67 @@ private fun StudyMainScreen(
                 mainColor = mainColor,
                 subColor = subColor,
                 backgroundColor = backgroundColor,
-                onTabClick = {},
+                onTabClick = onTabClick,
                 modifier = topSectionModifier
             )
         }
 
-        when (selectedTab) {
-            StudyMainTab.MAIN -> {
-                item {
-                    TimerSection(TimerInfo.mock1)
-                }
+        when (uiState.isLoaded) {
+            is UiState.Empty -> {}
+            is UiState.Failure -> {}
+            is UiState.Loading -> {}
 
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(TogedyTheme.colors.gray200)
-                            .padding(16.dp),
-                    ) {
-                        Text(
-                            text = "내 스터디",
-                            style = TogedyTheme.typography.title16sb,
-                            color = TogedyTheme.colors.gray800,
-                        )
+            is UiState.Success -> {
+                when (selectedTab) {
+                    StudyMainTab.MAIN -> {
+                        with((uiState.myStudyState as UiState.Success<MyStudyInfo>).data) {
+                            item {
+                                TimerSection(timerInfo)
+                            }
+
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(TogedyTheme.colors.gray200)
+                                        .padding(16.dp),
+                                ) {
+                                    Text(
+                                        text = "내 스터디",
+                                        style = TogedyTheme.typography.title16sb,
+                                        color = TogedyTheme.colors.gray800,
+                                    )
+                                }
+                            }
+
+                            items(studyList) { study ->
+                                Box(
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 4.dp
+                                    ),
+                                ) {
+                                    MyStudyItem(
+                                        study = study,
+                                        onItemClick = { onMyStudyItemClick(study.studyId) },
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    StudyMainTab.EXPLORE -> {
+                        with((uiState.exploreState as UiState.Success<MyStudyInfo>).data) {
+
+                        }
+                    }
+
+                    StudyMainTab.BADGE -> {
+                        // TODO("2차 스프린트")
                     }
                 }
-
-                items(userStudies) { study ->
-                    Box(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                    ) {
-                        MyStudyItem(
-                            study = study,
-                            onItemClick = {}
-                        )
-                    }
-                }
-            }
-
-            StudyMainTab.EXPLORE -> {}
-            StudyMainTab.BADGE -> {
-                TODO("2차 스프린트")
             }
         }
-
     }
 }
 
@@ -164,18 +192,6 @@ private fun TitleSection(
             contentDescription = "스터디 생성 버튼",
             tint = mainColor,
             modifier = Modifier.noRippleClickable(onCreateButtonClick),
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun StudyMainScreenPreview() {
-    TogedyTheme {
-        StudyMainScreen(
-            selectedTab = StudyMainTab.MAIN,
-            userStudies = listOf(Study.mock1),
-            modifier = Modifier,
         )
     }
 }

@@ -5,10 +5,25 @@ import com.together.study.common.state.UiState
 
 @Immutable
 data class StudyMainUiState(
-    val mainState: UiState<MainInformation>,
-)
+    val myStudyState: UiState<MyStudyInfo>,
+    val exploreState: UiState<MyStudyInfo>,
+) {
+    val isLoaded: UiState<Unit>
+        get() = when {
+            myStudyState is UiState.Loading || exploreState is UiState.Loading
+                -> UiState.Loading
 
-data class MainInformation(
+            myStudyState is UiState.Success && exploreState is UiState.Success
+                -> UiState.Success(Unit)
+
+            myStudyState is UiState.Failure && exploreState is UiState.Failure
+                -> UiState.Failure("failed to load")
+
+            else -> UiState.Empty
+        }
+}
+
+data class MyStudyInfo(
     val timerInfo: TimerInfo,
     val studyList: List<Study>,
 )
@@ -27,6 +42,7 @@ data class TimerInfo(
 
 /* TODO: domain으로 이동 예정 */
 data class Study(
+    val studyId: Long,
     val studyType: String,
     val challengeGoalTime: String?,
     val challengeAchievement: Int?,
@@ -37,6 +53,7 @@ data class Study(
 ) {
     companion object {
         val mock1 = Study(
+            studyId = 1,
             studyType = "CHALLENGE",
             challengeGoalTime = "10:00:00",
             challengeAchievement = 75,
@@ -46,6 +63,7 @@ data class Study(
             activeMemberList = listOf(User.mock1, User.mock2)
         )
         val mock2 = Study(
+            studyId = 2,
             studyType = "NORMAL",
             challengeGoalTime = null,
             challengeAchievement = null,
