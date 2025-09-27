@@ -33,7 +33,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.main.state.Study
 import com.together.study.study.main.state.User
 import com.together.study.util.noRippleClickable
-import com.together.study.util.toLocalTime
+import com.together.study.util.toLocalTimeWithSecond
 
 @Composable
 fun MyStudyItem(
@@ -75,7 +75,7 @@ fun MyStudyItem(
 
             Spacer(Modifier.height(16.dp))
 
-            StudyingMembers(activeMemberList)
+            StudyingMembers(activeMemberList!!)
 
             if (isChallengeType) {
                 Spacer(Modifier.height(8.dp))
@@ -169,7 +169,7 @@ private fun ChallengeGraph(
     challengeAchievement: Int,
     modifier: Modifier = Modifier,
 ) {
-    val goalTime = challengeGoalTime.toLocalTime().hour.toString()
+    val goalTime = challengeGoalTime.toLocalTimeWithSecond().hour.toString()
     val barHeight = 4.dp
     val roundedCornerShape = RoundedCornerShape(6.dp)
     val backgroundColor = TogedyTheme.colors.gray200

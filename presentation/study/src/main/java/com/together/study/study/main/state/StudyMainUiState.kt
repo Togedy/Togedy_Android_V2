@@ -45,11 +45,19 @@ data class Study(
     val studyId: Long,
     val studyType: String,
     val challengeGoalTime: String?,
-    val challengeAchievement: Int?,
+    val challengeAchievement: Int? = null,
     val studyName: String,
-    val completedMemberCount: Int?,
+    val studyDescription: String? = null,
+    val studyTag: String? = null,
+    val studyImageUrl: String = "",
+    val completedMemberCount: Int? = null,
     val studyMemberCount: Int,
-    val activeMemberList: List<User>,
+    val studyMemberLimit: Int? = null,
+    val studyLeaderImageUrl: String = "",
+    val activeMemberList: List<User>? = null,
+    val isNewlyCreated: Boolean = false,
+    val lastActivatedAt: String = "",
+    val hasPassword: Boolean = false,
 ) {
     companion object {
         val mock1 = Study(
@@ -58,9 +66,19 @@ data class Study(
             challengeGoalTime = "10:00:00",
             challengeAchievement = 75,
             studyName = "을지중학교 1-1",
+            studyDescription = "같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 ...수험생활 해봐요!!.....측정 → 강퇴입니다.같이 공부하고측정 →\n" +
+                    "\n" +
+                    "강퇴입니다.같이 공부하고측정 →",
+            studyTag = "자유 스터디",
+            studyImageUrl = "",
             completedMemberCount = 3,
             studyMemberCount = 5,
-            activeMemberList = listOf(User.mock1, User.mock2)
+            studyMemberLimit = 30,
+            studyLeaderImageUrl = "",
+            activeMemberList = listOf(User.mock1, User.mock2),
+            isNewlyCreated = true,
+            lastActivatedAt = "10분 전",
+            hasPassword = true,
         )
         val mock2 = Study(
             studyId = 2,

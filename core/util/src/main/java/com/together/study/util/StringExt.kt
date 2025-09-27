@@ -17,3 +17,7 @@ fun String?.toLocalDate(): LocalDate? {
 fun String.toLocalTime(): LocalTime {
     return LocalTime.parse(this, DateTimeFormatter.ofPattern("HH:mm"))
 }
+
+fun String.toLocalTimeWithSecond(): LocalTime {
+    return LocalTime.parse(this, DateTimeFormatter.ofPattern("HH:mm:ss"))
+}
