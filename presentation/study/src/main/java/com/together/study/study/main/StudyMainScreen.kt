@@ -37,6 +37,8 @@ import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun StudyMainRoute(
+    onStudySearchNavigate: () -> Unit,
+    onStudyDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyMainViewModel = hiltViewModel(),
 ) {
@@ -52,7 +54,8 @@ internal fun StudyMainRoute(
         selectedTab = selectedTab,
         modifier = modifier,
         onTabClick = viewModel::updateSelectedTab,
-        onMyStudyItemClick = { },
+        onSearchButtonClick = onStudySearchNavigate,
+        onMyStudyItemClick = onStudyDetailNavigate,
     )
 }
 
@@ -62,6 +65,7 @@ private fun StudyMainScreen(
     selectedTab: StudyMainTab,
     modifier: Modifier = Modifier,
     onTabClick: (StudyMainTab) -> Unit,
+    onSearchButtonClick: () -> Unit,
     onMyStudyItemClick: (Long) -> Unit,
 ) {
     val mainColor =
@@ -88,7 +92,7 @@ private fun StudyMainScreen(
 
             TitleSection(
                 mainColor = mainColor,
-                onSearchButtonClick = {},
+                onSearchButtonClick = onSearchButtonClick,
                 onCreateButtonClick = {},
                 modifier = topSectionModifier,
             )

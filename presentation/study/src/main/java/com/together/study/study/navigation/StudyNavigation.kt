@@ -15,10 +15,14 @@ fun NavController.navigateToStudy(
 
 fun NavGraphBuilder.studyGraph(
     navigateToUp: () -> Unit,
+    navigateToStudySearch: () -> Unit,
+    navigateToStudyDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Study> {
         StudyMainRoute(
+            onStudySearchNavigate = navigateToStudySearch,
+            onStudyDetailNavigate = navigateToStudyDetail,
             modifier = modifier,
         )
     }

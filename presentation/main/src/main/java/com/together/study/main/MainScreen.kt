@@ -79,6 +79,8 @@ private fun MainNavHost(
 
         studyGraph(
             navigateToUp = {},
+            navigateToStudySearch = {},
+            navigateToStudyDetail = {},
             modifier = modifier,
         )
 
