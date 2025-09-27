@@ -2,13 +2,16 @@ package com.together.study.study.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +25,9 @@ import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.main.component.MainTabSection
+import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
+import com.together.study.study.main.state.Study
 import com.together.study.study.main.state.TimerInfo
 import com.together.study.util.noRippleClickable
 
@@ -30,6 +35,14 @@ import com.together.study.util.noRippleClickable
 fun StudyMainRoute(modifier: Modifier = Modifier) {
     StudyMainScreen(
         selectedTab = StudyMainTab.MAIN,
+        userStudies = listOf(
+            Study.mock1,
+            Study.mock1,
+            Study.mock1,
+            Study.mock1,
+            Study.mock1,
+            Study.mock1
+        ),
         modifier = modifier,
     )
 }
@@ -37,6 +50,7 @@ fun StudyMainRoute(modifier: Modifier = Modifier) {
 @Composable
 private fun StudyMainScreen(
     selectedTab: StudyMainTab,
+    userStudies: List<Study>,
     modifier: Modifier = Modifier,
 ) {
     val mainColor =
@@ -48,20 +62,27 @@ private fun StudyMainScreen(
     val backgroundColor =
         if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.black
         else TogedyTheme.colors.gray50
+    val topSectionModifier = Modifier
+        .fillMaxWidth()
+        .background(backgroundColor)
 
     LazyColumn(
-        modifier = modifier.background(backgroundColor),
+        modifier = modifier
+            .fillMaxSize()
+            .background(TogedyTheme.colors.gray200),
+        contentPadding = PaddingValues(bottom = 20.dp),
     ) {
         item {
-            Spacer(Modifier.height(22.dp))
+            Spacer(topSectionModifier.height(22.dp))
 
             TitleSection(
                 mainColor = mainColor,
                 onSearchButtonClick = {},
                 onCreateButtonClick = {},
+                modifier = topSectionModifier,
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(topSectionModifier.height(16.dp))
 
             MainTabSection(
                 selectedTab = StudyMainTab.MAIN,
@@ -69,15 +90,14 @@ private fun StudyMainScreen(
                 subColor = subColor,
                 backgroundColor = backgroundColor,
                 onTabClick = {},
+                modifier = topSectionModifier
             )
         }
 
         when (selectedTab) {
             StudyMainTab.MAIN -> {
                 item {
-                    Spacer(Modifier.height(32.dp))
                     TimerSection(TimerInfo.mock1)
-                    Spacer(Modifier.height(32.dp))
                 }
 
                 item {
@@ -94,11 +114,22 @@ private fun StudyMainScreen(
                         )
                     }
                 }
+
+                items(userStudies) { study ->
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                    ) {
+                        MyStudyItem(
+                            study = study,
+                            onItemClick = {}
+                        )
+                    }
+                }
             }
 
             StudyMainTab.EXPLORE -> {}
             StudyMainTab.BADGE -> {
-                TODO()
+                TODO("2차 스프린트")
             }
         }
 
@@ -110,11 +141,10 @@ private fun TitleSection(
     mainColor: Color,
     onSearchButtonClick: () -> Unit,
     onCreateButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 22.dp, end = 16.dp),
+        modifier = modifier.padding(start = 22.dp, end = 16.dp),
     ) {
         Text(text = "스터디", style = TogedyTheme.typography.title18b, color = mainColor)
 
@@ -144,6 +174,7 @@ private fun StudyMainScreenPreview() {
     TogedyTheme {
         StudyMainScreen(
             selectedTab = StudyMainTab.MAIN,
+            userStudies = listOf(Study.mock1),
             modifier = Modifier,
         )
     }
