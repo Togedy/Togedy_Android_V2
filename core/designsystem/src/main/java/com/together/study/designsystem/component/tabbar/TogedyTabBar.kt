@@ -20,10 +20,10 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 
 @Composable
-fun TogedyTabBar(
-    tabList: List<TabType>,
-    selectedTab: TabType,
-    onTabChange: (TabType) -> Unit,
+fun <T : TabType> TogedyTabBar(
+    tabList: List<T>,
+    selectedTab: T,
+    onTabChange: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
@@ -76,7 +76,7 @@ private fun TogedyTabBarPreview(modifier: Modifier = Modifier) {
         TogedyTabBar(
             tabList = StudyDetailTab.entries,
             selectedTab = selected,
-            onTabChange = { selected = it as StudyDetailTab },
+            onTabChange = { selected = it },
             modifier = modifier,
         )
     }
