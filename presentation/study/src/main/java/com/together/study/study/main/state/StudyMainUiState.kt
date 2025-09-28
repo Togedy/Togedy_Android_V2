@@ -2,21 +2,24 @@ package com.together.study.study.main.state
 
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
+import com.together.study.common.type.StudySortingType
+import com.together.study.study.type.StudyTagType
 
 @Immutable
 data class StudyMainUiState(
     val myStudyState: UiState<MyStudyInfo>,
-    val exploreState: UiState<MyStudyInfo>,
+    val exploreStudyState: UiState<List<Study>>,
+    val exploreFilterState: ExploreFilterState,
 ) {
     val isLoaded: UiState<Unit>
         get() = when {
-            myStudyState is UiState.Loading || exploreState is UiState.Loading
+            myStudyState is UiState.Loading || exploreStudyState is UiState.Loading
                 -> UiState.Loading
 
-            myStudyState is UiState.Success && exploreState is UiState.Success
+            myStudyState is UiState.Success && exploreStudyState is UiState.Success
                 -> UiState.Success(Unit)
 
-            myStudyState is UiState.Failure && exploreState is UiState.Failure
+            myStudyState is UiState.Failure && exploreStudyState is UiState.Failure
                 -> UiState.Failure("failed to load")
 
             else -> UiState.Empty
@@ -39,6 +42,13 @@ data class TimerInfo(
         val mock2 = TimerInfo(false, null, "01:00:00", 0)
     }
 }
+
+data class ExploreFilterState(
+    var tagFilters: List<StudyTagType> = listOf(StudyTagType.ENTIRE),
+    var sortOption: StudySortingType = StudySortingType.RECENT,
+    var isJoinable: Boolean = false,
+    var isChallenge: Boolean = false,
+)
 
 /* TODO: domain으로 이동 예정 */
 data class Study(

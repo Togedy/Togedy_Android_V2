@@ -1,8 +1,8 @@
 package com.together.study.study.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +29,14 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.main.component.ExploreFilterSection
+import com.together.study.study.main.component.ExploreStudyItem
 import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
 import com.together.study.study.main.state.MyStudyInfo
 import com.together.study.study.main.state.StudyMainUiState
+import com.together.study.study.type.StudyTagType
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -55,10 +59,14 @@ internal fun StudyMainRoute(
         modifier = modifier,
         onTabClick = viewModel::updateSelectedTab,
         onSearchButtonClick = onStudySearchNavigate,
-        onMyStudyItemClick = onStudyDetailNavigate,
+        onStudyItemClick = onStudyDetailNavigate,
+        onTagFilterClick = viewModel::updateTagFilters,
+        onJoinableClick = viewModel::updateIsJoinable,
+        onChallengeClick = viewModel::updateIsChallenge,
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyMainScreen(
     uiState: StudyMainUiState,
@@ -66,7 +74,10 @@ private fun StudyMainScreen(
     modifier: Modifier = Modifier,
     onTabClick: (StudyMainTab) -> Unit,
     onSearchButtonClick: () -> Unit,
-    onMyStudyItemClick: (Long) -> Unit,
+    onStudyItemClick: (Long) -> Unit,
+    onTagFilterClick: (StudyTagType) -> Unit,
+    onJoinableClick: () -> Unit,
+    onChallengeClick: () -> Unit,
 ) {
     val mainColor =
         if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.white
@@ -85,7 +96,6 @@ private fun StudyMainScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray200),
-        contentPadding = PaddingValues(bottom = 20.dp),
     ) {
         item {
             Spacer(topSectionModifier.height(22.dp))
@@ -100,7 +110,7 @@ private fun StudyMainScreen(
             Spacer(topSectionModifier.height(16.dp))
 
             MainTabSection(
-                selectedTab = StudyMainTab.MAIN,
+                selectedTab = selectedTab,
                 mainColor = mainColor,
                 subColor = subColor,
                 backgroundColor = backgroundColor,
@@ -146,16 +156,45 @@ private fun StudyMainScreen(
                                 ) {
                                     MyStudyItem(
                                         study = study,
-                                        onItemClick = { onMyStudyItemClick(study.studyId) },
+                                        onItemClick = { onStudyItemClick(study.studyId) },
                                     )
                                 }
+                            }
+
+                            item {
+                                Spacer(Modifier.height(20.dp))
                             }
                         }
                     }
 
                     StudyMainTab.EXPLORE -> {
-                        with((uiState.exploreState as UiState.Success<MyStudyInfo>).data) {
+                        with(uiState.exploreFilterState) {
+                            stickyHeader {
+                                ExploreFilterSection(
+                                    selectedFilter = tagFilters,
+                                    selectedSortingType = sortOption,
+                                    isJoinable = isJoinable,
+                                    isChallenge = isChallenge,
+                                    modifier = Modifier.background(TogedyTheme.colors.gray100),
+                                    onFilterClick = onTagFilterClick,
+                                    onJoinableClick = onJoinableClick,
+                                    onChallengeClick = onChallengeClick,
+                                )
+                            }
+                        }
 
+                        itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { index, study ->
+                            Box(
+                                modifier = Modifier
+                                    .background(TogedyTheme.colors.gray100)
+                                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                            ) {
+                                ExploreStudyItem(
+                                    study = study,
+                                    modifier = Modifier,
+                                    onItemClick = { onStudyItemClick(study.studyId) }
+                                )
+                            }
                         }
                     }
 
