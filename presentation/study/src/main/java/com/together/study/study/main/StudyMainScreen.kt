@@ -3,6 +3,7 @@ package com.together.study.study.main
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +48,7 @@ import com.together.study.study.main.state.MyStudyInfo
 import com.together.study.study.main.state.StudyMainUiState
 import com.together.study.study.type.StudyTagType
 import com.together.study.util.noRippleClickable
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun StudyMainRoute(
@@ -87,6 +92,7 @@ private fun StudyMainScreen(
     onJoinableClick: () -> Unit,
     onChallengeClick: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var isSortBottomSheetVisible by remember { mutableStateOf(false) }
     val mainColor =
         if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.white
@@ -101,92 +107,119 @@ private fun StudyMainScreen(
         .fillMaxWidth()
         .background(backgroundColor)
 
-    LazyColumn(
+
+    val pagerState = rememberPagerState(
+        initialPage = StudyMainTab.entries.indexOf(selectedTab),
+        pageCount = { StudyMainTab.entries.size }
+    )
+
+    LaunchedEffect(selectedTab) {
+        val targetIndex = StudyMainTab.entries.indexOf(selectedTab)
+        if (pagerState.currentPage != targetIndex) {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(targetIndex)
+            }
+        }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        val currentTab = StudyMainTab.entries[pagerState.currentPage]
+        if (selectedTab != currentTab) onTabClick(currentTab)
+    }
+
+    Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray200),
     ) {
-        item {
-            Spacer(topSectionModifier.height(22.dp))
+        Box(modifier = topSectionModifier) {
+            Column {
+                Spacer(Modifier.height(22.dp))
 
-            TitleSection(
-                mainColor = mainColor,
-                onSearchButtonClick = onSearchButtonClick,
-                onCreateButtonClick = {},
-                modifier = topSectionModifier,
-            )
+                TitleSection(
+                    mainColor = mainColor,
+                    onSearchButtonClick = onSearchButtonClick,
+                    onCreateButtonClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                )
 
-            Spacer(topSectionModifier.height(16.dp))
+                Spacer(Modifier.height(16.dp))
 
-            MainTabSection(
-                selectedTab = selectedTab,
-                mainColor = mainColor,
-                subColor = subColor,
-                backgroundColor = backgroundColor,
-                onTabClick = onTabClick,
-                modifier = topSectionModifier
-            )
+                MainTabSection(
+                    selectedTab = selectedTab,
+                    mainColor = mainColor,
+                    subColor = subColor,
+                    backgroundColor = backgroundColor,
+                    onTabClick = onTabClick,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
 
-        when (uiState.isLoaded) {
-            is UiState.Empty -> {}
-            is UiState.Failure -> {}
-            is UiState.Loading -> {}
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1f),
+        ) { page ->
+            when (StudyMainTab.entries[page]) {
+                StudyMainTab.MAIN -> {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        when (uiState.isLoaded) {
+                            is UiState.Empty -> {}
+                            is UiState.Failure -> {}
+                            is UiState.Loading -> {}
+                            is UiState.Success -> {
+                                with((uiState.myStudyState as UiState.Success<MyStudyInfo>).data) {
+                                    item { TimerSection(timerInfo) }
 
-            is UiState.Success -> {
-                when (selectedTab) {
-                    StudyMainTab.MAIN -> {
-                        with((uiState.myStudyState as UiState.Success<MyStudyInfo>).data) {
-                            item {
-                                TimerSection(timerInfo)
-                            }
-
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(TogedyTheme.colors.gray200)
-                                        .padding(16.dp),
-                                ) {
-                                    Text(
-                                        text = "내 스터디",
-                                        style = TogedyTheme.typography.title16sb,
-                                        color = TogedyTheme.colors.gray800,
-                                    )
-                                }
-                            }
-
-                            if (studyList.isEmpty()) {
-                                item {
-                                    EmptyMyStudy(
-                                        onJoinButtonClick = { onTabClick(StudyMainTab.EXPLORE) },
-                                    )
-                                }
-                            } else {
-                                items(studyList) { study ->
-                                    Box(
-                                        modifier = Modifier.padding(
-                                            horizontal = 16.dp,
-                                            vertical = 4.dp
-                                        ),
-                                    ) {
-                                        MyStudyItem(
-                                            study = study,
-                                            onItemClick = { onStudyItemClick(study.studyId) },
-                                        )
+                                    item {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(TogedyTheme.colors.gray200)
+                                                .padding(16.dp),
+                                        ) {
+                                            Text(
+                                                text = "내 스터디",
+                                                style = TogedyTheme.typography.title16sb,
+                                                color = TogedyTheme.colors.gray800,
+                                            )
+                                        }
                                     }
-                                }
-                            }
 
-                            item {
-                                Spacer(Modifier.height(20.dp))
+                                    if (studyList.isEmpty()) {
+                                        item {
+                                            EmptyMyStudy(
+                                                onJoinButtonClick = { onTabClick(StudyMainTab.EXPLORE) },
+                                            )
+                                        }
+                                    } else {
+                                        items(studyList) { study ->
+                                            Box(
+                                                modifier = Modifier.padding(16.dp, 4.dp),
+                                            ) {
+                                                MyStudyItem(
+                                                    study = study,
+                                                    onItemClick = { onStudyItemClick(study.studyId) },
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    item { Spacer(Modifier.height(20.dp)) }
+                                }
                             }
                         }
                     }
+                }
 
-                    StudyMainTab.EXPLORE -> {
-                        with(uiState.exploreFilterState) {
-                            stickyHeader {
+                StudyMainTab.EXPLORE -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(TogedyTheme.colors.gray100)
+                    ) {
+                        stickyHeader {
+                            with(uiState.exploreFilterState) {
                                 ExploreFilterSection(
                                     selectedFilter = tagFilters,
                                     selectedSortingType = sortOption,
@@ -201,7 +234,7 @@ private fun StudyMainScreen(
                             }
                         }
 
-                        itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { index, study ->
+                        itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { _, study ->
                             Box(
                                 modifier = Modifier
                                     .background(TogedyTheme.colors.gray100)
@@ -210,15 +243,15 @@ private fun StudyMainScreen(
                                 StudyItem(
                                     study = study,
                                     modifier = Modifier,
-                                    onItemClick = { onStudyItemClick(study.studyId) }
+                                    onItemClick = { onStudyItemClick(study.studyId) },
                                 )
                             }
                         }
                     }
+                }
 
-                    StudyMainTab.BADGE -> {
-                        // TODO("2차 스프린트")
-                    }
+                StudyMainTab.BADGE -> {
+                    /* TODO() : 추후 스프린트 */
                 }
             }
         }
@@ -231,7 +264,7 @@ private fun StudyMainScreen(
             onSortOptionClick = {
                 onSortOptionClick(it)
                 isSortBottomSheetVisible = false
-            }
+            },
         )
     }
 }
