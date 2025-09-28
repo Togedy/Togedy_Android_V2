@@ -107,11 +107,12 @@ internal class StudyMainViewModel @Inject constructor(
         _exploreFilterState.update { it.copy(tagFilters = newFilters) }
     }
 
-    fun updateSortOption(new: StudySortingType) = _exploreFilterState.value.copy(sortOption = new)
+    fun updateSortOption(new: StudySortingType) =
+        _exploreFilterState.update { it.copy(sortOption = new) }
 
     fun updateIsJoinable() =
-        _exploreFilterState.value.copy(isJoinable = !_exploreFilterState.value.isJoinable)
+        _exploreFilterState.update { it.copy(isJoinable = !_exploreFilterState.value.isJoinable) }
 
     fun updateIsChallenge() =
-        _exploreFilterState.value.copy(isChallenge = !_exploreFilterState.value.isChallenge)
+        _exploreFilterState.update { it.copy(isChallenge = !_exploreFilterState.value.isChallenge) }
 }

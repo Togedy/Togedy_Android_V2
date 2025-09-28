@@ -18,6 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,9 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
+import com.together.study.common.type.StudySortingType
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.component.SortBottomSheet
 import com.together.study.study.component.StudyItem
 import com.together.study.study.main.component.EmptyMyStudy
 import com.together.study.study.main.component.ExploreFilterSection
@@ -62,6 +67,7 @@ internal fun StudyMainRoute(
         onSearchButtonClick = onStudySearchNavigate,
         onStudyItemClick = onStudyDetailNavigate,
         onTagFilterClick = viewModel::updateTagFilters,
+        onSortOptionClick = viewModel::updateSortOption,
         onJoinableClick = viewModel::updateIsJoinable,
         onChallengeClick = viewModel::updateIsChallenge,
     )
@@ -77,9 +83,11 @@ private fun StudyMainScreen(
     onSearchButtonClick: () -> Unit,
     onStudyItemClick: (Long) -> Unit,
     onTagFilterClick: (StudyTagType) -> Unit,
+    onSortOptionClick: (StudySortingType) -> Unit,
     onJoinableClick: () -> Unit,
     onChallengeClick: () -> Unit,
 ) {
+    var isSortBottomSheetVisible by remember { mutableStateOf(false) }
     val mainColor =
         if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.white
         else TogedyTheme.colors.black
@@ -186,6 +194,7 @@ private fun StudyMainScreen(
                                     isChallenge = isChallenge,
                                     modifier = Modifier.background(TogedyTheme.colors.gray100),
                                     onFilterClick = onTagFilterClick,
+                                    onSortingClick = { isSortBottomSheetVisible = true },
                                     onJoinableClick = onJoinableClick,
                                     onChallengeClick = onChallengeClick,
                                 )
@@ -213,6 +222,17 @@ private fun StudyMainScreen(
                 }
             }
         }
+    }
+
+    if (isSortBottomSheetVisible) {
+        SortBottomSheet(
+            selectedSortOption = uiState.exploreFilterState.sortOption,
+            onDismissRequest = { isSortBottomSheetVisible = false },
+            onSortOptionClick = {
+                onSortOptionClick(it)
+                isSortBottomSheetVisible = false
+            }
+        )
     }
 }
 

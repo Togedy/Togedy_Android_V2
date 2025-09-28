@@ -35,6 +35,7 @@ internal fun ExploreFilterSection(
     isChallenge: Boolean,
     modifier: Modifier = Modifier,
     onFilterClick: (StudyTagType) -> Unit,
+    onSortingClick: () -> Unit,
     onJoinableClick: () -> Unit,
     onChallengeClick: () -> Unit,
 ) {
@@ -67,7 +68,7 @@ internal fun ExploreFilterSection(
         ) {
             Sorting(
                 selected = selectedSortingType,
-                onSortingTypeClick = {},
+                onSortingClick = onSortingClick,
             )
 
             Spacer(Modifier.weight(1f))
@@ -93,10 +94,10 @@ internal fun ExploreFilterSection(
 private fun Sorting(
     selected: StudySortingType,
     modifier: Modifier = Modifier,
-    onSortingTypeClick: () -> Unit,
+    onSortingClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier.noRippleClickable(onSortingTypeClick),
+        modifier = modifier.noRippleClickable(onSortingClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -153,6 +154,7 @@ private fun ExploreFilterSectionPreview() {
             isChallenge = false,
             modifier = Modifier,
             onFilterClick = { },
+            onSortingClick = { },
             onJoinableClick = { },
             onChallengeClick = { },
         )
