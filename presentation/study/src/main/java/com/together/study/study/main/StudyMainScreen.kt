@@ -29,9 +29,9 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.component.StudyItem
 import com.together.study.study.main.component.EmptyMyStudy
 import com.together.study.study.main.component.ExploreFilterSection
-import com.together.study.study.main.component.ExploreStudyItem
 import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
@@ -198,7 +198,7 @@ private fun StudyMainScreen(
                                     .background(TogedyTheme.colors.gray100)
                                     .padding(horizontal = 16.dp, vertical = 4.dp),
                             ) {
-                                ExploreStudyItem(
+                                StudyItem(
                                     study = study,
                                     modifier = Modifier,
                                     onItemClick = { onStudyItemClick(study.studyId) }

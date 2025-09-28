@@ -1,4 +1,4 @@
-package com.together.study.study.main.component
+package com.together.study.study.component
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -42,7 +42,7 @@ import com.together.study.util.noRippleClickable
 import com.together.study.util.toLocalTimeWithSecond
 
 @Composable
-internal fun ExploreStudyItem(
+internal fun StudyItem(
     study: Study,
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit,
@@ -221,7 +221,7 @@ private fun MemberAndPassword(
 @Composable
 private fun ExploreStudyItemPreview() {
     TogedyTheme {
-        ExploreStudyItem(
+        StudyItem(
             study = Study.mock1,
             modifier = Modifier,
             onItemClick = {},
