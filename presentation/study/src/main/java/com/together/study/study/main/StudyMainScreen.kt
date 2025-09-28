@@ -29,6 +29,7 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.main.component.EmptyMyStudy
 import com.together.study.study.main.component.ExploreFilterSection
 import com.together.study.study.main.component.ExploreStudyItem
 import com.together.study.study.main.component.MainTabSection
@@ -147,17 +148,25 @@ private fun StudyMainScreen(
                                 }
                             }
 
-                            items(studyList) { study ->
-                                Box(
-                                    modifier = Modifier.padding(
-                                        horizontal = 16.dp,
-                                        vertical = 4.dp
-                                    ),
-                                ) {
-                                    MyStudyItem(
-                                        study = study,
-                                        onItemClick = { onStudyItemClick(study.studyId) },
+                            if (studyList.isEmpty()) {
+                                item {
+                                    EmptyMyStudy(
+                                        onJoinButtonClick = { onTabClick(StudyMainTab.EXPLORE) },
                                     )
+                                }
+                            } else {
+                                items(studyList) { study ->
+                                    Box(
+                                        modifier = Modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 4.dp
+                                        ),
+                                    ) {
+                                        MyStudyItem(
+                                            study = study,
+                                            onItemClick = { onStudyItemClick(study.studyId) },
+                                        )
+                                    }
                                 }
                             }
 

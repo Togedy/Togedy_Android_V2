@@ -61,14 +61,7 @@ internal class StudyMainViewModel @Inject constructor(
         _myStudyState.value = UiState.Success(
             MyStudyInfo(
                 timerInfo = TimerInfo.mock1,
-                studyList = listOf(
-                    Study.mock1,
-                    Study.mock1,
-                    Study.mock1,
-                    Study.mock1,
-                    Study.mock1,
-                    Study.mock1
-                )
+                studyList = emptyList(),
             )
         )
     }
