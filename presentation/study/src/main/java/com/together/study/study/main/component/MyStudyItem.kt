@@ -179,7 +179,7 @@ private fun ChallengeGraph(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TogedyBasicTextChip(text = goalTime, backgroundColor = progressColor)
+        TogedyBasicTextChip(text = "${goalTime}시간", backgroundColor = progressColor)
 
         Spacer(Modifier.width(12.dp))
 
