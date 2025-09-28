@@ -44,6 +44,7 @@ fun TogedyClickableTextChip(
         backgroundColor = backgroundColor,
         roundedCornerShape = RoundedCornerShape(20.dp),
         horizontalPadding = 12.dp,
+        verticalPadding = 4.dp,
         modifier = modifier.noRippleClickable(onClick),
     )
 }

@@ -31,6 +31,7 @@ fun TogedyBasicTextChip(
     backgroundColor: Color = TogedyTheme.colors.gray700,
     roundedCornerShape: RoundedCornerShape = RoundedCornerShape(30.dp),
     horizontalPadding: Dp = 10.dp,
+    verticalPadding: Dp = 3.dp,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -42,7 +43,7 @@ fun TogedyBasicTextChip(
                 color = backgroundColor,
                 shape = roundedCornerShape
             )
-            .padding(horizontal = horizontalPadding, vertical = 3.dp)
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
     )
 }
 
