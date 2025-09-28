@@ -44,10 +44,10 @@ data class TimerInfo(
 }
 
 data class ExploreFilterState(
-    var tagFilters: List<StudyTagType> = listOf(StudyTagType.ENTIRE),
-    var sortOption: StudySortingType = StudySortingType.RECENT,
-    var isJoinable: Boolean = false,
-    var isChallenge: Boolean = false,
+    val tagFilters: List<StudyTagType> = listOf(StudyTagType.ENTIRE),
+    val sortOption: StudySortingType = StudySortingType.RECENT,
+    val isJoinable: Boolean = false,
+    val isChallenge: Boolean = false,
 )
 
 /* TODO: domain으로 이동 예정 */
