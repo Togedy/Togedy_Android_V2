@@ -1,0 +1,16 @@
+package com.together.study.designsystem.component.tabbar
+
+sealed interface TabType {
+    val typeName: String
+}
+
+// STUDY
+enum class StudyDetailTab(override val typeName: String) : TabType {
+    MEMBER("스터디원"),
+    DAILY_CHECK("출석부"),
+}
+
+enum class StudyMemberTab(override val typeName: String) : TabType {
+    STUDY_TIME("공부시간"),
+    PLANNER("플래너"),
+}

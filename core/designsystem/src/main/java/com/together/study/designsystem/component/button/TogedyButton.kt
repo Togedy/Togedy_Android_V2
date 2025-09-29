@@ -1,0 +1,73 @@
+package com.together.study.designsystem.component.button
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.together.study.designsystem.theme.TogedyTheme
+
+/**
+ * TogedyButton
+ * 기본적인 활성화 여부가 적용되는 버튼입니다.
+ *
+ * @param text 버튼 내용
+ * @param onClick 버튼 클릭 시 호출되는 콜백
+ * @param enabled 버튼 클릭 활성화 여부(default : true)
+ * @param modifier 수정자
+ */
+@Composable
+fun TogedyButton(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+) {
+    val containerColor =
+        if (enabled) TogedyTheme.colors.green
+        else TogedyTheme.colors.gray400
+    val contentColor = TogedyTheme.colors.white
+
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+        ),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Text(
+            text = text,
+            style = TogedyTheme.typography.title16sb,
+            color = contentColor,
+            modifier = Modifier.padding(vertical = 10.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TogedyBasicButtonPreview() {
+    TogedyTheme {
+        Column {
+            TogedyButton(
+                text = "시작하기",
+                enabled = true,
+                onClick = {},
+            )
+            TogedyButton(
+                text = "시작하기",
+                enabled = false,
+                onClick = {},
+            )
+        }
+    }
+}

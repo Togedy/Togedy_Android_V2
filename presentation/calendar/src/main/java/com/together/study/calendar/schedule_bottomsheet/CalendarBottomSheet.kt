@@ -173,7 +173,7 @@ private fun YearMonthSection(
 
         Text(
             text = "$year. ${month.toString().padStart(2, '0')}",
-            style = TogedyTheme.typography.title18sb.copy(TogedyTheme.colors.gray700),
+            style = TogedyTheme.typography.title18b.copy(TogedyTheme.colors.gray700),
         )
 
         Spacer(Modifier.width(4.dp))
