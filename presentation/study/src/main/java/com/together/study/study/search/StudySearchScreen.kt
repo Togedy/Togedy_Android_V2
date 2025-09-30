@@ -132,7 +132,7 @@ fun StudySearchScreen(
                         isChallenge = isChallenge,
                         resultStudies = (uiState.resultStudyState as UiState.Success).data,
                         searchTerm = searchTerm,
-                        onSortingClick = {},
+                        onSortingClick = { isSortBottomSheetVisible = true },
                         onJoinableClick = onJoinableClick,
                         onChallengeClick = onChallengeClick,
                         onStudyItemClick = onStudyItemClick,
@@ -206,6 +206,7 @@ fun SuccessResultScreen(
                 onSortingClick = onSortingClick,
                 onJoinableClick = onJoinableClick,
                 onChallengeClick = onChallengeClick,
+                modifier = Modifier.background(TogedyTheme.colors.gray100),
             )
         }
 
