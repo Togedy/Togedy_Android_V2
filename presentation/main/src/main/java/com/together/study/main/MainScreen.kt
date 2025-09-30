@@ -15,6 +15,7 @@ import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDet
 import com.together.study.main.component.MainBottomBar
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
+import com.together.study.study.navigation.navigateToStudySearch
 import com.together.study.study.navigation.studyGraph
 import kotlinx.collections.immutable.toImmutableList
 
@@ -78,8 +79,8 @@ private fun MainNavHost(
         )
 
         studyGraph(
-            navigateToUp = {},
-            navigateToStudySearch = {},
+            navigateToUp = navigator::navigateUp,
+            navigateToStudySearch = navigator.navController::navigateToStudySearch,
             navigateToStudyDetail = {},
             modifier = modifier,
         )
