@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TogedySearchBar(
+    placeholder: String = "원하는 대학을 검색하세요",
     isShowSearch: Boolean = false,
     value: String = "",
     onValueChange: (String) -> Unit = {},
@@ -109,7 +110,7 @@ fun TogedySearchBar(
                 decorationBox = { innerTextField ->
                     if (value.isEmpty()) {
                         Text(
-                            text = "원하는 대학을 검색하세요",
+                            text = placeholder,
                             style = TogedyTheme.typography.body12m.copy(
                                 color = Color.LightGray
                             )
