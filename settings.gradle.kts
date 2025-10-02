@@ -44,4 +44,5 @@ include(
     ":presentation:calendar",
     ":presentation:search",
     ":presentation:study",
+    ":presentation:studydetail",
 )
