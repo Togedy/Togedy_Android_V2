@@ -52,19 +52,19 @@ data class ExploreFilterState(
 
 /* TODO: domain으로 이동 예정 */
 data class Study(
-    val studyId: Long,
+    val studyId: Long = -1,
     val studyType: String,
-    val challengeGoalTime: String?,
-    val challengeAchievement: Int? = null,
+    val challengeGoalTime: String = "",
+    val challengeAchievement: Int = 100,
     val studyName: String,
-    val studyDescription: String? = null,
-    val studyTag: String? = null,
+    val studyDescription: String = "",
+    val studyTag: String = "",
     val studyImageUrl: String = "",
-    val completedMemberCount: Int? = null,
-    val studyMemberCount: Int,
-    val studyMemberLimit: Int? = null,
+    val completedMemberCount: Int = 0,
+    val studyMemberCount: Int = 0,
+    val studyMemberLimit: Int = 0,
     val studyLeaderImageUrl: String = "",
-    val activeMemberList: List<User>? = null,
+    val activeMemberList: List<User> = emptyList(),
     val isNewlyCreated: Boolean = false,
     val lastActivatedAt: String = "",
     val hasPassword: Boolean = false,
@@ -76,9 +76,7 @@ data class Study(
             challengeGoalTime = "10:00:00",
             challengeAchievement = 75,
             studyName = "을지중학교 1-1",
-            studyDescription = "같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 ...수험생활 해봐요!!.....측정 → 강퇴입니다.같이 공부하고측정 →\n" +
-                    "\n" +
-                    "강퇴입니다.같이 공부하고측정 →",
+            studyDescription = "같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.",
             studyTag = "자유 스터디",
             studyImageUrl = "",
             completedMemberCount = 3,
@@ -93,10 +91,7 @@ data class Study(
         val mock2 = Study(
             studyId = 2,
             studyType = "NORMAL",
-            challengeGoalTime = null,
-            challengeAchievement = null,
             studyName = "고1 내신 대비반",
-            completedMemberCount = null,
             studyMemberCount = 5,
             activeMemberList = listOf(User.mock1, User.mock2, User.mock1, User.mock2, User.mock1)
         )
