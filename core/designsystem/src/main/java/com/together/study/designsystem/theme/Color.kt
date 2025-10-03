@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 
 val GREEN = Color(0xFF11BC78)
+val GREEN400 = Color(0xFFDCF5ED)
 val GREEN_BG = Color(0xFFEEFAF6)
 val RED = Color(0xFFD13E3E)
 val RED30 = Color(0x4DFF6363)
@@ -28,6 +29,7 @@ val BLACK = Color(0xFF000000)
 @Stable
 class TogedyColors(
     green: Color,
+    green400: Color,
     greenBg: Color,
     red: Color,
     red30: Color,
@@ -46,6 +48,8 @@ class TogedyColors(
     black: Color,
 ) {
     var green by mutableStateOf(green)
+        private set
+    var green400 by mutableStateOf(green400)
         private set
     var greenBg by mutableStateOf(greenBg)
         private set
@@ -77,7 +81,7 @@ class TogedyColors(
         private set
 
     /**
-     * @param gray300  Icon_Disabled
+     * @param gray300  Icon_Disabled / Border_default
      */
     var gray300 by mutableStateOf(gray300)
         private set
@@ -95,7 +99,7 @@ class TogedyColors(
         private set
 
     /**
-     * @param gray600  Text_Chip
+     * @param gray600  Text_Chip / Border_abled
      */
     var gray600 by mutableStateOf(gray600)
         private set
@@ -122,6 +126,7 @@ class TogedyColors(
 
     fun copy(): TogedyColors = TogedyColors(
         green,
+        green400,
         greenBg,
         red,
         red30,
@@ -142,6 +147,7 @@ class TogedyColors(
 
     fun update(other: TogedyColors) {
         green = other.green
+        green400 = other.green400
         greenBg = other.greenBg
         red = other.red
         red30 = other.red30
@@ -163,6 +169,7 @@ class TogedyColors(
 
 fun TogedyLightColors(
     green: Color = GREEN,
+    green400: Color = GREEN400,
     greenBg: Color = GREEN_BG,
     red: Color = RED,
     red30: Color = RED30,
@@ -181,6 +188,7 @@ fun TogedyLightColors(
     black: Color = BLACK,
 ) = TogedyColors(
     green,
+    green400,
     greenBg,
     red,
     red30,
