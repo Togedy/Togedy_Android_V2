@@ -47,6 +47,7 @@ import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studydetail.detailmain.component.AttendanceItem
 import com.together.study.studydetail.detailmain.component.DailyCompletionBar
 import com.together.study.studydetail.detailmain.component.StudyInfoSection
 import com.together.study.studydetail.detailmain.component.StudyMemberItem
@@ -134,6 +135,7 @@ private fun StudyDetailSuccessScreen(
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
     val members = (uiState.membersState as UiState.Success).data
+    val attendance = (uiState.attendanceState as UiState.Success).data
 
     LazyColumn(
         modifier = modifier
@@ -162,7 +164,6 @@ private fun StudyDetailSuccessScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 20.dp)
                         .drawWithContent {
                             drawContent()
                             val gradientHeight = size.height * 0.9f
@@ -240,13 +241,23 @@ private fun StudyDetailSuccessScreen(
                         }
                     }
                 }
-
-                item {
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
             }
 
-            StudyDetailTab.DAILY_CHECK -> TODO()
+            StudyDetailTab.DAILY_CHECK -> {
+                itemsIndexed(attendance) { index, attendance ->
+                    Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+                        AttendanceItem(
+                            ranking = index + 1,
+                            attendance = attendance,
+                            selectedDate = selectedDate,
+                        )
+                    }
+                }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(60.dp))
         }
     }
 
