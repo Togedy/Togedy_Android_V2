@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +41,7 @@ import coil.request.ImageRequest
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.R.drawable.ic_settings_24
 import com.together.study.designsystem.R.drawable.ic_share_20
 import com.together.study.designsystem.R.drawable.img_study_background
@@ -53,7 +55,10 @@ import com.together.study.studydetail.detailmain.component.StudyInfoSection
 import com.together.study.studydetail.detailmain.component.StudyMemberItem
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import com.together.study.util.noRippleClickable
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
+import java.time.temporal.WeekFields
 
 @Composable
 internal fun StudyDetailRoute(
@@ -81,6 +86,8 @@ internal fun StudyDetailRoute(
         onSettingsButtonClick = onSettingsNavigate,
         onTabChange = viewModel::updateSelectedTab,
         onUserClick = {},
+        onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
+        onNextWeekClick = { viewModel.updateSelectedDate("다음") },
     )
 }
 
@@ -96,6 +103,8 @@ private fun StudyDetailScreen(
     onSettingsButtonClick: () -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
     onUserClick: (Long) -> Unit,
+    onPreviousWeekClick: () -> Unit,
+    onNextWeekClick: () -> Unit,
 ) {
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
@@ -113,6 +122,8 @@ private fun StudyDetailScreen(
             onTabChange = onTabChange,
             onUserClick = onUserClick,
             onJoinButtonClick = {},
+            onPreviousWeekClick = onPreviousWeekClick,
+            onNextWeekClick = onNextWeekClick,
         )
     }
 }
@@ -131,11 +142,15 @@ private fun StudyDetailSuccessScreen(
     onTabChange: (StudyDetailTab) -> Unit,
     onUserClick: (Long) -> Unit,
     onJoinButtonClick: () -> Unit,
+    onPreviousWeekClick: () -> Unit,
+    onNextWeekClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
     val members = (uiState.membersState as UiState.Success).data
     val attendance = (uiState.attendanceState as UiState.Success).data
+
+    val isCurrentWeek = isCurrentWeek(selectedDate)
 
     LazyColumn(
         modifier = modifier
@@ -206,7 +221,7 @@ private fun StudyDetailSuccessScreen(
                 tabList = StudyDetailTab.entries,
                 selectedTab = selectedTab,
                 onTabChange = onTabChange,
-                modifier = Modifier,
+                modifier = Modifier.background(TogedyTheme.colors.white),
             )
         }
 
@@ -244,12 +259,48 @@ private fun StudyDetailSuccessScreen(
             }
 
             StudyDetailTab.DAILY_CHECK -> {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 26.dp, top = 16.dp, end = 26.dp, bottom = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ic_left_chevron),
+                            contentDescription = null,
+                            tint = TogedyTheme.colors.gray300,
+                            modifier = Modifier.noRippleClickable(onPreviousWeekClick),
+                        )
+
+                        Spacer(Modifier.weight(1f))
+
+                        with(selectedDate) {
+                            Text(
+                                text = "${year}년 ${monthValue}월 ${getYearMonthWeek(selectedDate)}주차",
+                                style = TogedyTheme.typography.body14b,
+                                color = TogedyTheme.colors.gray700,
+                            )
+                        }
+
+                        Spacer(Modifier.weight(1f))
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ic_right_chevron_green),
+                            contentDescription = null,
+                            tint = if (!isCurrentWeek) TogedyTheme.colors.gray300 else TogedyTheme.colors.gray100,
+                            modifier = Modifier.noRippleClickable {
+                                if (!isCurrentWeek) onNextWeekClick()
+                            },
+                        )
+                    }
+                }
                 itemsIndexed(attendance) { index, attendance ->
                     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
                         AttendanceItem(
                             ranking = index + 1,
                             attendance = attendance,
                             selectedDate = selectedDate,
+                            isCurrentWeek = isCurrentWeek,
                         )
                     }
                 }
@@ -306,7 +357,7 @@ private fun StudyDetailSuccessScreen(
             }
         }
 
-        if (isMyStudy) {
+        if (isMyStudy) { //TODO: 스탑워치 화면이동 버튼으로 변경
             Box(
                 modifier = Modifier
                     .background(color = TogedyTheme.colors.gray300)
@@ -330,4 +381,19 @@ private fun StudyDetailSuccessScreen(
             }
         }
     }
+}
+
+private fun getYearMonthWeek(selectedDate: LocalDate): Int {
+    val weekFields = WeekFields.of(DayOfWeek.MONDAY, 1)
+    val weekOfMonth = selectedDate.get(weekFields.weekOfMonth())
+
+    return weekOfMonth
+}
+
+private fun isCurrentWeek(targetDate: LocalDate): Boolean {
+    val startOfWeek = targetDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+    val endOfWeek = targetDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+    val today = LocalDate.now()
+
+    return today in startOfWeek..endOfWeek
 }

@@ -28,9 +28,7 @@ import com.together.study.designsystem.theme.TogedyColors
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studydetail.detailmain.state.StudyAttendance
 import com.together.study.util.toLocalTimeWithSecond
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 
 private val dayOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
 
@@ -102,14 +100,6 @@ private fun getPaletteForRanking(ranking: Int, colors: TogedyColors): RankingPal
     }
 }
 
-private fun isCurrentWeek(targetDate: LocalDate): Boolean {
-    val startOfWeek = targetDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-    val endOfWeek = targetDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
-    val today = LocalDate.now()
-
-    return today in startOfWeek..endOfWeek
-}
-
 private fun formatStudyTime(time: String?): String {
     if (time == null) return ""
 
@@ -130,6 +120,7 @@ internal fun AttendanceItem(
     ranking: Int,
     attendance: StudyAttendance,
     selectedDate: LocalDate,
+    isCurrentWeek: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = TogedyTheme.colors
@@ -176,7 +167,6 @@ internal fun AttendanceItem(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             val todayDayOfWeek = LocalDate.now().dayOfWeek.value - 1
-            val isCurrentWeek = isCurrentWeek(selectedDate)
 
             attendance.studyTimeList.forEachIndexed { index, time ->
                 DailyAttendanceItem(
@@ -254,27 +244,32 @@ private fun AttendanceItemPreview() {
             AttendanceItem(
                 1,
                 StudyAttendance.mock,
-                selectedDate = LocalDate.now()
+                selectedDate = LocalDate.now(),
+                isCurrentWeek = true,
             )
             AttendanceItem(
                 2,
                 StudyAttendance.mock,
-                selectedDate = LocalDate.now()
+                selectedDate = LocalDate.now(),
+                isCurrentWeek = true,
             )
             AttendanceItem(
                 3,
                 StudyAttendance.mock,
-                selectedDate = LocalDate.now()
+                selectedDate = LocalDate.now(),
+                isCurrentWeek = true,
             )
             AttendanceItem(
                 4,
                 StudyAttendance.mock2,
-                selectedDate = LocalDate.now()
+                selectedDate = LocalDate.now(),
+                isCurrentWeek = true,
             )
             AttendanceItem(
                 4,
                 StudyAttendance.mock,
-                selectedDate = LocalDate.now()
+                selectedDate = LocalDate.now(),
+                isCurrentWeek = false,
             )
         }
     }
