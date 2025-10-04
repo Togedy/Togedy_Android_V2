@@ -2,16 +2,19 @@ package com.together.study.studydetail.detailmain
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -41,6 +44,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.main.state.Study
 import com.together.study.studydetail.detailmain.component.DailyCompletionBar
 import com.together.study.studydetail.detailmain.component.StudyInfoSection
+import com.together.study.studydetail.detailmain.component.StudyMemberItem
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -54,11 +58,13 @@ private fun StudyDetailScreen(
     isMyStudy: Boolean,
     study: Study,
     selectedTab: StudyDetailTab,
+    studyMembers: List<StudyMember>,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
     onSettingsButtonClick: () -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
+    onUserClick: (Long) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -137,7 +143,42 @@ private fun StudyDetailScreen(
         }
 
         when (selectedTab) {
-            StudyDetailTab.MEMBER -> TODO()
+            StudyDetailTab.MEMBER -> {
+                val chunkedList = studyMembers.chunked(4)
+
+                item {
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+
+                itemsIndexed(chunkedList) { _, users ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        users.forEach { user ->
+                            StudyMemberItem(
+                                context = context,
+                                user = user,
+                                modifier = Modifier.weight(1f),
+                                onItemClick = { onUserClick(user.userId) },
+                            )
+                        }
+
+                        if (users.size < 4) {
+                            repeat(4 - users.size) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+
             StudyDetailTab.DAILY_CHECK -> TODO()
         }
     }
@@ -192,11 +233,21 @@ private fun StudyDetailScreenPreview() {
             isMyStudy = true,
             study = Study.mock1,
             selectedTab = StudyDetailTab.MEMBER,
+            studyMembers = listOf(
+                StudyMember.mock_member,
+                StudyMember.mock_leader,
+                StudyMember.mock_member2,
+                StudyMember.mock_member3,
+                StudyMember.mock_member2,
+                StudyMember.mock_member3,
+                StudyMember.mock_member3,
+            ),
             modifier = Modifier,
             onBackClick = {},
             onShareButtonClick = {},
             onSettingsButtonClick = {},
             onTabChange = {},
+            onUserClick = {},
         )
     }
 }
