@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 fun NavController.navigateToStudyDetail(
     studyId: Long,
     navOptions: NavOptions? = null,
-) = navigate(StudyDetail, navOptions)
+) = navigate(StudyDetail(studyId), navOptions)
 
 fun NavGraphBuilder.studyDetailGraph(
     navigateToUp: () -> Unit,

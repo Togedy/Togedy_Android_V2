@@ -1,5 +1,6 @@
 package com.together.study.studydetail.detailmain
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
@@ -19,8 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class StudyDetailViewModel @Inject constructor(
-
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    val studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
+
     private val _selectedTab = MutableStateFlow(StudyDetailTab.MEMBER)
     val selectedTab = _selectedTab.asStateFlow()
     private val _selectedDate = MutableStateFlow(LocalDate.now())
@@ -100,5 +103,9 @@ internal class StudyDetailViewModel @Inject constructor(
             _selectedDate.value = _selectedDate.value.plusWeeks(1)
         }
         getAttendance()
+    }
+
+    companion object {
+        const val STUDY_ID_KEY = "studyId"
     }
 }
