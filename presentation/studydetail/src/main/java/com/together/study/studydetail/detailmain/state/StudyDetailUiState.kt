@@ -9,7 +9,7 @@ import com.together.study.studydetail.detailmain.StudyMember
 data class StudyDetailUiState(
     val studyInfoState: UiState<Study>,
     val membersState: UiState<List<StudyMember>>,
-    val attendanceState: UiState<List<StudyMember>>, //TODO: 추후 변경
+    val attendanceState: UiState<List<StudyAttendance>>,
 ) {
     val isLoaded: UiState<Unit>
         get() = when {

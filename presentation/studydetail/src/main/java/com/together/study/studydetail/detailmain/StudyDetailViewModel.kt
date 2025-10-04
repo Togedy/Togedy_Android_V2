@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.study.main.state.Study
+import com.together.study.studydetail.detailmain.state.StudyAttendance
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,7 @@ internal class StudyDetailViewModel @Inject constructor(
 
     private val _studyInfoState = MutableStateFlow<UiState<Study>>(UiState.Loading)
     private val _membersState = MutableStateFlow<UiState<List<StudyMember>>>(UiState.Loading)
-    private val _attendanceState = MutableStateFlow<UiState<List<StudyMember>>>(UiState.Loading)
+    private val _attendanceState = MutableStateFlow<UiState<List<StudyAttendance>>>(UiState.Loading)
 
     val studyDetailUiState: StateFlow<StudyDetailUiState> = combine(
         _studyInfoState, _membersState, _attendanceState
@@ -81,13 +82,14 @@ internal class StudyDetailViewModel @Inject constructor(
         // TODO : 추후 API 연결
         _attendanceState.value = UiState.Success(
             listOf(
-                StudyMember.mock_member,
-                StudyMember.mock_leader,
-                StudyMember.mock_member2,
-                StudyMember.mock_member3,
-                StudyMember.mock_member2,
-                StudyMember.mock_member3,
-                StudyMember.mock_member3,
+                StudyAttendance.mock,
+                StudyAttendance.mock2,
+                StudyAttendance.mock,
+                StudyAttendance.mock2,
+                StudyAttendance.mock,
+                StudyAttendance.mock2,
+                StudyAttendance.mock,
+                StudyAttendance.mock2,
             )
         )
     }
