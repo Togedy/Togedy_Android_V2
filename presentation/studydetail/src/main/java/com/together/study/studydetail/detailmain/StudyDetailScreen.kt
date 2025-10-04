@@ -1,5 +1,6 @@
 package com.together.study.studydetail.detailmain
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,8 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_settings_24
 import com.together.study.designsystem.R.drawable.ic_share_20
 import com.together.study.designsystem.R.drawable.img_study_background
+import com.together.study.designsystem.component.tabbar.StudyDetailTab
+import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.main.state.Study
 import com.together.study.studydetail.detailmain.component.DailyCompletionBar
@@ -45,14 +48,17 @@ internal fun StudyDetailRoute(modifier: Modifier = Modifier) {
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyDetailScreen(
     isMyStudy: Boolean,
     study: Study,
+    selectedTab: StudyDetailTab,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
     onSettingsButtonClick: () -> Unit,
+    onTabChange: (StudyDetailTab) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -120,6 +126,20 @@ private fun StudyDetailScreen(
                 HorizontalDivider(thickness = 8.dp, color = TogedyTheme.colors.gray50)
             }
         }
+
+        stickyHeader {
+            TogedyTabBar(
+                tabList = StudyDetailTab.entries,
+                selectedTab = selectedTab,
+                onTabChange = onTabChange,
+                modifier = Modifier,
+            )
+        }
+
+        when (selectedTab) {
+            StudyDetailTab.MEMBER -> TODO()
+            StudyDetailTab.DAILY_CHECK -> TODO()
+        }
     }
 
     Row(
@@ -171,10 +191,12 @@ private fun StudyDetailScreenPreview() {
         StudyDetailScreen(
             isMyStudy = true,
             study = Study.mock1,
+            selectedTab = StudyDetailTab.MEMBER,
             modifier = Modifier,
             onBackClick = {},
             onShareButtonClick = {},
             onSettingsButtonClick = {},
+            onTabChange = {},
         )
     }
 }
