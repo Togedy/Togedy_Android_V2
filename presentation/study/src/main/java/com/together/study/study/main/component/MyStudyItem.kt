@@ -25,7 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.together.study.common.type.StudyType
+import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.textchip.TogedyBorderTextChip

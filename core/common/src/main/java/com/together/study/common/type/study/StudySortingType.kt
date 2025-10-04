@@ -1,4 +1,4 @@
-package com.together.study.common.type
+package com.together.study.common.type.study
 
 enum class StudySortingType(
     val label: String,

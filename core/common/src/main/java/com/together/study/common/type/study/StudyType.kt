@@ -1,4 +1,4 @@
-package com.together.study.common.type
+package com.together.study.common.type.study
 
 enum class StudyType() {
     CHALLENGE,
@@ -7,7 +7,7 @@ enum class StudyType() {
     companion object {
         fun get(studyType: String): StudyType {
             return try {
-                StudyType.valueOf(studyType.uppercase())
+                valueOf(studyType.uppercase())
             } catch (e: Exception) {
                 NORMAL
             }
