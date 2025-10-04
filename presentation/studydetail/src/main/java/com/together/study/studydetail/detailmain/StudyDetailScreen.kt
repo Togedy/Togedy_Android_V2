@@ -313,7 +313,7 @@ private fun StudyDetailSuccessScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
