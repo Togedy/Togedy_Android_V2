@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,6 +19,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -29,36 +32,63 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_settings_24
 import com.together.study.designsystem.R.drawable.ic_share_20
 import com.together.study.designsystem.R.drawable.img_study_background
+import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.study.main.state.Study
 import com.together.study.studydetail.detailmain.component.DailyCompletionBar
 import com.together.study.studydetail.detailmain.component.StudyInfoSection
 import com.together.study.studydetail.detailmain.component.StudyMemberItem
+import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import com.together.study.util.noRippleClickable
+import java.time.LocalDate
 
 @Composable
-internal fun StudyDetailRoute(modifier: Modifier = Modifier) {
+internal fun StudyDetailRoute(
+    onBackClick: () -> Unit,
+    onSettingsNavigate: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: StudyDetailViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.studyDetailUiState.collectAsStateWithLifecycle()
+    val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+    val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.getStudyDetailInfo()
+    }
+
+    StudyDetailScreen(
+        isMyStudy = true,
+        uiState = uiState,
+        selectedTab = selectedTab,
+        selectedDate = selectedDate,
+        modifier = modifier,
+        onBackClick = onBackClick,
+        onShareButtonClick = {},
+        onSettingsButtonClick = onSettingsNavigate,
+        onTabChange = viewModel::updateSelectedTab,
+        onUserClick = {},
+    )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyDetailScreen(
     isMyStudy: Boolean,
-    study: Study,
+    uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
-    studyMembers: List<StudyMember>,
+    selectedDate: LocalDate,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
@@ -66,7 +96,44 @@ private fun StudyDetailScreen(
     onTabChange: (StudyDetailTab) -> Unit,
     onUserClick: (Long) -> Unit,
 ) {
+    when (uiState.isLoaded) {
+        is UiState.Empty -> {}
+        is UiState.Failure -> {}
+        is UiState.Loading -> {}
+        is UiState.Success<*> -> StudyDetailSuccessScreen(
+            isMyStudy = isMyStudy,
+            uiState = uiState,
+            selectedTab = selectedTab,
+            selectedDate = selectedDate,
+            modifier = modifier,
+            onBackClick = onBackClick,
+            onShareButtonClick = onShareButtonClick,
+            onSettingsButtonClick = onSettingsButtonClick,
+            onTabChange = onTabChange,
+            onUserClick = onUserClick,
+            onJoinButtonClick = {},
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun StudyDetailSuccessScreen(
+    isMyStudy: Boolean,
+    uiState: StudyDetailUiState,
+    selectedTab: StudyDetailTab,
+    selectedDate: LocalDate,
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    onShareButtonClick: () -> Unit,
+    onSettingsButtonClick: () -> Unit,
+    onTabChange: (StudyDetailTab) -> Unit,
+    onUserClick: (Long) -> Unit,
+    onJoinButtonClick: () -> Unit,
+) {
     val context = LocalContext.current
+    val studyInfo = (uiState.studyInfoState as UiState.Success).data
+    val members = (uiState.membersState as UiState.Success).data
 
     LazyColumn(
         modifier = modifier
@@ -82,7 +149,7 @@ private fun StudyDetailScreen(
                 AsyncImage(
                     model = ImageRequest
                         .Builder(context)
-                        .data(study.studyImageUrl)
+                        .data(studyInfo.studyImageUrl)
                         .placeholder(img_study_background)
                         .error(img_study_background)
                         .fallback(img_study_background)
@@ -114,19 +181,19 @@ private fun StudyDetailScreen(
             }
 
             StudyInfoSection(
-                studyTag = study.studyTag,
-                studyName = study.studyName,
-                studyDescription = study.studyDescription,
-                studyTier = study.studyTag,
-                studyMemberCount = study.studyMemberCount,
-                studyMemberLimit = study.studyMemberLimit,
+                studyTag = studyInfo.studyTag,
+                studyName = studyInfo.studyName,
+                studyDescription = studyInfo.studyDescription,
+                studyTier = studyInfo.studyTag,
+                studyMemberCount = studyInfo.studyMemberCount,
+                studyMemberLimit = studyInfo.studyMemberLimit,
                 modifier = Modifier,
             )
 
-            if (isMyStudy && study.completedMemberCount != 0 && study.studyType == StudyType.CHALLENGE.name) {
+            if (isMyStudy && studyInfo.completedMemberCount != 0 && studyInfo.studyType == StudyType.CHALLENGE.name) {
                 DailyCompletionBar(
-                    study.completedMemberCount,
-                    study.studyMemberCount,
+                    studyInfo.completedMemberCount,
+                    studyInfo.studyMemberCount,
                 )
             } else {
                 HorizontalDivider(thickness = 8.dp, color = TogedyTheme.colors.gray50)
@@ -144,7 +211,7 @@ private fun StudyDetailScreen(
 
         when (selectedTab) {
             StudyDetailTab.MEMBER -> {
-                val chunkedList = studyMembers.chunked(4)
+                val chunkedList = members.chunked(4)
 
                 item {
                     Spacer(modifier = Modifier.height(10.dp))
@@ -183,71 +250,73 @@ private fun StudyDetailScreen(
         }
     }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(TogedyTheme.colors.black)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_left_chevron),
-            contentDescription = "뒤로 가기 버튼",
-            tint = TogedyTheme.colors.white,
+        Row(
             modifier = Modifier
-                .size(24.dp)
-                .noRippleClickable(onBackClick),
-        )
-
-        Spacer(Modifier.weight(1f))
-
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_share_20),
-            contentDescription = "공유 버튼",
-            tint = TogedyTheme.colors.white,
-            modifier = Modifier
-                .size(20.dp)
-                .noRippleClickable(onShareButtonClick),
-        )
-
-        if (isMyStudy) {
-            Spacer(Modifier.width(8.dp))
-
+                .fillMaxWidth()
+                .background(TogedyTheme.colors.black)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_settings_24),
-                contentDescription = "설정 버튼",
+                imageVector = ImageVector.vectorResource(ic_left_chevron),
+                contentDescription = "뒤로 가기 버튼",
                 tint = TogedyTheme.colors.white,
                 modifier = Modifier
                     .size(24.dp)
-                    .noRippleClickable(onSettingsButtonClick),
+                    .noRippleClickable(onBackClick),
             )
-        }
-    }
-}
 
-@Preview
-@Composable
-private fun StudyDetailScreenPreview() {
-    TogedyTheme {
-        StudyDetailScreen(
-            isMyStudy = true,
-            study = Study.mock1,
-            selectedTab = StudyDetailTab.MEMBER,
-            studyMembers = listOf(
-                StudyMember.mock_member,
-                StudyMember.mock_leader,
-                StudyMember.mock_member2,
-                StudyMember.mock_member3,
-                StudyMember.mock_member2,
-                StudyMember.mock_member3,
-                StudyMember.mock_member3,
-            ),
-            modifier = Modifier,
-            onBackClick = {},
-            onShareButtonClick = {},
-            onSettingsButtonClick = {},
-            onTabChange = {},
-            onUserClick = {},
-        )
+            Spacer(Modifier.weight(1f))
+
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_share_20),
+                contentDescription = "공유 버튼",
+                tint = TogedyTheme.colors.white,
+                modifier = Modifier
+                    .size(20.dp)
+                    .noRippleClickable(onShareButtonClick),
+            )
+
+            if (isMyStudy) {
+                Spacer(Modifier.width(8.dp))
+
+                Icon(
+                    imageVector = ImageVector.vectorResource(ic_settings_24),
+                    contentDescription = "설정 버튼",
+                    tint = TogedyTheme.colors.white,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .noRippleClickable(onSettingsButtonClick),
+                )
+            }
+        }
+
+        if (isMyStudy) {
+            Box(
+                modifier = Modifier
+                    .background(color = TogedyTheme.colors.gray300)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            ) {
+                TogedyButton(
+                    text = "스터디 가입하기",
+                    onClick = onJoinButtonClick,
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .background(color = TogedyTheme.colors.gray300)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            ) {
+                TogedyButton(
+                    text = "스터디 가입하기",
+                    onClick = onJoinButtonClick,
+                )
+            }
+        }
     }
 }
