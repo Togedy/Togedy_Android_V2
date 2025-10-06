@@ -10,12 +10,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.together.study.designsystem.theme.TogedyTheme
+
+private const val SEE_MORE_TEXT = "...더보기"
+private const val SEE_LESS_TEXT = " ...간략히"
+private const val ELLIPSIS_WIDTH_IN_CHARS = 8
 
 @Composable
 fun TextWithMoreButton(
@@ -25,57 +31,98 @@ fun TextWithMoreButton(
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+
+    val contentColor = TogedyTheme.colors.gray600
+    val buttonColor = TogedyTheme.colors.green
+
     val isTextClipped = textLayoutResult?.didOverflowHeight ?: false
-    val showSeeMore = isTextClipped && !isExpanded
+    val showSeeMoreButton = isTextClipped && !isExpanded
+
+    val onTextClick = {
+        if (isTextClipped || isExpanded) {
+            isExpanded = !isExpanded
+        }
+    }
 
     Box(
         modifier = modifier
-            .clickable { isExpanded = !isExpanded }
+            .clickable(onClick = onTextClick)
             .clipToBounds(),
     ) {
-        val annotatedText =
-            if (showSeeMore) {
-                val lastCharIndex =
-                    textLayoutResult?.getLineEnd(maxLines - 1, visibleEnd = true)
-                        ?: text.length
-
-                val effectiveText = text.take(lastCharIndex)
-
-                buildAnnotatedString {
-                    withStyle(SpanStyle(TogedyTheme.colors.gray600)) {
-                        append(effectiveText.dropLast("...더보기".length))
-                    }
-                    withStyle(SpanStyle(TogedyTheme.colors.green)) {
-                        append("...더보기")
-                    }
-                }
-            } else {
-                if (isExpanded) {
-                    buildAnnotatedString {
-                        withStyle(SpanStyle(TogedyTheme.colors.gray600)) {
-                            append(text)
-                        }
-                        withStyle(SpanStyle(TogedyTheme.colors.green)) {
-                            append(" ...간략히")
-                        }
-                    }
-                } else {
-                    buildAnnotatedString {
-                        withStyle(SpanStyle(TogedyTheme.colors.gray600)) {
-                            append(text)
-                        }
-                    }
-                }
-            }
+        val annotatedText = createAnnotatedText(
+            text = text,
+            isExpanded = isExpanded,
+            showSeeMoreButton = showSeeMoreButton,
+            textLayoutResult = textLayoutResult,
+            contentColor = contentColor,
+            buttonColor = buttonColor,
+            maxLines = maxLines,
+        )
 
         Text(
             text = annotatedText,
             style = TogedyTheme.typography.body14m,
             maxLines = if (isExpanded) Int.MAX_VALUE else maxLines,
             onTextLayout = { result ->
-                textLayoutResult = result
+                if (textLayoutResult == null || result.lineCount != textLayoutResult?.lineCount) {
+                    textLayoutResult = result
+                }
             },
         )
+    }
+}
+
+@Composable
+private fun createAnnotatedText(
+    text: String,
+    isExpanded: Boolean,
+    showSeeMoreButton: Boolean,
+    textLayoutResult: TextLayoutResult?,
+    contentColor: Color,
+    buttonColor: Color,
+    maxLines: Int,
+): AnnotatedString = buildAnnotatedString {
+
+    val contentStyle = SpanStyle(contentColor)
+    val buttonStyle = SpanStyle(buttonColor)
+
+    when {
+        showSeeMoreButton -> {
+            val lastLineIndex = maxLines - 1
+            textLayoutResult?.let { layoutResult ->
+                if (layoutResult.lineCount > lastLineIndex) {
+                    val lineEndIndex = layoutResult.getLineEnd(lastLineIndex, visibleEnd = true)
+                    val effectiveTextEnd = (lineEndIndex - ELLIPSIS_WIDTH_IN_CHARS).coerceAtLeast(0)
+
+                    withStyle(contentStyle) {
+                        append(text.substring(0, effectiveTextEnd))
+                    }
+                } else {
+                    withStyle(contentStyle) {
+                        append(text)
+                    }
+                }
+            }
+
+            withStyle(buttonStyle) {
+                append(SEE_MORE_TEXT)
+            }
+        }
+
+        isExpanded -> {
+            withStyle(contentStyle) {
+                append(text)
+            }
+            withStyle(buttonStyle) {
+                append(SEE_LESS_TEXT)
+            }
+        }
+
+        else -> {
+            withStyle(contentStyle) {
+                append(text)
+            }
+        }
     }
 }
 
