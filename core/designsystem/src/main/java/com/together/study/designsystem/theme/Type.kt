@@ -79,12 +79,12 @@ fun TogedyTypography() = TogedyTypography(
     body13b = TogedyTextStyle(
         fontFamily = PretendardBold,
         fontSize = 13.sp,
-        lineHeight = 29.sp,
+        lineHeight = 22.sp,
     ),
     body13m = TogedyTextStyle(
         fontFamily = PretendardMedium,
         fontSize = 13.sp,
-        lineHeight = 29.sp,
+        lineHeight = 22.sp,
     ),
     body12m = TogedyTextStyle(
         fontFamily = PretendardMedium,

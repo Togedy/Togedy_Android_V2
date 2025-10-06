@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.Calendar
 import com.together.study.calendar.maincalendar.navigation.navigateToCalendar
+import com.together.study.study.navigation.navigateToStudy
 
 class MainNavigator(
     val navController: NavHostController,
@@ -41,7 +42,7 @@ class MainNavigator(
             MainTab.CALENDAR -> navController.navigateToCalendar(navOptions)
             MainTab.DUMMY2 -> { } //TODO: 더미 추가 예정
             MainTab.DUMMY3 -> { } //TODO: 더미 추가 예정
-            MainTab.DUMMY4 -> { } //TODO: 더미 추가 예정
+            MainTab.STUDY -> navController.navigateToStudy(navOptions)
             MainTab.DUMMY5 -> { } //TODO: 더미 추가 예정
         }
     }

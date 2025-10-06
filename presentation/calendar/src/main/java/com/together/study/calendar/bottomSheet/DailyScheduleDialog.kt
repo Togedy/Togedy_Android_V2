@@ -43,7 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.component.UserScheduleItem
 import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
-import com.together.study.common.ScheduleType
+import com.together.study.common.type.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_delete_24
 import com.together.study.designsystem.component.TogedyScheduleChip
 import com.together.study.designsystem.component.button.AddButton

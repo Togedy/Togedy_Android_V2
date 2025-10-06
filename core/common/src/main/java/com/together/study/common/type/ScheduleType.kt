@@ -1,4 +1,4 @@
-package com.together.study.common
+package com.together.study.common.type
 
 enum class ScheduleType(
     val label: String,
@@ -10,7 +10,7 @@ enum class ScheduleType(
     companion object {
         fun get(scheduleType: String): ScheduleType {
             return try {
-                ScheduleType.valueOf(scheduleType.uppercase())
+                valueOf(scheduleType.uppercase())
             } catch (e: Exception) {
                 USER
             }
