@@ -45,8 +45,7 @@ internal fun StudyMemberItem(
         else TogedyTheme.colors.gray500
     val statusText =
         if (isActive) "공부중"
-        else if (user.totalStudyAmount != null) "1H 20M"
-        else user.lastActivatedAt ?: ""
+        else user.totalStudyAmount ?: (user.lastActivatedAt ?: "")
 
     Column(
         modifier = modifier.noRippleClickable(onItemClick),
