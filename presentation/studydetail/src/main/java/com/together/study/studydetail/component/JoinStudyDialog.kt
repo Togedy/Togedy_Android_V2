@@ -54,11 +54,12 @@ fun JoinStudyDialog(
         buttonText = "가입하기",
         onDismissRequest = onDismissRequest,
         onButtonClick = {
-            if (!hasPassword) onJoinStudyClick
-            else {
-                if (password == input) onJoinStudyClick
-                else showError = true
-            }
+            onJoinStudyClick()
+//            if (!hasPassword) onJoinStudyClick
+//            else {
+//                if (password == input) onJoinStudyClick
+//                else showError = true
+//            }
         },
         modifier = modifier,
     )
@@ -67,11 +68,13 @@ fun JoinStudyDialog(
 @Preview
 @Composable
 private fun JoinStudyDialogPreview() {
-    JoinStudyDialog(
-        studyName = "햄버거파이터즈",
-        hasPassword = false,
-        modifier = Modifier,
-        onDismissRequest = {},
-        onJoinStudyClick = {},
-    )
+    TogedyTheme {
+        JoinStudyDialog(
+            studyName = "햄버거파이터즈",
+            hasPassword = false,
+            modifier = Modifier,
+            onDismissRequest = {},
+            onJoinStudyClick = {},
+        )
+    }
 }
