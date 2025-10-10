@@ -9,6 +9,7 @@ import com.together.study.study.main.state.Study
 import com.together.study.studydetail.detailmain.state.StudyAttendance
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
+import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -110,6 +112,24 @@ internal class StudyDetailViewModel @Inject constructor(
             _selectedDate.value = _selectedDate.value.plusWeeks(1)
         }
         getAttendance()
+    }
+
+    fun updateDialogState(dialog: StudyDetailDialogType) {
+        _dialogState.update { dialogState ->
+            when (dialog) {
+                StudyDetailDialogType.JOIN -> {
+                    dialogState.copy(isJoinDialogVisible = !_dialogState.value.isJoinDialogVisible)
+                }
+
+                StudyDetailDialogType.JOIN_COMPLETE -> {
+                    dialogState.copy(isJoinCompleteDialogVisible = !_dialogState.value.isJoinCompleteDialogVisible)
+                }
+
+                StudyDetailDialogType.USER -> {
+                    dialogState.copy(isUserBottomSheetVisible = !_dialogState.value.isUserBottomSheetVisible)
+                }
+            }
+        }
     }
 
     companion object {

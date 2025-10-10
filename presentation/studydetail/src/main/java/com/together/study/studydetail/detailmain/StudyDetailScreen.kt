@@ -56,6 +56,7 @@ import com.together.study.studydetail.detailmain.component.StudyInfoSection
 import com.together.study.studydetail.detailmain.component.StudyMemberItem
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
+import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 import com.together.study.util.noRippleClickable
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -92,6 +93,7 @@ internal fun StudyDetailRoute(
         onUserClick = {},
         onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
+        onDialogStateChange = viewModel::updateDialogState
     )
 }
 
@@ -110,6 +112,8 @@ private fun StudyDetailScreen(
     onUserClick: (Long) -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
+    onDialogStateChange: (StudyDetailDialogType) -> Unit,
+    onJoinStudyClick: () -> Unit,
 ) {
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
@@ -130,6 +134,8 @@ private fun StudyDetailScreen(
             onJoinButtonClick = {},
             onPreviousWeekClick = onPreviousWeekClick,
             onNextWeekClick = onNextWeekClick,
+            onDialogStateChange = onDialogStateChange,
+            onJoinStudyClick = onJoinStudyClick,
         )
     }
 }
@@ -151,6 +157,8 @@ private fun StudyDetailSuccessScreen(
     onJoinButtonClick: () -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
+    onDialogStateChange: (StudyDetailDialogType) -> Unit,
+    onJoinStudyClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
@@ -384,7 +392,7 @@ private fun StudyDetailSuccessScreen(
             ) {
                 TogedyButton(
                     text = "스터디 가입하기",
-                    onClick = onJoinButtonClick,
+                    onClick = { onDialogStateChange(StudyDetailDialogType.JOIN) },
                 )
             }
         }
@@ -393,8 +401,8 @@ private fun StudyDetailSuccessScreen(
     StudyDetailDialogScreen(
         studyInfo = studyInfo,
         dialogState = dialogState,
-        onDismissRequest = { },
-        onJoinButtonClick = { },
+        onDismissRequest = onDialogStateChange,
+        onJoinStudyClick = onJoinStudyClick,
     )
 }
 

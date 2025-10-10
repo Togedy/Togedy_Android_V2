@@ -20,7 +20,7 @@ fun JoinStudyDialog(
     password: String = "",
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
-    onJoinButtonClick: () -> Unit,
+    onJoinStudyClick: () -> Unit,
 ) {
     var input by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -52,9 +52,9 @@ fun JoinStudyDialog(
         buttonText = "가입하기",
         onDismissRequest = onDismissRequest,
         onButtonClick = {
-            if (!hasPassword) onJoinButtonClick
+            if (!hasPassword) onJoinStudyClick
             else {
-                if (password == input) onJoinButtonClick
+                if (password == input) onJoinStudyClick
                 else showError = true
             }
         },
@@ -70,6 +70,6 @@ private fun JoinStudyDialogPreview() {
         hasPassword = false,
         modifier = Modifier,
         onDismissRequest = {},
-        onJoinButtonClick = {},
+        onJoinStudyClick = {},
     )
 }

@@ -13,7 +13,7 @@ fun StudyDetailDialogScreen(
     dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onDismissRequest: (StudyDetailDialogType) -> Unit,
-    onJoinButtonClick: () -> Unit,
+    onJoinStudyClick: () -> Unit,
 ) {
     with(dialogState) {
         if (isJoinDialogVisible) {
@@ -23,7 +23,7 @@ fun StudyDetailDialogScreen(
                     hasPassword = hasPassword,
                     password = password,
                     onDismissRequest = { onDismissRequest(StudyDetailDialogType.JOIN) },
-                    onJoinButtonClick = onJoinButtonClick,
+                    onJoinStudyClick = onJoinStudyClick,
                     modifier = modifier,
                 )
             }
