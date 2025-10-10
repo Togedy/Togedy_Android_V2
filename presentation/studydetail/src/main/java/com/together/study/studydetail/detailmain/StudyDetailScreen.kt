@@ -406,6 +406,8 @@ private fun StudyDetailSuccessScreen(
         onJoinStudyClick = {
             onJoinStudyClick()
             onDialogStateChange(StudyDetailDialogType.JOIN)
+
+            onDialogStateChange(StudyDetailDialogType.JOIN_COMPLETE) // TODO : 가입 통신 성공 후 보여주는 것으로 변경
         }
     )
 }

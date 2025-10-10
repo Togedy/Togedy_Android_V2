@@ -30,7 +30,10 @@ fun StudyDetailDialogScreen(
         }
 
         if (isJoinCompleteDialogVisible) {
-            //TODO: 가입 완료 다이얼로그
+            JoinCompleteDialog(
+                modifier = modifier,
+                onDismissRequest = { onDismissRequest(StudyDetailDialogType.JOIN_COMPLETE) }
+            )
         }
 
         if (isUserBottomSheetVisible) {
