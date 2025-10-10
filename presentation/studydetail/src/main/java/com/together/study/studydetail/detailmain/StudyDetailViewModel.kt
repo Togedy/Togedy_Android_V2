@@ -7,6 +7,7 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.study.main.state.Study
 import com.together.study.studydetail.detailmain.state.StudyAttendance
+import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,9 @@ internal class StudyDetailViewModel @Inject constructor(
     val selectedTab = _selectedTab.asStateFlow()
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
+    private val _dialogState: MutableStateFlow<StudyDetailDialogState> =
+        MutableStateFlow(StudyDetailDialogState())
+    val dialogState: StateFlow<StudyDetailDialogState> = _dialogState.asStateFlow()
 
     private val _studyInfoState = MutableStateFlow<UiState<Study>>(UiState.Loading)
     private val _membersState = MutableStateFlow<UiState<List<StudyMember>>>(UiState.Loading)
