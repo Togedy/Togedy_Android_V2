@@ -3,7 +3,7 @@ package com.together.study.study.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
-import com.together.study.common.type.StudySortingType
+import com.together.study.common.type.study.StudySortingType
 import com.together.study.study.main.state.Study
 import com.together.study.study.search.state.SearchFilterState
 import com.together.study.study.search.state.StudySearchUiState

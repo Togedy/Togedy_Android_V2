@@ -12,7 +12,7 @@ enum class StudyMainTab(override val typeName: String) : TabType {
 }
 
 enum class StudyDetailTab(override val typeName: String) : TabType {
-    MEMBER("스터디원"),
+    MEMBER("스터디 멤버"),
     DAILY_CHECK("출석부"),
 }
 

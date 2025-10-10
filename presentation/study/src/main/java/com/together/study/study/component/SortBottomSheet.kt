@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.together.study.common.type.StudySortingType
+import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable

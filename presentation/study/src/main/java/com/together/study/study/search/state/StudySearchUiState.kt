@@ -2,7 +2,7 @@ package com.together.study.study.search.state
 
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
-import com.together.study.common.type.StudySortingType
+import com.together.study.common.type.study.StudySortingType
 import com.together.study.study.main.state.Study
 
 @Immutable

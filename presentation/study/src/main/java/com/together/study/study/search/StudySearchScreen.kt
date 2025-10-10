@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
-import com.together.study.common.type.StudySortingType
+import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.R.drawable.ic_arrow_left_24
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.theme.TogedyTheme
