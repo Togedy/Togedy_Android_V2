@@ -93,7 +93,8 @@ internal fun StudyDetailRoute(
         onUserClick = {},
         onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
-        onDialogStateChange = viewModel::updateDialogState
+        onDialogStateChange = viewModel::updateDialogState,
+        onJoinStudyClick = {},
     )
 }
 
