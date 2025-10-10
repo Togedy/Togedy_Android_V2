@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
@@ -43,6 +44,7 @@ fun JoinStudyDialog(
                         append("\n스터디에 가입할까요?")
                     }
                 },
+                textAlign = TextAlign.Center,
             )
             if (hasPassword) {
                 //TODO : 비밀번호 입력

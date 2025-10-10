@@ -382,7 +382,7 @@ private fun StudyDetailSuccessScreen(
             ) {
                 TogedyButton(
                     text = "스터디 가입하기",
-                    onClick = onJoinButtonClick,
+                    onClick = { onDialogStateChange(StudyDetailDialogType.JOIN) },
                 )
             }
         } else {
@@ -403,7 +403,10 @@ private fun StudyDetailSuccessScreen(
         studyInfo = studyInfo,
         dialogState = dialogState,
         onDismissRequest = onDialogStateChange,
-        onJoinStudyClick = onJoinStudyClick,
+        onJoinStudyClick = {
+            onJoinStudyClick()
+            onDialogStateChange(StudyDetailDialogType.JOIN)
+        }
     )
 }
 
