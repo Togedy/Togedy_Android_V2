@@ -51,8 +51,10 @@ import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studydetail.detailmain.component.AttendanceItem
 import com.together.study.studydetail.detailmain.component.DailyCompletionBar
+import com.together.study.studydetail.detailmain.component.StudyDetailDialogScreen
 import com.together.study.studydetail.detailmain.component.StudyInfoSection
 import com.together.study.studydetail.detailmain.component.StudyMemberItem
+import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import com.together.study.util.noRippleClickable
 import java.time.DayOfWeek
@@ -70,6 +72,7 @@ internal fun StudyDetailRoute(
     val uiState by viewModel.studyDetailUiState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
+    val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getStudyDetailInfo()
@@ -80,6 +83,7 @@ internal fun StudyDetailRoute(
         uiState = uiState,
         selectedTab = selectedTab,
         selectedDate = selectedDate,
+        dialogState = dialogState,
         modifier = modifier,
         onBackClick = onBackClick,
         onShareButtonClick = {},
@@ -97,6 +101,7 @@ private fun StudyDetailScreen(
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
+    dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
@@ -110,11 +115,12 @@ private fun StudyDetailScreen(
         is UiState.Empty -> {}
         is UiState.Failure -> {}
         is UiState.Loading -> {}
-        is UiState.Success<*> -> StudyDetailSuccessScreen(
+        is UiState.Success -> StudyDetailSuccessScreen(
             isMyStudy = isMyStudy,
             uiState = uiState,
             selectedTab = selectedTab,
             selectedDate = selectedDate,
+            dialogState = dialogState,
             modifier = modifier,
             onBackClick = onBackClick,
             onShareButtonClick = onShareButtonClick,
@@ -135,6 +141,7 @@ private fun StudyDetailSuccessScreen(
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
+    dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
@@ -294,6 +301,7 @@ private fun StudyDetailSuccessScreen(
                         )
                     }
                 }
+
                 itemsIndexed(attendance) { index, attendance ->
                     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
                         AttendanceItem(
@@ -381,6 +389,13 @@ private fun StudyDetailSuccessScreen(
             }
         }
     }
+
+    StudyDetailDialogScreen(
+        studyInfo = studyInfo,
+        dialogState = dialogState,
+        onDismissRequest = { },
+        onJoinButtonClick = { },
+    )
 }
 
 private fun getYearMonthWeek(selectedDate: LocalDate): Int {
