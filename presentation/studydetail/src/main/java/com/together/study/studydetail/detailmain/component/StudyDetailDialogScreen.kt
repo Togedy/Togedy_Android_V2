@@ -37,7 +37,11 @@ fun StudyDetailDialogScreen(
         }
 
         if (isUserBottomSheetVisible) {
-            //TODO: 유저 바텀시트
+            UserInfoBottomSheet(
+                user = StudyMemberProfile.mock,
+                modifier = modifier,
+                onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) }
+            )
         }
     }
 }

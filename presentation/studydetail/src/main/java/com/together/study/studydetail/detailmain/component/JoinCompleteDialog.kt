@@ -23,7 +23,7 @@ import com.together.study.designsystem.R.drawable.img_character_goal
 import com.together.study.designsystem.theme.TogedyTheme
 
 @Composable
-fun JoinCompleteDialog(
+internal fun JoinCompleteDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
 ) {
