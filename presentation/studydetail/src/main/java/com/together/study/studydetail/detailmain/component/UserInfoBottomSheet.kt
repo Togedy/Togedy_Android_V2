@@ -44,7 +44,6 @@ import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.tabbar.StudyMemberTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
-import java.time.DayOfWeek
 
 data class StudyMemberProfile(
     val userName: String,
@@ -180,7 +179,9 @@ internal fun UserInfoBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(610 / 800f),
     ) {
         Column(
             modifier = Modifier
@@ -262,7 +263,7 @@ internal fun UserInfoBottomSheet(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         itemsIndexed(studyTimeBlocks.monthlyStudyTimeList) { index, item ->
-                            MonthlyStudyTimeSection(
+                            StudyMonthlyColorBlock(
                                 year = item.year,
                                 month = item.month,
                                 studyTimeList = item.studyTimeList,
@@ -273,43 +274,6 @@ internal fun UserInfoBottomSheet(
 
                 StudyMemberTab.PLANNER -> {}
             }
-        }
-    }
-}
-
-@Composable
-private fun MonthlyStudyTimeSection(
-    year: Int,
-    month: Int,
-    studyTimeList: List<Int>,
-    modifier: Modifier = Modifier,
-) {
-    val dayOfWeek = DayOfWeek.entries
-
-    Column(
-        modifier = modifier
-            .width(228.dp)
-            .background(
-                color = TogedyTheme.colors.gray50,
-                shape = RoundedCornerShape(8.dp),
-            )
-            .padding(12.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                text = year.toString(),
-                style = TogedyTheme.typography.body12m,
-                color = TogedyTheme.colors.gray500,
-            )
-
-            Text(
-                text = "${month}월",
-                style = TogedyTheme.typography.body12m,
-                color = TogedyTheme.colors.gray800,
-            )
         }
     }
 }

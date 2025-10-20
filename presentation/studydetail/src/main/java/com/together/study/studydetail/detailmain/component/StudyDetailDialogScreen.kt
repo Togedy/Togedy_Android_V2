@@ -39,8 +39,9 @@ fun StudyDetailDialogScreen(
         if (isUserBottomSheetVisible) {
             UserInfoBottomSheet(
                 user = StudyMemberProfile.mock,
+                studyTimeBlocks = StudyMemberTimeBlocks.mock,
                 modifier = modifier,
-                onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) }
+                onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) },
             )
         }
     }
