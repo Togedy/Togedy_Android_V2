@@ -106,7 +106,7 @@ internal fun StudyMonthlyColorBlock(
 }
 
 @Composable
-fun CalendarDayBlock(
+private fun CalendarDayBlock(
     day: String,
     stack: Int,
     modifier: Modifier = Modifier,
