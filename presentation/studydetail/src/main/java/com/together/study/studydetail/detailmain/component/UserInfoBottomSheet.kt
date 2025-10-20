@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.designsystem.R.drawable.img_character_sleeping
 import com.together.study.designsystem.R.drawable.img_study_background
+import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.component.tabbar.StudyMemberTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -189,7 +192,7 @@ data class StudyMemberPlanner(
             totalPlanCount = 10,
             dailyPlanner = listOf(
                 DailyPlanner(
-                    "국어", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                    "국어", listOf(Plan("플랜1", "완료"), Plan("플랜2", "상태2"))
                 ),
                 DailyPlanner(
                     "수학입니다", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
@@ -250,8 +253,6 @@ internal fun UserInfoBottomSheet(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(12.dp))
-
             AsyncImage(
                 model = ImageRequest
                     .Builder(context)
@@ -323,14 +324,20 @@ internal fun UserInfoBottomSheet(
                     LazyRow(
                         modifier = Modifier,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        reverseLayout = true,
                     ) {
-                        itemsIndexed(studyTimeBlocks.monthlyStudyTimeList) { index, item ->
+                        item { Spacer(Modifier.width(6.dp)) }
+
+                        itemsIndexed(studyTimeBlocks.monthlyStudyTimeList.reversed()) { index, item ->
                             StudyMonthlyColorBlock(
                                 year = item.year,
                                 month = item.month,
                                 studyTimeList = item.studyTimeList,
                             )
                         }
+
+
+                        item { Spacer(Modifier.width(6.dp)) }
                     }
                 }
 
@@ -342,7 +349,68 @@ internal fun UserInfoBottomSheet(
                             totalPlanCount = totalPlanCount,
                         )
 
+                        if (isMyPlanner) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .background(
+                                        TogedyTheme.colors.gray100,
+                                        RoundedCornerShape(8.dp)
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(
+                                    text = "다른 멤버에게 공개할래요",
+                                    style = TogedyTheme.typography.chip10sb,
+                                    color = TogedyTheme.colors.gray900,
+                                )
 
+                                TogedyToggleButton(
+                                    isToggleOn = true,
+                                    onToggleClick = {},
+                                )
+                            }
+                        }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .height(300.dp),
+                        ) {
+                            itemsIndexed(dailyPlanner.dailyPlanner) { index, item ->
+                                Column(
+                                    modifier = Modifier.padding(bottom = 16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Text(
+                                        text = item.studyCategoryName,
+                                        style = TogedyTheme.typography.body14b,
+                                        color = TogedyTheme.colors.gray900,
+                                    )
+
+                                    HorizontalDivider(color = TogedyTheme.colors.gray50)
+
+                                    item.planList.forEach { plan ->
+                                        val status =
+                                            if (plan.planStatus == "완료") TextDecoration.LineThrough
+                                            else TextDecoration.None
+                                        val color =
+                                            if (plan.planStatus == "완료") TogedyTheme.colors.gray500
+                                            else TogedyTheme.colors.gray900
+
+                                        Text(
+                                            text = plan.planName,
+                                            style = TogedyTheme.typography.body13m,
+                                            color = color,
+                                            textDecoration = status
+                                        )
+
+                                        HorizontalDivider(color = TogedyTheme.colors.gray50)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
