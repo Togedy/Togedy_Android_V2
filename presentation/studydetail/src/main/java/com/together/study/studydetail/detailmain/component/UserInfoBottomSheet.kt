@@ -111,7 +111,7 @@ data class StudyMemberTimeBlocks(
                     3,
                     4,
                     5,
-                    1
+                    1,
                 )
             )
             val mock1 = MonthlyStudyTime(
@@ -147,7 +147,7 @@ data class StudyMemberTimeBlocks(
                     2,
                     3,
                     4,
-                    5
+                    5,
                 )
             )
         }
@@ -164,11 +164,74 @@ data class StudyMemberTimeBlocks(
     }
 }
 
+data class StudyMemberPlanner(
+    val isMyPlanner: Boolean,
+    val isPlannerVisible: Boolean,
+    val completedPlanCount: Int?,
+    val totalPlanCount: Int?,
+    val dailyPlanner: List<DailyPlanner>,
+) {
+    data class DailyPlanner(
+        val studyCategoryName: String,
+        val planList: List<Plan>,
+    )
+
+    data class Plan(
+        val planName: String,
+        val planStatus: String,
+    )
+
+    companion object {
+        val mock = StudyMemberPlanner(
+            isMyPlanner = false,
+            isPlannerVisible = true,
+            completedPlanCount = 1,
+            totalPlanCount = 10,
+            dailyPlanner = listOf(
+                DailyPlanner(
+                    "국어", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                ),
+                DailyPlanner(
+                    "수학입니다", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                ),
+                DailyPlanner(
+                    "국어", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                ),
+                DailyPlanner(
+                    "수학입니다", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                )
+            )
+        )
+
+        val mock2 = StudyMemberPlanner(
+            isMyPlanner = true,
+            isPlannerVisible = true,
+            completedPlanCount = 1,
+            totalPlanCount = 10,
+            dailyPlanner = listOf(
+                DailyPlanner(
+                    "국어", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                ),
+                DailyPlanner(
+                    "수학입니다", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                ),
+                DailyPlanner(
+                    "국어", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                ),
+                DailyPlanner(
+                    "수학입니다", listOf(Plan("플랜1", "상태1"), Plan("플랜2", "상태2"))
+                )
+            )
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun UserInfoBottomSheet(
     user: StudyMemberProfile,
     studyTimeBlocks: StudyMemberTimeBlocks,
+    dailyPlanner: StudyMemberPlanner,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
 ) {
@@ -179,9 +242,8 @@ internal fun UserInfoBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(610 / 800f),
+        modifier = modifier.fillMaxWidth(),
+        containerColor = TogedyTheme.colors.white,
     ) {
         Column(
             modifier = Modifier
@@ -239,7 +301,7 @@ internal fun UserInfoBottomSheet(
 
             Spacer(Modifier.height(20.dp))
 
-            HorizontalDivider()
+            HorizontalDivider(color = TogedyTheme.colors.gray100)
 
             TogedyTabBar(
                 tabList = StudyMemberTab.entries,
@@ -272,7 +334,17 @@ internal fun UserInfoBottomSheet(
                     }
                 }
 
-                StudyMemberTab.PLANNER -> {}
+                StudyMemberTab.PLANNER -> {
+                    with(dailyPlanner) {
+                        PlannerTitleSection(
+                            isPlannerVisible = isPlannerVisible,
+                            completedPlanCount = completedPlanCount,
+                            totalPlanCount = totalPlanCount,
+                        )
+
+
+                    }
+                }
             }
         }
     }
@@ -375,6 +447,42 @@ private fun StudyTimeTitleSection(modifier: Modifier = Modifier) {
 }
 
 @Composable
+private fun PlannerTitleSection(
+    isPlannerVisible: Boolean,
+    completedPlanCount: Int?,
+    totalPlanCount: Int?,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 22.dp, vertical = 20.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Daily planner",
+            style = TogedyTheme.typography.body14b,
+            color = TogedyTheme.colors.black
+        )
+
+        if (isPlannerVisible) {
+            Text(
+                text = buildAnnotatedString {
+                    append("오늘의 할 일")
+                    withStyle(SpanStyle(color = TogedyTheme.colors.green)) {
+                        append("${completedPlanCount ?: 0}")
+                    }
+                    append("/${totalPlanCount ?: 0}")
+                },
+                style = TogedyTheme.typography.body12m,
+                color = TogedyTheme.colors.gray500,
+            )
+        }
+    }
+}
+
+@Composable
 fun UserRecordBlock(
     record: String,
     type: String,
@@ -430,6 +538,7 @@ private fun UserInfoBottomSheetPreview() {
         UserInfoBottomSheet(
             user = StudyMemberProfile.mock,
             studyTimeBlocks = StudyMemberTimeBlocks.mock,
+            dailyPlanner = StudyMemberPlanner.mock,
             onDismissRequest = {},
         )
     }

@@ -90,7 +90,10 @@ internal fun StudyDetailRoute(
         onShareButtonClick = {},
         onSettingsButtonClick = onSettingsNavigate,
         onTabChange = viewModel::updateSelectedTab,
-        onUserClick = {},
+        onUserClick = {
+            //TODO: 통신 함수 호출 후 성공하면 BottomSheet
+            viewModel.updateDialogState(StudyDetailDialogType.USER)
+        },
         onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
         onDialogStateChange = viewModel::updateDialogState,

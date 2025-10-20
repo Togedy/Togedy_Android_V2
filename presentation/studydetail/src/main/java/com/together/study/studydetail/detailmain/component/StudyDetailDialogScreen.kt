@@ -40,6 +40,7 @@ fun StudyDetailDialogScreen(
             UserInfoBottomSheet(
                 user = StudyMemberProfile.mock,
                 studyTimeBlocks = StudyMemberTimeBlocks.mock,
+                dailyPlanner = StudyMemberPlanner.mock,
                 modifier = modifier,
                 onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) },
             )

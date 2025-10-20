@@ -66,38 +66,41 @@ internal fun StudyMonthlyColorBlock(
 
         Spacer(Modifier.height(10.dp))
 
-        Column(Modifier.fillMaxWidth()) {
-            days.chunked(7).forEachIndexed { weekIndex, week ->
-                Row(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 2.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    week.forEachIndexed { dayIndex, day ->
-                        val colorIndex = (weekIndex + 1) * 7 + dayIndex - 1
-                        CalendarDayBlock(
-                            day = day,
-                            stack = studyTimeList[colorIndex],
-                            modifier = Modifier.weight(1f)
-                        )
+        days.chunked(7).forEachIndexed { weekIndex, week ->
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                week.forEachIndexed { dayIndex, day ->
+                    val colorIndex = weekIndex * 7 + dayIndex
+                    val stack =
+                        if (colorIndex >= studyTimeList.size) 0
+                        else studyTimeList[colorIndex]
 
-                        if (dayIndex < 6) {
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
+                    CalendarDayBlock(
+                        day = day,
+                        stack = stack,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    if (dayIndex < 6) {
+                        Spacer(modifier = Modifier.width(4.dp))
                     }
+                }
 
-                    val remainingSlots = 7 - week.size
-                    if (remainingSlots > 0) {
-                        repeat(remainingSlots) {
-                            Spacer(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f)
-                                    .padding(2.dp)
-                            )
-                        }
+                val remainingSlots = 7 - week.size
+                if (remainingSlots > 0) {
+                    repeat(remainingSlots) {
+                        Spacer(
+                            modifier = Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .padding(2.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
                     }
                 }
             }
