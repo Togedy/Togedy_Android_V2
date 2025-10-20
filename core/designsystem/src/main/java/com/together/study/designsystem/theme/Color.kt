@@ -7,8 +7,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 
 val GREEN = Color(0xFF11BC78)
+val GREEN800 = Color(0xFF41C993)
+val GREEN600 = Color(0xFF70D7AE)
+val GREEN500 = Color(0xFFCFF2E4)
 val GREEN400 = Color(0xFFDCF5ED)
 val GREEN_BG = Color(0xFFEEFAF6)
+
 val GOLD100 = Color(0xFFFFF5E1)
 val GOLD200 = Color(0xFFFFF1D6)
 val GOLD500 = Color(0xFFFFE3AB)
@@ -41,6 +45,9 @@ val BLACK = Color(0xFF000000)
 @Stable
 class TogedyColors(
     green: Color,
+    green800: Color,
+    green600: Color,
+    green500: Color,
     green400: Color,
     greenBg: Color,
     gold100: Color,
@@ -72,6 +79,12 @@ class TogedyColors(
     black: Color,
 ) {
     var green by mutableStateOf(green)
+        private set
+    var green800 by mutableStateOf(green800)
+        private set
+    var green600 by mutableStateOf(green600)
+        private set
+    var green500 by mutableStateOf(green500)
         private set
     var green400 by mutableStateOf(green400)
         private set
@@ -174,6 +187,9 @@ class TogedyColors(
 
     fun copy(): TogedyColors = TogedyColors(
         green,
+        green800,
+        green600,
+        green500,
         green400,
         greenBg,
         gold100,
@@ -207,6 +223,9 @@ class TogedyColors(
 
     fun update(other: TogedyColors) {
         green = other.green
+        green800 = other.green800
+        green600 = other.green600
+        green500 = other.green500
         green400 = other.green400
         greenBg = other.greenBg
         gold100 = other.gold100
@@ -241,6 +260,9 @@ class TogedyColors(
 
 fun TogedyLightColors(
     green: Color = GREEN,
+    green800: Color = GREEN800,
+    green600: Color = GREEN600,
+    green500: Color = GREEN500,
     green400: Color = GREEN400,
     greenBg: Color = GREEN_BG,
     gold100: Color = GOLD100,
@@ -272,6 +294,9 @@ fun TogedyLightColors(
     black: Color = BLACK,
 ) = TogedyColors(
     green,
+    green800,
+    green600,
+    green500,
     green400,
     greenBg,
     gold100,
