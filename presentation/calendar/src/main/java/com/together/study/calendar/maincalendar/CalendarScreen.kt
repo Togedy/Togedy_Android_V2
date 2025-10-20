@@ -39,7 +39,6 @@ import com.together.study.calendar.bottomSheet.DailyDialogViewModel
 import com.together.study.calendar.bottomSheet.DailyScheduleDialog
 import com.together.study.calendar.bottomSheet.YearMonthBottomSheet
 import com.together.study.calendar.generateCalendarWeeks
-import com.together.study.calendar.maincalendar.component.DayOfWeek
 import com.together.study.calendar.maincalendar.component.WeekSchedule
 import com.together.study.calendar.maincalendar.state.CalendarUiState
 import com.together.study.calendar.model.DDay
@@ -49,6 +48,7 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.component.TogedySearchBar
+import com.together.study.designsystem.component.calendar.DayOfWeek
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_volume_16
 import com.together.study.presentation.calendar.R.string.calendar_year_month

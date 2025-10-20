@@ -36,11 +36,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.together.study.calendar.maincalendar.component.DayOfWeek
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.R.drawable.ic_replay
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.component.button.TogedyToggleButton
+import com.together.study.designsystem.component.calendar.DayOfWeek
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 import java.time.LocalDate

@@ -1,4 +1,4 @@
-package com.together.study.calendar.maincalendar.component
+package com.together.study.designsystem.component.calendar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
