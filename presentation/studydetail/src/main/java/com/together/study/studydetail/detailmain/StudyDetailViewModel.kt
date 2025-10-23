@@ -118,15 +118,15 @@ internal class StudyDetailViewModel @Inject constructor(
         _dialogState.update { dialogState ->
             when (dialog) {
                 StudyDetailDialogType.JOIN -> {
-                    dialogState.copy(isJoinDialogVisible = !_dialogState.value.isJoinDialogVisible)
+                    dialogState.copy(isJoinDialogVisible = !dialogState.isJoinDialogVisible)
                 }
 
                 StudyDetailDialogType.JOIN_COMPLETE -> {
-                    dialogState.copy(isJoinCompleteDialogVisible = !_dialogState.value.isJoinCompleteDialogVisible)
+                    dialogState.copy(isJoinCompleteDialogVisible = !dialogState.isJoinCompleteDialogVisible)
                 }
 
                 StudyDetailDialogType.USER -> {
-                    dialogState.copy(isUserBottomSheetVisible = !_dialogState.value.isUserBottomSheetVisible)
+                    dialogState.copy(isUserBottomSheetVisible = !dialogState.isUserBottomSheetVisible)
                 }
             }
         }
