@@ -4,8 +4,8 @@ import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.study.model.ExploreStudyItem
+import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.model.MyStudyItem
-import com.together.study.study.model.StudyMainTimerInfo
 import com.together.study.study.type.StudyTagType
 
 @Immutable
@@ -28,11 +28,6 @@ data class StudyMainUiState(
             else -> UiState.Empty
         }
 }
-
-data class MyStudyInfo(
-    val studyMainTimerInfo: StudyMainTimerInfo,
-    val studyList: List<MyStudyItem>,
-)
 
 data class ExploreFilterState(
     val tagFilters: List<StudyTagType> = listOf(StudyTagType.ENTIRE),
