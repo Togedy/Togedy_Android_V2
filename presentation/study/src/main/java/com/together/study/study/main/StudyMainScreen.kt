@@ -44,8 +44,8 @@ import com.together.study.study.main.component.ExploreFilterSection
 import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
-import com.together.study.study.main.state.MyStudyInfo
 import com.together.study.study.main.state.StudyMainUiState
+import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.type.StudyTagType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch

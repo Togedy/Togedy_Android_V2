@@ -6,9 +6,9 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.study.main.state.ExploreFilterState
-import com.together.study.study.main.state.MyStudyInfo
-import com.together.study.study.main.state.Study
 import com.together.study.study.main.state.StudyMainUiState
+import com.together.study.study.model.ExploreStudyItem
+import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.model.StudyMainTimerInfo
 import com.together.study.study.type.StudyTagType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,8 @@ internal class StudyMainViewModel @Inject constructor(
     val selectedTab = _selectedTab.asStateFlow()
 
     private val _myStudyState = MutableStateFlow<UiState<MyStudyInfo>>(UiState.Loading)
-    private val _exploreStudyState = MutableStateFlow<UiState<List<Study>>>(UiState.Loading)
+    private val _exploreStudyState =
+        MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
     private val _exploreFilterState = MutableStateFlow(ExploreFilterState())
 
     val studyMainUiState: StateFlow<StudyMainUiState> = combine(

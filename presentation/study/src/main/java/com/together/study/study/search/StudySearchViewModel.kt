@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
-import com.together.study.study.main.state.Study
+import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.search.state.SearchFilterState
 import com.together.study.study.search.state.StudySearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,8 +21,10 @@ internal class StudySearchViewModel @Inject constructor(
 
 ) : ViewModel() {
     private val _searchTerm = MutableStateFlow("")
-    private val _activeStudyState = MutableStateFlow<UiState<List<Study>>>(UiState.Loading)
-    private val _resultStudyState = MutableStateFlow<UiState<List<Study>>>(UiState.Loading)
+    private val _activeStudyState =
+        MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
+    private val _resultStudyState =
+        MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
     private val _searchFilterState = MutableStateFlow(SearchFilterState())
 
     val studySearchUiState: StateFlow<StudySearchUiState> = combine(
@@ -48,27 +50,14 @@ internal class StudySearchViewModel @Inject constructor(
     suspend fun getActiveStudies() {
         // TODO : 추후 API 연결
         _activeStudyState.value = UiState.Success(
-            listOf(Study.mock1, Study.mock1, Study.mock1)
+            listOf()
         )
     }
 
     suspend fun getResultStudies() {
         // TODO : 추후 API 연결
         _resultStudyState.value = UiState.Success(
-            listOf(
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1
-            )
+            listOf()
         )
     }
 
