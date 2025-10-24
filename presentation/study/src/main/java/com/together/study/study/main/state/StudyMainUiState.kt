@@ -3,6 +3,7 @@ package com.together.study.study.main.state
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
+import com.together.study.study.model.UserStudyItemsInfo
 import com.together.study.study.type.StudyTagType
 
 @Immutable
@@ -27,21 +28,9 @@ data class StudyMainUiState(
 }
 
 data class MyStudyInfo(
-    val timerInfo: TimerInfo,
+    val userStudyItemsInfo: UserStudyItemsInfo,
     val studyList: List<Study>,
 )
-
-data class TimerInfo(
-    val hasChallenge: Boolean,
-    val goalTime: String?,
-    val studyTime: String?,
-    val achievement: Int?,
-) {
-    companion object {
-        val mock1 = TimerInfo(true, "10:00:00", "10:00:00", 0)
-        val mock2 = TimerInfo(false, null, "01:00:00", 0)
-    }
-}
 
 data class ExploreFilterState(
     val tagFilters: List<StudyTagType> = listOf(StudyTagType.ENTIRE),
