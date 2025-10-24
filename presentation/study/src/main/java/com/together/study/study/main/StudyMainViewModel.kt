@@ -68,24 +68,7 @@ internal class StudyMainViewModel @Inject constructor(
 
     suspend fun getExploreInfo() {
         _exploreStudyState.value = UiState.Success(
-            listOf(
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-            )
+            listOf()
         )
     }
 

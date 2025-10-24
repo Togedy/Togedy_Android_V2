@@ -30,14 +30,13 @@ import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.textchip.TogedyBorderTextChip
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.study.main.state.Study
-import com.together.study.study.main.state.User
+import com.together.study.study.model.MyStudyItem
 import com.together.study.util.noRippleClickable
 import com.together.study.util.toLocalTimeWithSecond
 
 @Composable
 fun MyStudyItem(
-    study: Study,
+    study: MyStudyItem,
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit,
 ) {
@@ -119,7 +118,7 @@ private fun ChallengedCount(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyingMembers(
-    activeMemberList: List<User>,
+    activeMemberList: List<MyStudyItem.Companion.ActiveMember>,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -213,11 +212,16 @@ private fun MyStudyItemPreview() {
     TogedyTheme {
         Column {
             MyStudyItem(
-                study = Study.mock1,
-                onItemClick = {},
-            )
-            MyStudyItem(
-                study = Study.mock2,
+                study = MyStudyItem(
+                    studyId = 1,
+                    studyType = "CHALLENGE",
+                    challengeGoalTime = "10:00:00",
+                    challengeAchievement = 75,
+                    studyName = "을지중학교 1-1",
+                    completedMemberCount = 3,
+                    studyMemberCount = 5,
+                    activeMemberList = listOf(),
+                ),
                 onItemClick = {},
             )
         }
