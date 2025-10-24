@@ -586,13 +586,24 @@ fun UserRecordBlock(
 }
 
 private fun changeToTotalStudyTime(time: String): String {
-    val times = time.split(":").map { it.toInt() }
-    val hour = if (times[0] == 0) "" else if (times[0] > 999) "999+h" else "${times[0]}h"
-    val minutes =
-        if (times[1] == 0 || times[0] > 999) "" else if (times[1] > 999) "999+m" else "${times[1]}m"
-    val space = if (hour.isNotEmpty() && minutes.isNotEmpty()) " " else ""
+    val times = time.split(":").mapNotNull { it.toIntOrNull() }
+    if (times.size < 2) return ""
 
-    return "$hour$space$minutes"
+    val hourValue = times[0]
+    val minuteValue = times[1]
+
+    val hour = when {
+        hourValue == 0 -> ""
+        hourValue > 999 -> "999+h"
+        else -> "${hourValue}h"
+    }
+    val minutes = when {
+        minuteValue == 0 || hourValue > 999 -> ""
+        minuteValue > 999 -> "999+m"
+        else -> "${minuteValue}m"
+    }
+
+    return if (hour.isNotEmpty() && minutes.isNotEmpty()) "$hour $minutes" else "$hour$minutes"
 }
 
 private fun checkMaxValue(value: Int): String {
