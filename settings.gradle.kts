@@ -37,6 +37,7 @@ include(
 include(
     ":domain:dummy",
     ":domain:calendar",
+    ":domain:study",
 )
 include(
     ":presentation:main",
