@@ -3,13 +3,15 @@ package com.together.study.study.main.state
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
+import com.together.study.study.model.ExploreStudyItem
+import com.together.study.study.model.MyStudyItem
 import com.together.study.study.model.StudyMainTimerInfo
 import com.together.study.study.type.StudyTagType
 
 @Immutable
 data class StudyMainUiState(
     val myStudyState: UiState<MyStudyInfo>,
-    val exploreStudyState: UiState<List<Study>>,
+    val exploreStudyState: UiState<List<ExploreStudyItem>>,
     val exploreFilterState: ExploreFilterState,
 ) {
     val isLoaded: UiState<Unit>
@@ -29,7 +31,7 @@ data class StudyMainUiState(
 
 data class MyStudyInfo(
     val studyMainTimerInfo: StudyMainTimerInfo,
-    val studyList: List<Study>,
+    val studyList: List<MyStudyItem>,
 )
 
 data class ExploreFilterState(
@@ -53,7 +55,7 @@ data class Study(
     val studyMemberCount: Int = 0,
     val studyMemberLimit: Int = 0,
     val studyLeaderImageUrl: String = "",
-    val activeMemberList: List<User> = emptyList(),
+    val activeMemberList: List<MyStudyItem.Companion.ActiveMember> = emptyList(),
     val isNewlyCreated: Boolean = false,
     val lastActivatedAt: String = "",
     val hasPassword: Boolean = false,
@@ -73,28 +75,10 @@ data class Study(
             studyMemberCount = 5,
             studyMemberLimit = 30,
             studyLeaderImageUrl = "",
-            activeMemberList = listOf(User.mock1, User.mock2),
+            activeMemberList = listOf(),
             isNewlyCreated = true,
             lastActivatedAt = "10분 전",
             hasPassword = true,
         )
-        val mock2 = Study(
-            studyId = 2,
-            studyType = "NORMAL",
-            studyName = "고1 내신 대비반",
-            studyMemberCount = 5,
-            activeMemberList = listOf(User.mock1, User.mock2, User.mock1, User.mock2, User.mock1)
-        )
-    }
-}
-
-/* TODO: domain으로 이동 예정 */
-data class User(
-    val userName: String,
-    val userProfileImageUrl: String,
-) {
-    companion object {
-        val mock1 = User(userName = "토마토마토", userProfileImageUrl = "")
-        val mock2 = User(userName = "더블치즈감자", userProfileImageUrl = "")
     }
 }

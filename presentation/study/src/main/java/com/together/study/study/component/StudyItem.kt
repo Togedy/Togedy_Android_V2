@@ -37,22 +37,24 @@ import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.study.main.state.Study
+import com.together.study.study.model.ExploreStudyItem
 import com.together.study.util.noRippleClickable
 import com.together.study.util.toLocalTimeWithSecond
 
 @Composable
 internal fun StudyItem(
-    study: Study,
+    study: ExploreStudyItem,
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
     val isChallengeType = StudyType.get(study.studyType) == StudyType.CHALLENGE
-    val goalTime =
-        if (study.challengeGoalTime != null) study.challengeGoalTime.toLocalTimeWithSecond().hour.toString()
-        else ""
+    val goalTime = study.challengeGoalTime
+        ?.toLocalTimeWithSecond()
+        ?.hour
+        ?.toString()
+        ?: ""
 
     Row(
         modifier = modifier
@@ -100,7 +102,7 @@ internal fun StudyItem(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     TogedyBasicTextChip(
-                        text = studyTag!!,
+                        text = studyTag,
                         textStyle = TogedyTheme.typography.body10m,
                         textColor = TogedyTheme.colors.gray700,
                         horizontalPadding = 6.dp,
@@ -119,11 +121,11 @@ internal fun StudyItem(
                         )
                     }
 
-                    if (lastActivatedAt.isNotEmpty()) {
+                    if (!lastActivatedAt.isNullOrEmpty()) {
                         Spacer(Modifier.weight(1f))
 
                         Text(
-                            text = lastActivatedAt,
+                            text = lastActivatedAt!!,
                             style = TogedyTheme.typography.body10m,
                             color = TogedyTheme.colors.green,
                         )
@@ -152,7 +154,7 @@ internal fun StudyItem(
                     context = context,
                     studyLeaderImageUrl = studyLeaderImageUrl,
                     studyMemberCount = studyMemberCount,
-                    studyMemberLimit = studyMemberLimit!!,
+                    studyMemberLimit = studyMemberLimit,
                     hasPassword = hasPassword,
                 )
             }
@@ -222,7 +224,22 @@ private fun MemberAndPassword(
 private fun ExploreStudyItemPreview() {
     TogedyTheme {
         StudyItem(
-            study = Study.mock1,
+            study = ExploreStudyItem(
+                studyId = 101L,
+                studyType = "CHALLENGE",
+                studyName = "Kotlin 개발자 되기 60일 챌린지",
+                studyDescription = "하루 2시간씩 Kotlin 코드를 작성하고 서로 피드백하며 실력을 향상시키는 챌린지 스터디입니다.",
+                studyTag = "일반스터디",
+                studyLeaderImageUrl = "",
+                studyTier = "GOLD",
+                studyMemberCount = 8,
+                studyMemberLimit = 10,
+                studyImageUrl = "",
+                isNewlyCreated = false,
+                lastActivatedAt = null,
+                hasPassword = true,
+                challengeGoalTime = "02:00:00"
+            ),
             modifier = Modifier,
             onItemClick = {},
         )
