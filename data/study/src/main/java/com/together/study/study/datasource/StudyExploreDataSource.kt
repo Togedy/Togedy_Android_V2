@@ -9,12 +9,12 @@ class StudyExploreDataSource @Inject constructor(
     suspend fun getMyStudyInfo() = studyExploreService.getMyStudyInfo()
 
     suspend fun getExploreStudyItems(
-        tag: List<String>,
+        tag: List<String>?,
         filter: String,
         joinable: Boolean,
         challenge: Boolean,
-        page: Int,
-        size: Int,
+        page: Int?,
+        size: Int?,
     ) = studyExploreService.getExploreStudyItems(
         tag = tag,
         filter = filter,
