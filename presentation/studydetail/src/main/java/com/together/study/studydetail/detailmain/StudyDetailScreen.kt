@@ -51,9 +51,12 @@ import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studydetail.detailmain.component.AttendanceItem
 import com.together.study.studydetail.detailmain.component.DailyCompletionBar
+import com.together.study.studydetail.detailmain.component.StudyDetailDialogScreen
 import com.together.study.studydetail.detailmain.component.StudyInfoSection
 import com.together.study.studydetail.detailmain.component.StudyMemberItem
+import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
+import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 import com.together.study.util.noRippleClickable
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -70,6 +73,7 @@ internal fun StudyDetailRoute(
     val uiState by viewModel.studyDetailUiState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
+    val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getStudyDetailInfo()
@@ -80,14 +84,20 @@ internal fun StudyDetailRoute(
         uiState = uiState,
         selectedTab = selectedTab,
         selectedDate = selectedDate,
+        dialogState = dialogState,
         modifier = modifier,
         onBackClick = onBackClick,
         onShareButtonClick = {},
         onSettingsButtonClick = onSettingsNavigate,
         onTabChange = viewModel::updateSelectedTab,
-        onUserClick = {},
+        onUserClick = {
+            //TODO: 통신 함수 호출 후 성공하면 BottomSheet
+            viewModel.updateDialogState(StudyDetailDialogType.USER)
+        },
         onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
+        onDialogStateChange = viewModel::updateDialogState,
+        onJoinStudyClick = {},
     )
 }
 
@@ -97,6 +107,7 @@ private fun StudyDetailScreen(
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
+    dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
@@ -105,16 +116,19 @@ private fun StudyDetailScreen(
     onUserClick: (Long) -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
+    onDialogStateChange: (StudyDetailDialogType) -> Unit,
+    onJoinStudyClick: () -> Unit,
 ) {
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
         is UiState.Failure -> {}
         is UiState.Loading -> {}
-        is UiState.Success<*> -> StudyDetailSuccessScreen(
+        is UiState.Success -> StudyDetailSuccessScreen(
             isMyStudy = isMyStudy,
             uiState = uiState,
             selectedTab = selectedTab,
             selectedDate = selectedDate,
+            dialogState = dialogState,
             modifier = modifier,
             onBackClick = onBackClick,
             onShareButtonClick = onShareButtonClick,
@@ -124,6 +138,8 @@ private fun StudyDetailScreen(
             onJoinButtonClick = {},
             onPreviousWeekClick = onPreviousWeekClick,
             onNextWeekClick = onNextWeekClick,
+            onDialogStateChange = onDialogStateChange,
+            onJoinStudyClick = onJoinStudyClick,
         )
     }
 }
@@ -135,6 +151,7 @@ private fun StudyDetailSuccessScreen(
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
+    dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
@@ -144,6 +161,8 @@ private fun StudyDetailSuccessScreen(
     onJoinButtonClick: () -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
+    onDialogStateChange: (StudyDetailDialogType) -> Unit,
+    onJoinStudyClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
@@ -294,6 +313,7 @@ private fun StudyDetailSuccessScreen(
                         )
                     }
                 }
+
                 itemsIndexed(attendance) { index, attendance ->
                     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
                         AttendanceItem(
@@ -365,7 +385,7 @@ private fun StudyDetailSuccessScreen(
             ) {
                 TogedyButton(
                     text = "스터디 가입하기",
-                    onClick = onJoinButtonClick,
+                    onClick = { onDialogStateChange(StudyDetailDialogType.JOIN) },
                 )
             }
         } else {
@@ -376,11 +396,23 @@ private fun StudyDetailSuccessScreen(
             ) {
                 TogedyButton(
                     text = "스터디 가입하기",
-                    onClick = onJoinButtonClick,
+                    onClick = { onDialogStateChange(StudyDetailDialogType.JOIN) },
                 )
             }
         }
     }
+
+    StudyDetailDialogScreen(
+        studyInfo = studyInfo,
+        dialogState = dialogState,
+        onDismissRequest = onDialogStateChange,
+        onJoinStudyClick = {
+            onJoinStudyClick()
+            onDialogStateChange(StudyDetailDialogType.JOIN)
+
+            onDialogStateChange(StudyDetailDialogType.JOIN_COMPLETE) // TODO : 가입 통신 성공 후 보여주는 것으로 변경
+        }
+    )
 }
 
 private fun getYearMonthWeek(selectedDate: LocalDate): Int {

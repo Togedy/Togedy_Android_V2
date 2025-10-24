@@ -68,6 +68,7 @@ data class Study(
     val isNewlyCreated: Boolean = false,
     val lastActivatedAt: String = "",
     val hasPassword: Boolean = false,
+    val password: String = "",
 ) {
     companion object {
         val mock1 = Study(

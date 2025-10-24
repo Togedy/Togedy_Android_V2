@@ -7,7 +7,9 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.study.main.state.Study
 import com.together.study.studydetail.detailmain.state.StudyAttendance
+import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
+import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -30,6 +33,9 @@ internal class StudyDetailViewModel @Inject constructor(
     val selectedTab = _selectedTab.asStateFlow()
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
+    private val _dialogState: MutableStateFlow<StudyDetailDialogState> =
+        MutableStateFlow(StudyDetailDialogState())
+    val dialogState: StateFlow<StudyDetailDialogState> = _dialogState.asStateFlow()
 
     private val _studyInfoState = MutableStateFlow<UiState<Study>>(UiState.Loading)
     private val _membersState = MutableStateFlow<UiState<List<StudyMember>>>(UiState.Loading)
@@ -106,6 +112,24 @@ internal class StudyDetailViewModel @Inject constructor(
             _selectedDate.value = _selectedDate.value.plusWeeks(1)
         }
         getAttendance()
+    }
+
+    fun updateDialogState(dialog: StudyDetailDialogType) {
+        _dialogState.update { dialogState ->
+            when (dialog) {
+                StudyDetailDialogType.JOIN -> {
+                    dialogState.copy(isJoinDialogVisible = !dialogState.isJoinDialogVisible)
+                }
+
+                StudyDetailDialogType.JOIN_COMPLETE -> {
+                    dialogState.copy(isJoinCompleteDialogVisible = !dialogState.isJoinCompleteDialogVisible)
+                }
+
+                StudyDetailDialogType.USER -> {
+                    dialogState.copy(isUserBottomSheetVisible = !dialogState.isUserBottomSheetVisible)
+                }
+            }
+        }
     }
 
     companion object {
