@@ -9,7 +9,7 @@ import com.together.study.study.main.state.ExploreFilterState
 import com.together.study.study.main.state.MyStudyInfo
 import com.together.study.study.main.state.Study
 import com.together.study.study.main.state.StudyMainUiState
-import com.together.study.study.model.UserStudyItemsInfo
+import com.together.study.study.model.StudyMainTimerInfo
 import com.together.study.study.type.StudyTagType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,7 +60,7 @@ internal class StudyMainViewModel @Inject constructor(
         // TODO : 추후 API 연결
         _myStudyState.value = UiState.Success(
             MyStudyInfo(
-                userStudyItemsInfo = UserStudyItemsInfo.mock1,
+                studyMainTimerInfo = StudyMainTimerInfo.mock1,
                 studyList = emptyList(),
             )
         )

@@ -1,13 +1,13 @@
 package com.together.study.study.model
 
-data class UserStudyItemsInfo(
+data class StudyMainTimerInfo(
     val hasChallenge: Boolean,
     val goalTime: String?,
     val studyTime: String?,
     val achievement: Int?,
 ) {
     companion object {
-        val mock1 = UserStudyItemsInfo(true, "10:00:00", "10:00:00", 0)
-        val mock2 = UserStudyItemsInfo(false, null, "01:00:00", 0)
+        val mock1 = StudyMainTimerInfo(true, "10:00:00", "10:00:00", 0)
+        val mock2 = StudyMainTimerInfo(false, null, "01:00:00", 0)
     }
 }

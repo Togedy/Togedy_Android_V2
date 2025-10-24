@@ -169,7 +169,7 @@ private fun StudyMainScreen(
                             is UiState.Loading -> {}
                             is UiState.Success -> {
                                 with((uiState.myStudyState as UiState.Success<MyStudyInfo>).data) {
-                                    item { TimerSection(userStudyItemsInfo) }
+                                    item { TimerSection(studyMainTimerInfo) }
 
                                     item {
                                         Box(

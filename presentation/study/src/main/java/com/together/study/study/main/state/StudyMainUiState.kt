@@ -3,7 +3,7 @@ package com.together.study.study.main.state
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
-import com.together.study.study.model.UserStudyItemsInfo
+import com.together.study.study.model.StudyMainTimerInfo
 import com.together.study.study.type.StudyTagType
 
 @Immutable
@@ -28,7 +28,7 @@ data class StudyMainUiState(
 }
 
 data class MyStudyInfo(
-    val userStudyItemsInfo: UserStudyItemsInfo,
+    val studyMainTimerInfo: StudyMainTimerInfo,
     val studyList: List<Study>,
 )
 

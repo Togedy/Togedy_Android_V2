@@ -31,22 +31,22 @@ import com.together.study.designsystem.R.drawable.img_character_achieved
 import com.together.study.designsystem.R.drawable.img_character_heart
 import com.together.study.designsystem.R.drawable.img_character_speaker
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.study.model.UserStudyItemsInfo
+import com.together.study.study.model.StudyMainTimerInfo
 
 @Composable
 internal fun TimerSection(
-    userStudyItemsInfo: UserStudyItemsInfo,
+    studyMainTimerInfo: StudyMainTimerInfo,
 ) {
     val imageResource =
-        if (userStudyItemsInfo.hasChallenge) {
-            if (userStudyItemsInfo.achievement!! >= 100) img_character_achieved
+        if (studyMainTimerInfo.hasChallenge) {
+            if (studyMainTimerInfo.achievement!! >= 100) img_character_achieved
             else img_character_heart
         } else {
             img_character_speaker
         }
-    val studyTime = userStudyItemsInfo.studyTime ?: "00:00:00"
+    val studyTime = studyMainTimerInfo.studyTime ?: "00:00:00"
     val timerColor =
-        if (userStudyItemsInfo.studyTime == null) TogedyTheme.colors.gray700
+        if (studyMainTimerInfo.studyTime == null) TogedyTheme.colors.gray700
         else TogedyTheme.colors.green
 
     Box(
@@ -65,12 +65,12 @@ internal fun TimerSection(
                 contentDescription = null,
             )
 
-            if (userStudyItemsInfo.hasChallenge) {
+            if (studyMainTimerInfo.hasChallenge) {
                 Row {
                     listOf(
-                        "목표 ${userStudyItemsInfo.goalTime}" to TogedyTheme.colors.gray500,
+                        "목표 ${studyMainTimerInfo.goalTime}" to TogedyTheme.colors.gray500,
                         " | " to TogedyTheme.colors.gray800,
-                        "${userStudyItemsInfo.achievement}%" to TogedyTheme.colors.green
+                        "${studyMainTimerInfo.achievement}%" to TogedyTheme.colors.green
                     ).forEach { (text, color) ->
                         Text(
                             text = text,
@@ -100,11 +100,11 @@ internal fun TimerSection(
             Spacer(Modifier.height(20.dp))
         }
 
-        if (userStudyItemsInfo.studyTime == null) {
+        if (studyMainTimerInfo.studyTime == null) {
             AnimatedRingProgress(0f)
         } else {
-            if (userStudyItemsInfo.hasChallenge) {
-                AnimatedRingProgress(userStudyItemsInfo.achievement!! * 0.01f)
+            if (studyMainTimerInfo.hasChallenge) {
+                AnimatedRingProgress(studyMainTimerInfo.achievement!! * 0.01f)
             } else {
                 AnimatedRingProgress(
                     1f,
@@ -171,8 +171,8 @@ fun RingProgress(
 private fun MainScreenPreview() {
     TogedyTheme {
         Column {
-            TimerSection(userStudyItemsInfo = UserStudyItemsInfo.mock1)
-            TimerSection(userStudyItemsInfo = UserStudyItemsInfo.mock2)
+            TimerSection(studyMainTimerInfo = StudyMainTimerInfo.mock1)
+            TimerSection(studyMainTimerInfo = StudyMainTimerInfo.mock2)
         }
     }
 }
