@@ -37,6 +37,7 @@ import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studysettings.type.MemberEditType
 import com.together.study.util.noRippleClickable
 
 data class Member(
@@ -47,6 +48,7 @@ data class Member(
 
 @Composable
 fun MemberEditScreen(
+    type: MemberEditType,
     modifier: Modifier = Modifier,
 ) {
     var isMemberDeleteDialogVisible by remember { mutableStateOf(false) }
@@ -242,38 +244,40 @@ fun MemberEditScreen(
             .padding(top = 22.dp),
     ) {
         TogedyTopBar(
-            title = "멤버 관리",
+            title = type.title,
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             modifier = Modifier.padding(bottom = 4.dp),
         )
 
         Spacer(Modifier.height(20.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "스터디 멤버 관리 10/30",
-                style = TogedyTheme.typography.body14b,
-                color = TogedyTheme.colors.gray800,
-            )
+        if (type == MemberEditType.EDIT) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "스터디 멤버 관리 10/30",
+                    style = TogedyTheme.typography.body14b,
+                    color = TogedyTheme.colors.gray800,
+                )
 
-            Spacer(Modifier.width(4.dp))
+                Spacer(Modifier.width(4.dp))
 
-            Text(
-                text = "최대 30명까지 가능해요",
-                style = TogedyTheme.typography.body10m,
-                color = TogedyTheme.colors.gray500,
-            )
+                Text(
+                    text = "최대 30명까지 가능해요",
+                    style = TogedyTheme.typography.body10m,
+                    color = TogedyTheme.colors.gray500,
+                )
+            }
         }
 
         LazyColumn(
             modifier = Modifier
-                .padding(horizontal = 26.dp)
-                .padding(top = 26.dp)
+                .padding(horizontal = 26.dp),
         ) {
             item {
                 Box(
@@ -336,19 +340,32 @@ fun MemberEditScreen(
                             maxLines = 1,
                         )
 
-                        TogedyBasicTextChip(
-                            text = "내보내기",
-                            textStyle = TogedyTheme.typography.body10m,
-                            textColor = TogedyTheme.colors.red,
-                            backgroundColor = TogedyTheme.colors.red30,
-                            roundedCornerShape = RoundedCornerShape(4.dp),
-                            horizontalPadding = 4.dp,
-                            verticalPadding = 4.dp,
-                            modifier = Modifier.noRippleClickable {
-                                selectedUser = item
-                                isMemberDeleteDialogVisible = true
+                        if (!type.chipText.isNullOrBlank()) {
+                            val textColor = when (type) {
+                                MemberEditType.EDIT -> TogedyTheme.colors.red
+                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.green
+                                else -> TogedyTheme.colors.gray600
                             }
-                        )
+                            val backgroundColor = when (type) {
+                                MemberEditType.EDIT -> TogedyTheme.colors.red30
+                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.greenBg
+                                else -> TogedyTheme.colors.gray600
+                            }
+
+                            TogedyBasicTextChip(
+                                text = type.chipText,
+                                textStyle = TogedyTheme.typography.body10m,
+                                textColor = textColor,
+                                backgroundColor = backgroundColor,
+                                roundedCornerShape = RoundedCornerShape(4.dp),
+                                horizontalPadding = 4.dp,
+                                verticalPadding = 4.dp,
+                                modifier = Modifier.noRippleClickable {
+                                    selectedUser = item
+                                    isMemberDeleteDialogVisible = true
+                                }
+                            )
+                        }
                     }
 
                     HorizontalDivider(
@@ -392,6 +409,8 @@ fun MemberEditScreen(
 @Composable
 private fun MemberEditScreenPreview() {
     TogedyTheme {
-        MemberEditScreen()
+        MemberEditScreen(
+            type = MemberEditType.EDIT
+        )
     }
 }
