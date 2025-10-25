@@ -51,7 +51,7 @@ fun MemberEditScreen(
     type: MemberEditType,
     modifier: Modifier = Modifier,
 ) {
-    var isMemberDeleteDialogVisible by remember { mutableStateOf(false) }
+    var isMemberDialogVisible by remember { mutableStateOf(false) }
     var selectedUser by remember { mutableStateOf(Member(0, "", StudyRole.MEMBER)) }
 
     val memberList = listOf(
@@ -362,7 +362,7 @@ fun MemberEditScreen(
                                 verticalPadding = 4.dp,
                                 modifier = Modifier.noRippleClickable {
                                     selectedUser = item
-                                    isMemberDeleteDialogVisible = true
+                                    isMemberDialogVisible = true
                                 }
                             )
                         }
@@ -382,26 +382,54 @@ fun MemberEditScreen(
         }
     }
 
-    if (isMemberDeleteDialogVisible) {
-        TogedyBasicDialog(
-            title = "멤버 내보내기",
-            subTitle = {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
-                            append(selectedUser.userName)
-                        }
-                        append("님을 내보낼까요?")
+    if (isMemberDialogVisible) {
+        when (type) {
+            MemberEditType.EDIT -> {
+                TogedyBasicDialog(
+                    title = "멤버 내보내기",
+                    subTitle = {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
+                                    append(selectedUser.userName)
+                                }
+                                append("님을 내보낼까요?")
+                            },
+                            style = TogedyTheme.typography.body14m,
+                            color = TogedyTheme.colors.gray900,
+                            textAlign = TextAlign.Center,
+                        )
                     },
-                    style = TogedyTheme.typography.body14m,
-                    color = TogedyTheme.colors.gray900,
-                    textAlign = TextAlign.Center,
+                    buttonText = "내보내기",
+                    onDismissRequest = { isMemberDialogVisible = false },
+                    onButtonClick = { /* 추방 api */ }
                 )
-            },
-            buttonText = "내보내기",
-            onDismissRequest = { isMemberDeleteDialogVisible = false },
-            onButtonClick = { /* 추방 api */ }
-        )
+            }
+
+            MemberEditType.LEADER_CHANGE -> {
+                TogedyBasicDialog(
+                    title = "방장 위임하기",
+                    subTitle = {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
+                                    append(selectedUser.userName)
+                                }
+                                append("님을 방장으로 설정할까요?\n위임 후에는 일반 멤버로 변경됩니다.")
+                            },
+                            style = TogedyTheme.typography.body14m,
+                            color = TogedyTheme.colors.gray900,
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+                    buttonText = "설정하기",
+                    onDismissRequest = { isMemberDialogVisible = false },
+                    onButtonClick = { /* 위임 api */ }
+                )
+            }
+
+            else -> {}
+        }
     }
 }
 
