@@ -3,13 +3,13 @@ package com.together.study.study.search.state
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
-import com.together.study.study.main.state.Study
+import com.together.study.study.model.ExploreStudyItem
 
 @Immutable
 data class StudySearchUiState(
     val searchTerm: String,
-    val activeStudyState: UiState<List<Study>>,
-    val resultStudyState: UiState<List<Study>>,
+    val activeStudyState: UiState<List<ExploreStudyItem>>,
+    val resultStudyState: UiState<List<ExploreStudyItem>>,
     val searchFilterState: SearchFilterState,
 ) {
     val isLoaded: UiState<Unit>

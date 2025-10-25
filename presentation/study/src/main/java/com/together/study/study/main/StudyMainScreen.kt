@@ -44,8 +44,8 @@ import com.together.study.study.main.component.ExploreFilterSection
 import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
-import com.together.study.study.main.state.MyStudyInfo
 import com.together.study.study.main.state.StudyMainUiState
+import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.type.StudyTagType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
@@ -59,9 +59,14 @@ internal fun StudyMainRoute(
 ) {
     val uiState by viewModel.studyMainUiState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+    val exploreFilterState by viewModel.exploreFilterState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.getStudyMainInfo()
+        viewModel.getMyStudyInfo()
+    }
+
+    LaunchedEffect(exploreFilterState) {
+        viewModel.getExploreInfo()
     }
 
     StudyMainScreen(
@@ -169,7 +174,7 @@ private fun StudyMainScreen(
                             is UiState.Loading -> {}
                             is UiState.Success -> {
                                 with((uiState.myStudyState as UiState.Success<MyStudyInfo>).data) {
-                                    item { TimerSection(timerInfo) }
+                                    item { TimerSection(studyMainTimerInfo) }
 
                                     item {
                                         Box(
@@ -213,38 +218,45 @@ private fun StudyMainScreen(
                 }
 
                 StudyMainTab.EXPLORE -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(TogedyTheme.colors.gray100)
-                    ) {
-                        stickyHeader {
-                            with(uiState.exploreFilterState) {
-                                ExploreFilterSection(
-                                    selectedFilter = tagFilters,
-                                    selectedSortingType = sortOption,
-                                    isJoinable = isJoinable,
-                                    isChallenge = isChallenge,
-                                    modifier = Modifier.background(TogedyTheme.colors.gray100),
-                                    onFilterClick = onTagFilterClick,
-                                    onSortingClick = { isSortBottomSheetVisible = true },
-                                    onJoinableClick = onJoinableClick,
-                                    onChallengeClick = onChallengeClick,
-                                )
-                            }
-                        }
-
-                        itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { _, study ->
-                            Box(
+                    when (uiState.isLoaded) {
+                        is UiState.Empty -> {}
+                        is UiState.Failure -> {}
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            LazyColumn(
                                 modifier = Modifier
+                                    .fillMaxSize()
                                     .background(TogedyTheme.colors.gray100)
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
                             ) {
-                                StudyItem(
-                                    study = study,
-                                    modifier = Modifier,
-                                    onItemClick = { onStudyItemClick(study.studyId) },
-                                )
+                                stickyHeader {
+                                    with(uiState.exploreFilterState) {
+                                        ExploreFilterSection(
+                                            selectedFilter = tagFilters,
+                                            selectedSortingType = sortOption,
+                                            isJoinable = isJoinable,
+                                            isChallenge = isChallenge,
+                                            modifier = Modifier.background(TogedyTheme.colors.gray100),
+                                            onFilterClick = onTagFilterClick,
+                                            onSortingClick = { isSortBottomSheetVisible = true },
+                                            onJoinableClick = onJoinableClick,
+                                            onChallengeClick = onChallengeClick,
+                                        )
+                                    }
+                                }
+
+                                itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { _, study ->
+                                    Box(
+                                        modifier = Modifier
+                                            .background(TogedyTheme.colors.gray100)
+                                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                                    ) {
+                                        StudyItem(
+                                            study = study,
+                                            modifier = Modifier,
+                                            onItemClick = { onStudyItemClick(study.studyId) },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

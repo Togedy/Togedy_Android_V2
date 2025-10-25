@@ -6,10 +6,11 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.study.main.state.ExploreFilterState
-import com.together.study.study.main.state.MyStudyInfo
-import com.together.study.study.main.state.Study
 import com.together.study.study.main.state.StudyMainUiState
-import com.together.study.study.main.state.TimerInfo
+import com.together.study.study.model.ExploreStudyFilter
+import com.together.study.study.model.ExploreStudyItem
+import com.together.study.study.model.MyStudyInfo
+import com.together.study.study.repository.StudyExploreRepository
 import com.together.study.study.type.StudyTagType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,19 +20,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class StudyMainViewModel @Inject constructor(
-
+    private val studyExploreRepository: StudyExploreRepository,
 ) : ViewModel() {
     private val _selectedTab = MutableStateFlow(StudyMainTab.MAIN)
     val selectedTab = _selectedTab.asStateFlow()
 
     private val _myStudyState = MutableStateFlow<UiState<MyStudyInfo>>(UiState.Loading)
-    private val _exploreStudyState = MutableStateFlow<UiState<List<Study>>>(UiState.Loading)
+    private val _exploreStudyState =
+        MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
     private val _exploreFilterState = MutableStateFlow(ExploreFilterState())
+    val exploreFilterState = _exploreFilterState.asStateFlow()
 
     val studyMainUiState: StateFlow<StudyMainUiState> = combine(
         _myStudyState, _exploreStudyState, _exploreFilterState
@@ -51,42 +53,32 @@ internal class StudyMainViewModel @Inject constructor(
         )
     )
 
-    fun getStudyMainInfo() = viewModelScope.launch {
-        getMyStudyInfo()
-        getExploreInfo()
-    }
-
     suspend fun getMyStudyInfo() {
-        // TODO : 추후 API 연결
-        _myStudyState.value = UiState.Success(
-            MyStudyInfo(
-                timerInfo = TimerInfo.mock1,
-                studyList = emptyList(),
-            )
-        )
+        studyExploreRepository.getMyStudyInfo()
+            .onSuccess { _myStudyState.value = UiState.Success(it) }
+            .onFailure { _myStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
     suspend fun getExploreInfo() {
-        _exploreStudyState.value = UiState.Success(
-            listOf(
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-                Study.mock1,
-            )
+        val filterValue = exploreFilterState.value.tagFilters
+        val tagFilter =
+            if (filterValue == listOf(StudyTagType.ENTIRE)) null
+            else filterValue.map { it.label }
+
+        studyExploreRepository.getExploreStudyItems(
+            with(_exploreFilterState.value) {
+                ExploreStudyFilter(
+                    tag = tagFilter,
+                    filter = sortOption.request,
+                    joinable = isJoinable,
+                    challenge = isChallenge,
+                    page = null,
+                    size = null
+                )
+            }
         )
+            .onSuccess { _exploreStudyState.value = UiState.Success(it.studies) }
+            .onFailure { _exploreStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun updateSelectedTab(new: StudyMainTab) {

@@ -33,10 +33,12 @@ include(
     ":data:remote",
     ":data:calendar",
     ":data:dummy",
+    ":data:study",
 )
 include(
     ":domain:dummy",
     ":domain:calendar",
+    ":domain:study",
 )
 include(
     ":presentation:main",

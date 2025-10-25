@@ -38,7 +38,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.component.SortBottomSheet
 import com.together.study.study.component.SortingFilterSection
 import com.together.study.study.component.StudyItem
-import com.together.study.study.main.state.Study
+import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.search.state.SearchFilterState
 import com.together.study.study.search.state.StudySearchUiState
 import com.together.study.util.noRippleClickable
@@ -156,7 +156,7 @@ fun StudySearchScreen(
 
 @Composable
 fun EmptySearchTermScreen(
-    activeStudies: List<Study>,
+    activeStudies: List<ExploreStudyItem>,
     modifier: Modifier = Modifier,
     onStudyItemClick: (Long) -> Unit,
 ) {
@@ -187,7 +187,7 @@ fun SuccessResultScreen(
     selectedSortingType: StudySortingType,
     isJoinable: Boolean,
     isChallenge: Boolean,
-    resultStudies: List<Study>,
+    resultStudies: List<ExploreStudyItem>,
     searchTerm: String,
     modifier: Modifier = Modifier,
     onSortingClick: () -> Unit,
