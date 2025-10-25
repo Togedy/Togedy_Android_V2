@@ -1,7 +1,7 @@
 package com.together.study.study.service
 
 import com.together.study.remote.model.BaseResponse
-import com.together.study.study.dto.ExploreStudyItemsResponse
+import com.together.study.study.dto.ExploreStudyInfoResponse
 import com.together.study.study.dto.MyStudyInfoResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -18,5 +18,5 @@ interface StudyExploreService {
         @Query("challenge") challenge: Boolean,
         @Query("page") page: Int?,
         @Query("size") size: Int?,
-    ): BaseResponse<ExploreStudyItemsResponse>
+    ): BaseResponse<ExploreStudyInfoResponse>
 }

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ExploreStudyItemsResponse(
+data class ExploreStudyInfoResponse(
     @SerialName("hasNext") val hasNext: Boolean,
     @SerialName("studyList") val studyList: List<ExploreStudyItemResponse>,
 )

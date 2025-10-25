@@ -1,10 +1,11 @@
 package com.together.study.study.mapper
 
 import com.together.study.study.dto.ActiveMemberResponse
+import com.together.study.study.dto.ExploreStudyInfoResponse
 import com.together.study.study.dto.ExploreStudyItemResponse
-import com.together.study.study.dto.ExploreStudyItemsResponse
 import com.together.study.study.dto.MyStudyInfoResponse
 import com.together.study.study.dto.MyStudyItemResponse
+import com.together.study.study.model.ExploreStudyInfo
 import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.model.MyStudyItem
@@ -40,10 +41,10 @@ fun ActiveMemberResponse.toActiveMember(): ActiveMember =
         userProfileImageUrl = userProfileImageUrl,
     )
 
-fun ExploreStudyItemsResponse.toDomain(): Pair<Boolean, List<ExploreStudyItem>> =
-    Pair(
-        hasNext,
-        studyList.map { it.toExploreStudyItem() }
+fun ExploreStudyInfoResponse.toDomain(): ExploreStudyInfo =
+    ExploreStudyInfo(
+        hasNext = hasNext,
+        studies = studyList.map { it.toExploreStudyItem() }
     )
 
 fun ExploreStudyItemResponse.toExploreStudyItem(): ExploreStudyItem =
