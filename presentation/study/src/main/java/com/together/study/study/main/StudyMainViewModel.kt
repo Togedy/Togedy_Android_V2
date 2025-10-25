@@ -7,9 +7,10 @@ import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.study.main.state.ExploreFilterState
 import com.together.study.study.main.state.StudyMainUiState
+import com.together.study.study.model.ExploreStudyFilter
 import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.model.MyStudyInfo
-import com.together.study.study.model.StudyMainTimerInfo
+import com.together.study.study.repository.StudyExploreRepository
 import com.together.study.study.type.StudyTagType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class StudyMainViewModel @Inject constructor(
-
+    private val studyExploreRepository: StudyExploreRepository,
 ) : ViewModel() {
     private val _selectedTab = MutableStateFlow(StudyMainTab.MAIN)
     val selectedTab = _selectedTab.asStateFlow()
@@ -33,6 +34,7 @@ internal class StudyMainViewModel @Inject constructor(
     private val _exploreStudyState =
         MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
     private val _exploreFilterState = MutableStateFlow(ExploreFilterState())
+    val exploreFilterState = _exploreFilterState.asStateFlow()
 
     val studyMainUiState: StateFlow<StudyMainUiState> = combine(
         _myStudyState, _exploreStudyState, _exploreFilterState
@@ -58,19 +60,34 @@ internal class StudyMainViewModel @Inject constructor(
     }
 
     suspend fun getMyStudyInfo() {
-        // TODO : 추후 API 연결
-        _myStudyState.value = UiState.Success(
-            MyStudyInfo(
-                studyMainTimerInfo = StudyMainTimerInfo.mock1,
-                studyList = emptyList(),
-            )
-        )
+        studyExploreRepository.getMyStudyInfo()
+            .onSuccess {
+                _myStudyState.value =
+                    UiState.Success(MyStudyInfo(it.studyMainTimerInfo, it.studyList))
+            }
+            .onFailure { _myStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
     suspend fun getExploreInfo() {
-        _exploreStudyState.value = UiState.Success(
-            listOf()
+        val filterValue = exploreFilterState.value.tagFilters
+        val tagFilter =
+            if (filterValue == listOf(StudyTagType.ENTIRE)) null
+            else filterValue.map { it.label }
+
+        studyExploreRepository.getExploreStudyItems(
+            with(_exploreFilterState.value) {
+                ExploreStudyFilter(
+                    tag = tagFilter,
+                    filter = sortOption.request,
+                    joinable = isJoinable,
+                    challenge = isChallenge,
+                    page = null,
+                    size = null
+                )
+            }
         )
+            .onSuccess { _exploreStudyState.value = UiState.Success(it.second) }
+            .onFailure { _exploreStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun updateSelectedTab(new: StudyMainTab) {
