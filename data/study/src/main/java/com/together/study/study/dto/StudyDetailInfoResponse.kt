@@ -10,7 +10,7 @@ data class StudyDetailInfoResponse(
     @SerialName("studyName") val studyName: String,
     @SerialName("studyDescription") val studyDescription: String?,
     @SerialName("studyImageUrl") val studyImageUrl: String,
-    @SerialName("studyType") val studyType: String,
+//    @SerialName("studyType") val studyType: String,
     @SerialName("studyTag") val studyTag: String,
     @SerialName("studyTier") val studyTier: String,
     @SerialName("studyMemberCount") val studyMemberCount: Int,

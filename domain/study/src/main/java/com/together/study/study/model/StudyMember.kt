@@ -9,6 +9,6 @@ data class StudyMember(
     val userProfileImageUrl: String,
     val studyRole: StudyRole,
     val userStatus: UserStatus,
-    val totalStudyAmount: String?,
+    val studyTime: String?,
     val lastActivatedAt: String?,
 )

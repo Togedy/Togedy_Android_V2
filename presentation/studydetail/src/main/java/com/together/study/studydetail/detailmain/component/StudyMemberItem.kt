@@ -42,11 +42,11 @@ internal fun StudyMemberItem(
         else TogedyTheme.colors.gray400
     val textColor =
         if (isActive) TogedyTheme.colors.green
-        else if (user.totalStudyAmount != null) TogedyTheme.colors.gray700
+        else if (user.studyTime != null) TogedyTheme.colors.gray700
         else TogedyTheme.colors.gray500
     val statusText =
         if (isActive) "공부중"
-        else user.totalStudyAmount ?: (user.lastActivatedAt ?: "")
+        else user.studyTime ?: (user.lastActivatedAt ?: "")
 
     Column(
         modifier = modifier.noRippleClickable(onItemClick),
@@ -103,7 +103,7 @@ private fun StudyMemberItemPreview() {
                     studyRole = StudyRole.LEADER,
                     userStatus = UserStatus.ACTIVE,
                     userProfileImageUrl = "",
-                    totalStudyAmount = "1H 20M",
+                    studyTime = "1H 20M",
                     lastActivatedAt = null,
                 ),
                 modifier = Modifier.weight(1f),
@@ -117,7 +117,7 @@ private fun StudyMemberItemPreview() {
                     studyRole = StudyRole.MEMBER,
                     userStatus = UserStatus.STUDYING,
                     userProfileImageUrl = "",
-                    totalStudyAmount = null,
+                    studyTime = null,
                     lastActivatedAt = "3분 전",
                 ),
                 modifier = Modifier.weight(1f),
@@ -131,7 +131,7 @@ private fun StudyMemberItemPreview() {
                     studyRole = StudyRole.MEMBER,
                     userStatus = UserStatus.ACTIVE,
                     userProfileImageUrl = "",
-                    totalStudyAmount = null,
+                    studyTime = null,
                     lastActivatedAt = "3분 전",
                 ),
                 modifier = Modifier.weight(1f),

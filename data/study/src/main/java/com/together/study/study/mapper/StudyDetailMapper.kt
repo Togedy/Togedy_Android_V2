@@ -33,10 +33,10 @@ fun StudyMemberResponse.toStudyMember(): StudyMember =
     StudyMember(
         userId = userId,
         userName = userName,
-        userProfileImageUrl = userProfileImageUrl,
+        userProfileImageUrl = userProfileImageUrl ?: "",
         studyRole = studyRole.toEnum(StudyRole.MEMBER),
         userStatus = userStatus.toEnum(UserStatus.ACTIVE),
-        totalStudyAmount = totalStudyAmount,
+        studyTime = studyTime,
         lastActivatedAt = lastActivatedAt,
     )
 
