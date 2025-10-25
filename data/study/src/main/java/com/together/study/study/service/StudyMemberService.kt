@@ -1,10 +1,13 @@
 package com.together.study.study.service
 
 import com.together.study.remote.model.BaseResponse
+import com.together.study.remote.model.EmptyDataResponse
 import com.together.study.study.dto.StudyMemberPlannerResponse
 import com.together.study.study.dto.StudyMemberProfileResponse
 import com.together.study.study.dto.StudyMemberTimeBlockResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface StudyMemberService {
@@ -25,4 +28,11 @@ interface StudyMemberService {
         @Path("studyId") studyId: Long,
         @Path("userId") userId: Long,
     ): BaseResponse<StudyMemberPlannerResponse>
+
+    @POST("studies/{studyId}/members/{userId}/planners/visibility")
+    suspend fun postPlannerVisibility(
+        @Path("studyId") studyId: Long,
+        @Path("userId") userId: Long,
+        @Body isPlannerVisible: Boolean,
+    ): EmptyDataResponse
 }

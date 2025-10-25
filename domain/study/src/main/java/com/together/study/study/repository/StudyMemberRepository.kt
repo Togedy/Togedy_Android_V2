@@ -8,4 +8,5 @@ interface StudyMemberRepository {
     suspend fun getStudyMemberProfile(studyId: Long, userId: Long): Result<StudyMemberProfile>
     suspend fun getStudyMemberTimeBlocks(studyId: Long, userId: Long): Result<StudyMemberTimeBlocks>
     suspend fun getStudyMemberPlanner(studyId: Long, userId: Long): Result<StudyMemberPlanner>
+    suspend fun postPlannerVisibility(studyId: Long, userId: Long, isVisible: Boolean): Result<Unit>
 }

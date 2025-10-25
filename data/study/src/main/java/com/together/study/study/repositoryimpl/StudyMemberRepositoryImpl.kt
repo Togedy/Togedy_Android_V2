@@ -37,4 +37,13 @@ class StudyMemberRepositoryImpl @Inject constructor(
             val response = studyMemberDataSource.getStudyMemberPlanner(studyId, userId).response
             response.toDomain()
         }
+
+    override suspend fun postPlannerVisibility(
+        studyId: Long,
+        userId: Long,
+        isVisible: Boolean,
+    ): Result<Unit> =
+        runCatching {
+            studyMemberDataSource.postPlannerVisibility(studyId, userId, isVisible)
+        }
 }
