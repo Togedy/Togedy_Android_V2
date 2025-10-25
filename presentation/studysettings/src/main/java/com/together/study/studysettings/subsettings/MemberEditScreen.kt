@@ -17,14 +17,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.common.type.study.StudyRole
 import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -37,7 +46,12 @@ data class Member(
 )
 
 @Composable
-fun MemberEditScreen(modifier: Modifier = Modifier) {
+fun MemberEditScreen(
+    modifier: Modifier = Modifier,
+) {
+    var isMemberDeleteDialogVisible by remember { mutableStateOf(false) }
+    var selectedUser by remember { mutableStateOf(Member(0, "", StudyRole.MEMBER)) }
+
     val memberList = listOf(
         Member(
             userId = 1,
@@ -278,6 +292,8 @@ fun MemberEditScreen(modifier: Modifier = Modifier) {
                             text = "방장이름",
                             style = TogedyTheme.typography.body13b,
                             color = TogedyTheme.colors.gray700,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                         )
 
                         TogedyBasicTextChip(
@@ -294,7 +310,7 @@ fun MemberEditScreen(modifier: Modifier = Modifier) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         thickness = 1.dp,
-                        color = TogedyTheme.colors.gray200
+                        color = TogedyTheme.colors.gray200,
                     )
                 }
 
@@ -316,6 +332,8 @@ fun MemberEditScreen(modifier: Modifier = Modifier) {
                             text = "member~!@",
                             style = TogedyTheme.typography.body13b,
                             color = TogedyTheme.colors.gray700,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                         )
 
                         TogedyBasicTextChip(
@@ -326,7 +344,10 @@ fun MemberEditScreen(modifier: Modifier = Modifier) {
                             roundedCornerShape = RoundedCornerShape(4.dp),
                             horizontalPadding = 4.dp,
                             verticalPadding = 4.dp,
-                            modifier = Modifier.noRippleClickable { /*click*/ }
+                            modifier = Modifier.noRippleClickable {
+                                selectedUser = item
+                                isMemberDeleteDialogVisible = true
+                            }
                         )
                     }
 
@@ -342,6 +363,28 @@ fun MemberEditScreen(modifier: Modifier = Modifier) {
                 Spacer(Modifier.height(40.dp))
             }
         }
+    }
+
+    if (isMemberDeleteDialogVisible) {
+        TogedyBasicDialog(
+            title = "멤버 내보내기",
+            subTitle = {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
+                            append(selectedUser.userName)
+                        }
+                        append("님을 내보낼까요?")
+                    },
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray900,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            buttonText = "내보내기",
+            onDismissRequest = { isMemberDeleteDialogVisible = false },
+            onButtonClick = { /* 추방 api */ }
+        )
     }
 }
 
