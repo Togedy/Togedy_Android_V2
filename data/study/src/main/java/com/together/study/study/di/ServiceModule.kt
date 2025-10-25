@@ -1,5 +1,6 @@
 package com.together.study.study.di
 
+import com.together.study.study.service.StudyDetailService
 import com.together.study.study.service.StudyExploreService
 import dagger.Module
 import dagger.Provides
@@ -15,5 +16,10 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideStudyExploreService(retrofit: Retrofit): StudyExploreService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideStudyDetailService(retrofit: Retrofit): StudyDetailService =
         retrofit.create()
 }
