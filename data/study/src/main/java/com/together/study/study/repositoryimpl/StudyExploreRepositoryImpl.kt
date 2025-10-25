@@ -3,7 +3,7 @@ package com.together.study.study.repositoryimpl
 import com.together.study.study.datasource.StudyExploreDataSource
 import com.together.study.study.mapper.toDomain
 import com.together.study.study.model.ExploreStudyFilter
-import com.together.study.study.model.ExploreStudyItem
+import com.together.study.study.model.ExploreStudyInfo
 import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.repository.StudyExploreRepository
 import javax.inject.Inject
@@ -17,7 +17,7 @@ class StudyExploreRepositoryImpl @Inject constructor(
             response.toDomain()
         }
 
-    override suspend fun getExploreStudyItems(request: ExploreStudyFilter): Result<Pair<Boolean, List<ExploreStudyItem>>> =
+    override suspend fun getExploreStudyItems(request: ExploreStudyFilter): Result<ExploreStudyInfo> =
         runCatching {
             val response = studyExploreDataSource.getExploreStudyItems(
                 tag = request.tag,

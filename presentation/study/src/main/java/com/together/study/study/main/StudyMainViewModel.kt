@@ -80,7 +80,7 @@ internal class StudyMainViewModel @Inject constructor(
                 )
             }
         )
-            .onSuccess { _exploreStudyState.value = UiState.Success(it.second) }
+            .onSuccess { _exploreStudyState.value = UiState.Success(it.studies) }
             .onFailure { _exploreStudyState.value = UiState.Failure(it.message.toString()) }
     }
 

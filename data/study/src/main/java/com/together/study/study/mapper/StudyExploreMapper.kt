@@ -9,7 +9,7 @@ import com.together.study.study.model.ExploreStudyInfo
 import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.model.MyStudyItem
-import com.together.study.study.model.MyStudyItem.Companion.ActiveMember
+import com.together.study.study.model.MyStudyItem.ActiveMember
 import com.together.study.study.model.StudyMainTimerInfo
 
 fun MyStudyInfoResponse.toDomain(): MyStudyInfo =

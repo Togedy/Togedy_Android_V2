@@ -10,10 +10,8 @@ data class MyStudyItem(
     val studyMemberCount: Int,
     val activeMemberList: List<ActiveMember> = emptyList(),
 ) {
-    companion object {
-        data class ActiveMember(
-            val userName: String,
-            val userProfileImageUrl: String,
-        )
-    }
+    data class ActiveMember(
+        val userName: String,
+        val userProfileImageUrl: String,
+    )
 }

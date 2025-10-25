@@ -31,6 +31,7 @@ import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.textchip.TogedyBorderTextChip
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.model.MyStudyItem
+import com.together.study.study.model.MyStudyItem.ActiveMember
 import com.together.study.util.noRippleClickable
 import com.together.study.util.toLocalTimeWithSecond
 
@@ -118,7 +119,7 @@ private fun ChallengedCount(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyingMembers(
-    activeMemberList: List<MyStudyItem.Companion.ActiveMember>,
+    activeMemberList: List<ActiveMember>,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
