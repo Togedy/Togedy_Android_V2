@@ -95,7 +95,7 @@ internal fun StudyDetailRoute(
         onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
         onDialogStateChange = viewModel::updateDialogState,
-        onJoinStudyClick = {},
+        onJoinStudyClick = viewModel::joinStudy,
     )
 }
 
@@ -131,7 +131,6 @@ private fun StudyDetailScreen(
             onSettingsButtonClick = onSettingsButtonClick,
             onTabChange = onTabChange,
             onUserClick = onUserClick,
-            onJoinButtonClick = {},
             onPreviousWeekClick = onPreviousWeekClick,
             onNextWeekClick = onNextWeekClick,
             onDialogStateChange = onDialogStateChange,
@@ -153,7 +152,6 @@ private fun StudyDetailSuccessScreen(
     onSettingsButtonClick: () -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
     onUserClick: (Long) -> Unit,
-    onJoinButtonClick: () -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
@@ -405,8 +403,6 @@ private fun StudyDetailSuccessScreen(
         onJoinStudyClick = {
             onJoinStudyClick()
             onDialogStateChange(StudyDetailDialogType.JOIN)
-
-            onDialogStateChange(StudyDetailDialogType.JOIN_COMPLETE) // TODO : 가입 통신 성공 후 보여주는 것으로 변경
         }
     )
 }

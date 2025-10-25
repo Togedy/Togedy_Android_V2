@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -82,17 +83,23 @@ internal class StudyDetailViewModel @Inject constructor(
             .onFailure { _membersState.value = UiState.Failure(it.message.toString()) }
     }
 
-    fun getAttendance() = viewModelScope.launch {
+    suspend fun getAttendance() {
         getAttendanceUseCase(studyId, selectedDate.value)
             .onSuccess { _attendanceState.value = UiState.Success(it) }
             .onFailure { _attendanceState.value = UiState.Failure(it.message.toString()) }
+    }
+
+    fun joinStudy(password: String? = null) = viewModelScope.launch {
+        studyDetailRepository.postStudyJoin(studyId, password)
+            .onSuccess { updateDialogState(StudyDetailDialogType.JOIN_COMPLETE) }
+            .onFailure { Timber.tag("STUDY_DETAIL").e(it.message.toString()) }
     }
 
     fun updateSelectedTab(new: StudyDetailTab) {
         _selectedTab.value = new
     }
 
-    fun updateSelectedDate(button: String) {
+    fun updateSelectedDate(button: String) = viewModelScope.launch {
         if (button == "이전") {
             _selectedDate.value = _selectedDate.value.minusWeeks(1)
         } else {
