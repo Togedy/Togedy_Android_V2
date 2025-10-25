@@ -59,9 +59,14 @@ internal fun StudyMainRoute(
 ) {
     val uiState by viewModel.studyMainUiState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+    val exploreFilterState by viewModel.exploreFilterState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.getStudyMainInfo()
+        viewModel.getMyStudyInfo()
+    }
+
+    LaunchedEffect(exploreFilterState) {
+        viewModel.getExploreInfo()
     }
 
     StudyMainScreen(

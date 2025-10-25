@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,11 +52,6 @@ internal class StudyMainViewModel @Inject constructor(
             exploreFilterState = ExploreFilterState(),
         )
     )
-
-    fun getStudyMainInfo() = viewModelScope.launch {
-        getMyStudyInfo()
-        getExploreInfo()
-    }
 
     suspend fun getMyStudyInfo() {
         studyExploreRepository.getMyStudyInfo()
