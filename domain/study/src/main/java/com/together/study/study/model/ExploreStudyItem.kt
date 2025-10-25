@@ -10,7 +10,7 @@ data class ExploreStudyItem(
     val studyTier: String,
     val studyMemberCount: Int,
     val studyMemberLimit: Int,
-    val studyImageUrl: String?,
+    val studyImageUrl: String,
     val isNewlyCreated: Boolean,
     val lastActivatedAt: String?,
     val hasPassword: Boolean,

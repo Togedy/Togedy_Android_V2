@@ -12,21 +12,7 @@ data class StudyMainUiState(
     val myStudyState: UiState<MyStudyInfo>,
     val exploreStudyState: UiState<List<ExploreStudyItem>>,
     val exploreFilterState: ExploreFilterState,
-) {
-    val isLoaded: UiState<Unit>
-        get() = when {
-            myStudyState is UiState.Loading || exploreStudyState is UiState.Loading
-                -> UiState.Loading
-
-            myStudyState is UiState.Success && exploreStudyState is UiState.Success
-                -> UiState.Success(Unit)
-
-            myStudyState is UiState.Failure && exploreStudyState is UiState.Failure
-                -> UiState.Failure("failed to load")
-
-            else -> UiState.Empty
-        }
-}
+)
 
 data class ExploreFilterState(
     val tagFilters: List<StudyTagType> = listOf(StudyTagType.ENTIRE),
