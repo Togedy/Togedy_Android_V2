@@ -82,7 +82,7 @@ internal fun UserInfoBottomSheet(
         modifier = modifier.fillMaxWidth(),
         containerColor = TogedyTheme.colors.white,
     ) {
-        when (memberUiState) {
+        when (memberUiState.isLoaded) {
             is UiState.Empty -> {}
             is UiState.Failure -> {}
             is UiState.Loading -> {}
