@@ -19,7 +19,6 @@ fun SettingsSection(
     items: List<Settings>,
     isEndDividerNeeded: Boolean = true,
     modifier: Modifier = Modifier,
-    horizontalPaddingModifier: Modifier = Modifier.padding(horizontal = 20.dp),
 ) {
     Column(
         modifier = modifier,
@@ -30,7 +29,7 @@ fun SettingsSection(
             text = sectionTitle,
             style = TogedyTheme.typography.body10m,
             color = TogedyTheme.colors.gray500,
-            modifier = horizontalPaddingModifier,
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
 
         Spacer(Modifier.height(12.dp))
@@ -42,7 +41,6 @@ fun SettingsSection(
                 icon = item.icon,
                 textColor = if (item.isTextRed) TogedyTheme.colors.red else TogedyTheme.colors.gray700,
                 onItemClick = { item.onClick() },
-                modifier = horizontalPaddingModifier,
             )
 
             Spacer(Modifier.height(12.dp))

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -24,7 +25,6 @@ import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun SettingsItem(
-    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     @DrawableRes icon: Int? = null,
@@ -32,9 +32,10 @@ internal fun SettingsItem(
     onItemClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .noRippleClickable(onItemClick),
+            .noRippleClickable(onItemClick)
+            .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
