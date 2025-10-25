@@ -11,4 +11,5 @@ data class StudyMemberProfileResponse(
     @SerialName("userProfileMessage") val userProfileMessage: String?,
     @SerialName("totalStudyTime") val totalStudyTime: String,
     @SerialName("attendanceStreak") val attendanceStreak: Int,
+    @SerialName("elapsedDays") val elapsedDays: Int,
 )
