@@ -25,7 +25,7 @@ fun TogedyTopBar(
     title: String? = null,
     titleStyle: TextStyle = TogedyTheme.typography.title16sb.copy(color = TogedyTheme.colors.black),
     leftIcon: ImageVector? = null,
-    leftIconColor: Color = TogedyTheme.colors.black,
+    leftIconColor: Color = TogedyTheme.colors.gray800,
     rightText: String? = null,
     rightTextStyle: TextStyle = TogedyTheme.typography.title16sb.copy(color = TogedyTheme.colors.black),
     onLeftClicked: () -> Unit = {},
