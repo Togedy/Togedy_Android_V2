@@ -39,7 +39,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
-import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.R.drawable.ic_settings_24
@@ -80,7 +79,6 @@ internal fun StudyDetailRoute(
     }
 
     StudyDetailScreen(
-        isMyStudy = true,
         uiState = uiState,
         selectedTab = selectedTab,
         selectedDate = selectedDate,
@@ -103,7 +101,6 @@ internal fun StudyDetailRoute(
 
 @Composable
 private fun StudyDetailScreen(
-    isMyStudy: Boolean,
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
@@ -124,7 +121,6 @@ private fun StudyDetailScreen(
         is UiState.Failure -> {}
         is UiState.Loading -> {}
         is UiState.Success -> StudyDetailSuccessScreen(
-            isMyStudy = isMyStudy,
             uiState = uiState,
             selectedTab = selectedTab,
             selectedDate = selectedDate,
@@ -147,7 +143,6 @@ private fun StudyDetailScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyDetailSuccessScreen(
-    isMyStudy: Boolean,
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
@@ -225,9 +220,10 @@ private fun StudyDetailSuccessScreen(
                 modifier = Modifier,
             )
 
-            if (isMyStudy && studyInfo.completedMemberCount != 0 && studyInfo.studyType == StudyType.CHALLENGE.name) {
+            // TODO: api 수정되면 주석 삭제
+            if (studyInfo.isJoined && studyInfo.completedMemberCount != 0 /*&& studyInfo.studyType == StudyType.CHALLENGE.name*/) {
                 DailyCompletionBar(
-                    studyInfo.completedMemberCount,
+                    studyInfo.completedMemberCount!!,
                     studyInfo.studyMemberCount,
                 )
             } else {
@@ -363,7 +359,7 @@ private fun StudyDetailSuccessScreen(
                     .noRippleClickable(onShareButtonClick),
             )
 
-            if (isMyStudy) {
+            if (studyInfo.isJoined) {
                 Spacer(Modifier.width(8.dp))
 
                 Icon(
@@ -377,7 +373,7 @@ private fun StudyDetailSuccessScreen(
             }
         }
 
-        if (isMyStudy) { //TODO: 스탑워치 화면이동 버튼으로 변경
+        if (studyInfo.isJoined) { //TODO: 스탑워치 화면이동 버튼으로 변경
             Box(
                 modifier = Modifier
                     .background(color = TogedyTheme.colors.gray300)
