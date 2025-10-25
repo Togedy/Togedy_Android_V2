@@ -16,4 +16,11 @@ class StudyDetailDataSource @Inject constructor(
             startDate = startDate,
             endDate = endDate
         )
+
+    suspend fun postStudyJoin(studyId: Long, password: String?) =
+        studyDetailService.postStudyJoin(
+            studyId = studyId,
+            studyPassword = password
+        )
+
 }

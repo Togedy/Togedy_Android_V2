@@ -4,7 +4,9 @@ import com.together.study.remote.model.BaseResponse
 import com.together.study.study.dto.StudyAttendanceResponse
 import com.together.study.study.dto.StudyDetailInfoResponse
 import com.together.study.study.dto.StudyMemberResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -25,4 +27,10 @@ interface StudyDetailService {
         @Query("startDate") startDate: String,
         @Query("endDate") endDate: String,
     ): BaseResponse<List<StudyAttendanceResponse>>
+
+    @POST("studies/{studyId}/members")
+    suspend fun postStudyJoin(
+        @Path("studyId") studyId: Long,
+        @Body studyPassword: String?,
+    ): BaseResponse<Unit>
 }

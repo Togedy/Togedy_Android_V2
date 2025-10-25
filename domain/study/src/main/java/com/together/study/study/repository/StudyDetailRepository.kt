@@ -12,4 +12,5 @@ interface StudyDetailRepository {
         startDate: String,
         endDate: String,
     ): Result<List<StudyAttendance>>
+    suspend fun postStudyJoin(studyId: Long, password: String?): Result<Unit>
 }

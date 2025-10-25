@@ -34,4 +34,10 @@ class StudyDetailRepositoryImpl @Inject constructor(
             response.toDomain()
         }
 
+    override suspend fun postStudyJoin(
+        studyId: Long,
+        password: String?,
+    ): Result<Unit> =
+        runCatching { studyDetailDataSource.postStudyJoin(studyId, password).response }
+
 }
