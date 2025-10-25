@@ -2,14 +2,14 @@ package com.together.study.studydetail.detailmain.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.together.study.study.main.state.Study
+import com.together.study.study.model.StudyDetailInfo
 import com.together.study.studydetail.component.JoinStudyDialog
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 
 @Composable
 fun StudyDetailDialogScreen(
-    studyInfo: Study,
+    studyInfo: StudyDetailInfo,
     dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onDismissRequest: (StudyDetailDialogType) -> Unit,
@@ -20,8 +20,7 @@ fun StudyDetailDialogScreen(
             with(studyInfo) {
                 JoinStudyDialog(
                     studyName = studyName,
-                    hasPassword = hasPassword,
-                    password = password,
+                    password = studyPassword,
                     onDismissRequest = { onDismissRequest(StudyDetailDialogType.JOIN) },
                     onJoinStudyClick = onJoinStudyClick,
                     modifier = modifier,

@@ -5,7 +5,6 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.model.MyStudyInfo
-import com.together.study.study.model.MyStudyItem.ActiveMember
 import com.together.study.study.type.StudyTagType
 
 @Immutable
@@ -35,45 +34,3 @@ data class ExploreFilterState(
     val isJoinable: Boolean = false,
     val isChallenge: Boolean = false,
 )
-
-/* TODO: domain으로 이동 예정 */
-data class Study(
-    val studyId: Long = -1,
-    val studyType: String,
-    val challengeGoalTime: String = "",
-    val challengeAchievement: Int = 100,
-    val studyName: String,
-    val studyDescription: String = "",
-    val studyTag: String = "",
-    val studyImageUrl: String = "",
-    val completedMemberCount: Int = 0,
-    val studyMemberCount: Int = 0,
-    val studyMemberLimit: Int = 0,
-    val studyLeaderImageUrl: String = "",
-    val activeMemberList: List<ActiveMember> = emptyList(),
-    val isNewlyCreated: Boolean = false,
-    val lastActivatedAt: String = "",
-    val hasPassword: Boolean = false,
-    val password: String = "",
-) {
-    companion object {
-        val mock1 = Study(
-            studyId = 1,
-            studyType = "CHALLENGE",
-            challengeGoalTime = "10:00:00",
-            challengeAchievement = 75,
-            studyName = "을지중학교 1-1",
-            studyDescription = "같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.같이 공부하고 응원해주면서 수험생활 해봐요!! 특별한 사유없이 5일 연속 미측정 → 강퇴입니다.",
-            studyTag = "자유 스터디",
-            studyImageUrl = "",
-            completedMemberCount = 3,
-            studyMemberCount = 5,
-            studyMemberLimit = 30,
-            studyLeaderImageUrl = "",
-            activeMemberList = listOf(),
-            isNewlyCreated = true,
-            lastActivatedAt = "10분 전",
-            hasPassword = true,
-        )
-    }
-}

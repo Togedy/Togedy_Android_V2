@@ -22,10 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.together.study.common.type.study.UserStatus
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.studydetail.detailmain.StudyMember
+import com.together.study.study.model.StudyMember
+import com.together.study.study.type.StudyRole
+import com.together.study.study.type.UserStatus
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -96,25 +97,43 @@ private fun StudyMemberItemPreview() {
         ) {
             StudyMemberItem(
                 context = context,
-                user = StudyMember.mock_leader,
+                user = StudyMember(
+                    userId = 1,
+                    userName = "내가리더임",
+                    studyRole = StudyRole.LEADER,
+                    userStatus = UserStatus.ACTIVE,
+                    userProfileImageUrl = "",
+                    totalStudyAmount = "1H 20M",
+                    lastActivatedAt = null,
+                ),
                 modifier = Modifier.weight(1f),
                 onItemClick = {}
             )
             StudyMemberItem(
                 context = context,
-                user = StudyMember.mock_member,
+                user = StudyMember(
+                    userId = 1,
+                    userName = "투게디공부핑1투게디공부핑1투게디공부핑1",
+                    studyRole = StudyRole.MEMBER,
+                    userStatus = UserStatus.STUDYING,
+                    userProfileImageUrl = "",
+                    totalStudyAmount = null,
+                    lastActivatedAt = "3분 전",
+                ),
                 modifier = Modifier.weight(1f),
                 onItemClick = {}
             )
             StudyMemberItem(
                 context = context,
-                user = StudyMember.mock_member2,
-                modifier = Modifier.weight(1f),
-                onItemClick = {}
-            )
-            StudyMemberItem(
-                context = context,
-                user = StudyMember.mock_member3,
+                user = StudyMember(
+                    userId = 1,
+                    userName = "투게디공부핑2",
+                    studyRole = StudyRole.MEMBER,
+                    userStatus = UserStatus.ACTIVE,
+                    userProfileImageUrl = "",
+                    totalStudyAmount = null,
+                    lastActivatedAt = "3분 전",
+                ),
                 modifier = Modifier.weight(1f),
                 onItemClick = {}
             )
