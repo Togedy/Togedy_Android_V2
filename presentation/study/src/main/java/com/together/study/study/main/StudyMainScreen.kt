@@ -213,38 +213,45 @@ private fun StudyMainScreen(
                 }
 
                 StudyMainTab.EXPLORE -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(TogedyTheme.colors.gray100)
-                    ) {
-                        stickyHeader {
-                            with(uiState.exploreFilterState) {
-                                ExploreFilterSection(
-                                    selectedFilter = tagFilters,
-                                    selectedSortingType = sortOption,
-                                    isJoinable = isJoinable,
-                                    isChallenge = isChallenge,
-                                    modifier = Modifier.background(TogedyTheme.colors.gray100),
-                                    onFilterClick = onTagFilterClick,
-                                    onSortingClick = { isSortBottomSheetVisible = true },
-                                    onJoinableClick = onJoinableClick,
-                                    onChallengeClick = onChallengeClick,
-                                )
-                            }
-                        }
-
-                        itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { _, study ->
-                            Box(
+                    when (uiState.isLoaded) {
+                        is UiState.Empty -> {}
+                        is UiState.Failure -> {}
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            LazyColumn(
                                 modifier = Modifier
+                                    .fillMaxSize()
                                     .background(TogedyTheme.colors.gray100)
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
                             ) {
-                                StudyItem(
-                                    study = study,
-                                    modifier = Modifier,
-                                    onItemClick = { onStudyItemClick(study.studyId) },
-                                )
+                                stickyHeader {
+                                    with(uiState.exploreFilterState) {
+                                        ExploreFilterSection(
+                                            selectedFilter = tagFilters,
+                                            selectedSortingType = sortOption,
+                                            isJoinable = isJoinable,
+                                            isChallenge = isChallenge,
+                                            modifier = Modifier.background(TogedyTheme.colors.gray100),
+                                            onFilterClick = onTagFilterClick,
+                                            onSortingClick = { isSortBottomSheetVisible = true },
+                                            onJoinableClick = onJoinableClick,
+                                            onChallengeClick = onChallengeClick,
+                                        )
+                                    }
+                                }
+
+                                itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { _, study ->
+                                    Box(
+                                        modifier = Modifier
+                                            .background(TogedyTheme.colors.gray100)
+                                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                                    ) {
+                                        StudyItem(
+                                            study = study,
+                                            modifier = Modifier,
+                                            onItemClick = { onStudyItemClick(study.studyId) },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
