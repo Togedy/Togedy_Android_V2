@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
-import com.together.study.study.main.state.Study
-import com.together.study.studydetail.detailmain.state.StudyAttendance
+import com.together.study.study.model.StudyAttendance
+import com.together.study.study.model.StudyDetailInfo
+import com.together.study.study.model.StudyMember
+import com.together.study.study.repository.StudyDetailRepository
+import com.together.study.study.usecase.GetStudyDetailInfoUseCase
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
@@ -26,6 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class StudyDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val studyDetailRepository: StudyDetailRepository,
+    private val getAttendanceUseCase: GetStudyDetailInfoUseCase,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
 
@@ -37,7 +42,7 @@ internal class StudyDetailViewModel @Inject constructor(
         MutableStateFlow(StudyDetailDialogState())
     val dialogState: StateFlow<StudyDetailDialogState> = _dialogState.asStateFlow()
 
-    private val _studyInfoState = MutableStateFlow<UiState<Study>>(UiState.Loading)
+    private val _studyInfoState = MutableStateFlow<UiState<StudyDetailInfo>>(UiState.Loading)
     private val _membersState = MutableStateFlow<UiState<List<StudyMember>>>(UiState.Loading)
     private val _attendanceState = MutableStateFlow<UiState<List<StudyAttendance>>>(UiState.Loading)
 
@@ -66,39 +71,21 @@ internal class StudyDetailViewModel @Inject constructor(
     }
 
     suspend fun getStudyInfo() {
-        // TODO : 추후 API 연결
-        _studyInfoState.value = UiState.Success(Study.mock1)
+        studyDetailRepository.getStudyDetailInfo(studyId)
+            .onSuccess { _studyInfoState.value = UiState.Success(it) }
+            .onFailure { _studyInfoState.value = UiState.Failure(it.message.toString()) }
     }
 
     suspend fun getMembers() {
-        // TODO : 추후 API 연결
-        _membersState.value = UiState.Success(
-            listOf(
-                StudyMember.mock_member,
-                StudyMember.mock_leader,
-                StudyMember.mock_member2,
-                StudyMember.mock_member3,
-                StudyMember.mock_member2,
-                StudyMember.mock_member3,
-                StudyMember.mock_member3,
-            )
-        )
+        studyDetailRepository.getStudyMembers(studyId)
+            .onSuccess { _membersState.value = UiState.Success(it) }
+            .onFailure { _membersState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun getAttendance() = viewModelScope.launch {
-        // TODO : 추후 API 연결
-        _attendanceState.value = UiState.Success(
-            listOf(
-                StudyAttendance.mock,
-                StudyAttendance.mock2,
-                StudyAttendance.mock,
-                StudyAttendance.mock2,
-                StudyAttendance.mock,
-                StudyAttendance.mock2,
-                StudyAttendance.mock,
-                StudyAttendance.mock2,
-            )
-        )
+        getAttendanceUseCase(studyId, selectedDate.value)
+            .onSuccess { _attendanceState.value = UiState.Success(it) }
+            .onFailure { _attendanceState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun updateSelectedTab(new: StudyDetailTab) {
