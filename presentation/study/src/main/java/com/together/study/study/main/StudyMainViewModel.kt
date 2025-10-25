@@ -55,10 +55,7 @@ internal class StudyMainViewModel @Inject constructor(
 
     suspend fun getMyStudyInfo() {
         studyExploreRepository.getMyStudyInfo()
-            .onSuccess {
-                _myStudyState.value =
-                    UiState.Success(MyStudyInfo(it.studyMainTimerInfo, it.studyList))
-            }
+            .onSuccess { _myStudyState.value = UiState.Success(it) }
             .onFailure { _myStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
