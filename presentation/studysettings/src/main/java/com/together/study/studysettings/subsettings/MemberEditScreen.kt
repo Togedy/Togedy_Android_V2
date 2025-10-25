@@ -1,0 +1,354 @@
+package com.together.study.studysettings.subsettings
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.together.study.common.type.study.StudyRole
+import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
+import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.util.noRippleClickable
+
+data class Member(
+    val userId: Long,
+    val userName: String,
+    val studyRole: StudyRole,
+)
+
+@Composable
+fun MemberEditScreen(modifier: Modifier = Modifier) {
+    val memberList = listOf(
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 1,
+            userName = "member1",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 2,
+            userName = "member2",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 3,
+            userName = "member3",
+            studyRole = StudyRole.MEMBER
+        ),
+        Member(
+            userId = 4,
+            userName = "member4",
+            studyRole = StudyRole.MEMBER
+        ),
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(TogedyTheme.colors.white)
+            .padding(top = 22.dp),
+    ) {
+        TogedyTopBar(
+            title = "멤버 관리",
+            leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
+            modifier = Modifier.padding(bottom = 4.dp),
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "스터디 멤버 관리 10/30",
+                style = TogedyTheme.typography.body14b,
+                color = TogedyTheme.colors.gray800,
+            )
+
+            Spacer(Modifier.width(4.dp))
+
+            Text(
+                text = "최대 30명까지 가능해요",
+                style = TogedyTheme.typography.body10m,
+                color = TogedyTheme.colors.gray500,
+            )
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(horizontal = 26.dp)
+                .padding(top = 26.dp)
+        ) {
+            item {
+                Box(
+                    modifier = Modifier,
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(TogedyTheme.colors.gray50, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 8.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "방장이름",
+                            style = TogedyTheme.typography.body13b,
+                            color = TogedyTheme.colors.gray700,
+                        )
+
+                        TogedyBasicTextChip(
+                            text = "방장",
+                            textStyle = TogedyTheme.typography.body10m,
+                            textColor = TogedyTheme.colors.gray600,
+                            backgroundColor = TogedyTheme.colors.gray200,
+                            roundedCornerShape = RoundedCornerShape(4.dp),
+                            horizontalPadding = 4.dp,
+                            verticalPadding = 4.dp
+                        )
+                    }
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        thickness = 1.dp,
+                        color = TogedyTheme.colors.gray200
+                    )
+                }
+
+            }
+
+            itemsIndexed(memberList) { index, item ->
+                Box(
+                    modifier = Modifier,
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "member~!@",
+                            style = TogedyTheme.typography.body13b,
+                            color = TogedyTheme.colors.gray700,
+                        )
+
+                        TogedyBasicTextChip(
+                            text = "내보내기",
+                            textStyle = TogedyTheme.typography.body10m,
+                            textColor = TogedyTheme.colors.red,
+                            backgroundColor = TogedyTheme.colors.red30,
+                            roundedCornerShape = RoundedCornerShape(4.dp),
+                            horizontalPadding = 4.dp,
+                            verticalPadding = 4.dp,
+                            modifier = Modifier.noRippleClickable { /*click*/ }
+                        )
+                    }
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        thickness = 1.dp,
+                        color = TogedyTheme.colors.gray200
+                    )
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(40.dp))
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun MemberEditScreenPreview() {
+    TogedyTheme {
+        MemberEditScreen()
+    }
+}
