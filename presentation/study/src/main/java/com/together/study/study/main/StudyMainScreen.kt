@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
+import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
@@ -45,7 +46,6 @@ import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
 import com.together.study.study.main.state.StudyMainUiState
-import com.together.study.study.type.StudyTagType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 
