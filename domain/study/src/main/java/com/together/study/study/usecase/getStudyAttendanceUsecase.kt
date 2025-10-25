@@ -2,7 +2,9 @@ package com.together.study.study.usecase
 
 import com.together.study.study.model.StudyAttendance
 import com.together.study.study.repository.StudyDetailRepository
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 class GetStudyDetailInfoUseCase @Inject constructor(
@@ -12,8 +14,8 @@ class GetStudyDetailInfoUseCase @Inject constructor(
         studyId: Long,
         selectedDate: LocalDate,
     ): Result<List<StudyAttendance>> {
-        val startDate = selectedDate.withDayOfMonth(1)
-        val endDate = selectedDate.withDayOfMonth(7)
+        val startDate = selectedDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        val endDate = selectedDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 
         return studyDetailRepository.getStudyAttendance(
             studyId = studyId,
