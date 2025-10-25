@@ -79,6 +79,7 @@ internal fun StudyDetailRoute(
     }
 
     StudyDetailScreen(
+        studyId = viewModel.studyId,
         uiState = uiState,
         selectedTab = selectedTab,
         selectedDate = selectedDate,
@@ -101,6 +102,7 @@ internal fun StudyDetailRoute(
 
 @Composable
 private fun StudyDetailScreen(
+    studyId: Long,
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
@@ -121,6 +123,7 @@ private fun StudyDetailScreen(
         is UiState.Failure -> {}
         is UiState.Loading -> {}
         is UiState.Success -> StudyDetailSuccessScreen(
+            studyId = studyId,
             uiState = uiState,
             selectedTab = selectedTab,
             selectedDate = selectedDate,
@@ -142,6 +145,7 @@ private fun StudyDetailScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyDetailSuccessScreen(
+    studyId: Long,
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
@@ -397,6 +401,7 @@ private fun StudyDetailSuccessScreen(
     }
 
     StudyDetailDialogScreen(
+        studyId = studyId,
         studyInfo = studyInfo,
         dialogState = dialogState,
         onDismissRequest = onDialogStateChange,

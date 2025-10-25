@@ -4,11 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.together.study.study.model.StudyDetailInfo
 import com.together.study.studydetail.component.JoinStudyDialog
+import com.together.study.studydetail.detailmain.UserInfoBottomSheet
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 
 @Composable
 fun StudyDetailDialogScreen(
+    studyId: Long,
     studyInfo: StudyDetailInfo,
     dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
@@ -37,9 +39,7 @@ fun StudyDetailDialogScreen(
 
         if (isUserBottomSheetVisible) {
             UserInfoBottomSheet(
-                user = StudyMemberProfile.mock,
-                studyTimeBlocks = StudyMemberTimeBlocks.mock,
-                dailyPlanner = StudyMemberPlanner.mock,
+                studyId = studyId,
                 modifier = modifier,
                 onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) },
             )
