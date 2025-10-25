@@ -26,7 +26,8 @@ fun StudyDetailInfoResponse.toDomain(): StudyDetailInfo =
         studyPassword = studyPassword,
     )
 
-fun List<StudyMemberResponse>.toDomain(): List<StudyMember> = map { it.toStudyMember() }
+@JvmName("studyMemberResponseToDomain")
+fun List<StudyMemberResponse>.toDomain(): List<StudyMember> = this.map { it.toStudyMember() }
 
 fun StudyMemberResponse.toStudyMember(): StudyMember =
     StudyMember(
@@ -39,7 +40,9 @@ fun StudyMemberResponse.toStudyMember(): StudyMember =
         lastActivatedAt = lastActivatedAt,
     )
 
-fun List<StudyAttendanceResponse>.toDomain(): List<StudyAttendance> = map { it.toStudyAttendance() }
+@JvmName("studyAttendanceResponseToDomain")
+fun List<StudyAttendanceResponse>.toDomain(): List<StudyAttendance> =
+    this.map { it.toStudyAttendance() }
 
 fun StudyAttendanceResponse.toStudyAttendance(): StudyAttendance =
     StudyAttendance(
