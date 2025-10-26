@@ -49,7 +49,7 @@ data class Member(
 @Composable
 fun MemberEditScreen(
     onBackClick: () -> Unit,
-    type: MemberEditType,
+    type: MemberEditType = MemberEditType.EDIT,
     modifier: Modifier = Modifier,
 ) {
     var isMemberDialogVisible by remember { mutableStateOf(false) }

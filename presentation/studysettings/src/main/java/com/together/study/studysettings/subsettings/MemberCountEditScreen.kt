@@ -38,7 +38,7 @@ import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemberCountEditRoute(
+fun MemberCountEditScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -141,7 +141,7 @@ fun MemberCountEditRoute(
 @Composable
 private fun MemberCountEditRoutePreview() {
     TogedyTheme {
-        MemberCountEditRoute(
+        MemberCountEditScreen(
             onBackClick = {},
         )
     }

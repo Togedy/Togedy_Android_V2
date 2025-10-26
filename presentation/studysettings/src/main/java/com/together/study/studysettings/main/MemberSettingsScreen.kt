@@ -30,17 +30,17 @@ import com.together.study.studysettings.component.SettingsSection
 fun MemberSettingsRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onMemberNavigate: () -> Unit,
-    onReportNavigate: () -> Unit,
+    onMemberNavigate: (Long) -> Unit,
+    onReportNavigate: (Long) -> Unit,
 ) {
     var studyName = "햄부기"
     var isExitDialogVisible by remember { mutableStateOf(false) }
 
     val memberEdit = listOf(
-        Settings(title = "멤버 보기", onClick = onMemberNavigate),
+        Settings(title = "멤버 보기", onClick = { onMemberNavigate(1) }),
     )
     val deleteEdit = listOf(
-        Settings(title = "문제 신고하기", icon = null, onClick = onReportNavigate),
+        Settings(title = "문제 신고하기", icon = null, onClick = { onReportNavigate(1) }),
         Settings(
             title = "스터디 나가기",
             icon = null,

@@ -30,22 +30,23 @@ import com.together.study.studysettings.component.SettingsSection
 fun LeaderSettingsRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onInfoClick: () -> Unit,
-    onMemberClick: () -> Unit,
-    onMemberCountClick: () -> Unit,
-    onLeaderEditClick: () -> Unit,
+    onInfoClick: (Long) -> Unit,
+    onMemberClick: (Long) -> Unit,
+    onMemberCountClick: (Int) -> Unit,
+    onLeaderEditClick: (Long) -> Unit,
 ) {
     var isDeleteDialogVisible by remember { mutableStateOf(false) }
 
+    // TODO(): 넘겨주는 값 실제값으로 수정
     val studyEdit = listOf(
-        Settings("계정 센터", "비밀번호, 배경이미지, 스터디 태그 변경", onClick = onInfoClick)
+        Settings("계정 센터", "비밀번호, 배경이미지, 스터디 태그 변경", onClick = { onInfoClick(1) })
     )
     val memberEdit = listOf(
-        Settings(title = "멤버관리", onClick = onMemberClick),
-        Settings(title = "스터디 인원 수 설정", onClick = onMemberCountClick)
+        Settings(title = "멤버관리", onClick = { onMemberClick(1) }),
+        Settings(title = "스터디 인원 수 설정", onClick = { onMemberCountClick(10) })
     )
     val deleteEdit = listOf(
-        Settings(title = "방장위임", onClick = onLeaderEditClick),
+        Settings(title = "방장위임", onClick = { onLeaderEditClick(1) }),
         Settings(
             title = "스터디 삭제하기",
             icon = null,
