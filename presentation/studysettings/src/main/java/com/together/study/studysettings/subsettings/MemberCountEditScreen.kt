@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,9 +39,11 @@ import com.together.study.util.noRippleClickable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemberCountEditRoute(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var isBottomSheetVisible by remember { mutableStateOf(true) }
     var memberCount = 10
     var selectedCount by remember { mutableIntStateOf(memberCount) }
 
@@ -56,6 +57,7 @@ fun MemberCountEditRoute(
             title = "스터디 인원수 설정",
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             modifier = Modifier.padding(bottom = 4.dp),
+            onLeftClicked = onBackClick,
         )
 
         Spacer(Modifier.height(20.dp))
@@ -113,7 +115,7 @@ fun MemberCountEditRoute(
 
     if (isBottomSheetVisible) {
         TogedyBottomSheet(
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            sheetState = sheetState,
             onDismissRequest = { isBottomSheetVisible = false },
             title = "스터디 인원",
             showDone = true,
@@ -122,7 +124,7 @@ fun MemberCountEditRoute(
                 // 수정 API
                 memberCount = selectedCount
             },
-            modifier = modifier.fillMaxHeight(0.62f),
+            modifier = modifier,
         ) {
             TogedyScrollPicker(
                 initValue = memberCount,
@@ -139,6 +141,8 @@ fun MemberCountEditRoute(
 @Composable
 private fun MemberCountEditRoutePreview() {
     TogedyTheme {
-        MemberCountEditRoute()
+        MemberCountEditRoute(
+            onBackClick = {},
+        )
     }
 }

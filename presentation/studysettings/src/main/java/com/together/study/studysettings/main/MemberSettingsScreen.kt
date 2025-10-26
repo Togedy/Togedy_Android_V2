@@ -28,18 +28,19 @@ import com.together.study.studysettings.component.SettingsSection
 
 @Composable
 fun MemberSettingsRoute(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onMemberClick: () -> Unit,
-    onReportClick: () -> Unit,
+    onMemberNavigate: () -> Unit,
+    onReportNavigate: () -> Unit,
 ) {
     var studyName = "햄부기"
     var isExitDialogVisible by remember { mutableStateOf(false) }
 
     val memberEdit = listOf(
-        Settings(title = "멤버 보기", onClick = onMemberClick),
+        Settings(title = "멤버 보기", onClick = onMemberNavigate),
     )
     val deleteEdit = listOf(
-        Settings(title = "문제 신고하기", icon = null, onClick = onReportClick),
+        Settings(title = "문제 신고하기", icon = null, onClick = onReportNavigate),
         Settings(
             title = "스터디 나가기",
             icon = null,
@@ -58,6 +59,7 @@ fun MemberSettingsRoute(
             title = "스터디 설정",
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             modifier = Modifier.padding(bottom = 4.dp),
+            onLeftClicked = onBackClick,
         )
 
         Spacer(Modifier.height(8.dp))
@@ -104,8 +106,9 @@ fun MemberSettingsRoute(
 private fun MemberSettingsRoutePreview() {
     TogedyTheme {
         MemberSettingsRoute(
-            onMemberClick = {},
-            onReportClick = {},
+            onBackClick = {},
+            onMemberNavigate = {},
+            onReportNavigate = {},
         )
     }
 }

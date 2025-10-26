@@ -28,6 +28,7 @@ import com.together.study.studysettings.component.SettingsSection
 
 @Composable
 fun LeaderSettingsRoute(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onInfoClick: () -> Unit,
     onMemberClick: () -> Unit,
@@ -63,6 +64,7 @@ fun LeaderSettingsRoute(
             title = "스터디 설정",
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             modifier = Modifier.padding(bottom = 4.dp),
+            onLeftClicked = onBackClick,
         )
 
         Spacer(Modifier.height(8.dp))
@@ -111,6 +113,7 @@ fun LeaderSettingsRoute(
 private fun LeaderSettingsRoutePreview() {
     TogedyTheme {
         LeaderSettingsRoute(
+            onBackClick = {},
             onInfoClick = {},
             onMemberClick = {},
             onMemberCountClick = {},

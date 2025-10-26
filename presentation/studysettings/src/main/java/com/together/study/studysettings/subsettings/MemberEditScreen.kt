@@ -48,6 +48,7 @@ data class Member(
 
 @Composable
 fun MemberEditScreen(
+    onBackClick: () -> Unit,
     type: MemberEditType,
     modifier: Modifier = Modifier,
 ) {
@@ -247,6 +248,7 @@ fun MemberEditScreen(
             title = type.title,
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             modifier = Modifier.padding(bottom = 4.dp),
+            onLeftClicked = onBackClick,
         )
 
         Spacer(Modifier.height(20.dp))
@@ -438,6 +440,7 @@ fun MemberEditScreen(
 private fun MemberEditScreenPreview() {
     TogedyTheme {
         MemberEditScreen(
+            onBackClick = {},
             type = MemberEditType.EDIT
         )
     }
