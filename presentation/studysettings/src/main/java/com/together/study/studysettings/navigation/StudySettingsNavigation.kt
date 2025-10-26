@@ -77,7 +77,7 @@ fun NavGraphBuilder.studySettingsGraph(
         )
     }
 
-    composable<MemberSettings> {
+    composable<MemberEdit> {
         MemberEditScreen(
             onBackClick = navigateToUp,
             modifier = modifier,
