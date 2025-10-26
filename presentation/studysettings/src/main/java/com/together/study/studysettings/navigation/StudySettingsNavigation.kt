@@ -1,5 +1,6 @@
 package com.together.study.studysettings.navigation
 
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -37,6 +38,7 @@ fun NavController.navigateToMemberCountEditScreen(
 fun NavGraphBuilder.studySettingsGraph(
     navigateToUp: () -> Unit,
     navController: NavController,
+    modifier: Modifier = Modifier,
 ) {
     composable<LeaderSettings> {
         LeaderSettingsRoute(
@@ -57,6 +59,7 @@ fun NavGraphBuilder.studySettingsGraph(
                     type = MemberEditType.LEADER_CHANGE,
                 )
             },
+            modifier = modifier,
         )
     }
 
@@ -70,18 +73,21 @@ fun NavGraphBuilder.studySettingsGraph(
                 )
             },
             onReportNavigate = { /* 추후 신고화면 연결*/ },
+            modifier = modifier,
         )
     }
 
     composable<MemberSettings> {
         MemberEditScreen(
             onBackClick = navigateToUp,
+            modifier = modifier,
         )
     }
 
     composable<MemberCountEdit> {
         MemberCountEditScreen(
             onBackClick = navigateToUp,
+            modifier = modifier,
         )
     }
 }
@@ -98,4 +104,3 @@ data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
 
 @Serializable
 data class MemberCountEdit(val memberCount: Int) : Route
-

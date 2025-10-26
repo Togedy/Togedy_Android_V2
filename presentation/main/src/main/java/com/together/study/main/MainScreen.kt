@@ -19,6 +19,8 @@ import com.together.study.study.navigation.navigateToStudySearch
 import com.together.study.study.navigation.studyGraph
 import com.together.study.studydetail.navigation.navigateToStudyDetail
 import com.together.study.studydetail.navigation.studyDetailGraph
+import com.together.study.studysettings.navigation.navigateToLeaderSettingsScreen
+import com.together.study.studysettings.navigation.studySettingsGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -89,7 +91,13 @@ private fun MainNavHost(
 
         studyDetailGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToStudySettings = {},
+            navigateToStudySettings = { navigator.navController.navigateToLeaderSettingsScreen(1) },
+            modifier = modifier,
+        )
+
+        studySettingsGraph(
+            navigateToUp = navigator::navigateUp,
+            navController = navigator.navController,
             modifier = modifier,
         )
 

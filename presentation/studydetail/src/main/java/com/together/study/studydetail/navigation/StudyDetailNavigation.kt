@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
+import com.together.study.common.type.study.StudyRole
 import com.together.study.studydetail.detailmain.StudyDetailRoute
 import kotlinx.serialization.Serializable
 
@@ -16,13 +17,13 @@ fun NavController.navigateToStudyDetail(
 
 fun NavGraphBuilder.studyDetailGraph(
     navigateToUp: () -> Unit,
-    navigateToStudySettings: () -> Unit,
+    navigateToStudySettings: (StudyRole) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<StudyDetail> {
         StudyDetailRoute(
             onBackClick = navigateToUp,
-            onSettingsNavigate = navigateToStudySettings,
+            onSettingsNavigate = { /*navigateToStudySettings*/ },
             modifier = modifier,
         )
     }
