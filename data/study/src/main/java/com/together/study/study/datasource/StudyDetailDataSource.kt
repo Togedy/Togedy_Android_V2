@@ -1,5 +1,6 @@
 package com.together.study.study.datasource
 
+import com.together.study.study.dto.JoinStudyRequest
 import com.together.study.study.service.StudyDetailService
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class StudyDetailDataSource @Inject constructor(
     suspend fun postStudyJoin(studyId: Long, password: String?) =
         studyDetailService.postStudyJoin(
             studyId = studyId,
-            studyPassword = password
+            body = JoinStudyRequest(password)
         )
 
 }
