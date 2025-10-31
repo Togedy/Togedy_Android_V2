@@ -40,7 +40,7 @@ fun SettingsSection(
                 subtitle = item.subtitle,
                 icon = item.icon,
                 textColor = if (item.isTextRed) TogedyTheme.colors.red else TogedyTheme.colors.gray700,
-                onItemClick = { item.onClick() },
+                onItemClick = item.onClick,
             )
 
             Spacer(Modifier.height(12.dp))
