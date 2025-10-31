@@ -92,7 +92,7 @@ class MemberEditViewModel @Inject constructor(
         studySettingsRepository.updateStudyLeader(studyId, selectedUser.value.userId)
             .onSuccess { _eventFlow.emit(MemberEditEvent.DelegateSuccess) }
             .onFailure {
-                _eventFlow.emit(MemberEditEvent.ShowError(it.message ?: "방장 위임에 실패했습니다."))
+                _eventFlow.emit(MemberEditEvent.ShowError("방장 위임에 실패했습니다."))
                 Timber.tag(TAG).d("delegateLeader failed: $it")
             }
     }

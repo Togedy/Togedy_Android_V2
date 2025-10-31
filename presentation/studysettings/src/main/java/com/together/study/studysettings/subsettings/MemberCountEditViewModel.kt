@@ -3,10 +3,12 @@ package com.together.study.studysettings.subsettings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.together.study.common.state.UiState
 import com.together.study.study.repository.StudySettingsRepository
+import com.together.study.studysettings.subsettings.event.MemberCountEditEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,24 +26,23 @@ class MemberCountEditViewModel @Inject constructor(
 
     private val _memberLimit = MutableStateFlow(studyMemberLimit)
     val memberLimit = _memberLimit.asStateFlow()
-    private val _uiState = MutableStateFlow<UiState<Boolean?>>(UiState.Success(null))
-    val uiState = _uiState.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<MemberCountEditEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     fun postNewMemberLimit(new: Int) = viewModelScope.launch {
-        _uiState.update { UiState.Loading }
         studySettingsRepository.updateStudyMemberLimit(studyId, memberLimit.value)
             .onSuccess {
-                _uiState.update { UiState.Success(true) }
+                _eventFlow.emit(MemberCountEditEvent.UpdateSuccess)
                 updateSelectedValue(new)
             }
             .onFailure {
+                _eventFlow.emit(MemberCountEditEvent.ShowError("인원 수 변경에 실패했습니다."))
                 Timber.tag(TAG).d("postNewMemberLimit failed: $it")
-                _uiState.update { UiState.Success(false) }
             }
-
     }
 
-    fun updateSelectedValue(new: Int) = {
+    private fun updateSelectedValue(new: Int) = {
         _memberLimit.update { new }
     }
 

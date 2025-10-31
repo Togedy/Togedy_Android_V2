@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.TogedyBottomSheet
@@ -37,6 +37,7 @@ import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.component.wheelpicker.PickerPosition
 import com.together.study.designsystem.component.wheelpicker.TogedyScrollPicker
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studysettings.subsettings.event.MemberCountEditEvent
 import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,11 +48,25 @@ fun MemberCountEditScreen(
     viewModel: MemberCountEditViewModel = hiltViewModel(),
 ) {
     val memberLimit by viewModel.memberLimit.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val eventFlow = viewModel.eventFlow
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedValue by remember { mutableIntStateOf(memberLimit) }
+
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is MemberCountEditEvent.UpdateSuccess -> {
+                    // toast
+                }
+
+                is MemberCountEditEvent.ShowError -> {
+                    // toast
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -137,23 +152,6 @@ fun MemberCountEditScreen(
                 modifier = modifier,
                 onValueChange = { selectedValue = it },
             )
-        }
-    }
-
-    if (uiState == UiState.Loading) {
-        // TODO: Loading 화면 연결
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TogedyTheme.colors.gray50),
-        ) {
-            Text("LOADING...")
-        }
-    } else if (uiState is UiState.Success) {
-        if ((uiState as UiState.Success<Boolean?>).data == true) {
-            //TODO: 스터디 인원 변경 성공 toast
-        } else {
-            //TODO: 스터디 인원 변경 실패 toast
         }
     }
 }
