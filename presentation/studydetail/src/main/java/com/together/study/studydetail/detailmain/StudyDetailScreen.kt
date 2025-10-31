@@ -412,7 +412,7 @@ private fun StudyDetailSuccessScreen(
         onJoinStudyClick = {
             onJoinStudyClick()
             onDialogStateChange(StudyDetailDialogType.JOIN)
-        }
+        },
     )
 }
 

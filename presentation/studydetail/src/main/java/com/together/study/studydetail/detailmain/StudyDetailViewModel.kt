@@ -91,7 +91,10 @@ internal class StudyDetailViewModel @Inject constructor(
 
     fun joinStudy(password: String? = null) = viewModelScope.launch {
         studyDetailRepository.postStudyJoin(studyId, password)
-            .onSuccess { updateDialogState(StudyDetailDialogType.JOIN_COMPLETE) }
+            .onSuccess {
+                updateDialogState(StudyDetailDialogType.JOIN_COMPLETE)
+                getStudyDetailInfo()
+            }
             .onFailure { Timber.tag("okhttp-joinStudy").e(it.message.toString()) }
     }
 

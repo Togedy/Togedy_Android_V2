@@ -1,6 +1,7 @@
 package com.together.study.study.service
 
 import com.together.study.remote.model.BaseResponse
+import com.together.study.remote.model.EmptyDataResponse
 import com.together.study.study.dto.JoinStudyRequest
 import com.together.study.study.dto.StudyAttendanceResponse
 import com.together.study.study.dto.StudyDetailInfoResponse
@@ -33,5 +34,5 @@ interface StudyDetailService {
     suspend fun postStudyJoin(
         @Path("studyId") studyId: Long,
         @Body body: JoinStudyRequest,
-    ): BaseResponse<Unit>
+    ): EmptyDataResponse
 }
