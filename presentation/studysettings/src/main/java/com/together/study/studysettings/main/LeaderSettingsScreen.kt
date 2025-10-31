@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,12 +23,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studysettings.component.SettingsSection
+import com.together.study.studysettings.main.event.LeaderSettingsEvent
 import com.together.study.studysettings.model.Settings
 
 @Composable
@@ -43,7 +44,19 @@ fun LeaderSettingsRoute(
 ) {
     var isDeleteDialogVisible by remember { mutableStateOf(false) }
     val studyInfo by viewModel.studyInfo.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val eventFlow = viewModel.eventFlow
+
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is LeaderSettingsEvent.DeleteStudySuccess -> onStudyMainNavigate()
+
+                is LeaderSettingsEvent.ShowError -> {
+                    // toast
+                }
+            }
+        }
+    }
 
     val studyEdit = listOf(
         Settings("계정 센터", "비밀번호, 배경이미지, 스터디 태그 변경", onClick = { onInfoClick(viewModel.studyId) })
@@ -124,23 +137,6 @@ fun LeaderSettingsRoute(
                 isDeleteDialogVisible = false
             },
         )
-    }
-
-    if (uiState == UiState.Loading) {
-        // TODO: Loading 화면 연결
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TogedyTheme.colors.gray50),
-        ) {
-            Text("LOADING...")
-        }
-    } else if (uiState is UiState.Success) {
-        if ((uiState as UiState.Success<Boolean?>).data == true) {
-            onStudyMainNavigate()
-        } else {
-            //TODO: 스터디 삭제 실패 toast
-        }
     }
 }
 

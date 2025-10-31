@@ -3,12 +3,14 @@ package com.together.study.studysettings.main
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.together.study.common.state.UiState
 import com.together.study.study.model.StudyDetailInfo
 import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudySettingsRepository
+import com.together.study.studysettings.main.event.MemberSettingsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,8 +28,8 @@ class MemberSettingsViewModel @Inject constructor(
     private val _studyInfo = MutableStateFlow<StudyDetailInfo?>(null)
     val studyInfo = _studyInfo.asStateFlow()
 
-    private val _uiState = MutableStateFlow<UiState<Boolean?>>(UiState.Success(null))
-    val uiState = _uiState.asStateFlow()
+    private val _eventFlow = MutableSharedFlow<MemberSettingsEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     init {
         getStudyInfo()
@@ -40,10 +42,9 @@ class MemberSettingsViewModel @Inject constructor(
     }
 
     fun deleteStudyAsMember() = viewModelScope.launch {
-        _uiState.update { UiState.Loading }
         studySettingsRepository.deleteStudyAsMember(studyId)
-            .onSuccess { _uiState.update { UiState.Success(true) } }
-            .onFailure { _uiState.update { UiState.Success(false) } }
+            .onSuccess { _eventFlow.emit(MemberSettingsEvent.DeleteStudySuccess) }
+            .onFailure { _eventFlow.emit(MemberSettingsEvent.ShowError("스터디 나가기에 실패했습니다.")) }
     }
 
     companion object {
