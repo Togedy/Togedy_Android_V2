@@ -49,6 +49,7 @@ import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.type.StudyRole
 import com.together.study.studydetail.detailmain.component.AttendanceItem
 import com.together.study.studydetail.detailmain.component.DailyCompletionBar
 import com.together.study.studydetail.detailmain.component.StudyDetailDialogScreen
@@ -66,7 +67,7 @@ import java.time.temporal.WeekFields
 @Composable
 internal fun StudyDetailRoute(
     onBackClick: () -> Unit,
-    onSettingsNavigate: () -> Unit,
+    onSettingsNavigate: (Long, StudyRole) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyDetailViewModel = hiltViewModel(),
 ) {
@@ -111,7 +112,7 @@ private fun StudyDetailScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
-    onSettingsButtonClick: () -> Unit,
+    onSettingsButtonClick: (Long, StudyRole) -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
     onUserClick: (Long) -> Unit,
     onPreviousWeekClick: () -> Unit,
@@ -156,7 +157,7 @@ private fun StudyDetailSuccessScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onShareButtonClick: () -> Unit,
-    onSettingsButtonClick: () -> Unit,
+    onSettingsButtonClick: (Long, StudyRole) -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
     onUserClick: (Long) -> Unit,
     onPreviousWeekClick: () -> Unit,
@@ -372,7 +373,11 @@ private fun StudyDetailSuccessScreen(
                     tint = TogedyTheme.colors.white,
                     modifier = Modifier
                         .size(24.dp)
-                        .noRippleClickable(onSettingsButtonClick),
+                        .noRippleClickable {
+                            val role =
+                                if (studyInfo.isStudyLeader) StudyRole.LEADER else StudyRole.MEMBER
+                            onSettingsButtonClick(studyId, role)
+                        },
                 )
             }
         }

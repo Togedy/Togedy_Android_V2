@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.presentation.study)
     implementation(projects.presentation.studydetail)
     implementation(projects.presentation.studysettings)
+    implementation(projects.domain.study)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
