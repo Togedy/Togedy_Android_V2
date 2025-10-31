@@ -15,6 +15,7 @@ import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDet
 import com.together.study.main.component.MainBottomBar
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
+import com.together.study.study.navigation.navigateToStudy
 import com.together.study.study.navigation.navigateToStudySearch
 import com.together.study.study.navigation.studyGraph
 import com.together.study.studydetail.navigation.navigateToStudyDetail
@@ -92,17 +93,14 @@ private fun MainNavHost(
         studyDetailGraph(
             navigateToUp = navigator::navigateUp,
             navigateToStudySettings = {
-                navigator.navController.navigateToLeaderSettingsScreen(
-                    1,
-                    5,
-                    10
-                )
+                navigator.navController.navigateToLeaderSettingsScreen(1)
             },
             modifier = modifier,
         )
 
         studySettingsGraph(
             navigateToUp = navigator::navigateUp,
+            navigateToStudyMain = navigator.navController::navigateToStudy,
             navController = navigator.navController,
             modifier = modifier,
         )

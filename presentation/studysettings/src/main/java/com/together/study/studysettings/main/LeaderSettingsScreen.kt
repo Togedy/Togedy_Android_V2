@@ -21,6 +21,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
@@ -36,29 +38,28 @@ fun LeaderSettingsRoute(
     onMemberClick: (Long, Int, Int) -> Unit,
     onMemberCountClick: (Long, Int, Int) -> Unit,
     onLeaderEditClick: (Long) -> Unit,
+    onStudyMainNavigate: () -> Unit,
     viewModel: LeaderSettingsViewModel = hiltViewModel(),
 ) {
     var isDeleteDialogVisible by remember { mutableStateOf(false) }
+    val studyInfo by viewModel.studyInfo.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val studyEdit = listOf(
         Settings("계정 센터", "비밀번호, 배경이미지, 스터디 태그 변경", onClick = { onInfoClick(viewModel.studyId) })
     )
     val memberEdit = listOf(
         Settings(title = "멤버관리", onClick = {
-            onMemberClick(
-                viewModel.studyId,
-                viewModel.studyMemberCount,
-                viewModel.studyMemberLimit,
-            )
+            studyInfo?.let {
+                onMemberClick(viewModel.studyId, it.studyMemberCount, it.studyMemberLimit)
+            }
         }),
         Settings(
             title = "스터디 인원 수 설정",
             onClick = {
-                onMemberCountClick(
-                    viewModel.studyId,
-                    viewModel.studyMemberCount,
-                    viewModel.studyMemberLimit,
-                )
+                studyInfo?.let {
+                    onMemberCountClick(viewModel.studyId, it.studyMemberCount, it.studyMemberLimit)
+                }
             })
     )
     val deleteEdit = listOf(
@@ -120,8 +121,28 @@ fun LeaderSettingsRoute(
             buttonText = "삭제하기",
             buttonColor = TogedyTheme.colors.red,
             onDismissRequest = { isDeleteDialogVisible = false },
-            onButtonClick = viewModel::deleteStudyAsLeader,
+            onButtonClick = {
+                viewModel.deleteStudyAsLeader()
+                isDeleteDialogVisible = false
+            },
         )
+    }
+
+    if (uiState == UiState.Loading) {
+        // TODO: Loading 화면 연결
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(TogedyTheme.colors.gray50),
+        ) {
+            Text("LOADING...")
+        }
+    } else if (uiState is UiState.Success) {
+        if ((uiState as UiState.Success<Boolean?>).data == true) {
+            onStudyMainNavigate()
+        } else {
+            //TODO: 스터디 삭제 실패 toast
+        }
     }
 }
 
@@ -135,6 +156,7 @@ private fun LeaderSettingsRoutePreview() {
             onMemberClick = { id, count, limit -> },
             onMemberCountClick = { id, count, limit -> },
             onLeaderEditClick = {},
+            onStudyMainNavigate = {},
         )
     }
 }
