@@ -81,7 +81,10 @@ class MemberEditViewModel @Inject constructor(
 
     fun deleteStudyMember() = viewModelScope.launch {
         studySettingsRepository.deleteMemberFromStudy(studyId, selectedUser.value.userId)
-            .onSuccess { getMembers() }
+            .onSuccess {
+                _eventFlow.emit(MemberEditEvent.DeleteMemberSuccess)
+                getMembers()
+            }
             .onFailure {
                 _eventFlow.emit(MemberEditEvent.ShowError(it.message ?: "해당 멤버 삭제 실패했습니다."))
                 Timber.tag(TAG).d("deleteStudyMember failed: $it")

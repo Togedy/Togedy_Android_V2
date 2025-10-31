@@ -60,6 +60,10 @@ fun MemberEditScreen(
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
             when (event) {
+                is MemberEditEvent.DeleteMemberSuccess -> {
+                    // toast
+                }
+
                 is MemberEditEvent.DelegateSuccess -> {
                     onMemberSettingsNavigate(viewModel.studyId)
                 }
