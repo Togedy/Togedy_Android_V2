@@ -40,6 +40,7 @@ import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.type.StudyRole
 import com.together.study.studysettings.subsettings.event.MemberEditEvent
 import com.together.study.studysettings.type.MemberEditType
 import com.together.study.util.noRippleClickable
@@ -126,100 +127,106 @@ fun MemberEditScreen(
                     modifier = Modifier
                         .padding(horizontal = 26.dp),
                 ) {
-                    item {
-                        Box(
-                            modifier = Modifier,
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(TogedyTheme.colors.gray50, RoundedCornerShape(8.dp))
-                                    .padding(horizontal = 8.dp, vertical = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(
-                                    text = "방장이름",
-                                    style = TogedyTheme.typography.body13b,
-                                    color = TogedyTheme.colors.gray700,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
-
-                                TogedyBasicTextChip(
-                                    text = "방장",
-                                    textStyle = TogedyTheme.typography.body10m,
-                                    textColor = TogedyTheme.colors.gray600,
-                                    backgroundColor = TogedyTheme.colors.gray200,
-                                    roundedCornerShape = RoundedCornerShape(4.dp),
-                                    horizontalPadding = 4.dp,
-                                    verticalPadding = 4.dp
-                                )
-                            }
-
-                            HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                thickness = 1.dp,
-                                color = TogedyTheme.colors.gray200,
-                            )
-                        }
-
-                    }
-
                     itemsIndexed(memberList) { index, item ->
-                        Box(
-                            modifier = Modifier,
-                            contentAlignment = Alignment.BottomCenter,
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp, vertical = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(
-                                    text = item.userName,
-                                    style = TogedyTheme.typography.body13b,
-                                    color = TogedyTheme.colors.gray700,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
+                        when (item.studyRole) {
+                            StudyRole.LEADER -> {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.BottomCenter
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                TogedyTheme.colors.gray50,
+                                                RoundedCornerShape(8.dp)
+                                            )
+                                            .padding(horizontal = 8.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Text(
+                                            text = item.userName,
+                                            style = TogedyTheme.typography.body13b,
+                                            color = TogedyTheme.colors.gray700,
+                                            overflow = TextOverflow.Ellipsis,
+                                            maxLines = 1,
+                                        )
 
-                                if (!type.chipText.isNullOrBlank()) {
-                                    val textColor = when (type) {
-                                        MemberEditType.EDIT -> TogedyTheme.colors.red
-                                        MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.green
-                                        else -> TogedyTheme.colors.gray600
-                                    }
-                                    val backgroundColor = when (type) {
-                                        MemberEditType.EDIT -> TogedyTheme.colors.red30
-                                        MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.greenBg
-                                        else -> TogedyTheme.colors.gray600
+                                        TogedyBasicTextChip(
+                                            text = "방장",
+                                            textStyle = TogedyTheme.typography.body10m,
+                                            textColor = TogedyTheme.colors.gray600,
+                                            backgroundColor = TogedyTheme.colors.gray200,
+                                            roundedCornerShape = RoundedCornerShape(4.dp),
+                                            horizontalPadding = 4.dp,
+                                            verticalPadding = 4.dp
+                                        )
                                     }
 
-                                    TogedyBasicTextChip(
-                                        text = type.chipText,
-                                        textStyle = TogedyTheme.typography.body10m,
-                                        textColor = textColor,
-                                        backgroundColor = backgroundColor,
-                                        roundedCornerShape = RoundedCornerShape(4.dp),
-                                        horizontalPadding = 4.dp,
-                                        verticalPadding = 4.dp,
-                                        modifier = Modifier.noRippleClickable {
-                                            viewModel.updateSelectedUSer(item)
-                                            isMemberDialogVisible = true
-                                        }
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        thickness = 1.dp,
+                                        color = TogedyTheme.colors.gray200,
                                     )
                                 }
                             }
 
-                            HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                thickness = 1.dp,
-                                color = TogedyTheme.colors.gray200
-                            )
+                            StudyRole.MEMBER -> {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.BottomCenter,
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Text(
+                                            text = item.userName,
+                                            style = TogedyTheme.typography.body13b,
+                                            color = TogedyTheme.colors.gray700,
+                                            overflow = TextOverflow.Ellipsis,
+                                            maxLines = 1,
+                                        )
+
+                                        if (!type.chipText.isNullOrBlank()) {
+                                            val textColor = when (type) {
+                                                MemberEditType.EDIT -> TogedyTheme.colors.red
+                                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.green
+                                                else -> TogedyTheme.colors.gray600
+                                            }
+                                            val backgroundColor = when (type) {
+                                                MemberEditType.EDIT -> TogedyTheme.colors.red30
+                                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.greenBg
+                                                else -> TogedyTheme.colors.gray600
+                                            }
+
+                                            TogedyBasicTextChip(
+                                                text = type.chipText,
+                                                textStyle = TogedyTheme.typography.body10m,
+                                                textColor = textColor,
+                                                backgroundColor = backgroundColor,
+                                                roundedCornerShape = RoundedCornerShape(4.dp),
+                                                horizontalPadding = 4.dp,
+                                                verticalPadding = 4.dp,
+                                                modifier = Modifier.noRippleClickable {
+                                                    viewModel.updateSelectedUSer(item)
+                                                    isMemberDialogVisible = true
+                                                }
+                                            )
+                                        }
+                                    }
+
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        thickness = 1.dp,
+                                        color = TogedyTheme.colors.gray200
+                                    )
+                                }
+                            }
                         }
                     }
 
