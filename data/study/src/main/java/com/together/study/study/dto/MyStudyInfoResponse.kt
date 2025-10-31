@@ -27,5 +27,5 @@ data class MyStudyItemResponse(
 @Serializable
 data class ActiveMemberResponse(
     @SerialName("userName") val userName: String,
-    @SerialName("userProfileImageUrl") val userProfileImageUrl: String,
+    @SerialName("userProfileImageUrl") val userProfileImageUrl: String?,
 )
