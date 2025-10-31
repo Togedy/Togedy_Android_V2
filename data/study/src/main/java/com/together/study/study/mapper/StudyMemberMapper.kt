@@ -44,7 +44,7 @@ fun StudyMemberPlannerResponse.toDomain(): StudyMemberPlanner =
         isPlannerVisible = isPlannerVisible,
         completedPlanCount = completedPlanCount,
         totalPlanCount = totalPlanCount,
-        dailyPlanner = dailyPlanner.map { it.toDailyPlanner() }
+        dailyPlanner = dailyPlanner?.map { it.toDailyPlanner() }
     )
 
 fun DailyPlannerResponse.toDailyPlanner(): DailyPlanner =
