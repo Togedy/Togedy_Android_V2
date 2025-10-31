@@ -3,7 +3,7 @@ package com.together.study.studysettings.subsettings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.together.study.common.type.study.StudyRole
+import com.together.study.study.type.StudyRole
 import com.together.study.studysettings.type.MemberEditType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

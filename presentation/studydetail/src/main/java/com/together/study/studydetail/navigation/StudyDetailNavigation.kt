@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
-import com.together.study.common.type.study.StudyRole
+import com.together.study.study.type.StudyRole
 import com.together.study.studydetail.detailmain.StudyDetailRoute
 import kotlinx.serialization.Serializable
 
