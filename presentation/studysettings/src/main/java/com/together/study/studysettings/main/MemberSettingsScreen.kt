@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
@@ -32,15 +33,15 @@ fun MemberSettingsRoute(
     modifier: Modifier = Modifier,
     onMemberNavigate: (Long) -> Unit,
     onReportNavigate: (Long) -> Unit,
+    viewModel: MemberSettingsViewModel = hiltViewModel(),
 ) {
-    var studyName = "햄부기"
     var isExitDialogVisible by remember { mutableStateOf(false) }
 
     val memberEdit = listOf(
-        Settings(title = "멤버 보기", onClick = { onMemberNavigate(1) }),
+        Settings(title = "멤버 보기", onClick = { onMemberNavigate(viewModel.studyId) }),
     )
     val deleteEdit = listOf(
-        Settings(title = "문제 신고하기", icon = null, onClick = { onReportNavigate(1) }),
+        Settings(title = "문제 신고하기", icon = null, onClick = { onReportNavigate(viewModel.studyId) }),
         Settings(
             title = "스터디 나가기",
             icon = null,
@@ -82,9 +83,7 @@ fun MemberSettingsRoute(
                 Text(
                     text = buildAnnotatedString {
                         withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
-                            append(
-                                studyName
-                            )
+                            append(viewModel.studyName)
                         }
                         append(" 스터디를 나갈까요?")
                     },
@@ -96,7 +95,7 @@ fun MemberSettingsRoute(
             buttonText = "나가기",
             buttonColor = TogedyTheme.colors.red,
             onDismissRequest = { isExitDialogVisible = false },
-            onButtonClick = { /* 나가기 api */ }
+            onButtonClick = viewModel::deleteStudyAsMember,
         )
     }
 }

@@ -22,8 +22,9 @@ fun NavController.navigateToLeaderSettingsScreen(
 
 fun NavController.navigateToMemberSettingsScreen(
     studyId: Long,
+    studyName: String,
     navOptions: NavOptions? = null,
-) = navigate(MemberSettings(studyId), navOptions)
+) = navigate(MemberSettings(studyId, studyName), navOptions)
 
 fun NavController.navigateToMemberEditScreen(
     studyId: Long,
@@ -103,7 +104,10 @@ data class LeaderSettings(
 ) : Route
 
 @Serializable
-data class MemberSettings(val studyId: Long) : Route
+data class MemberSettings(
+    val studyId: Long,
+    val studyName: String,
+) : Route
 
 @Serializable
 data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
