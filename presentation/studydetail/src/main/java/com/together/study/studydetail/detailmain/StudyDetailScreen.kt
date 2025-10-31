@@ -269,7 +269,7 @@ private fun StudyDetailSuccessScreen(
                                 modifier = Modifier.weight(1f),
                                 onItemClick = {
                                     selectedUserId = user.userId
-                                    onUserClick()
+                                    if (studyInfo.isJoined) onUserClick()
                                 },
                             )
                         }
