@@ -15,7 +15,7 @@ interface StudySettingsService {
         @Path("studyId") studyId: Long,
     ): BaseResponse<List<StudyMemberBriefInfoResponse>>
 
-    @PATCH("sutdies/{studyId}/members/limit")
+    @PATCH("studies/{studyId}/members/limit")
     suspend fun updateStudyMemberLimit(
         @Path("studyId") studyId: Long,
         @Body studyMemberLimit: Int,
