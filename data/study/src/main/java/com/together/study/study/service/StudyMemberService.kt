@@ -7,7 +7,7 @@ import com.together.study.study.dto.StudyMemberProfileResponse
 import com.together.study.study.dto.StudyMemberTimeBlockResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.PATCH
 import retrofit2.http.Path
 
 interface StudyMemberService {
@@ -29,8 +29,8 @@ interface StudyMemberService {
         @Path("userId") userId: Long,
     ): BaseResponse<StudyMemberPlannerResponse>
 
-    @POST("studies/{studyId}/members/{userId}/planners/visibility")
-    suspend fun postPlannerVisibility(
+    @PATCH("studies/{studyId}/members/{userId}/planners/visibility")
+    suspend fun updatePlannerVisibility(
         @Path("studyId") studyId: Long,
         @Path("userId") userId: Long,
         @Body isPlannerVisible: Boolean,

@@ -91,7 +91,7 @@ internal class UserInfoViewModel @Inject constructor(
             delay(3000L)
 
             if (_isPlannerVisibleToggle.value != initialValue) {
-                studyMemberRepository.postPlannerVisibility(
+                studyMemberRepository.updatePlannerVisibility(
                     studyId,
                     userId,
                     _isPlannerVisibleToggle.value

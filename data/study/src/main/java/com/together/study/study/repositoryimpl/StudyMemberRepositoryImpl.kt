@@ -38,12 +38,12 @@ class StudyMemberRepositoryImpl @Inject constructor(
             response.toDomain()
         }
 
-    override suspend fun postPlannerVisibility(
+    override suspend fun updatePlannerVisibility(
         studyId: Long,
         userId: Long,
         isVisible: Boolean,
     ): Result<Unit> =
         runCatching {
-            studyMemberDataSource.postPlannerVisibility(studyId, userId, isVisible)
+            studyMemberDataSource.updatePlannerVisibility(studyId, userId, isVisible)
         }.map { }
 }
