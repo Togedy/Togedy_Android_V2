@@ -91,7 +91,13 @@ private fun MainNavHost(
 
         studyDetailGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToStudySettings = { navigator.navController.navigateToLeaderSettingsScreen(1) },
+            navigateToStudySettings = {
+                navigator.navController.navigateToLeaderSettingsScreen(
+                    1,
+                    5,
+                    10
+                )
+            },
             modifier = modifier,
         )
 

@@ -15,8 +15,10 @@ import kotlinx.serialization.Serializable
 
 fun NavController.navigateToLeaderSettingsScreen(
     studyId: Long,
+    studyMemberCount: Int,
+    studyMemberLimit: Int,
     navOptions: NavOptions? = null,
-) = navigate(LeaderSettings(studyId), navOptions)
+) = navigate(LeaderSettings(studyId, studyMemberCount, studyMemberLimit), navOptions)
 
 fun NavController.navigateToMemberSettingsScreen(
     studyId: Long,
@@ -50,8 +52,8 @@ fun NavGraphBuilder.studySettingsGraph(
                     type = MemberEditType.EDIT,
                 )
             },
-            onMemberCountClick = {
-                navController.navigateToMemberCountEditScreen(memberCount = it)
+            onMemberCountClick = { count, limit ->
+                navController.navigateToMemberCountEditScreen(memberCount = count)
             },
             onLeaderEditClick = {
                 navController.navigateToMemberEditScreen(
@@ -94,7 +96,11 @@ fun NavGraphBuilder.studySettingsGraph(
 
 
 @Serializable
-data class LeaderSettings(val studyId: Long) : Route
+data class LeaderSettings(
+    val studyId: Long,
+    val studyMemberCount: Int,
+    val studyMemberLimit: Int,
+) : Route
 
 @Serializable
 data class MemberSettings(val studyId: Long) : Route
