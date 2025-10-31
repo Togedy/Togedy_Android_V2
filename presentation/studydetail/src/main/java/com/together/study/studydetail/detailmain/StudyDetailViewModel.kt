@@ -9,7 +9,7 @@ import com.together.study.study.model.StudyAttendance
 import com.together.study.study.model.StudyDetailInfo
 import com.together.study.study.model.StudyMember
 import com.together.study.study.repository.StudyDetailRepository
-import com.together.study.study.usecase.GetStudyDetailInfoUseCase
+import com.together.study.study.usecase.GetStudyAttendanceUseCase
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
@@ -31,7 +31,7 @@ import javax.inject.Inject
 internal class StudyDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val studyDetailRepository: StudyDetailRepository,
-    private val getAttendanceUseCase: GetStudyDetailInfoUseCase,
+    private val getAttendanceUseCase: GetStudyAttendanceUseCase,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
 

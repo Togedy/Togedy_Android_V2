@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
+import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.R.drawable.ic_settings_24
@@ -122,23 +123,25 @@ private fun StudyDetailScreen(
         is UiState.Empty -> {}
         is UiState.Failure -> {}
         is UiState.Loading -> {}
-        is UiState.Success -> StudyDetailSuccessScreen(
-            studyId = studyId,
-            uiState = uiState,
-            selectedTab = selectedTab,
-            selectedDate = selectedDate,
-            dialogState = dialogState,
-            modifier = modifier,
-            onBackClick = onBackClick,
-            onShareButtonClick = onShareButtonClick,
-            onSettingsButtonClick = onSettingsButtonClick,
-            onTabChange = onTabChange,
-            onUserClick = onUserClick,
-            onPreviousWeekClick = onPreviousWeekClick,
-            onNextWeekClick = onNextWeekClick,
-            onDialogStateChange = onDialogStateChange,
-            onJoinStudyClick = onJoinStudyClick,
-        )
+        is UiState.Success -> {
+            StudyDetailSuccessScreen(
+                studyId = studyId,
+                uiState = uiState,
+                selectedTab = selectedTab,
+                selectedDate = selectedDate,
+                dialogState = dialogState,
+                modifier = modifier,
+                onBackClick = onBackClick,
+                onShareButtonClick = onShareButtonClick,
+                onSettingsButtonClick = onSettingsButtonClick,
+                onTabChange = onTabChange,
+                onUserClick = onUserClick,
+                onPreviousWeekClick = onPreviousWeekClick,
+                onNextWeekClick = onNextWeekClick,
+                onDialogStateChange = onDialogStateChange,
+                onJoinStudyClick = onJoinStudyClick,
+            )
+        }
     }
 }
 
@@ -222,8 +225,7 @@ private fun StudyDetailSuccessScreen(
                 modifier = Modifier,
             )
 
-            // TODO: api 수정되면 주석 삭제
-            if (studyInfo.isJoined && studyInfo.completedMemberCount != 0 /*&& studyInfo.studyType == StudyType.CHALLENGE.name*/) {
+            if (studyInfo.isJoined && studyInfo.completedMemberCount != 0 && studyInfo.studyType == StudyType.CHALLENGE.name) {
                 DailyCompletionBar(
                     studyInfo.completedMemberCount!!,
                     studyInfo.studyMemberCount,
@@ -375,17 +377,8 @@ private fun StudyDetailSuccessScreen(
             }
         }
 
-        if (studyInfo.isJoined) { //TODO: 스탑워치 화면이동 버튼으로 변경
-            Box(
-                modifier = Modifier
-                    .background(color = TogedyTheme.colors.gray300)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-            ) {
-                TogedyButton(
-                    text = "스터디 가입하기",
-                    onClick = { onDialogStateChange(StudyDetailDialogType.JOIN) },
-                )
-            }
+        if (studyInfo.isJoined) {
+            //TODO: 스탑워치 화면이동 버튼으로 변경
         } else {
             Box(
                 modifier = Modifier

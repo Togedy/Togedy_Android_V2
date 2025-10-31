@@ -6,7 +6,7 @@ data class StudyDetailInfo(
     val studyName: String,
     val studyDescription: String?,
     val studyImageUrl: String,
-//    val studyType: String,
+    val studyType: String,
     val studyTag: String,
     val studyTier: String,
     val studyMemberCount: Int,

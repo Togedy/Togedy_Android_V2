@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
-class GetStudyDetailInfoUseCase @Inject constructor(
+class GetStudyAttendanceUseCase @Inject constructor(
     private val studyDetailRepository: StudyDetailRepository,
 ) {
     suspend operator fun invoke(

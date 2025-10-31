@@ -45,5 +45,5 @@ class StudyMemberRepositoryImpl @Inject constructor(
     ): Result<Unit> =
         runCatching {
             studyMemberDataSource.postPlannerVisibility(studyId, userId, isVisible)
-        }
+        }.map { }
 }
