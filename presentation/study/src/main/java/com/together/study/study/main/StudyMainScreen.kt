@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
+import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
@@ -45,8 +46,6 @@ import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
 import com.together.study.study.main.state.StudyMainUiState
-import com.together.study.study.model.MyStudyInfo
-import com.together.study.study.type.StudyTagType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 
@@ -167,13 +166,13 @@ private fun StudyMainScreen(
         ) { page ->
             when (StudyMainTab.entries[page]) {
                 StudyMainTab.MAIN -> {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        when (uiState.isLoaded) {
-                            is UiState.Empty -> {}
-                            is UiState.Failure -> {}
-                            is UiState.Loading -> {}
-                            is UiState.Success -> {
-                                with((uiState.myStudyState as UiState.Success<MyStudyInfo>).data) {
+                    when (uiState.myStudyState) {
+                        is UiState.Empty -> {}
+                        is UiState.Failure -> {}
+                        is UiState.Loading -> {}
+                        is UiState.Success -> {
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                with(uiState.myStudyState.data) {
                                     item { TimerSection(studyMainTimerInfo) }
 
                                     item {
@@ -218,7 +217,7 @@ private fun StudyMainScreen(
                 }
 
                 StudyMainTab.EXPLORE -> {
-                    when (uiState.isLoaded) {
+                    when (uiState.exploreStudyState) {
                         is UiState.Empty -> {}
                         is UiState.Failure -> {}
                         is UiState.Loading -> {}
@@ -244,7 +243,7 @@ private fun StudyMainScreen(
                                     }
                                 }
 
-                                itemsIndexed((uiState.exploreStudyState as UiState.Success).data) { _, study ->
+                                itemsIndexed(uiState.exploreStudyState.data) { _, study ->
                                     Box(
                                         modifier = Modifier
                                             .background(TogedyTheme.colors.gray100)

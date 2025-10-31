@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
+import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.study.main.state.ExploreFilterState
 import com.together.study.study.main.state.StudyMainUiState
@@ -11,7 +12,6 @@ import com.together.study.study.model.ExploreStudyFilter
 import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.model.MyStudyInfo
 import com.together.study.study.repository.StudyExploreRepository
-import com.together.study.study.type.StudyTagType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

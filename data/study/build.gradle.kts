@@ -12,6 +12,9 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.util)
+    implementation(projects.core.common)
+
     implementation(projects.data.remote)
     implementation(projects.domain.study)
     implementation(libs.timber)

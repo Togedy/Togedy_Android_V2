@@ -164,7 +164,7 @@ private fun StudyMonthlyColorBlockPreview() {
         StudyMonthlyColorBlock(
             year = 2025,
             month = 10,
-            studyTimeList = StudyMemberTimeBlocks.MonthlyStudyTime.mock.studyTimeList,
+            studyTimeList = emptyList(),
         )
     }
 }

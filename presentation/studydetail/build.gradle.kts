@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
-    implementation(projects.presentation.study) // TODO : 추후 domain 정리되면 삭제
+    implementation(projects.domain.study)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
