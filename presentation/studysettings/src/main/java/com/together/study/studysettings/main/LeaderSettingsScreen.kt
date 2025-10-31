@@ -26,6 +26,7 @@ import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studysettings.component.SettingsSection
+import com.together.study.studysettings.model.Settings
 
 @Composable
 fun LeaderSettingsRoute(
