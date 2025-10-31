@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.TogedyBottomSheet
@@ -44,9 +46,12 @@ fun MemberCountEditScreen(
     modifier: Modifier = Modifier,
     viewModel: MemberCountEditViewModel = hiltViewModel(),
 ) {
+    val memberLimit by viewModel.memberLimit.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetVisible by remember { mutableStateOf(false) }
-    val selectedValue by viewModel.selectedValue.collectAsStateWithLifecycle()
+    var selectedValue by remember { mutableIntStateOf(memberLimit) }
 
     Column(
         modifier = modifier
@@ -100,7 +105,7 @@ fun MemberCountEditScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "${selectedValue}명",
+                    text = "${memberLimit}명",
                     style = TogedyTheme.typography.title16sb,
                     color = TogedyTheme.colors.gray700,
                 )
@@ -121,17 +126,34 @@ fun MemberCountEditScreen(
             title = "스터디 인원",
             showDone = true,
             isDoneActivate = viewModel.studyMemberCount <= selectedValue,
-            onDoneClick = viewModel::postNewMemberLimit,
+            onDoneClick = { viewModel.postNewMemberLimit(selectedValue) },
             modifier = modifier,
         ) {
             TogedyScrollPicker(
-                initValue = selectedValue,
+                initValue = memberLimit,
                 minValue = 2,
                 maxValue = 30,
                 position = PickerPosition.START,
                 modifier = modifier,
-                onValueChange = viewModel::updateSelectedValue,
+                onValueChange = { selectedValue = it },
             )
+        }
+    }
+
+    if (uiState == UiState.Loading) {
+        // TODO: Loading 화면 연결
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(TogedyTheme.colors.gray50),
+        ) {
+            Text("LOADING...")
+        }
+    } else if (uiState is UiState.Success) {
+        if ((uiState as UiState.Success<Boolean?>).data == true) {
+            //TODO: 스터디 인원 변경 성공 toast
+        } else {
+            //TODO: 스터디 인원 변경 실패 toast
         }
     }
 }
