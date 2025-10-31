@@ -37,7 +37,7 @@ class MemberSettingsViewModel @Inject constructor(
 
     fun getStudyInfo() = viewModelScope.launch {
         studyDetailRepository.getStudyDetailInfo(studyId)
-            .onSuccess { _studyInfo.update { it } }
+            .onSuccess { newInfo -> _studyInfo.update { newInfo } }
             .onFailure { Timber.tag(TAG).d("getStudyInfo failed: $it") }
     }
 
