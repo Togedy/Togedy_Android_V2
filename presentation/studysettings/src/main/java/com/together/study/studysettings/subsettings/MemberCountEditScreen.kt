@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,6 +26,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.TogedyBottomSheet
@@ -41,11 +42,11 @@ import com.together.study.util.noRippleClickable
 fun MemberCountEditScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: MemberCountEditViewModel = hiltViewModel(),
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var isBottomSheetVisible by remember { mutableStateOf(true) }
-    var memberCount = 10
-    var selectedCount by remember { mutableIntStateOf(memberCount) }
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    val selectedValue by viewModel.selectedValue.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -99,7 +100,7 @@ fun MemberCountEditScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "3명",
+                    text = "${selectedValue}명",
                     style = TogedyTheme.typography.title16sb,
                     color = TogedyTheme.colors.gray700,
                 )
@@ -119,19 +120,17 @@ fun MemberCountEditScreen(
             onDismissRequest = { isBottomSheetVisible = false },
             title = "스터디 인원",
             showDone = true,
-            isDoneActivate = memberCount <= selectedCount,
-            onDoneClick = {
-                // 수정 API
-                memberCount = selectedCount
-            },
+            isDoneActivate = viewModel.studyMemberCount <= selectedValue,
+            onDoneClick = viewModel::postNewMemberLimit,
             modifier = modifier,
         ) {
             TogedyScrollPicker(
-                initValue = memberCount,
+                initValue = selectedValue,
                 minValue = 2,
                 maxValue = 30,
                 position = PickerPosition.START,
                 modifier = modifier,
+                onValueChange = viewModel::updateSelectedValue,
             )
         }
     }
