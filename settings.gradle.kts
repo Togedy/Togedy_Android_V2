@@ -47,4 +47,5 @@ include(
     ":presentation:search",
     ":presentation:study",
     ":presentation:studydetail",
+    ":presentation:studysettings",
 )
