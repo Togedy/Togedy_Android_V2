@@ -32,8 +32,8 @@ fun LeaderSettingsRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onInfoClick: (Long) -> Unit,
-    onMemberClick: (Long) -> Unit,
-    onMemberCountClick: (Int, Int) -> Unit,
+    onMemberClick: (Long, Int, Int) -> Unit,
+    onMemberCountClick: (Long, Int, Int) -> Unit,
     onLeaderEditClick: (Long) -> Unit,
     viewModel: LeaderSettingsViewModel = hiltViewModel(),
 ) {
@@ -43,13 +43,20 @@ fun LeaderSettingsRoute(
         Settings("계정 센터", "비밀번호, 배경이미지, 스터디 태그 변경", onClick = { onInfoClick(viewModel.studyId) })
     )
     val memberEdit = listOf(
-        Settings(title = "멤버관리", onClick = { onMemberClick(viewModel.studyId) }),
+        Settings(title = "멤버관리", onClick = {
+            onMemberClick(
+                viewModel.studyId,
+                viewModel.studyMemberCount,
+                viewModel.studyMemberLimit,
+            )
+        }),
         Settings(
             title = "스터디 인원 수 설정",
             onClick = {
                 onMemberCountClick(
+                    viewModel.studyId,
                     viewModel.studyMemberCount,
-                    viewModel.studyMemberLimit
+                    viewModel.studyMemberLimit,
                 )
             })
     )
@@ -124,8 +131,8 @@ private fun LeaderSettingsRoutePreview() {
         LeaderSettingsRoute(
             onBackClick = {},
             onInfoClick = {},
-            onMemberClick = {},
-            onMemberCountClick = { count, limit -> },
+            onMemberClick = { id, count, limit -> },
+            onMemberCountClick = { id, count, limit -> },
             onLeaderEditClick = {},
         )
     }

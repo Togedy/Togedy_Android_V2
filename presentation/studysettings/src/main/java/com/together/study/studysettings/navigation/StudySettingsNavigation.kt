@@ -29,8 +29,10 @@ fun NavController.navigateToMemberSettingsScreen(
 fun NavController.navigateToMemberEditScreen(
     studyId: Long,
     type: MemberEditType,
+    studyMemberCount: Int = 0,
+    studyMemberLimit: Int = 0,
     navOptions: NavOptions? = null,
-) = navigate(MemberEdit(studyId, type), navOptions)
+) = navigate(MemberEdit(studyId, type, studyMemberCount, studyMemberLimit), navOptions)
 
 fun NavController.navigateToMemberCountEditScreen(
     memberCount: Int,
@@ -47,18 +49,20 @@ fun NavGraphBuilder.studySettingsGraph(
         LeaderSettingsRoute(
             onBackClick = navigateToUp,
             onInfoClick = {},
-            onMemberClick = {
+            onMemberClick = { id, count, limit ->
                 navController.navigateToMemberEditScreen(
-                    studyId = it,
+                    studyId = id,
                     type = MemberEditType.EDIT,
+                    studyMemberCount = count,
+                    studyMemberLimit = limit,
                 )
             },
-            onMemberCountClick = { count, limit ->
+            onMemberCountClick = { id, count, limit ->
                 navController.navigateToMemberCountEditScreen(memberCount = count)
             },
-            onLeaderEditClick = {
+            onLeaderEditClick = { id ->
                 navController.navigateToMemberEditScreen(
-                    studyId = it,
+                    studyId = id,
                     type = MemberEditType.LEADER_CHANGE,
                 )
             },
@@ -69,9 +73,9 @@ fun NavGraphBuilder.studySettingsGraph(
     composable<MemberSettings> {
         MemberSettingsRoute(
             onBackClick = navigateToUp,
-            onMemberNavigate = {
+            onMemberNavigate = { id ->
                 navController.navigateToMemberEditScreen(
-                    studyId = it,
+                    studyId = id,
                     type = MemberEditType.SHOW,
                 )
             },
@@ -110,7 +114,12 @@ data class MemberSettings(
 ) : Route
 
 @Serializable
-data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
+data class MemberEdit(
+    val studyId: Long,
+    val type: MemberEditType,
+    val studyMemberCount: Int,
+    val studyMemberLimit: Int,
+) : Route
 
 @Serializable
 data class MemberCountEdit(val memberCount: Int) : Route

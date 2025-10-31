@@ -31,6 +31,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.type.study.StudyRole
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
@@ -51,9 +53,11 @@ fun MemberEditScreen(
     onBackClick: () -> Unit,
     type: MemberEditType = MemberEditType.EDIT,
     modifier: Modifier = Modifier,
+    viewModel: MemberEditViewModel = hiltViewModel(),
 ) {
     var isMemberDialogVisible by remember { mutableStateOf(false) }
-    var selectedUser by remember { mutableStateOf(Member(0, "", StudyRole.MEMBER)) }
+    val currentStudyMemberCount by viewModel.currentStudyMemberCount.collectAsStateWithLifecycle()
+    val selectedUser by viewModel.selectedUser.collectAsStateWithLifecycle()
 
     val memberList = listOf(
         Member(
@@ -245,7 +249,7 @@ fun MemberEditScreen(
             .padding(top = 22.dp),
     ) {
         TogedyTopBar(
-            title = type.title,
+            title = viewModel.type.title,
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             modifier = Modifier.padding(bottom = 4.dp),
             onLeftClicked = onBackClick,
@@ -262,7 +266,7 @@ fun MemberEditScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "스터디 멤버 관리 10/30",
+                    text = "스터디 멤버 관리 ${currentStudyMemberCount}/${viewModel.studyMemberLimit}",
                     style = TogedyTheme.typography.body14b,
                     color = TogedyTheme.colors.gray800,
                 )
@@ -335,7 +339,7 @@ fun MemberEditScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            text = "member~!@",
+                            text = item.userName,
                             style = TogedyTheme.typography.body13b,
                             color = TogedyTheme.colors.gray700,
                             overflow = TextOverflow.Ellipsis,
@@ -363,7 +367,7 @@ fun MemberEditScreen(
                                 horizontalPadding = 4.dp,
                                 verticalPadding = 4.dp,
                                 modifier = Modifier.noRippleClickable {
-                                    selectedUser = item
+                                    viewModel.updateSelectedUSer(item)
                                     isMemberDialogVisible = true
                                 }
                             )
@@ -404,7 +408,7 @@ fun MemberEditScreen(
                     },
                     buttonText = "내보내기",
                     onDismissRequest = { isMemberDialogVisible = false },
-                    onButtonClick = { /* 추방 api */ }
+                    onButtonClick = viewModel::deleteStudyMember,
                 )
             }
 
@@ -426,7 +430,7 @@ fun MemberEditScreen(
                     },
                     buttonText = "설정하기",
                     onDismissRequest = { isMemberDialogVisible = false },
-                    onButtonClick = { /* 위임 api */ }
+                    onButtonClick = viewModel::delegateLeader,
                 )
             }
 
