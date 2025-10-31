@@ -59,32 +59,32 @@ fun TogedyTypography() = TogedyTypography(
     title18b = TogedyTextStyle(
         fontFamily = PretendardBold,
         fontSize = 18.sp,
-        lineHeight = 22.sp,
+        lineHeight = 29.sp,
     ),
     title16sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
-        lineHeight = 22.sp,
+        lineHeight = 26.sp,
     ),
     body14b = TogedyTextStyle(
         fontFamily = PretendardBold,
         fontSize = 14.sp,
-        lineHeight = 20.sp,
+        lineHeight = 22.sp,
     ),
     body14m = TogedyTextStyle(
         fontFamily = PretendardMedium,
         fontSize = 14.sp,
-        lineHeight = 20.sp,
+        lineHeight = 22.sp,
     ),
     body13b = TogedyTextStyle(
         fontFamily = PretendardBold,
         fontSize = 13.sp,
-        lineHeight = 22.sp,
+        lineHeight = 21.sp,
     ),
     body13m = TogedyTextStyle(
         fontFamily = PretendardMedium,
         fontSize = 13.sp,
-        lineHeight = 22.sp,
+        lineHeight = 21.sp,
     ),
     body12m = TogedyTextStyle(
         fontFamily = PretendardMedium,
@@ -94,12 +94,12 @@ fun TogedyTypography() = TogedyTypography(
     body10m = TogedyTextStyle(
         fontFamily = PretendardMedium,
         fontSize = 10.sp,
-        lineHeight = 12.sp,
+        lineHeight = 14.sp,
     ),
     toast13sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 13.sp,
-        lineHeight = 15.sp,
+        lineHeight = 16.sp,
     ),
     toast12sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
