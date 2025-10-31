@@ -11,6 +11,7 @@ import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 @Composable
 fun StudyDetailDialogScreen(
     studyId: Long,
+    userId: Long,
     studyInfo: StudyDetailInfo,
     dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
@@ -40,6 +41,7 @@ fun StudyDetailDialogScreen(
         if (isUserBottomSheetVisible) {
             UserInfoBottomSheet(
                 studyId = studyId,
+                userId = userId,
                 modifier = modifier,
                 onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) },
             )

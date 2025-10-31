@@ -16,12 +16,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -91,10 +95,7 @@ internal fun StudyDetailRoute(
         onShareButtonClick = {},
         onSettingsButtonClick = onSettingsNavigate,
         onTabChange = viewModel::updateSelectedTab,
-        onUserClick = {
-            //TODO: 통신 함수 호출 후 성공하면 BottomSheet
-            viewModel.updateDialogState(StudyDetailDialogType.USER)
-        },
+        onUserClick = { viewModel.updateDialogState(StudyDetailDialogType.USER) },
         onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
         onDialogStateChange = viewModel::updateDialogState,
@@ -114,7 +115,7 @@ private fun StudyDetailScreen(
     onShareButtonClick: () -> Unit,
     onSettingsButtonClick: (Long, StudyRole) -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
-    onUserClick: (Long) -> Unit,
+    onUserClick: () -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
@@ -146,7 +147,7 @@ private fun StudyDetailScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun StudyDetailSuccessScreen(
     studyId: Long,
@@ -159,7 +160,7 @@ private fun StudyDetailSuccessScreen(
     onShareButtonClick: () -> Unit,
     onSettingsButtonClick: (Long, StudyRole) -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
-    onUserClick: (Long) -> Unit,
+    onUserClick: () -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
@@ -171,6 +172,7 @@ private fun StudyDetailSuccessScreen(
     val attendance = (uiState.attendanceState as UiState.Success).data
 
     val isCurrentWeek = isCurrentWeek(selectedDate)
+    var selectedUserId by remember { mutableLongStateOf(0) }
 
     LazyColumn(
         modifier = modifier
@@ -265,7 +267,10 @@ private fun StudyDetailSuccessScreen(
                                 context = context,
                                 user = user,
                                 modifier = Modifier.weight(1f),
-                                onItemClick = { onUserClick(user.userId) },
+                                onItemClick = {
+                                    selectedUserId = user.userId
+                                    onUserClick()
+                                },
                             )
                         }
 
@@ -400,6 +405,7 @@ private fun StudyDetailSuccessScreen(
 
     StudyDetailDialogScreen(
         studyId = studyId,
+        userId = selectedUserId,
         studyInfo = studyInfo,
         dialogState = dialogState,
         onDismissRequest = onDialogStateChange,

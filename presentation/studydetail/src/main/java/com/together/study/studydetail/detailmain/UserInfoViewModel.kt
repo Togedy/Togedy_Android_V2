@@ -25,7 +25,7 @@ internal class UserInfoViewModel @Inject constructor(
     private val studyMemberRepository: StudyMemberRepository,
 ) : ViewModel() {
     var studyId: Long = 0
-    private var userId: Long = 0
+    var userId: Long = 0
 
     private val _isPlannerVisibleToggle = MutableStateFlow(false)
     val isPlannerVisibleToggle: StateFlow<Boolean> = _isPlannerVisibleToggle
@@ -54,26 +54,28 @@ internal class UserInfoViewModel @Inject constructor(
         )
     )
 
-    fun getStudyMemberInfo(id: Long) = viewModelScope.launch {
+    fun getStudyMemberInfo(id: Long, user: Long) = viewModelScope.launch {
         studyId = id
-        getStudyMemberProfile(studyId)
-        getStudyMemberTimeBlocks(studyId)
-        getStudyMemberPlanner(studyId)
+        userId = user
+
+        getStudyMemberProfile()
+        getStudyMemberTimeBlocks()
+        getStudyMemberPlanner()
     }
 
-    suspend fun getStudyMemberProfile(studyId: Long) {
+    fun getStudyMemberProfile() = viewModelScope.launch {
         studyMemberRepository.getStudyMemberProfile(studyId, userId)
             .onSuccess { _profileState.value = UiState.Success(it) }
             .onFailure { _profileState.value = UiState.Failure(it.message.toString()) }
     }
 
-    suspend fun getStudyMemberTimeBlocks(studyId: Long) {
+    fun getStudyMemberTimeBlocks() = viewModelScope.launch {
         studyMemberRepository.getStudyMemberTimeBlocks(studyId, userId)
             .onSuccess { _timeBlockState.value = UiState.Success(it) }
             .onFailure { _timeBlockState.value = UiState.Failure(it.message.toString()) }
     }
 
-    suspend fun getStudyMemberPlanner(studyId: Long) {
+    fun getStudyMemberPlanner() = viewModelScope.launch {
         studyMemberRepository.getStudyMemberPlanner(studyId, userId)
             .onSuccess { _plannerState.value = UiState.Success(it) }
             .onFailure { _plannerState.value = UiState.Failure(it.message.toString()) }
