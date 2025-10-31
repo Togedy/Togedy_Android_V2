@@ -47,7 +47,7 @@ fun NavGraphBuilder.studySettingsGraph(
     composable<LeaderSettings> {
         LeaderSettingsRoute(
             onBackClick = navigateToUp,
-            onInfoClick = {},
+            onInfoClick = { /* 정보 수정 화면 */ },
             onMemberClick = { id, count, limit ->
                 navController.navigateToMemberEditScreen(
                     studyId = id,
@@ -80,6 +80,7 @@ fun NavGraphBuilder.studySettingsGraph(
                 )
             },
             onReportNavigate = { /* 추후 신고화면 연결*/ },
+            onStudyMainNavigate = navigateToStudyMain,
             modifier = modifier,
         )
     }

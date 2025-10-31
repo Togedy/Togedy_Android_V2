@@ -21,6 +21,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
@@ -31,12 +33,15 @@ import com.together.study.studysettings.model.Settings
 @Composable
 fun MemberSettingsRoute(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
     onMemberNavigate: (Long) -> Unit,
     onReportNavigate: (Long) -> Unit,
+    onStudyMainNavigate: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: MemberSettingsViewModel = hiltViewModel(),
 ) {
     var isExitDialogVisible by remember { mutableStateOf(false) }
+    val studyInfo by viewModel.studyInfo.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val memberEdit = listOf(
         Settings(title = "멤버 보기", onClick = { onMemberNavigate(viewModel.studyId) }),
@@ -84,7 +89,7 @@ fun MemberSettingsRoute(
                 Text(
                     text = buildAnnotatedString {
                         withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
-                            append(viewModel.studyName)
+                            append(studyInfo?.studyName ?: "해당")
                         }
                         append(" 스터디를 나갈까요?")
                     },
@@ -96,8 +101,28 @@ fun MemberSettingsRoute(
             buttonText = "나가기",
             buttonColor = TogedyTheme.colors.red,
             onDismissRequest = { isExitDialogVisible = false },
-            onButtonClick = viewModel::deleteStudyAsMember,
+            onButtonClick = {
+                viewModel.deleteStudyAsMember()
+                isExitDialogVisible = false
+            },
         )
+    }
+
+    if (uiState == UiState.Loading) {
+        // TODO: Loading 화면 연결
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(TogedyTheme.colors.gray50),
+        ) {
+            Text("LOADING...")
+        }
+    } else if (uiState is UiState.Success) {
+        if ((uiState as UiState.Success<Boolean?>).data == true) {
+            onStudyMainNavigate()
+        } else {
+            //TODO: 스터디 삭제 실패 toast
+        }
     }
 }
 
@@ -109,6 +134,7 @@ private fun MemberSettingsRoutePreview() {
             onBackClick = {},
             onMemberNavigate = {},
             onReportNavigate = {},
+            onStudyMainNavigate = {},
         )
     }
 }
