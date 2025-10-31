@@ -35,7 +35,7 @@ fun LeaderSettingsRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onInfoClick: (Long) -> Unit,
-    onMemberClick: (Long, Int, Int) -> Unit,
+    onMemberClick: (Long) -> Unit,
     onMemberCountClick: (Long, Int, Int) -> Unit,
     onLeaderEditClick: (Long) -> Unit,
     onStudyMainNavigate: () -> Unit,
@@ -50,9 +50,7 @@ fun LeaderSettingsRoute(
     )
     val memberEdit = listOf(
         Settings(title = "멤버관리", onClick = {
-            studyInfo?.let {
-                onMemberClick(viewModel.studyId, it.studyMemberCount, it.studyMemberLimit)
-            }
+            studyInfo?.let { onMemberClick(viewModel.studyId) }
         }),
         Settings(
             title = "스터디 인원 수 설정",
@@ -153,7 +151,7 @@ private fun LeaderSettingsRoutePreview() {
         LeaderSettingsRoute(
             onBackClick = {},
             onInfoClick = {},
-            onMemberClick = { id, count, limit -> },
+            onMemberClick = {},
             onMemberCountClick = { id, count, limit -> },
             onLeaderEditClick = {},
             onStudyMainNavigate = {},
