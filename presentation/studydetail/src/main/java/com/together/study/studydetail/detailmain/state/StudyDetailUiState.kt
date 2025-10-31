@@ -2,12 +2,13 @@ package com.together.study.studydetail.detailmain.state
 
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState
-import com.together.study.study.main.state.Study
-import com.together.study.studydetail.detailmain.StudyMember
+import com.together.study.study.model.StudyAttendance
+import com.together.study.study.model.StudyDetailInfo
+import com.together.study.study.model.StudyMember
 
 @Immutable
 data class StudyDetailUiState(
-    val studyInfoState: UiState<Study>,
+    val studyInfoState: UiState<StudyDetailInfo>,
     val membersState: UiState<List<StudyMember>>,
     val attendanceState: UiState<List<StudyAttendance>>,
 ) {

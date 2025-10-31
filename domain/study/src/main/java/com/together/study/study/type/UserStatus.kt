@@ -1,4 +1,4 @@
-package com.together.study.common.type.study
+package com.together.study.study.type
 
 enum class UserStatus(
     val label: String = "",

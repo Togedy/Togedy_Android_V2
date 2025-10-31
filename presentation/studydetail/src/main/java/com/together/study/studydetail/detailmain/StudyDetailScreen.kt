@@ -80,7 +80,7 @@ internal fun StudyDetailRoute(
     }
 
     StudyDetailScreen(
-        isMyStudy = true,
+        studyId = viewModel.studyId,
         uiState = uiState,
         selectedTab = selectedTab,
         selectedDate = selectedDate,
@@ -97,13 +97,13 @@ internal fun StudyDetailRoute(
         onPreviousWeekClick = { viewModel.updateSelectedDate("이전") },
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
         onDialogStateChange = viewModel::updateDialogState,
-        onJoinStudyClick = {},
+        onJoinStudyClick = viewModel::joinStudy,
     )
 }
 
 @Composable
 private fun StudyDetailScreen(
-    isMyStudy: Boolean,
+    studyId: Long,
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
@@ -123,31 +123,32 @@ private fun StudyDetailScreen(
         is UiState.Empty -> {}
         is UiState.Failure -> {}
         is UiState.Loading -> {}
-        is UiState.Success -> StudyDetailSuccessScreen(
-            isMyStudy = isMyStudy,
-            uiState = uiState,
-            selectedTab = selectedTab,
-            selectedDate = selectedDate,
-            dialogState = dialogState,
-            modifier = modifier,
-            onBackClick = onBackClick,
-            onShareButtonClick = onShareButtonClick,
-            onSettingsButtonClick = onSettingsButtonClick,
-            onTabChange = onTabChange,
-            onUserClick = onUserClick,
-            onJoinButtonClick = {},
-            onPreviousWeekClick = onPreviousWeekClick,
-            onNextWeekClick = onNextWeekClick,
-            onDialogStateChange = onDialogStateChange,
-            onJoinStudyClick = onJoinStudyClick,
-        )
+        is UiState.Success -> {
+            StudyDetailSuccessScreen(
+                studyId = studyId,
+                uiState = uiState,
+                selectedTab = selectedTab,
+                selectedDate = selectedDate,
+                dialogState = dialogState,
+                modifier = modifier,
+                onBackClick = onBackClick,
+                onShareButtonClick = onShareButtonClick,
+                onSettingsButtonClick = onSettingsButtonClick,
+                onTabChange = onTabChange,
+                onUserClick = onUserClick,
+                onPreviousWeekClick = onPreviousWeekClick,
+                onNextWeekClick = onNextWeekClick,
+                onDialogStateChange = onDialogStateChange,
+                onJoinStudyClick = onJoinStudyClick,
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyDetailSuccessScreen(
-    isMyStudy: Boolean,
+    studyId: Long,
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
@@ -158,7 +159,6 @@ private fun StudyDetailSuccessScreen(
     onSettingsButtonClick: () -> Unit,
     onTabChange: (StudyDetailTab) -> Unit,
     onUserClick: (Long) -> Unit,
-    onJoinButtonClick: () -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
@@ -225,9 +225,9 @@ private fun StudyDetailSuccessScreen(
                 modifier = Modifier,
             )
 
-            if (isMyStudy && studyInfo.completedMemberCount != 0 && studyInfo.studyType == StudyType.CHALLENGE.name) {
+            if (studyInfo.isJoined && studyInfo.completedMemberCount != 0 && studyInfo.studyType == StudyType.CHALLENGE.name) {
                 DailyCompletionBar(
-                    studyInfo.completedMemberCount,
+                    studyInfo.completedMemberCount!!,
                     studyInfo.studyMemberCount,
                 )
             } else {
@@ -363,7 +363,7 @@ private fun StudyDetailSuccessScreen(
                     .noRippleClickable(onShareButtonClick),
             )
 
-            if (isMyStudy) {
+            if (studyInfo.isJoined) {
                 Spacer(Modifier.width(8.dp))
 
                 Icon(
@@ -377,17 +377,8 @@ private fun StudyDetailSuccessScreen(
             }
         }
 
-        if (isMyStudy) { //TODO: 스탑워치 화면이동 버튼으로 변경
-            Box(
-                modifier = Modifier
-                    .background(color = TogedyTheme.colors.gray300)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-            ) {
-                TogedyButton(
-                    text = "스터디 가입하기",
-                    onClick = { onDialogStateChange(StudyDetailDialogType.JOIN) },
-                )
-            }
+        if (studyInfo.isJoined) {
+            //TODO: 스탑워치 화면이동 버튼으로 변경
         } else {
             Box(
                 modifier = Modifier
@@ -403,14 +394,13 @@ private fun StudyDetailSuccessScreen(
     }
 
     StudyDetailDialogScreen(
+        studyId = studyId,
         studyInfo = studyInfo,
         dialogState = dialogState,
         onDismissRequest = onDialogStateChange,
         onJoinStudyClick = {
             onJoinStudyClick()
             onDialogStateChange(StudyDetailDialogType.JOIN)
-
-            onDialogStateChange(StudyDetailDialogType.JOIN_COMPLETE) // TODO : 가입 통신 성공 후 보여주는 것으로 변경
         }
     )
 }

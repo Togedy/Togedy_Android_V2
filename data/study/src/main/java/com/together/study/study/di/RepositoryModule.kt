@@ -1,7 +1,11 @@
 package com.together.study.study.di
 
+import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudyExploreRepository
+import com.together.study.study.repository.StudyMemberRepository
+import com.together.study.study.repositoryimpl.StudyDetailRepositoryImpl
 import com.together.study.study.repositoryimpl.StudyExploreRepositoryImpl
+import com.together.study.study.repositoryimpl.StudyMemberRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,4 +20,16 @@ abstract class RepositoryModule {
     abstract fun bindStudyExploreRepository(
         studyExploreRepositoryImpl: StudyExploreRepositoryImpl,
     ): StudyExploreRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStudyDetailRepository(
+        studyDetailRepositoryImpl: StudyDetailRepositoryImpl,
+    ): StudyDetailRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStudyMemberRepository(
+        studyMemberRepositoryImpl: StudyMemberRepositoryImpl,
+    ): StudyMemberRepository
 }

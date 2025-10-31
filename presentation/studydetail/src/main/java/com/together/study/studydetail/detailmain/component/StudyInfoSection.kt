@@ -26,7 +26,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 internal fun StudyInfoSection(
     studyTag: String,
     studyName: String,
-    studyDescription: String,
+    studyDescription: String?,
     studyTier: String,
     studyMemberCount: Int,
     studyMemberLimit: Int,
@@ -88,8 +88,10 @@ internal fun StudyInfoSection(
 
         Spacer(Modifier.height(12.dp))
 
-        TextWithMoreButton(
-            text = studyDescription,
-        )
+        if (!studyDescription.isNullOrEmpty()) {
+            TextWithMoreButton(
+                text = studyDescription,
+            )
+        }
     }
 }

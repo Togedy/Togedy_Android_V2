@@ -17,8 +17,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 @Composable
 fun JoinStudyDialog(
     studyName: String,
-    hasPassword: Boolean,
-    password: String = "",
+    password: String?,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onJoinStudyClick: () -> Unit,
@@ -46,7 +45,7 @@ fun JoinStudyDialog(
                 },
                 textAlign = TextAlign.Center,
             )
-            if (hasPassword) {
+            if (!password.isNullOrBlank()) {
                 //TODO : 비밀번호 입력
                 //오류 메시지 부분
             }
@@ -71,7 +70,7 @@ private fun JoinStudyDialogPreview() {
     TogedyTheme {
         JoinStudyDialog(
             studyName = "햄버거파이터즈",
-            hasPassword = false,
+            password = null,
             modifier = Modifier,
             onDismissRequest = {},
             onJoinStudyClick = {},
