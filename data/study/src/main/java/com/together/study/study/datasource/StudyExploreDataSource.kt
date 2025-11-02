@@ -23,4 +23,6 @@ class StudyExploreDataSource @Inject constructor(
         page = page,
         size = size,
     )
+
+    suspend fun getPopularStudyItems() = studyExploreService.getPopularStudyItems()
 }
