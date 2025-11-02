@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import com.together.study.common.navigation.Route
 import com.together.study.studysettings.main.LeaderSettingsRoute
 import com.together.study.studysettings.main.MemberSettingsRoute
@@ -74,7 +75,15 @@ fun NavGraphBuilder.studySettingsGraph(
     composable<MemberEdit> {
         MemberEditScreen(
             onBackClick = navigateToUp,
-            onMemberSettingsNavigate = navController::navigateToMemberSettingsScreen,
+            onMemberSettingsNavigate = { id ->
+                navController.navigateToMemberSettingsScreen(
+                    studyId = id,
+                    navOptions = navOptions {
+                        popUpTo(MemberSettings) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
+            },
             modifier = modifier,
         )
     }
