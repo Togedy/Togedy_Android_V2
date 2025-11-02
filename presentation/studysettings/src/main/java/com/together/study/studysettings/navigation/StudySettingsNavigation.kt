@@ -30,9 +30,9 @@ fun NavController.navigateToMemberEditScreen(
 ) = navigate(MemberEdit(studyId, type), navOptions)
 
 fun NavController.navigateToMemberCountEditScreen(
-    memberCount: Int,
+    studyId: Long,
     navOptions: NavOptions? = null,
-) = navigate(MemberCountEdit(memberCount), navOptions)
+) = navigate(MemberCountEdit(studyId), navOptions)
 
 
 fun NavGraphBuilder.studySettingsGraph(
@@ -48,8 +48,8 @@ fun NavGraphBuilder.studySettingsGraph(
             onMemberClick = { id ->
                 navController.navigateToMemberEditScreen(id, MemberEditType.EDIT)
             },
-            onMemberCountClick = { id, count, limit ->
-                navController.navigateToMemberCountEditScreen(memberCount = count)
+            onMemberCountClick = { id ->
+                navController.navigateToMemberCountEditScreen(id)
             },
             onLeaderEditClick = { id ->
                 navController.navigateToMemberEditScreen(id, MemberEditType.LEADER_CHANGE)
@@ -98,4 +98,4 @@ data class MemberSettings(val studyId: Long) : Route
 data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
 
 @Serializable
-data class MemberCountEdit(val memberCount: Int) : Route
+data class MemberCountEdit(val studyId: Long) : Route

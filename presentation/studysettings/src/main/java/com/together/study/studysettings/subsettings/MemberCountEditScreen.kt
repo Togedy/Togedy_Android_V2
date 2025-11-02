@@ -47,12 +47,13 @@ fun MemberCountEditScreen(
     modifier: Modifier = Modifier,
     viewModel: MemberCountEditViewModel = hiltViewModel(),
 ) {
-    val memberLimit by viewModel.memberLimit.collectAsStateWithLifecycle()
+    val studyInfo by viewModel.studyInfo.collectAsStateWithLifecycle()
+    val memberLimit = studyInfo?.studyMemberLimit ?: 0
     val eventFlow = viewModel.eventFlow
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var selectedValue by remember { mutableIntStateOf(memberLimit) }
+    var selectedValue by remember { mutableIntStateOf(studyInfo?.studyMemberLimit ?: 0) }
 
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
@@ -140,19 +141,25 @@ fun MemberCountEditScreen(
             onDismissRequest = { isBottomSheetVisible = false },
             title = "스터디 인원",
             showDone = true,
-            isDoneActivate = viewModel.studyMemberCount <= selectedValue,
-            onDoneClick = { viewModel.postNewMemberLimit(selectedValue) },
-            modifier = modifier,
-        ) {
-            TogedyScrollPicker(
-                initValue = memberLimit,
-                minValue = 2,
-                maxValue = 30,
-                position = PickerPosition.START,
-                modifier = modifier,
-                onValueChange = { selectedValue = it },
-            )
-        }
+            isDoneActivate = (studyInfo?.studyMemberCount ?: 0) <= selectedValue,
+            onDoneClick = {
+                viewModel.postNewMemberLimit(selectedValue)
+                isBottomSheetVisible = false
+            },
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(top = 20.dp),
+            content = {
+                TogedyScrollPicker(
+                    initValue = memberLimit,
+                    minValue = 2,
+                    maxValue = 30,
+                    position = PickerPosition.MIDDLE,
+                    modifier = Modifier,
+                    onValueChange = { selectedValue = it },
+                )
+            }
+        )
     }
 }
 
