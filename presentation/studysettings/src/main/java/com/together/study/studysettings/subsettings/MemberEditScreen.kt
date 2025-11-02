@@ -62,6 +62,7 @@ fun MemberEditScreen(
         eventFlow.collect { event ->
             when (event) {
                 is MemberEditEvent.DeleteMemberSuccess -> {
+                    isMemberDialogVisible = false
                     // toast
                 }
 
@@ -70,6 +71,7 @@ fun MemberEditScreen(
                 }
 
                 is MemberEditEvent.ShowError -> {
+                    isMemberDialogVisible = false
                     // toast
                 }
             }
