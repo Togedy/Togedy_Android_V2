@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
+import com.together.study.study.model.ExploreStudyFilter
 import com.together.study.study.model.ExploreStudyItem
+import com.together.study.study.repository.StudyExploreRepository
 import com.together.study.study.search.state.SearchFilterState
 import com.together.study.study.search.state.StudySearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,11 +16,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class StudySearchViewModel @Inject constructor(
-
+    private val studyExploreRepository: StudyExploreRepository,
 ) : ViewModel() {
     private val _searchTerm = MutableStateFlow("")
     private val _activeStudyState =
@@ -48,17 +51,27 @@ internal class StudySearchViewModel @Inject constructor(
     )
 
     suspend fun getActiveStudies() {
-        // TODO : 추후 API 연결
-        _activeStudyState.value = UiState.Success(
-            listOf()
-        )
+        studyExploreRepository.getPopularStudyItems()
+            .onSuccess { _activeStudyState.value = UiState.Success(it) }
+            .onFailure { _activeStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
-    suspend fun getResultStudies() {
-        // TODO : 추후 API 연결
-        _resultStudyState.value = UiState.Success(
-            listOf()
+    fun getResultStudies() = viewModelScope.launch {
+        _resultStudyState.value = UiState.Loading
+        studyExploreRepository.getExploreStudyItems(
+            with(_searchFilterState.value) {
+                ExploreStudyFilter(
+                    tag = null,
+                    filter = sortOption.request,
+                    joinable = isJoinable,
+                    challenge = isChallenge,
+                    page = null,
+                    size = null,
+                )
+            }
         )
+            .onSuccess { _resultStudyState.value = UiState.Success(it.studies) }
+            .onFailure { _resultStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun updateSearchTerm(new: String) = _searchTerm.update { new }
