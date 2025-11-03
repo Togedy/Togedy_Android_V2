@@ -26,6 +26,7 @@ class StudyExploreRepositoryImpl @Inject constructor(
                 filter = request.filter,
                 joinable = request.joinable,
                 challenge = request.challenge,
+                name = request.name,
                 page = request.page,
                 size = request.size,
             ).response

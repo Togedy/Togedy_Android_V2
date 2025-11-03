@@ -65,6 +65,7 @@ internal class StudySearchViewModel @Inject constructor(
                     filter = sortOption.request,
                     joinable = isJoinable,
                     challenge = isChallenge,
+                    name = _searchTerm.value,
                     page = null,
                     size = null,
                 )
@@ -74,7 +75,10 @@ internal class StudySearchViewModel @Inject constructor(
             .onFailure { _resultStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
-    fun updateSearchTerm(new: String) = _searchTerm.update { new }
+    fun updateSearchTerm(new: String) = viewModelScope.launch {
+        _searchTerm.update { new }
+        getResultStudies()
+    }
 
     fun updateSortOption(new: StudySortingType) =
         _searchFilterState.update { it.copy(sortOption = new) }

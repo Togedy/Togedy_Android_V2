@@ -17,6 +17,7 @@ interface StudyExploreService {
         @Query("filter") filter: String,
         @Query("joinable") joinable: Boolean,
         @Query("challenge") challenge: Boolean,
+        @Query("name") name: String,
         @Query("page") page: Int?,
         @Query("size") size: Int?,
     ): BaseResponse<ExploreStudyInfoResponse>
