@@ -13,7 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,25 +30,26 @@ internal class StudySearchViewModel @Inject constructor(
         MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
     private val _resultStudyState =
         MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
+
     private val _searchFilterState = MutableStateFlow(SearchFilterState())
+    val searchFilterState = _searchFilterState.asStateFlow()
+
 
     val studySearchUiState: StateFlow<StudySearchUiState> = combine(
-        _searchTerm, _activeStudyState, _resultStudyState, _searchFilterState,
-    ) { searchTerm, activeStudyState, resultStudyState, searchFilterState ->
+        _searchTerm, _activeStudyState, _resultStudyState,
+    ) { searchTerm, activeStudyState, resultStudyState ->
         StudySearchUiState(
             searchTerm = searchTerm,
             activeStudyState = activeStudyState,
             resultStudyState = resultStudyState,
-            searchFilterState = searchFilterState,
         )
-    }.stateIn(
+    }.distinctUntilChanged().stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = StudySearchUiState(
             searchTerm = "",
             activeStudyState = UiState.Loading,
             resultStudyState = UiState.Loading,
-            searchFilterState = SearchFilterState(),
         )
     )
 

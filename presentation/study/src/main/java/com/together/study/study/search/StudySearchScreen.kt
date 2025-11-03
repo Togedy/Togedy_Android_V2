@@ -51,14 +51,20 @@ internal fun StudySearchRoute(
     viewModel: StudySearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.studySearchUiState.collectAsStateWithLifecycle()
+    val filterState by viewModel.searchFilterState.collectAsStateWithLifecycle()
+
 
     LaunchedEffect(Unit) {
         viewModel.getActiveStudies()
+    }
+
+    LaunchedEffect(filterState) {
         viewModel.getResultStudies()
     }
+
     StudySearchScreen(
         uiState = uiState,
-        searchTerm = uiState.searchTerm,
+        filterState = filterState,
         modifier = modifier,
         onBackClick = onBackClick,
         onSearchTermChange = viewModel::updateSearchTerm,
@@ -72,7 +78,7 @@ internal fun StudySearchRoute(
 @Composable
 fun StudySearchScreen(
     uiState: StudySearchUiState,
-    searchTerm: String,
+    filterState: SearchFilterState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onSearchTermChange: (String) -> Unit,
@@ -107,10 +113,24 @@ fun StudySearchScreen(
 
             TogedySearchBar(
                 placeholder = "스터디명, 태그로 검색해보세요",
-                value = searchTerm,
+                value = uiState.searchTerm,
                 onValueChange = onSearchTermChange,
-                onSearchClicked = { onSearchTermChange(searchTerm) },
+                onSearchClicked = { onSearchTermChange(uiState.searchTerm) },
             )
+        }
+
+        if (uiState.searchTerm.isNotEmpty()) {
+            with(filterState) {
+                SortingFilterSection(
+                    selectedSortingType = sortOption,
+                    isJoinable = isJoinable,
+                    isChallenge = isChallenge,
+                    onSortingClick = { isSortBottomSheetVisible = true },
+                    onJoinableClick = onJoinableClick,
+                    onChallengeClick = onChallengeClick,
+                    modifier = Modifier.background(TogedyTheme.colors.gray100),
+                )
+            }
         }
 
         when (uiState.isLoaded) {
@@ -125,16 +145,10 @@ fun StudySearchScreen(
             is UiState.Failure -> {}
             is UiState.Loading -> {}
             is UiState.Success<*> -> {
-                with(uiState.searchFilterState) {
+                with(filterState) {
                     SuccessResultScreen(
-                        selectedSortingType = sortOption,
-                        isJoinable = isJoinable,
-                        isChallenge = isChallenge,
                         resultStudies = (uiState.resultStudyState as UiState.Success).data,
-                        searchTerm = searchTerm,
-                        onSortingClick = { isSortBottomSheetVisible = true },
-                        onJoinableClick = onJoinableClick,
-                        onChallengeClick = onChallengeClick,
+                        searchTerm = uiState.searchTerm,
                         onStudyItemClick = onStudyItemClick,
                     )
                 }
@@ -144,7 +158,7 @@ fun StudySearchScreen(
 
     if (isSortBottomSheetVisible) {
         SortBottomSheet(
-            selectedSortOption = uiState.searchFilterState.sortOption,
+            selectedSortOption = filterState.sortOption,
             onDismissRequest = { isSortBottomSheetVisible = false },
             onSortOptionClick = {
                 onSortOptionClick(it)
@@ -184,32 +198,14 @@ fun EmptySearchTermScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SuccessResultScreen(
-    selectedSortingType: StudySortingType,
-    isJoinable: Boolean,
-    isChallenge: Boolean,
     resultStudies: List<ExploreStudyItem>,
     searchTerm: String,
     modifier: Modifier = Modifier,
-    onSortingClick: () -> Unit,
-    onJoinableClick: () -> Unit,
-    onChallengeClick: () -> Unit,
     onStudyItemClick: (Long) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
     ) {
-        stickyHeader {
-            SortingFilterSection(
-                selectedSortingType = selectedSortingType,
-                isJoinable = isJoinable,
-                isChallenge = isChallenge,
-                onSortingClick = onSortingClick,
-                onJoinableClick = onJoinableClick,
-                onChallengeClick = onChallengeClick,
-                modifier = Modifier.background(TogedyTheme.colors.gray100),
-            )
-        }
-
         itemsIndexed(resultStudies) { _, study ->
             Box(
                 modifier = Modifier.padding(vertical = 4.dp),
@@ -233,18 +229,20 @@ fun SuccessResultScreen(
                 }
             }
         }
+
+        item {
+            Spacer(Modifier.height(40.dp))
+        }
     }
 }
 
 @Preview
 @Composable
 private fun StudySearchScreenPreview() {
-    var searchTerm by remember { mutableStateOf("") }
-
     TogedyTheme {
         StudySearchScreen(
-            uiState = StudySearchUiState("", UiState.Loading, UiState.Loading, SearchFilterState()),
-            searchTerm = searchTerm,
+            uiState = StudySearchUiState("", UiState.Loading, UiState.Loading),
+            filterState = SearchFilterState(),
             modifier = Modifier,
             onBackClick = {},
             onSearchTermChange = {},

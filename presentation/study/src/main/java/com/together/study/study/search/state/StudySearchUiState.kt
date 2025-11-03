@@ -10,7 +10,6 @@ data class StudySearchUiState(
     val searchTerm: String,
     val activeStudyState: UiState<List<ExploreStudyItem>>,
     val resultStudyState: UiState<List<ExploreStudyItem>>,
-    val searchFilterState: SearchFilterState,
 ) {
     val isLoaded: UiState<Unit>
         get() = when {
