@@ -12,6 +12,6 @@ data class MyStudyItem(
 ) {
     data class ActiveMember(
         val userName: String,
-        val userProfileImageUrl: String,
+        val userProfileImageUrl: String?,
     )
 }

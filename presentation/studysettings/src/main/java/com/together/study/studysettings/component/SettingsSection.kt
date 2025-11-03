@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.studysettings.main.Settings
+import com.together.study.studysettings.model.Settings
 
 @Composable
 fun SettingsSection(
