@@ -15,7 +15,7 @@ class StudyMemberDataSource @Inject constructor(
     suspend fun getStudyMemberPlanner(studyId: Long, userId: Long) =
         studyMemberService.getStudyMemberPlanner(studyId, userId)
 
-    suspend fun postPlannerVisibility(studyId: Long, userId: Long, isPlannerVisible: Boolean) =
-        studyMemberService.postPlannerVisibility(studyId, userId, isPlannerVisible)
+    suspend fun updatePlannerVisibility(studyId: Long, userId: Long, isPlannerVisible: Boolean) =
+        studyMemberService.updatePlannerVisibility(studyId, userId, isPlannerVisible)
 
 }

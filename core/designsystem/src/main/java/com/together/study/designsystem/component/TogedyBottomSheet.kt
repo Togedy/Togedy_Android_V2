@@ -30,11 +30,11 @@ fun TogedyBottomSheet(
     isDoneActivate: Boolean = true,
     onDoneClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    searchContent: @Composable () -> Unit = {},
+    searchContent: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
-    val isSearchDetail = searchContent != {}
+    val isSearchDetail = searchContent != null
 
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
@@ -51,7 +51,7 @@ fun TogedyBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                searchContent()
+                if (searchContent != null) searchContent()
 
                 if (!isSearchDetail) {
                     Text(

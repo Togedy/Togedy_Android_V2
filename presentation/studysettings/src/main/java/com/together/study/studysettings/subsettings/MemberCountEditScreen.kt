@@ -16,7 +16,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,6 +37,7 @@ import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.component.wheelpicker.PickerPosition
 import com.together.study.designsystem.component.wheelpicker.TogedyScrollPicker
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studysettings.subsettings.event.MemberCountEditEvent
 import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,9 +47,27 @@ fun MemberCountEditScreen(
     modifier: Modifier = Modifier,
     viewModel: MemberCountEditViewModel = hiltViewModel(),
 ) {
+    val studyInfo by viewModel.studyInfo.collectAsStateWithLifecycle()
+    val memberLimit = studyInfo?.studyMemberLimit ?: 0
+    val eventFlow = viewModel.eventFlow
+
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetVisible by remember { mutableStateOf(false) }
-    val selectedValue by viewModel.selectedValue.collectAsStateWithLifecycle()
+    var selectedValue by remember { mutableIntStateOf(studyInfo?.studyMemberLimit ?: 0) }
+
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is MemberCountEditEvent.UpdateSuccess -> {
+                    // toast
+                }
+
+                is MemberCountEditEvent.ShowError -> {
+                    // toast
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -100,7 +121,7 @@ fun MemberCountEditScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "${selectedValue}명",
+                    text = "${memberLimit}명",
                     style = TogedyTheme.typography.title16sb,
                     color = TogedyTheme.colors.gray700,
                 )
@@ -120,19 +141,25 @@ fun MemberCountEditScreen(
             onDismissRequest = { isBottomSheetVisible = false },
             title = "스터디 인원",
             showDone = true,
-            isDoneActivate = viewModel.studyMemberCount <= selectedValue,
-            onDoneClick = viewModel::postNewMemberLimit,
-            modifier = modifier,
-        ) {
-            TogedyScrollPicker(
-                initValue = selectedValue,
-                minValue = 2,
-                maxValue = 30,
-                position = PickerPosition.START,
-                modifier = modifier,
-                onValueChange = viewModel::updateSelectedValue,
-            )
-        }
+            isDoneActivate = (studyInfo?.studyMemberCount ?: 0) <= selectedValue,
+            onDoneClick = {
+                viewModel.postNewMemberLimit(selectedValue)
+                isBottomSheetVisible = false
+            },
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(top = 20.dp),
+            content = {
+                TogedyScrollPicker(
+                    initValue = memberLimit,
+                    minValue = 2,
+                    maxValue = 30,
+                    position = PickerPosition.MIDDLE,
+                    modifier = Modifier,
+                    onValueChange = { selectedValue = it },
+                )
+            }
+        )
     }
 }
 

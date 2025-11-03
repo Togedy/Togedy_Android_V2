@@ -17,7 +17,7 @@ data class ExploreStudyItemResponse(
     @SerialName("studyDescription") val studyDescription: String?,
     @SerialName("studyTag") val studyTag: String,
     @SerialName("studyLeaderImageUrl") val studyLeaderImageUrl: String?,
-    @SerialName("studyTier") val studyTier: String,
+    @SerialName("studyTier") val studyTier: String?,
     @SerialName("studyMemberCount") val studyMemberCount: Int,
     @SerialName("studyMemberLimit") val studyMemberLimit: Int,
     @SerialName("studyImageUrl") val studyImageUrl: String?,
