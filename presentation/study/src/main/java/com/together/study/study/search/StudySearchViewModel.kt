@@ -10,6 +10,8 @@ import com.together.study.study.repository.StudyExploreRepository
 import com.together.study.study.search.state.SearchFilterState
 import com.together.study.study.search.state.StudySearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +28,8 @@ internal class StudySearchViewModel @Inject constructor(
     private val studyExploreRepository: StudyExploreRepository,
 ) : ViewModel() {
     private val _searchTerm = MutableStateFlow("")
+    private var searchJob: Job? = null
+
     private val _activeStudyState =
         MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
     private val _resultStudyState =
@@ -80,7 +84,11 @@ internal class StudySearchViewModel @Inject constructor(
 
     fun updateSearchTerm(new: String) = viewModelScope.launch {
         _searchTerm.update { new }
-        getResultStudies()
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(300)
+            getResultStudies()
+        }
     }
 
     fun updateSortOption(new: StudySortingType) =
