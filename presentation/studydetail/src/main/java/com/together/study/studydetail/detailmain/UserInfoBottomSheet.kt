@@ -1,22 +1,17 @@
 package com.together.study.studydetail.detailmain
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,13 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -54,7 +47,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_lock
-import com.together.study.designsystem.R.drawable.img_character_sleeping
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.component.tabbar.StudyMemberTab
@@ -63,9 +55,9 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.model.StudyMemberPlanner
 import com.together.study.study.model.StudyMemberProfile
 import com.together.study.study.model.StudyMemberTimeBlocks
-import com.together.study.studydetail.detailmain.component.StudyMonthlyColorBlock
+import com.together.study.studydetail.component.CurrentMonthlyStudyCount
+import com.together.study.studydetail.component.MonthlyStudyTimeBlock
 import com.together.study.util.noRippleClickable
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -202,67 +194,16 @@ private fun UserInfoSuccessScreen(
 
         when (selectedTab) {
             StudyMemberTab.STUDY_TIME -> {
-                val currentDate = LocalDate.now()
-                val currentYear = currentDate.year
-                val currentMonth = currentDate.monthValue
-
                 StudyTimeTitleSection()
 
                 if (studyTimeBlocks.studyTimeCount != 0) {
                     CurrentMonthlyStudyCount(
                         userName = user.userName,
-                        count = studyTimeBlocks.studyTimeCount
+                        count = studyTimeBlocks.studyTimeCount,
                     )
                 }
 
-                if (studyTimeBlocks.monthlyStudyTimeList.isEmpty()) {
-                    val monthsToShow = listOf(
-                        LocalDate.of(currentYear, currentMonth, 1),
-                        LocalDate.of(currentYear, currentMonth, 1).minusMonths(1)
-                    )
-
-                    LazyRow(
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        reverseLayout = true,
-                    ) {
-                        item { Spacer(Modifier.width(6.dp)) }
-
-                        items(monthsToShow) { date ->
-                            val year = date.year
-                            val month = date.monthValue
-                            val daysInMonth = date.lengthOfMonth()
-
-                            val emptyStudyTimeList = List(daysInMonth) { 1 }
-
-                            StudyMonthlyColorBlock(
-                                year = year,
-                                month = month,
-                                studyTimeList = emptyStudyTimeList,
-                            )
-                        }
-
-                        item { Spacer(Modifier.width(6.dp)) }
-                    }
-                } else {
-                    LazyRow(
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        reverseLayout = true,
-                    ) {
-                        item { Spacer(Modifier.width(6.dp)) }
-
-                        itemsIndexed(studyTimeBlocks.monthlyStudyTimeList.reversed()) { index, item ->
-                            StudyMonthlyColorBlock(
-                                year = item.year,
-                                month = item.month,
-                                studyTimeList = item.studyTimeList,
-                            )
-                        }
-
-                        item { Spacer(Modifier.width(6.dp)) }
-                    }
-                }
+                MonthlyStudyTimeBlock(monthlyStudyTimeList = studyTimeBlocks.monthlyStudyTimeList)
             }
 
             StudyMemberTab.PLANNER -> {
@@ -309,13 +250,10 @@ private fun UserInfoSuccessScreen(
                     }
 
                     when {
-                        dailyPlanner.dailyPlanner != null && dailyPlanner.isPlannerVisible -> {
+                        dailyPlanner.dailyPlanner != null && dailyPlanner.isPlannerVisible ->
                             UserDailyPlanner(plans = dailyPlanner.dailyPlanner!!)
-                        }
 
-                        !isMyPlanner && !dailyPlanner.isPlannerVisible -> {
-                            UnOpenedPlanner()
-                        }
+                        !isMyPlanner && !dailyPlanner.isPlannerVisible -> UnOpenedPlanner()
 
                         else -> EmptyDailyPlanner()
                     }
@@ -339,60 +277,6 @@ private fun UserInfoSuccessScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun CurrentMonthlyStudyCount(
-    userName: String,
-    count: Int,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 12.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(
-                    color = TogedyTheme.colors.greenBg,
-                    shape = RoundedCornerShape(8.dp),
-                )
-                .clip(RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            contentAlignment = Alignment.TopEnd,
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = TogedyTheme.colors.gray800)) {
-                        append("${userName}님")
-                    }
-                    withStyle(SpanStyle(color = TogedyTheme.colors.gray600)) {
-                        append("은 이번 달 총 ")
-                    }
-                    withStyle(SpanStyle(color = TogedyTheme.colors.green)) {
-                        append("${count}일")
-                    }
-                    withStyle(SpanStyle(color = TogedyTheme.colors.gray600)) {
-                        append(" 공부했어요 \uD83D\uDD25")
-                    }
-                },
-                style = TogedyTheme.typography.body13b,
-                modifier = Modifier.align(Alignment.CenterStart),
-            )
-
-            Image(
-                painter = painterResource(img_character_sleeping),
-                contentDescription = null,
-                modifier = Modifier
-                    .width(57.dp)
-                    .aspectRatio(1f)
-                    .alpha(0.2f),
-            )
         }
     }
 }
