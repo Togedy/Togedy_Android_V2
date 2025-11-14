@@ -5,6 +5,7 @@ data class ExploreStudyFilter(
     val filter: String,
     val joinable: Boolean,
     val challenge: Boolean,
+    val name: String = "",
     val page: Int?,
     val size: Int?,
 )
