@@ -11,12 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -29,15 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,9 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
-import com.together.study.designsystem.R.drawable.ic_lock
 import com.together.study.designsystem.R.drawable.img_study_background
-import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.component.tabbar.StudyMemberTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -56,8 +46,12 @@ import com.together.study.study.model.StudyMemberPlanner
 import com.together.study.study.model.StudyMemberProfile
 import com.together.study.study.model.StudyMemberTimeBlocks
 import com.together.study.studydetail.component.CurrentMonthlyStudyCount
+import com.together.study.studydetail.component.EmptyDailyPlanner
 import com.together.study.studydetail.component.MonthlyStudyTimeBlock
-import com.together.study.util.noRippleClickable
+import com.together.study.studydetail.component.PlannerEditButton
+import com.together.study.studydetail.component.PlannerVisibleToggle
+import com.together.study.studydetail.component.UnOpenedPlanner
+import com.together.study.studydetail.component.UserDailyPlanner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -216,37 +210,10 @@ private fun UserInfoSuccessScreen(
                     )
 
                     if (isMyPlanner) {
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .background(
-                                    TogedyTheme.colors.gray100,
-                                    RoundedCornerShape(8.dp)
-                                ),
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(14.dp)
-                                    .background(
-                                        TogedyTheme.colors.gray100,
-                                        RoundedCornerShape(8.dp)
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(
-                                    text = "다른 멤버에게 공개할래요",
-                                    style = TogedyTheme.typography.chip10sb,
-                                    color = TogedyTheme.colors.gray900,
-                                )
-
-                                TogedyToggleButton(
-                                    isToggleOn = isPlannerVisible,
-                                    onToggleClick = onPlannerVisibleToggleClick,
-                                )
-                            }
-                        }
+                        PlannerVisibleToggle(
+                            isPlannerVisible = isPlannerVisible,
+                            onPlannerVisibleToggleClick = onPlannerVisibleToggleClick,
+                        )
                     }
 
                     when {
@@ -258,23 +225,7 @@ private fun UserInfoSuccessScreen(
                         else -> EmptyDailyPlanner()
                     }
 
-                    if (isMyPlanner) {
-                        Spacer(Modifier.height(10.dp))
-
-                        Text(
-                            text = "플래너 수정하기",
-                            style = TogedyTheme.typography.body14m,
-                            color = TogedyTheme.colors.white,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .background(
-                                    color = TogedyTheme.colors.black,
-                                    shape = RoundedCornerShape(16.dp)
-                                )
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .noRippleClickable(onPlannerEditClick),
-                        )
-                    }
+                    if (isMyPlanner) PlannerEditButton(onPlannerEditClick = onPlannerEditClick)
                 }
             }
         }
@@ -365,97 +316,6 @@ private fun PlannerTitleSection(
                 color = TogedyTheme.colors.gray500,
             )
         }
-    }
-}
-
-
-@Composable
-private fun UserDailyPlanner(
-    plans: List<StudyMemberPlanner.DailyPlanner>,
-    modifier: Modifier = Modifier,
-) {
-    LazyColumn(
-        modifier = modifier
-            .padding(horizontal = 20.dp)
-            .height(300.dp),
-    ) {
-        itemsIndexed(plans) { index, item ->
-            Column(
-                modifier = Modifier.padding(bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Text(
-                    text = item.studyCategoryName,
-                    style = TogedyTheme.typography.body14b,
-                    color = TogedyTheme.colors.gray900,
-                )
-
-                HorizontalDivider(color = TogedyTheme.colors.gray50)
-
-                item.planList.forEach { plan ->
-                    val status =
-                        if (plan.planStatus == "완료") TextDecoration.LineThrough
-                        else TextDecoration.None
-                    val color =
-                        if (plan.planStatus == "완료") TogedyTheme.colors.gray500
-                        else TogedyTheme.colors.gray900
-
-                    Text(
-                        text = plan.planName,
-                        style = TogedyTheme.typography.body13m,
-                        color = color,
-                        textDecoration = status
-                    )
-
-                    HorizontalDivider(color = TogedyTheme.colors.gray50)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun EmptyDailyPlanner(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.height(200.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = "오늘의 일정이 없습니다.",
-            style = TogedyTheme.typography.body14m,
-            color = TogedyTheme.colors.gray500,
-        )
-    }
-}
-
-@Composable
-private fun UnOpenedPlanner(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.height(200.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_lock),
-            contentDescription = null,
-            tint = Color.Unspecified,
-        )
-
-        Spacer(Modifier.height(12.dp))
-
-        Text(
-            text = "플래너가 비공개 상태예요",
-            style = TogedyTheme.typography.body14b,
-            color = TogedyTheme.colors.gray700,
-        )
-
-        Text(
-            text = "이 멤버가 개인 플래너를\n다른 사람들에게 공개하지 않기로 했어요",
-            style = TogedyTheme.typography.body12m,
-            color = TogedyTheme.colors.gray500,
-            textAlign = TextAlign.Center,
-        )
     }
 }
 
