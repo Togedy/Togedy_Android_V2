@@ -100,6 +100,7 @@ private fun MainNavHost(
                     StudyRole.MEMBER -> navigator.navController.navigateToMemberSettingsScreen(id)
                 }
             },
+            navigateToPlannerMain = { /* TODO : 플래너 화면으로 연결 */ },
             modifier = modifier,
         )
 

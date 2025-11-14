@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,6 +59,7 @@ import com.together.study.study.model.StudyMemberPlanner
 import com.together.study.study.model.StudyMemberProfile
 import com.together.study.study.model.StudyMemberTimeBlocks
 import com.together.study.studydetail.detailmain.component.StudyMonthlyColorBlock
+import com.together.study.util.noRippleClickable
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +69,7 @@ internal fun UserInfoBottomSheet(
     userId: Long,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
+    onPlannerEditClick: () -> Unit,
     viewModel: UserInfoViewModel = hiltViewModel(),
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -107,7 +110,8 @@ internal fun UserInfoBottomSheet(
                         viewModel.onPlannerVisibleToggleClicked(
                             isPlannerVisible
                         )
-                    }
+                    },
+                    onPlannerEditClick = onPlannerEditClick,
                 )
             }
         }
@@ -125,6 +129,7 @@ private fun UserInfoSuccessScreen(
     modifier: Modifier = Modifier,
     onTabChange: (StudyMemberTab) -> Unit,
     onPlannerVisibleToggleClick: () -> Unit,
+    onPlannerEditClick: () -> Unit,
 ) {
     val totalStudyTime by remember { mutableStateOf(changeToTotalStudyTime(user.totalStudyTime)) }
     val attendanceStreak by remember { mutableStateOf(checkMaxValue(user.attendanceStreak)) }
@@ -339,15 +344,35 @@ private fun UserInfoSuccessScreen(
                             }
                         }
                     } else {
-                        Box(
-                            modifier = Modifier.height(100.dp),
-                            contentAlignment = Alignment.Center,
+                        Column(
+                            modifier = Modifier.height(200.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
                                 text = "오늘의 일정이 없습니다.",
-                                style = TogedyTheme.typography.body14b,
+                                style = TogedyTheme.typography.body14m,
+                                color = TogedyTheme.colors.gray500,
                             )
                         }
+                    }
+
+                    if (isMyPlanner) {
+                        Spacer(Modifier.height(20.dp))
+
+                        Text(
+                            text = "플래너 수정하기",
+                            style = TogedyTheme.typography.body14m,
+                            color = TogedyTheme.colors.white,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .background(
+                                    color = TogedyTheme.colors.black,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .noRippleClickable(onPlannerEditClick),
+                        )
                     }
                 }
             }
@@ -411,6 +436,14 @@ private fun CurrentMonthlyStudyCount(
 
 @Composable
 private fun StudyTimeTitleSection(modifier: Modifier = Modifier) {
+    val stackColorList = listOf(
+        TogedyTheme.colors.gray200,
+        TogedyTheme.colors.green500,
+        TogedyTheme.colors.green600,
+        TogedyTheme.colors.green800,
+        TogedyTheme.colors.green,
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -436,12 +469,12 @@ private fun StudyTimeTitleSection(modifier: Modifier = Modifier) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(1.dp),
             ) {
-                repeat(5) {
+                repeat(5) { count ->
                     Box(
                         modifier = Modifier
                             .size(8.dp)
                             .background(
-                                color = TogedyTheme.colors.gray400,
+                                color = stackColorList[count],
                                 shape = RoundedCornerShape(2.dp)
                             ),
                     )
@@ -558,6 +591,7 @@ private fun UserInfoBottomSheetPreview() {
             studyId = 1,
             userId = 1,
             onDismissRequest = {},
+            onPlannerEditClick = {},
         )
     }
 }

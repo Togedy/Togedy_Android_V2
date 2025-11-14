@@ -72,6 +72,7 @@ import java.time.temporal.WeekFields
 internal fun StudyDetailRoute(
     onBackClick: () -> Unit,
     onSettingsNavigate: (Long, StudyRole) -> Unit,
+    onPlannerNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyDetailViewModel = hiltViewModel(),
 ) {
@@ -100,6 +101,7 @@ internal fun StudyDetailRoute(
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
         onDialogStateChange = viewModel::updateDialogState,
         onJoinStudyClick = viewModel::joinStudy,
+        onPlannerEditClick = onPlannerNavigate,
     )
 }
 
@@ -120,6 +122,7 @@ private fun StudyDetailScreen(
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
     onJoinStudyClick: () -> Unit,
+    onPlannerEditClick: () -> Unit,
 ) {
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
@@ -142,6 +145,7 @@ private fun StudyDetailScreen(
                 onNextWeekClick = onNextWeekClick,
                 onDialogStateChange = onDialogStateChange,
                 onJoinStudyClick = onJoinStudyClick,
+                onPlannerEditClick = onPlannerEditClick,
             )
         }
     }
@@ -165,6 +169,7 @@ private fun StudyDetailSuccessScreen(
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
     onJoinStudyClick: () -> Unit,
+    onPlannerEditClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
@@ -413,6 +418,7 @@ private fun StudyDetailSuccessScreen(
             onJoinStudyClick()
             onDialogStateChange(StudyDetailDialogType.JOIN)
         },
+        onPlannerEditClick = onPlannerEditClick,
     )
 }
 

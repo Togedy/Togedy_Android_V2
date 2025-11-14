@@ -17,6 +17,7 @@ fun StudyDetailDialogScreen(
     modifier: Modifier = Modifier,
     onDismissRequest: (StudyDetailDialogType) -> Unit,
     onJoinStudyClick: () -> Unit,
+    onPlannerEditClick: () -> Unit,
 ) {
     with(dialogState) {
         if (isJoinDialogVisible) {
@@ -44,6 +45,7 @@ fun StudyDetailDialogScreen(
                 userId = userId,
                 modifier = modifier,
                 onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) },
+                onPlannerEditClick = onPlannerEditClick,
             )
         }
     }
