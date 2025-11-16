@@ -119,7 +119,7 @@ private fun StudyDetailScreen(
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
-    onJoinStudyClick: () -> Unit,
+    onJoinStudyClick: (String?) -> Unit,
 ) {
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
@@ -164,7 +164,7 @@ private fun StudyDetailSuccessScreen(
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
-    onJoinStudyClick: () -> Unit,
+    onJoinStudyClick: (String?) -> Unit,
 ) {
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
@@ -409,8 +409,8 @@ private fun StudyDetailSuccessScreen(
         studyInfo = studyInfo,
         dialogState = dialogState,
         onDismissRequest = onDialogStateChange,
-        onJoinStudyClick = {
-            onJoinStudyClick()
+        onJoinStudyClick = { password ->
+            onJoinStudyClick(password)
             onDialogStateChange(StudyDetailDialogType.JOIN)
         },
     )

@@ -16,7 +16,7 @@ fun StudyDetailDialogScreen(
     dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onDismissRequest: (StudyDetailDialogType) -> Unit,
-    onJoinStudyClick: () -> Unit,
+    onJoinStudyClick: (String?) -> Unit,
 ) {
     with(dialogState) {
         if (isJoinDialogVisible) {

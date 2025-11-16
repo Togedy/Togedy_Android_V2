@@ -30,10 +30,10 @@ fun JoinStudyDialog(
     password: String?,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
-    onJoinStudyClick: () -> Unit,
+    onJoinStudyClick: (String?) -> Unit,
 ) {
-    val hasPassword = !password.isNullOrBlank()
-    var inputValue by remember { mutableStateOf("") }
+    val hasPassword = !password.isNullOrEmpty()
+    var inputValue: String? by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
@@ -50,7 +50,7 @@ fun JoinStudyDialog(
                 Spacer(Modifier.height(10.dp))
 
                 PasswordTextField(
-                    inputValue = inputValue,
+                    inputValue = inputValue ?: "",
                     onValueChange = { inputValue = it },
                 )
 
@@ -91,14 +91,15 @@ fun JoinStudyDialog(
             if (hasPassword && password != inputValue) {
                 showError = true
                 errorMessage =
-                    if (inputValue.toIntOrNull() == null) {
+                    if (inputValue?.toIntOrNull() == null) {
                         "숫자 4자리 비밀번호를 입력해주세요."
                     } else {
                         "비밀번호가 올바르지 않습니다."
                     }
             } else {
                 showError = false
-                onJoinStudyClick()
+                if (!hasPassword) inputValue = null
+                onJoinStudyClick(inputValue)
             }
         },
         modifier = modifier,
