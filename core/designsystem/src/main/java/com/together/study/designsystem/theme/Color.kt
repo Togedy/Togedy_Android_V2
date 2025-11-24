@@ -27,6 +27,7 @@ val BRONZE500 = Color(0xFFD5C6BD)
 val BRONZE900 = Color(0xFF976D3D)
 val RED = Color(0xFFD13E3E)
 val RED30 = Color(0x4DFF6363)
+val RED50 = Color(0xFFF34822)
 val BLUE = Color(0xFF677BFF)
 
 val WHITE = Color(0xFFFFFFFF)
@@ -64,6 +65,7 @@ class TogedyColors(
     bronze900: Color,
     red: Color,
     red30: Color,
+    red50: Color,
     blue: Color,
     white: Color,
     gray50: Color,
@@ -117,6 +119,8 @@ class TogedyColors(
     var red by mutableStateOf(red)
         private set
     var red30 by mutableStateOf(red30)
+        private set
+    var red50 by mutableStateOf(red30)
         private set
     var blue by mutableStateOf(blue)
         private set
@@ -206,6 +210,7 @@ class TogedyColors(
         bronze900,
         red,
         red30,
+        red50,
         blue,
         white,
         gray50,
@@ -242,6 +247,7 @@ class TogedyColors(
         bronze900 = other.bronze900
         red = other.red
         red30 = other.red30
+        red50 = other.red50
         blue = other.blue
         white = other.white
         gray50 = other.gray50
@@ -279,6 +285,7 @@ fun TogedyLightColors(
     bronze900: Color = BRONZE900,
     red: Color = RED,
     red30: Color = RED30,
+    red50: Color = RED50,
     blue: Color = BLUE,
     white: Color = WHITE,
     gray50: Color = GRAY50,
@@ -313,6 +320,7 @@ fun TogedyLightColors(
     bronze900,
     red,
     red30,
+    red50,
     blue,
     white,
     gray50,
