@@ -34,8 +34,6 @@ fun JoinStudyDialog(
     onJoinStudyClick: (String?) -> Unit,
 ) {
     var inputValue: String? by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(errorMessage.isNotEmpty()) }
-    var errorMessage by remember { mutableStateOf(errorMessage) }
 
     TogedyBasicDialog(
         title = "스터디 가입",
@@ -54,7 +52,7 @@ fun JoinStudyDialog(
                     onValueChange = { inputValue = it },
                 )
 
-                if (showError) {
+                if (errorMessage.isNotEmpty()) {
                     Spacer(Modifier.height(2.dp))
 
                     Text(
