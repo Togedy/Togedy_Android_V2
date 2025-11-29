@@ -27,15 +27,15 @@ import com.together.study.designsystem.theme.TogedyTheme
 @Composable
 fun JoinStudyDialog(
     studyName: String,
-    password: String?,
+    hasPassword: Boolean,
     modifier: Modifier = Modifier,
+    errorMessage: String = "",
     onDismissRequest: () -> Unit,
     onJoinStudyClick: (String?) -> Unit,
 ) {
-    val hasPassword = !password.isNullOrEmpty()
     var inputValue: String? by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(errorMessage.isNotEmpty()) }
+    var errorMessage by remember { mutableStateOf(errorMessage) }
 
     TogedyBasicDialog(
         title = "스터디 가입",
@@ -87,21 +87,7 @@ fun JoinStudyDialog(
         },
         buttonText = "가입하기",
         onDismissRequest = onDismissRequest,
-        onButtonClick = {
-            if (hasPassword && password != inputValue) {
-                showError = true
-                errorMessage =
-                    if (inputValue?.toIntOrNull() == null) {
-                        "숫자 4자리 비밀번호를 입력해주세요."
-                    } else {
-                        "비밀번호가 올바르지 않습니다."
-                    }
-            } else {
-                showError = false
-                if (!hasPassword) inputValue = null
-                onJoinStudyClick(inputValue)
-            }
-        },
+        onButtonClick = { onJoinStudyClick(inputValue) },
         modifier = modifier,
     )
 }
@@ -150,7 +136,7 @@ private fun JoinStudyDialogPreview() {
     TogedyTheme {
         JoinStudyDialog(
             studyName = "햄버거파이터즈",
-            password = "1234",
+            hasPassword = true,
             modifier = Modifier,
             onDismissRequest = {},
             onJoinStudyClick = {},
