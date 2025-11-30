@@ -78,6 +78,7 @@ internal fun StudyDetailRoute(
     val uiState by viewModel.studyDetailUiState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
+    val passwordErrorMessage by viewModel.passwordError.collectAsStateWithLifecycle()
     val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -89,6 +90,7 @@ internal fun StudyDetailRoute(
         uiState = uiState,
         selectedTab = selectedTab,
         selectedDate = selectedDate,
+        passwordErrorMessage = passwordErrorMessage,
         dialogState = dialogState,
         modifier = modifier,
         onBackClick = onBackClick,
@@ -109,6 +111,7 @@ private fun StudyDetailScreen(
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
+    passwordErrorMessage: String,
     dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
@@ -119,7 +122,7 @@ private fun StudyDetailScreen(
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
-    onJoinStudyClick: () -> Unit,
+    onJoinStudyClick: (String?) -> Unit,
 ) {
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
@@ -131,6 +134,7 @@ private fun StudyDetailScreen(
                 uiState = uiState,
                 selectedTab = selectedTab,
                 selectedDate = selectedDate,
+                passwordErrorMessage = passwordErrorMessage,
                 dialogState = dialogState,
                 modifier = modifier,
                 onBackClick = onBackClick,
@@ -154,6 +158,7 @@ private fun StudyDetailSuccessScreen(
     uiState: StudyDetailUiState,
     selectedTab: StudyDetailTab,
     selectedDate: LocalDate,
+    passwordErrorMessage: String,
     dialogState: StudyDetailDialogState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
@@ -164,7 +169,7 @@ private fun StudyDetailSuccessScreen(
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
-    onJoinStudyClick: () -> Unit,
+    onJoinStudyClick: (String?) -> Unit,
 ) {
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
@@ -406,12 +411,13 @@ private fun StudyDetailSuccessScreen(
     StudyDetailDialogScreen(
         studyId = studyId,
         userId = selectedUserId,
-        studyInfo = studyInfo,
+        studyName = studyInfo.studyName,
+        hasPassword = studyInfo.hasPassword,
+        errorMessage = passwordErrorMessage,
         dialogState = dialogState,
         onDismissRequest = onDialogStateChange,
-        onJoinStudyClick = {
-            onJoinStudyClick()
-            onDialogStateChange(StudyDetailDialogType.JOIN)
+        onJoinStudyClick = { password ->
+            onJoinStudyClick(password)
         },
     )
 }
