@@ -48,8 +48,10 @@ import com.together.study.util.noRippleClickable
  * @param onValueChange 텍스트 변경 호출 함수
  * @param modifier 텍스트 필드에 적용할 Modifier
  * @param textStyle 텍스트 스타일
+ * @param textColor 텍스트 색상
  * @param placeholderText placeholder 텍스트
  * @param placeholderStyle placeholder 텍스트 스타일
+ * @param placeholderColor placeholder 텍스트 색상
  * @param singleLine 텍스트 필드가 한 줄 제한 여부 (기본값 true)
  * @param shape 텍스트 필드의 모서리 (기본값 RoundedCornerShape(4.dp))
  * @param backgroundColor 텍스트 필드의 배경색
@@ -74,9 +76,11 @@ fun TogedyTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = TogedyTheme.typography.body14m.copy(color = TogedyTheme.colors.black),
+    textStyle: TextStyle = TogedyTheme.typography.body14m,
+    textColor: Color = TogedyTheme.colors.black,
     placeholderText: String = "",
-    placeholderStyle: TextStyle = TogedyTheme.typography.body14m.copy(color = TogedyTheme.colors.gray400),
+    placeholderStyle: TextStyle = TogedyTheme.typography.body14m,
+    placeholderColor: Color = TogedyTheme.colors.gray400,
     singleLine: Boolean = true,
     shape: Shape = RoundedCornerShape(4.dp),
     backgroundColor: Color = TogedyTheme.colors.gray50,
@@ -140,11 +144,11 @@ fun TogedyTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = singleLine,
-        textStyle = textStyle,
+        textStyle = textStyle.copy(color = textColor),
         visualTransformation = effectiveVisualTransformation,
         enabled = enabled,
         interactionSource = interactionSource,
-        cursorBrush = Brush.verticalGradient(listOf(textStyle.color, textStyle.color)),
+        cursorBrush = Brush.verticalGradient(listOf(textColor, textColor)),
         modifier = textFieldModifier,
         decorationBox = { innerTextField ->
             Column(
@@ -157,6 +161,7 @@ fun TogedyTextField(
                     value = value,
                     placeholderText = placeholderText,
                     placeholderStyle = placeholderStyle,
+                    placeholderColor = placeholderColor,
                     singleLine = singleLine,
                     visualTransformation = visualTransformation,
                     showDupCheck = showDupCheck,
@@ -188,6 +193,7 @@ private fun TextFieldContent(
     value: String,
     placeholderText: String,
     placeholderStyle: TextStyle,
+    placeholderColor: Color,
     singleLine: Boolean,
     visualTransformation: VisualTransformation,
     showDupCheck: Boolean,
@@ -212,7 +218,7 @@ private fun TextFieldContent(
             if (value.isEmpty()) {
                 Text(
                     text = placeholderText,
-                    style = placeholderStyle,
+                    style = placeholderStyle.copy(color = placeholderColor),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
