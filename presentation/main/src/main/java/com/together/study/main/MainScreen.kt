@@ -10,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.togehter.study.studyupdate.navigation.navigateToStudyUpdate
+import com.togehter.study.studyupdate.navigation.navigateToStudyUpdateDone
+import com.togehter.study.studyupdate.navigation.studyUpdateGraph
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.main.component.MainBottomBar
@@ -84,6 +87,9 @@ private fun MainNavHost(
 
         studyGraph(
             navigateToUp = navigator::navigateUp,
+            navigateToStudyUpdate = { isChallenge ->
+                navigator.navController.navigateToStudyUpdate(isChallenge = isChallenge)
+            },
             navigateToStudySearch = navigator.navController::navigateToStudySearch,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
             modifier = modifier,
@@ -96,6 +102,21 @@ private fun MainNavHost(
                     1,
                     5,
                     10
+                )
+            },
+            modifier = modifier,
+        )
+
+        studyUpdateGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToStudyUpdateDone = { studyName, studyIntroduce, studyCategory, studyImage, memberCount, isChallenge ->
+                navigator.navController.navigateToStudyUpdateDone(
+                    studyName = studyName,
+                    studyIntroduce = studyIntroduce,
+                    studyCategory = studyCategory,
+                    studyImage = studyImage,
+                    memberCount = memberCount,
+                    isChallenge = isChallenge
                 )
             },
             modifier = modifier,
