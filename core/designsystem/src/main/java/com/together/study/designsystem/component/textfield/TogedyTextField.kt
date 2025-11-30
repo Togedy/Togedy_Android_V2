@@ -1,18 +1,20 @@
 package com.together.study.designsystem.component.textfield
 
-import android.view.MotionEvent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
@@ -23,13 +25,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -47,8 +48,10 @@ import com.together.study.util.noRippleClickable
  * @param onValueChange 텍스트 변경 호출 함수
  * @param modifier 텍스트 필드에 적용할 Modifier
  * @param textStyle 텍스트 스타일
+ * @param textColor 텍스트 색상
  * @param placeholderText placeholder 텍스트
  * @param placeholderStyle placeholder 텍스트 스타일
+ * @param placeholderColor placeholder 텍스트 색상
  * @param singleLine 텍스트 필드가 한 줄 제한 여부 (기본값 true)
  * @param shape 텍스트 필드의 모서리 (기본값 RoundedCornerShape(4.dp))
  * @param backgroundColor 텍스트 필드의 배경색
@@ -64,19 +67,20 @@ import com.together.study.util.noRippleClickable
  * @param minHeight 텍스트 필드의 최소 높이 (null일 경우 기본 높이)
  * @param isError 에러 상태 여부 (기본값 false)
  * @param errorMessage 텍스트 필드 하단에 표시될 에러 메시지 (null일 경우 표시 안 함)
- * @param errorMessageStyle 에러 메시지 텍스트의 스타일
+ * @param errorMessageStyle 에러 메시지 텍스트의 스타일 (색상은 errorColor로 자동 적용됨)
  * @param errorMessagePadding 에러 메시지 패딩 값
- * @param errorColor 에러 상태일 때 테두리와 메시지에 사용될 색상
+ * @param errorColor 에러 상태일 때 테두리, 아이콘, 텍스트에 사용될 색상 (기본값: TogedyTheme.colors.red)
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TogedyTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = TogedyTheme.typography.body14m.copy(color = TogedyTheme.colors.black),
+    textStyle: TextStyle = TogedyTheme.typography.body14m,
+    textColor: Color = TogedyTheme.colors.black,
     placeholderText: String = "",
-    placeholderStyle: TextStyle = TogedyTheme.typography.body14m.copy(color = TogedyTheme.colors.gray400),
+    placeholderStyle: TextStyle = TogedyTheme.typography.body14m,
+    placeholderColor: Color = TogedyTheme.colors.gray400,
     singleLine: Boolean = true,
     shape: Shape = RoundedCornerShape(4.dp),
     backgroundColor: Color = TogedyTheme.colors.gray50,
@@ -92,9 +96,9 @@ fun TogedyTextField(
     minHeight: Dp? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
-    errorMessageStyle: TextStyle = TogedyTheme.typography.body12m.copy(color = TogedyTheme.colors.gray400),
+    errorMessageStyle: TextStyle = TogedyTheme.typography.body12m,
     errorMessagePadding: PaddingValues = PaddingValues(top = 4.dp),
-    errorColor: Color = TogedyTheme.colors.black,
+    errorColor: Color = TogedyTheme.colors.red,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -140,11 +144,11 @@ fun TogedyTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = singleLine,
-        textStyle = textStyle,
+        textStyle = textStyle.copy(color = textColor),
         visualTransformation = effectiveVisualTransformation,
         enabled = enabled,
         interactionSource = interactionSource,
-        cursorBrush = Brush.verticalGradient(listOf(textStyle.color, textStyle.color)),
+        cursorBrush = Brush.verticalGradient(listOf(textColor, textColor)),
         modifier = textFieldModifier,
         decorationBox = { innerTextField ->
             Column(
@@ -157,6 +161,7 @@ fun TogedyTextField(
                     value = value,
                     placeholderText = placeholderText,
                     placeholderStyle = placeholderStyle,
+                    placeholderColor = placeholderColor,
                     singleLine = singleLine,
                     visualTransformation = visualTransformation,
                     showDupCheck = showDupCheck,
@@ -188,6 +193,7 @@ private fun TextFieldContent(
     value: String,
     placeholderText: String,
     placeholderStyle: TextStyle,
+    placeholderColor: Color,
     singleLine: Boolean,
     visualTransformation: VisualTransformation,
     showDupCheck: Boolean,
@@ -206,14 +212,13 @@ private fun TextFieldContent(
         // 입력 필드
         Box(
             modifier = Modifier
-                .weight(1f)
-                .padding(end = if (showDupCheck) 8.dp else 0.dp),
+                .weight(1f),
             contentAlignment = Alignment.CenterStart
         ) {
             if (value.isEmpty()) {
                 Text(
                     text = placeholderText,
-                    style = placeholderStyle,
+                    style = placeholderStyle.copy(color = placeholderColor),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -223,6 +228,7 @@ private fun TextFieldContent(
 
         // 비밀번호 표시/숨김 아이콘
         if (visualTransformation != VisualTransformation.None) {
+            Spacer(Modifier.width(8.dp))
             PasswordVisibilityIcon(
                 onVisibilityChange = onPasswordVisibilityChange
             )
@@ -230,6 +236,7 @@ private fun TextFieldContent(
 
         // 중복 확인 버튼
         if (showDupCheck) {
+            Spacer(Modifier.width(8.dp))
             DupCheckButton(
                 text = dupCheckText,
                 onClick = onDupCheckClick,
@@ -241,7 +248,6 @@ private fun TextFieldContent(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun PasswordVisibilityIcon(
     onVisibilityChange: (Boolean) -> Unit
@@ -250,23 +256,15 @@ private fun PasswordVisibilityIcon(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye),
         contentDescription = "비밀번호 표시",
         tint = TogedyTheme.colors.gray400,
-        modifier = Modifier
-            .padding(start = 8.dp)
-            .pointerInteropFilter { event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        onVisibilityChange(true)
-                        true
-                    }
-
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        onVisibilityChange(false)
-                        true
-                    }
-
-                    else -> false
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(
+                onPress = {
+                    onVisibilityChange(true)
+                    tryAwaitRelease()
+                    onVisibilityChange(false)
                 }
-            }
+            )
+        }
     )
 }
 
@@ -325,7 +323,7 @@ private fun ErrorMessageRow(
 
         Text(
             text = errorMessage,
-            style = errorMessageStyle
+            style = errorMessageStyle.copy(color = errorColor)
         )
     }
 }
@@ -354,11 +352,7 @@ fun TogedyTextFieldPreview_ErrorState() {
             onValueChange = { text = it },
             placeholderText = "내용을 입력하세요",
             isError = true,
-            errorMessage = "욕설/비방 글은 작성이 불가합니다",
-            errorMessageStyle = TogedyTheme.typography.body12m.copy(
-                color = TogedyTheme.colors.red
-            ),
-            errorColor = TogedyTheme.colors.red
+            errorMessage = "욕설/비방 글은 작성이 불가합니다"
         )
     }
 }
