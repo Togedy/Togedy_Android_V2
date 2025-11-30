@@ -64,9 +64,9 @@ import com.together.study.util.noRippleClickable
  * @param minHeight 텍스트 필드의 최소 높이 (null일 경우 기본 높이)
  * @param isError 에러 상태 여부 (기본값 false)
  * @param errorMessage 텍스트 필드 하단에 표시될 에러 메시지 (null일 경우 표시 안 함)
- * @param errorMessageStyle 에러 메시지 텍스트의 스타일
+ * @param errorMessageStyle 에러 메시지 텍스트의 스타일 (색상은 errorColor로 자동 적용됨)
  * @param errorMessagePadding 에러 메시지 패딩 값
- * @param errorColor 에러 상태일 때 테두리와 메시지에 사용될 색상
+ * @param errorColor 에러 상태일 때 테두리, 아이콘, 텍스트에 사용될 색상 (기본값: TogedyTheme.colors.red)
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -92,9 +92,9 @@ fun TogedyTextField(
     minHeight: Dp? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
-    errorMessageStyle: TextStyle = TogedyTheme.typography.body12m.copy(color = TogedyTheme.colors.gray400),
+    errorMessageStyle: TextStyle = TogedyTheme.typography.body12m,
     errorMessagePadding: PaddingValues = PaddingValues(top = 4.dp),
-    errorColor: Color = TogedyTheme.colors.black,
+    errorColor: Color = TogedyTheme.colors.red,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -325,7 +325,7 @@ private fun ErrorMessageRow(
 
         Text(
             text = errorMessage,
-            style = errorMessageStyle
+            style = errorMessageStyle.copy(color = errorColor)
         )
     }
 }
@@ -354,11 +354,7 @@ fun TogedyTextFieldPreview_ErrorState() {
             onValueChange = { text = it },
             placeholderText = "내용을 입력하세요",
             isError = true,
-            errorMessage = "욕설/비방 글은 작성이 불가합니다",
-            errorMessageStyle = TogedyTheme.typography.body12m.copy(
-                color = TogedyTheme.colors.red
-            ),
-            errorColor = TogedyTheme.colors.red
+            errorMessage = "욕설/비방 글은 작성이 불가합니다"
         )
     }
 }
