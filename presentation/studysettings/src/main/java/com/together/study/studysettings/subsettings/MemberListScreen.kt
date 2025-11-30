@@ -46,10 +46,12 @@ import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.type.StudyRole
+import com.together.study.util.noRippleClickable
 
 @Composable
 fun MemberListScreen(
     onBackClick: () -> Unit,
+    onMemberDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MemberListViewModel = hiltViewModel(),
 ) {
@@ -115,7 +117,8 @@ fun MemberListScreen(
                 ) {
                     itemsIndexed(memberList) { index, item ->
                         Box(
-                            modifier = Modifier,
+                            modifier = Modifier
+                                .noRippleClickable { onMemberDetailNavigate(item.userId) },
                             contentAlignment = Alignment.BottomCenter,
                         ) {
                             Row(
@@ -194,6 +197,7 @@ private fun MemberListScreenPreview() {
     TogedyTheme {
         MemberListScreen(
             onBackClick = {},
+            onMemberDetailNavigate = {},
         )
     }
 }

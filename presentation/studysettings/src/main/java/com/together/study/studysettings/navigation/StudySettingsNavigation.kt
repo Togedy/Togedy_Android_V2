@@ -102,6 +102,7 @@ fun NavGraphBuilder.studySettingsGraph(
     composable<MemberList> {
         MemberListScreen(
             onBackClick = navigateToUp,
+            onMemberDetailNavigate = {},
             modifier = modifier,
         )
     }
