@@ -1,13 +1,8 @@
 package com.together.study.studydetail.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,12 +11,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
+import com.together.study.designsystem.component.textfield.TogedyTextField
 import com.together.study.designsystem.theme.TogedyTheme
 
 @Composable
@@ -47,9 +42,13 @@ fun JoinStudyDialog(
 
                 Spacer(Modifier.height(10.dp))
 
-                PasswordTextField(
-                    inputValue = inputValue,
+                TogedyTextField(
+                    value = inputValue,
                     onValueChange = { inputValue = it },
+                    placeholderText = "비밀번호를 입력해주세요",
+                    focusedBorderColor = TogedyTheme.colors.green,
+                    backgroundColor = TogedyTheme.colors.white,
+                    modifier = Modifier.fillMaxWidth(),
                 )
 
                 if (errorMessage.isNotEmpty()) {
@@ -87,44 +86,6 @@ fun JoinStudyDialog(
         onDismissRequest = onDismissRequest,
         onButtonClick = { onJoinStudyClick(if (hasPassword) inputValue else null) },
         modifier = modifier,
-    )
-}
-
-@Composable
-private fun PasswordTextField(
-    inputValue: String,
-    modifier: Modifier = Modifier,
-    onValueChange: (String) -> Unit,
-) {
-    val borderColor =
-        if (inputValue.isEmpty()) TogedyTheme.colors.gray200
-        else TogedyTheme.colors.green
-
-    BasicTextField(
-        value = inputValue,
-        onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(4.dp)
-            )
-            .padding(10.dp),
-        textStyle = TogedyTheme.typography.body14m,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        decorationBox = { innerTextField ->
-            if (inputValue.isEmpty()) {
-                Text(
-                    text = "비밀번호를 입력해주세요",
-                    style = TogedyTheme.typography.body14m,
-                    color = TogedyTheme.colors.gray500,
-                )
-            }
-
-            innerTextField()
-        }
     )
 }
 
