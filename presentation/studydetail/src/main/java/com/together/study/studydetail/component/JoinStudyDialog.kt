@@ -33,7 +33,7 @@ fun JoinStudyDialog(
     onDismissRequest: () -> Unit,
     onJoinStudyClick: (String?) -> Unit,
 ) {
-    var inputValue: String? by remember { mutableStateOf("") }
+    var inputValue by remember { mutableStateOf("") }
 
     TogedyBasicDialog(
         title = "스터디 가입",
@@ -48,7 +48,7 @@ fun JoinStudyDialog(
                 Spacer(Modifier.height(10.dp))
 
                 PasswordTextField(
-                    inputValue = inputValue ?: "",
+                    inputValue = inputValue,
                     onValueChange = { inputValue = it },
                 )
 
@@ -85,7 +85,7 @@ fun JoinStudyDialog(
         },
         buttonText = "가입하기",
         onDismissRequest = onDismissRequest,
-        onButtonClick = { onJoinStudyClick(inputValue) },
+        onButtonClick = { onJoinStudyClick(if (hasPassword) inputValue else null) },
         modifier = modifier,
     )
 }
