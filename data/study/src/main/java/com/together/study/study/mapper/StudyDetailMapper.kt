@@ -14,6 +14,7 @@ fun StudyDetailInfoResponse.toDomain(): StudyDetailInfo =
     StudyDetailInfo(
         isJoined = isJoined,
         isStudyLeader = isStudyLeader,
+        hasPassword = hasPassword,
         studyName = studyName,
         studyDescription = studyDescription,
         studyImageUrl = studyImageUrl,

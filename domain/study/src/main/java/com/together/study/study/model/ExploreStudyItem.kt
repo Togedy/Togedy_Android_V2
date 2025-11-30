@@ -7,7 +7,7 @@ data class ExploreStudyItem(
     val studyDescription: String?,
     val studyTag: String,
     val studyLeaderImageUrl: String,
-    val studyTier: String,
+    val studyTier: String?,
     val studyMemberCount: Int,
     val studyMemberLimit: Int,
     val studyImageUrl: String,

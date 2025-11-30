@@ -13,6 +13,7 @@ class StudyExploreDataSource @Inject constructor(
         filter: String,
         joinable: Boolean,
         challenge: Boolean,
+        name: String,
         page: Int?,
         size: Int?,
     ) = studyExploreService.getExploreStudyItems(
@@ -20,7 +21,10 @@ class StudyExploreDataSource @Inject constructor(
         filter = filter,
         joinable = joinable,
         challenge = challenge,
+        name = name,
         page = page,
         size = size,
     )
+
+    suspend fun getPopularStudyItems() = studyExploreService.getPopularStudyItems()
 }

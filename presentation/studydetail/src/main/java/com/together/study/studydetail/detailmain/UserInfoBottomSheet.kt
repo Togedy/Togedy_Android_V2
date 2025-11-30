@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,28 +58,30 @@ import com.together.study.study.model.StudyMemberPlanner
 import com.together.study.study.model.StudyMemberProfile
 import com.together.study.study.model.StudyMemberTimeBlocks
 import com.together.study.studydetail.detailmain.component.StudyMonthlyColorBlock
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun UserInfoBottomSheet(
     studyId: Long,
+    userId: Long,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     viewModel: UserInfoViewModel = hiltViewModel(),
 ) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var selectedTab by remember { mutableStateOf(StudyMemberTab.STUDY_TIME) }
     val context = LocalContext.current
 
     val isPlannerVisible by viewModel.isPlannerVisibleToggle.collectAsStateWithLifecycle()
     val memberUiState by viewModel.memberUiState.collectAsStateWithLifecycle()
-    val user = (memberUiState.profileState as UiState.Success).data
-    val dailyPlanner = (memberUiState.plannerState as UiState.Success).data
 
-    LaunchedEffect(selectedTab) {
-        viewModel.getStudyMemberInfo(studyId)
+    LaunchedEffect(Unit) {
+        viewModel.getStudyMemberInfo(studyId, userId)
     }
 
     ModalBottomSheet(
+        sheetState = sheetState,
         onDismissRequest = onDismissRequest,
         modifier = modifier.fillMaxWidth(),
         containerColor = TogedyTheme.colors.white,
@@ -87,6 +91,9 @@ internal fun UserInfoBottomSheet(
             is UiState.Failure -> {}
             is UiState.Loading -> {}
             is UiState.Success<*> -> {
+                val user = (memberUiState.profileState as UiState.Success).data
+                val dailyPlanner = (memberUiState.plannerState as UiState.Success).data
+
                 UserInfoSuccessScreen(
                     context = context,
                     selectedTab = selectedTab,
@@ -185,6 +192,10 @@ private fun UserInfoSuccessScreen(
 
         when (selectedTab) {
             StudyMemberTab.STUDY_TIME -> {
+                val currentDate = LocalDate.now()
+                val currentYear = currentDate.year
+                val currentMonth = currentDate.monthValue
+
                 StudyTimeTitleSection()
 
                 if (studyTimeBlocks.studyTimeCount != 0) {
@@ -194,23 +205,54 @@ private fun UserInfoSuccessScreen(
                     )
                 }
 
-                LazyRow(
-                    modifier = Modifier,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    reverseLayout = true,
-                ) {
-                    item { Spacer(Modifier.width(6.dp)) }
+                if (studyTimeBlocks.monthlyStudyTimeList.isEmpty()) {
+                    val monthsToShow = listOf(
+                        LocalDate.of(currentYear, currentMonth, 1),
+                        LocalDate.of(currentYear, currentMonth, 1).minusMonths(1)
+                    )
 
-                    itemsIndexed(studyTimeBlocks.monthlyStudyTimeList.reversed()) { index, item ->
-                        StudyMonthlyColorBlock(
-                            year = item.year,
-                            month = item.month,
-                            studyTimeList = item.studyTimeList,
-                        )
+                    LazyRow(
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        reverseLayout = true,
+                    ) {
+                        item { Spacer(Modifier.width(6.dp)) }
+
+                        items(monthsToShow) { date ->
+                            val year = date.year
+                            val month = date.monthValue
+                            val daysInMonth = date.lengthOfMonth()
+
+                            val emptyStudyTimeList = List(daysInMonth) { 1 }
+
+                            StudyMonthlyColorBlock(
+                                year = year,
+                                month = month,
+                                studyTimeList = emptyStudyTimeList,
+                            )
+                        }
+
+                        item { Spacer(Modifier.width(6.dp)) }
                     }
+                } else {
+                    LazyRow(
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        reverseLayout = true,
+                    ) {
+                        item { Spacer(Modifier.width(6.dp)) }
+
+                        itemsIndexed(studyTimeBlocks.monthlyStudyTimeList.reversed()) { index, item ->
+                            StudyMonthlyColorBlock(
+                                year = item.year,
+                                month = item.month,
+                                studyTimeList = item.studyTimeList,
+                            )
+                        }
 
 
-                    item { Spacer(Modifier.width(6.dp)) }
+                        item { Spacer(Modifier.width(6.dp)) }
+                    }
                 }
             }
 
@@ -231,58 +273,80 @@ private fun UserInfoSuccessScreen(
                                     TogedyTheme.colors.gray100,
                                     RoundedCornerShape(8.dp)
                                 ),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text(
-                                text = "다른 멤버에게 공개할래요",
-                                style = TogedyTheme.typography.chip10sb,
-                                color = TogedyTheme.colors.gray900,
-                            )
-
-                            TogedyToggleButton(
-                                isToggleOn = isPlannerVisible,
-                                onToggleClick = onPlannerVisibleToggleClick,
-                            )
-                        }
-                    }
-
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .height(300.dp),
-                    ) {
-                        itemsIndexed(dailyPlanner.dailyPlanner) { index, item ->
-                            Column(
-                                modifier = Modifier.padding(bottom = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp)
+                                    .background(
+                                        TogedyTheme.colors.gray100,
+                                        RoundedCornerShape(8.dp)
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Text(
-                                    text = item.studyCategoryName,
-                                    style = TogedyTheme.typography.body14b,
+                                    text = "다른 멤버에게 공개할래요",
+                                    style = TogedyTheme.typography.chip10sb,
                                     color = TogedyTheme.colors.gray900,
                                 )
 
-                                HorizontalDivider(color = TogedyTheme.colors.gray50)
+                                TogedyToggleButton(
+                                    isToggleOn = isPlannerVisible,
+                                    onToggleClick = onPlannerVisibleToggleClick,
+                                )
+                            }
+                        }
+                    }
 
-                                item.planList.forEach { plan ->
-                                    val status =
-                                        if (plan.planStatus == "완료") TextDecoration.LineThrough
-                                        else TextDecoration.None
-                                    val color =
-                                        if (plan.planStatus == "완료") TogedyTheme.colors.gray500
-                                        else TogedyTheme.colors.gray900
-
+                    if (dailyPlanner.dailyPlanner != null) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .height(300.dp),
+                        ) {
+                            itemsIndexed(dailyPlanner.dailyPlanner!!) { index, item ->
+                                Column(
+                                    modifier = Modifier.padding(bottom = 16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
                                     Text(
-                                        text = plan.planName,
-                                        style = TogedyTheme.typography.body13m,
-                                        color = color,
-                                        textDecoration = status
+                                        text = item.studyCategoryName,
+                                        style = TogedyTheme.typography.body14b,
+                                        color = TogedyTheme.colors.gray900,
                                     )
 
                                     HorizontalDivider(color = TogedyTheme.colors.gray50)
+
+                                    item.planList.forEach { plan ->
+                                        val status =
+                                            if (plan.planStatus == "완료") TextDecoration.LineThrough
+                                            else TextDecoration.None
+                                        val color =
+                                            if (plan.planStatus == "완료") TogedyTheme.colors.gray500
+                                            else TogedyTheme.colors.gray900
+
+                                        Text(
+                                            text = plan.planName,
+                                            style = TogedyTheme.typography.body13m,
+                                            color = color,
+                                            textDecoration = status
+                                        )
+
+                                        HorizontalDivider(color = TogedyTheme.colors.gray50)
+                                    }
                                 }
                             }
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier.height(100.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "오늘의 일정이 없습니다.",
+                                style = TogedyTheme.typography.body14b,
+                            )
                         }
                     }
                 }
@@ -411,7 +475,7 @@ private fun PlannerTitleSection(
         if (isMyPlanner || isPlannerVisible) {
             Text(
                 text = buildAnnotatedString {
-                    append("오늘의 할 일")
+                    append("오늘의 할 일 ")
                     withStyle(SpanStyle(color = TogedyTheme.colors.green)) {
                         append("${completedPlanCount ?: 0}")
                     }
@@ -477,7 +541,9 @@ private fun changeToTotalStudyTime(time: String): String {
         else -> "${minuteValue}m"
     }
 
-    return if (hour.isNotEmpty() && minutes.isNotEmpty()) "$hour $minutes" else "$hour$minutes"
+    return if (hour.isBlank() && minutes.isBlank()) "0h"
+    else if (hour.isNotEmpty() && minutes.isNotEmpty()) "$hour $minutes"
+    else "$hour$minutes"
 }
 
 private fun checkMaxValue(value: Int): String {
@@ -490,6 +556,7 @@ private fun UserInfoBottomSheetPreview() {
     TogedyTheme {
         UserInfoBottomSheet(
             studyId = 1,
+            userId = 1,
             onDismissRequest = {},
         )
     }

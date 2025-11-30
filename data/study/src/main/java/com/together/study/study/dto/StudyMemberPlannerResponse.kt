@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
 data class StudyMemberPlannerResponse(
     @SerialName("isMyPlanner") val isMyPlanner: Boolean,
     @SerialName("isPlannerVisible") val isPlannerVisible: Boolean,
-    @SerialName("completedPlanCount") val completedPlanCount: Int?,
+    @SerialName("completedCount") val completedPlanCount: Int?,
     @SerialName("totalPlanCount") val totalPlanCount: Int?,
-    @SerialName("dailyPlanner") val dailyPlanner: List<DailyPlannerResponse>,
+    @SerialName("dailyPlanner") val dailyPlanner: List<DailyPlannerResponse>?,
 )
 
 @Serializable

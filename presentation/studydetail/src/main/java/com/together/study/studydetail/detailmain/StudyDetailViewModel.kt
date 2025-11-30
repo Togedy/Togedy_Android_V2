@@ -39,6 +39,8 @@ internal class StudyDetailViewModel @Inject constructor(
     val selectedTab = _selectedTab.asStateFlow()
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
+    private val _passwordErrorMessage = MutableStateFlow("")
+    val passwordError = _passwordErrorMessage.asStateFlow()
     private val _dialogState: MutableStateFlow<StudyDetailDialogState> =
         MutableStateFlow(StudyDetailDialogState())
     val dialogState: StateFlow<StudyDetailDialogState> = _dialogState.asStateFlow()
@@ -90,9 +92,17 @@ internal class StudyDetailViewModel @Inject constructor(
     }
 
     fun joinStudy(password: String? = null) = viewModelScope.launch {
+        _passwordErrorMessage.value = ""
         studyDetailRepository.postStudyJoin(studyId, password)
-            .onSuccess { updateDialogState(StudyDetailDialogType.JOIN_COMPLETE) }
-            .onFailure { Timber.tag("STUDY_DETAIL").e(it.message.toString()) }
+            .onSuccess {
+                updateDialogState(StudyDetailDialogType.JOIN_COMPLETE)
+                updateDialogState(StudyDetailDialogType.JOIN)
+                getStudyDetailInfo()
+            }
+            .onFailure {
+                _passwordErrorMessage.value = "스터디 비밀번호가 일치하지 않습니다."
+                Timber.tag("okhttp-joinStudy").e(it.message.toString())
+            }
     }
 
     fun updateSelectedTab(new: StudyDetailTab) {

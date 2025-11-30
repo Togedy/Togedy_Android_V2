@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,214 +34,49 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.type.StudyRole
+import com.together.study.studysettings.subsettings.event.MemberEditEvent
 import com.together.study.studysettings.type.MemberEditType
 import com.together.study.util.noRippleClickable
-
-data class Member(
-    val userId: Long,
-    val userName: String,
-    val studyRole: StudyRole,
-)
 
 @Composable
 fun MemberEditScreen(
     onBackClick: () -> Unit,
-    type: MemberEditType = MemberEditType.EDIT,
+    onMemberSettingsNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MemberEditViewModel = hiltViewModel(),
 ) {
     var isMemberDialogVisible by remember { mutableStateOf(false) }
-    val currentStudyMemberCount by viewModel.currentStudyMemberCount.collectAsStateWithLifecycle()
+    val uiState by viewModel.studyDetailUiState.collectAsStateWithLifecycle()
     val selectedUser by viewModel.selectedUser.collectAsStateWithLifecycle()
+    val eventFlow = viewModel.eventFlow
+    val type = viewModel.type
 
-    val memberList = listOf(
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 1,
-            userName = "member1",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 2,
-            userName = "member2",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 3,
-            userName = "member3",
-            studyRole = StudyRole.MEMBER
-        ),
-        Member(
-            userId = 4,
-            userName = "member4",
-            studyRole = StudyRole.MEMBER
-        ),
-    )
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is MemberEditEvent.DeleteMemberSuccess -> {
+                    isMemberDialogVisible = false
+                    // toast
+                }
+
+                is MemberEditEvent.DelegateSuccess -> {
+                    onMemberSettingsNavigate(viewModel.studyId)
+                }
+
+                is MemberEditEvent.ShowError -> {
+                    isMemberDialogVisible = false
+                    // toast
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -257,133 +93,149 @@ fun MemberEditScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        if (type == MemberEditType.EDIT) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "스터디 멤버 관리 ${currentStudyMemberCount}/${viewModel.studyMemberLimit}",
-                    style = TogedyTheme.typography.body14b,
-                    color = TogedyTheme.colors.gray800,
-                )
+        when (uiState.isLoaded) {
+            is UiState.Loading -> {}
+            is UiState.Empty -> {}
+            is UiState.Failure -> {}
+            is UiState.Success<*> -> {
+                val studyInfo = (uiState.studyInfoState as UiState.Success).data
+                val memberList = (uiState.membersState as UiState.Success).data
 
-                Spacer(Modifier.width(4.dp))
-
-                Text(
-                    text = "최대 30명까지 가능해요",
-                    style = TogedyTheme.typography.body10m,
-                    color = TogedyTheme.colors.gray500,
-                )
-            }
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .padding(horizontal = 26.dp),
-        ) {
-            item {
-                Box(
-                    modifier = Modifier,
-                    contentAlignment = Alignment.BottomCenter
-                ) {
+                if (type == MemberEditType.EDIT) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(TogedyTheme.colors.gray50, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp, vertical = 12.dp),
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 20.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            text = "방장이름",
-                            style = TogedyTheme.typography.body13b,
-                            color = TogedyTheme.colors.gray700,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
+                            text = "스터디 멤버 관리 ${memberList.size}/${studyInfo.studyMemberLimit}",
+                            style = TogedyTheme.typography.body14b,
+                            color = TogedyTheme.colors.gray800,
                         )
 
-                        TogedyBasicTextChip(
-                            text = "방장",
-                            textStyle = TogedyTheme.typography.body10m,
-                            textColor = TogedyTheme.colors.gray600,
-                            backgroundColor = TogedyTheme.colors.gray200,
-                            roundedCornerShape = RoundedCornerShape(4.dp),
-                            horizontalPadding = 4.dp,
-                            verticalPadding = 4.dp
+                        Spacer(Modifier.width(4.dp))
+
+                        Text(
+                            text = "최대 30명까지 가능해요",
+                            style = TogedyTheme.typography.body10m,
+                            color = TogedyTheme.colors.gray500,
                         )
                     }
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        thickness = 1.dp,
-                        color = TogedyTheme.colors.gray200,
-                    )
                 }
 
-            }
-
-            itemsIndexed(memberList) { index, item ->
-                Box(
-                    modifier = Modifier,
-                    contentAlignment = Alignment.BottomCenter,
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(horizontal = 26.dp),
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Text(
-                            text = item.userName,
-                            style = TogedyTheme.typography.body13b,
-                            color = TogedyTheme.colors.gray700,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                        )
+                    itemsIndexed(memberList) { index, item ->
+                        when (item.studyRole) {
+                            StudyRole.LEADER -> {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.BottomCenter
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                TogedyTheme.colors.gray50,
+                                                RoundedCornerShape(8.dp)
+                                            )
+                                            .padding(horizontal = 8.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Text(
+                                            text = item.userName,
+                                            style = TogedyTheme.typography.body13b,
+                                            color = TogedyTheme.colors.gray700,
+                                            overflow = TextOverflow.Ellipsis,
+                                            maxLines = 1,
+                                        )
 
-                        if (!type.chipText.isNullOrBlank()) {
-                            val textColor = when (type) {
-                                MemberEditType.EDIT -> TogedyTheme.colors.red
-                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.green
-                                else -> TogedyTheme.colors.gray600
-                            }
-                            val backgroundColor = when (type) {
-                                MemberEditType.EDIT -> TogedyTheme.colors.red30
-                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.greenBg
-                                else -> TogedyTheme.colors.gray600
-                            }
+                                        TogedyBasicTextChip(
+                                            text = "방장",
+                                            textStyle = TogedyTheme.typography.body10m,
+                                            textColor = TogedyTheme.colors.gray600,
+                                            backgroundColor = TogedyTheme.colors.gray200,
+                                            roundedCornerShape = RoundedCornerShape(4.dp),
+                                            horizontalPadding = 4.dp,
+                                            verticalPadding = 4.dp
+                                        )
+                                    }
 
-                            TogedyBasicTextChip(
-                                text = type.chipText,
-                                textStyle = TogedyTheme.typography.body10m,
-                                textColor = textColor,
-                                backgroundColor = backgroundColor,
-                                roundedCornerShape = RoundedCornerShape(4.dp),
-                                horizontalPadding = 4.dp,
-                                verticalPadding = 4.dp,
-                                modifier = Modifier.noRippleClickable {
-                                    viewModel.updateSelectedUSer(item)
-                                    isMemberDialogVisible = true
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        thickness = 1.dp,
+                                        color = TogedyTheme.colors.gray200,
+                                    )
                                 }
-                            )
+                            }
+
+                            StudyRole.MEMBER -> {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.BottomCenter,
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Text(
+                                            text = item.userName,
+                                            style = TogedyTheme.typography.body13b,
+                                            color = TogedyTheme.colors.gray700,
+                                            overflow = TextOverflow.Ellipsis,
+                                            maxLines = 1,
+                                        )
+
+                                        if (!type.chipText.isNullOrBlank()) {
+                                            val textColor = when (type) {
+                                                MemberEditType.EDIT -> TogedyTheme.colors.red
+                                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.green
+                                                else -> TogedyTheme.colors.gray600
+                                            }
+                                            val backgroundColor = when (type) {
+                                                MemberEditType.EDIT -> TogedyTheme.colors.red30
+                                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.greenBg
+                                                else -> TogedyTheme.colors.gray600
+                                            }
+
+                                            TogedyBasicTextChip(
+                                                text = type.chipText,
+                                                textStyle = TogedyTheme.typography.body10m,
+                                                textColor = textColor,
+                                                backgroundColor = backgroundColor,
+                                                roundedCornerShape = RoundedCornerShape(4.dp),
+                                                horizontalPadding = 4.dp,
+                                                verticalPadding = 4.dp,
+                                                modifier = Modifier.noRippleClickable {
+                                                    viewModel.updateSelectedUSer(item)
+                                                    isMemberDialogVisible = true
+                                                }
+                                            )
+                                        }
+                                    }
+
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        thickness = 1.dp,
+                                        color = TogedyTheme.colors.gray200
+                                    )
+                                }
+                            }
                         }
                     }
 
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        thickness = 1.dp,
-                        color = TogedyTheme.colors.gray200
-                    )
+                    item {
+                        Spacer(Modifier.height(40.dp))
+                    }
                 }
-            }
-
-            item {
-                Spacer(Modifier.height(40.dp))
             }
         }
     }
@@ -445,7 +297,7 @@ private fun MemberEditScreenPreview() {
     TogedyTheme {
         MemberEditScreen(
             onBackClick = {},
-            type = MemberEditType.EDIT
+            onMemberSettingsNavigate = {},
         )
     }
 }

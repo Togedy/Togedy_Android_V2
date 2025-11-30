@@ -5,7 +5,7 @@ data class StudyMemberPlanner(
     val isPlannerVisible: Boolean,
     val completedPlanCount: Int?,
     val totalPlanCount: Int?,
-    val dailyPlanner: List<DailyPlanner>,
+    val dailyPlanner: List<DailyPlanner>?,
 ) {
     data class DailyPlanner(
         val studyCategoryName: String,

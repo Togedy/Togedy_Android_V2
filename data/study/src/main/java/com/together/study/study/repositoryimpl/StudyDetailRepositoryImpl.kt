@@ -38,6 +38,6 @@ class StudyDetailRepositoryImpl @Inject constructor(
         studyId: Long,
         password: String?,
     ): Result<Unit> =
-        runCatching { studyDetailDataSource.postStudyJoin(studyId, password).response }
+        runCatching { studyDetailDataSource.postStudyJoin(studyId, password) }
 
 }
