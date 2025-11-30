@@ -36,6 +36,8 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.R.drawable.ic_search_24
+import com.together.study.designsystem.R.drawable.img_character_challenge
+import com.together.study.designsystem.R.drawable.img_character_speaker_no_gradient
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.component.SortBottomSheet
@@ -51,6 +53,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun StudyMainRoute(
+    onStudyUpdateNavigate: (Boolean) -> Unit,
     onStudySearchNavigate: () -> Unit,
     onStudyDetailNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -73,6 +76,7 @@ internal fun StudyMainRoute(
         selectedTab = selectedTab,
         modifier = modifier,
         onTabClick = viewModel::updateSelectedTab,
+        onUpdateButtonClick = onStudyUpdateNavigate,
         onSearchButtonClick = onStudySearchNavigate,
         onStudyItemClick = onStudyDetailNavigate,
         onTagFilterClick = viewModel::updateTagFilters,
@@ -89,6 +93,7 @@ private fun StudyMainScreen(
     selectedTab: StudyMainTab,
     modifier: Modifier = Modifier,
     onTabClick: (StudyMainTab) -> Unit,
+    onUpdateButtonClick: (Boolean) -> Unit,
     onSearchButtonClick: () -> Unit,
     onStudyItemClick: (Long) -> Unit,
     onTagFilterClick: (StudyTagType) -> Unit,
@@ -131,6 +136,8 @@ private fun StudyMainScreen(
         if (selectedTab != currentTab) onTabClick(currentTab)
     }
 
+    var showStudyTypeDropdown by remember { mutableStateOf(false) }
+    
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -143,7 +150,9 @@ private fun StudyMainScreen(
                 TitleSection(
                     mainColor = mainColor,
                     onSearchButtonClick = onSearchButtonClick,
-                    onCreateButtonClick = {},
+                    onUpdateButtonClick = onUpdateButtonClick,
+                    showDropdown = showStudyTypeDropdown,
+                    onDropdownChange = { showStudyTypeDropdown = it },
                     modifier = Modifier.fillMaxWidth(),
                 )
 
@@ -284,7 +293,9 @@ private fun StudyMainScreen(
 private fun TitleSection(
     mainColor: Color,
     onSearchButtonClick: () -> Unit,
-    onCreateButtonClick: () -> Unit,
+    onUpdateButtonClick: (Boolean) -> Unit,
+    showDropdown: Boolean,
+    onDropdownChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -303,11 +314,39 @@ private fun TitleSection(
 
         Spacer(Modifier.width(16.dp))
 
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_search_24),
-            contentDescription = "스터디 생성 버튼",
-            tint = mainColor,
-            modifier = Modifier.noRippleClickable(onCreateButtonClick),
-        )
+        Box {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_search_24),
+                contentDescription = "스터디 생성 버튼",
+                tint = mainColor,
+                modifier = Modifier.noRippleClickable {
+                    onDropdownChange(true)
+                },
+            )
+
+            StudyDropDownScrim(
+                expanded = showDropdown,
+                onDismissRequest = { onDropdownChange(false) }
+            ) {
+                StudyDropDownScrimItem(
+                    text = "스터디룸 만들기",
+                    onClick = {
+                        onDropdownChange(false)
+                        onUpdateButtonClick(false)
+                    },
+                    imageResId = img_character_speaker_no_gradient,
+                )
+
+                StudyDropDownScrimItem(
+                    text = "챌린지 스터디룸 만들기",
+                    onClick = {
+                        onDropdownChange(false)
+                        onUpdateButtonClick(true)
+                    },
+                    imageResId = img_character_challenge,
+                )
+            }
+        }
     }
 }
+
