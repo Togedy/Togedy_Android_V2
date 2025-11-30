@@ -1,8 +1,8 @@
 package com.together.study.designsystem.component.textfield
 
-import android.view.MotionEvent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
@@ -25,13 +25,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -70,7 +69,6 @@ import com.together.study.util.noRippleClickable
  * @param errorMessagePadding 에러 메시지 패딩 값
  * @param errorColor 에러 상태일 때 테두리, 아이콘, 텍스트에 사용될 색상 (기본값: TogedyTheme.colors.red)
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TogedyTextField(
     value: String,
@@ -244,7 +242,6 @@ private fun TextFieldContent(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun PasswordVisibilityIcon(
     onVisibilityChange: (Boolean) -> Unit
@@ -253,22 +250,15 @@ private fun PasswordVisibilityIcon(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye),
         contentDescription = "비밀번호 표시",
         tint = TogedyTheme.colors.gray400,
-        modifier = Modifier
-            .pointerInteropFilter { event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        onVisibilityChange(true)
-                        true
-                    }
-
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        onVisibilityChange(false)
-                        true
-                    }
-
-                    else -> false
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(
+                onPress = {
+                    onVisibilityChange(true)
+                    tryAwaitRelease()
+                    onVisibilityChange(false)
                 }
-            }
+            )
+        }
     )
 }
 
