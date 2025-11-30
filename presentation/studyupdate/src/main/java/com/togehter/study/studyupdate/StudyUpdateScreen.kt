@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.togehter.study.studyupdate.component.StudyTimeOption
 import com.togehter.study.studyupdate.component.StudyUpdateImage
 import com.togehter.study.studyupdate.component.StudyUpdateIntroduce
@@ -29,6 +30,7 @@ import com.togehter.study.studyupdate.component.StudyUpdateNext
 import com.togehter.study.studyupdate.component.StudyUpdatePassword
 import com.togehter.study.studyupdate.component.StudyUpdateTag
 import com.togehter.study.studyupdate.component.StudyUpdateTime
+import com.togehter.study.studyupdate.type.StudyUpdateType
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -37,8 +39,8 @@ import com.together.study.designsystem.theme.TogedyTheme
 internal fun StudyUpdateRoute(
     onBackClick: () -> Unit,
     onNextClick: (String, String, String?, Uri?, Int?, Boolean) -> Unit,
-    isChallenge: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
     }
@@ -48,7 +50,7 @@ internal fun StudyUpdateRoute(
         onBackClick = onBackClick,
         onNextClick = onNextClick,
         type = StudyUpdateType.CREATE,
-        isChallenge = isChallenge,
+        isChallenge = viewModel.isChallenge,
     )
 }
 

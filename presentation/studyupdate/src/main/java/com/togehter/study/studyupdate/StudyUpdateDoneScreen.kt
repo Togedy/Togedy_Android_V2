@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
@@ -40,23 +41,18 @@ import com.together.study.util.noRippleClickable
 @Composable
 internal fun StudyUpdateDoneRoute(
     onBackClick: () -> Unit,
-    studyName: String,
-    studyIntroduce: String,
-    studyCategory: String?,
-    studyImage: Uri?,
-    memberCount: Int?,
-    isChallenge: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: StudyUpdateDoneViewModel = hiltViewModel(),
 ) {
     StudyUpdateDoneScreen(
         modifier = modifier,
         onBackClick = onBackClick,
-        studyName = studyName,
-        studyIntroduce = studyIntroduce,
-        studyCategory = studyCategory,
-        studyImage = studyImage,
-        memberCount = memberCount,
-        isChallenge = isChallenge
+        studyName = viewModel.studyName,
+        studyIntroduce = viewModel.studyIntroduce,
+        studyCategory = viewModel.studyCategory,
+        studyImage = viewModel.studyImageUri,
+        memberCount = viewModel.memberCount,
+        isChallenge = viewModel.isChallenge
     )
 }
 
