@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
@@ -206,8 +208,7 @@ private fun TextFieldContent(
         // 입력 필드
         Box(
             modifier = Modifier
-                .weight(1f)
-                .padding(end = if (showDupCheck) 8.dp else 0.dp),
+                .weight(1f),
             contentAlignment = Alignment.CenterStart
         ) {
             if (value.isEmpty()) {
@@ -223,6 +224,7 @@ private fun TextFieldContent(
 
         // 비밀번호 표시/숨김 아이콘
         if (visualTransformation != VisualTransformation.None) {
+            Spacer(Modifier.width(8.dp))
             PasswordVisibilityIcon(
                 onVisibilityChange = onPasswordVisibilityChange
             )
@@ -230,6 +232,7 @@ private fun TextFieldContent(
 
         // 중복 확인 버튼
         if (showDupCheck) {
+            Spacer(Modifier.width(8.dp))
             DupCheckButton(
                 text = dupCheckText,
                 onClick = onDupCheckClick,
@@ -251,7 +254,6 @@ private fun PasswordVisibilityIcon(
         contentDescription = "비밀번호 표시",
         tint = TogedyTheme.colors.gray400,
         modifier = Modifier
-            .padding(start = 8.dp)
             .pointerInteropFilter { event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
