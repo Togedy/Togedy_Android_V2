@@ -1,0 +1,34 @@
+package com.togehter.study.studyupdate.component
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import com.togehter.study.studyupdate.StudyUpdateTextItem
+import com.together.study.designsystem.component.textfield.TogedyTextField
+import com.together.study.designsystem.theme.TogedyTheme
+
+@Composable
+internal fun StudyUpdatePassword(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    StudyUpdateTextItem(
+        modifier = modifier.padding(top = 32.dp),
+        inputTitle = "비밀번호(선택)",
+        inputTitleSub = "4자리 설정",
+        inputEssential = false
+    ) {
+        TogedyTextField(
+            value = value,
+            onValueChange = onValueChange,
+            showBorder = false,
+            backgroundColor = TogedyTheme.colors.white,
+            visualTransformation = PasswordVisualTransformation(),
+            placeholderText = "비밀번호를 입력해주세요",
+        )
+    }
+}
+
