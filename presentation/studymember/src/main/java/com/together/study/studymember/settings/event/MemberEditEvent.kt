@@ -1,4 +1,4 @@
-package com.together.study.studysettings.subsettings.event
+package com.together.study.studymember.settings.event
 
 sealed class MemberEditEvent {
     data object DeleteMemberSuccess : MemberEditEvent()

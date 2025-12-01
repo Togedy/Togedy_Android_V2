@@ -1,4 +1,4 @@
-package com.together.study.studysettings.subsettings
+package com.together.study.studymember.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,9 +40,9 @@ import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.type.MemberEditType
 import com.together.study.study.type.StudyRole
-import com.together.study.studysettings.subsettings.event.MemberEditEvent
-import com.together.study.studysettings.type.MemberEditType
+import com.together.study.studymember.settings.event.MemberEditEvent
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -194,32 +194,28 @@ fun MemberEditScreen(
                                             maxLines = 1,
                                         )
 
-                                        if (!type.chipText.isNullOrBlank()) {
-                                            val textColor = when (type) {
-                                                MemberEditType.EDIT -> TogedyTheme.colors.red
-                                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.green
-                                                else -> TogedyTheme.colors.gray600
-                                            }
-                                            val backgroundColor = when (type) {
-                                                MemberEditType.EDIT -> TogedyTheme.colors.red30
-                                                MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.greenBg
-                                                else -> TogedyTheme.colors.gray600
-                                            }
-
-                                            TogedyBasicTextChip(
-                                                text = type.chipText,
-                                                textStyle = TogedyTheme.typography.body10m,
-                                                textColor = textColor,
-                                                backgroundColor = backgroundColor,
-                                                roundedCornerShape = RoundedCornerShape(4.dp),
-                                                horizontalPadding = 4.dp,
-                                                verticalPadding = 4.dp,
-                                                modifier = Modifier.noRippleClickable {
-                                                    viewModel.updateSelectedUSer(item)
-                                                    isMemberDialogVisible = true
-                                                }
-                                            )
+                                        val textColor = when (type) {
+                                            MemberEditType.EDIT -> TogedyTheme.colors.red
+                                            MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.green
                                         }
+                                        val backgroundColor = when (type) {
+                                            MemberEditType.EDIT -> TogedyTheme.colors.red30
+                                            MemberEditType.LEADER_CHANGE -> TogedyTheme.colors.greenBg
+                                        }
+
+                                        TogedyBasicTextChip(
+                                            text = type.chipText,
+                                            textStyle = TogedyTheme.typography.body10m,
+                                            textColor = textColor,
+                                            backgroundColor = backgroundColor,
+                                            roundedCornerShape = RoundedCornerShape(4.dp),
+                                            horizontalPadding = 4.dp,
+                                            verticalPadding = 4.dp,
+                                            modifier = Modifier.noRippleClickable {
+                                                viewModel.updateSelectedUSer(item)
+                                                isMemberDialogVisible = true
+                                            }
+                                        )
                                     }
 
                                     HorizontalDivider(
@@ -285,8 +281,6 @@ fun MemberEditScreen(
                     onButtonClick = viewModel::delegateLeader,
                 )
             }
-
-            else -> {}
         }
     }
 }

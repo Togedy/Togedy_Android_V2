@@ -1,4 +1,4 @@
-package com.together.study.studysettings.subsettings
+package com.together.study.studymember.settings
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -8,10 +8,10 @@ import com.together.study.study.model.StudyDetailInfo
 import com.together.study.study.model.StudyMemberBriefInfo
 import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudySettingsRepository
+import com.together.study.study.type.MemberEditType
 import com.together.study.study.type.StudyRole
-import com.together.study.studysettings.subsettings.event.MemberEditEvent
-import com.together.study.studysettings.subsettings.state.MemberEditUiState
-import com.together.study.studysettings.type.MemberEditType
+import com.together.study.studymember.settings.event.MemberEditEvent
+import com.together.study.studymember.settings.state.MemberEditUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +34,7 @@ class MemberEditViewModel @Inject constructor(
     private val studySettingsRepository: StudySettingsRepository,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
-    val type: MemberEditType = savedStateHandle.get<MemberEditType>(TYPE_KEY) ?: MemberEditType.SHOW
+    val type: MemberEditType = savedStateHandle.get<MemberEditType>(TYPE_KEY) ?: MemberEditType.EDIT
 
     private val _studyInfoState = MutableStateFlow<UiState<StudyDetailInfo>>(UiState.Loading)
     private val _membersState =
