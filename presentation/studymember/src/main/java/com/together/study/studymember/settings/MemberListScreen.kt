@@ -1,4 +1,4 @@
-package com.together.study.studysettings.subsettings
+package com.together.study.studymember.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

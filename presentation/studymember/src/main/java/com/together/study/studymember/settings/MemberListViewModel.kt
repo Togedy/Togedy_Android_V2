@@ -1,4 +1,4 @@
-package com.together.study.studysettings.subsettings
+package com.together.study.studymember.settings
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
