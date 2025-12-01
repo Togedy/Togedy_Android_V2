@@ -6,8 +6,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
+import com.together.study.study.type.MemberEditType
+import com.together.study.studymember.settings.MemberEditScreen
 import com.together.study.studymember.settings.MemberListScreen
 import kotlinx.serialization.Serializable
+
+fun NavController.navigateToMemberEditScreen(
+    studyId: Long,
+    type: MemberEditType,
+    navOptions: NavOptions? = null,
+) = navigate(MemberEdit(studyId, type), navOptions)
 
 fun NavController.navigateToMemberListScreen(
     studyId: Long,
@@ -16,9 +24,17 @@ fun NavController.navigateToMemberListScreen(
 
 fun NavGraphBuilder.studyMemberGraph(
     navigateToUp: () -> Unit,
+    navigateToMemberSettings: (Long) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
+    composable<MemberEdit> {
+        MemberEditScreen(
+            onBackClick = navigateToUp,
+            onMemberSettingsNavigate = navigateToMemberSettings,
+            modifier = modifier,
+        )
+    }
 
     composable<MemberList> {
         MemberListScreen(
@@ -28,6 +44,9 @@ fun NavGraphBuilder.studyMemberGraph(
         )
     }
 }
+
+@Serializable
+data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
 
 @Serializable
 data class MemberList(val studyId: Long) : Route

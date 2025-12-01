@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.main.component.MainBottomBar
@@ -21,8 +22,10 @@ import com.together.study.study.navigation.studyGraph
 import com.together.study.study.type.StudyRole
 import com.together.study.studydetail.navigation.navigateToStudyDetail
 import com.together.study.studydetail.navigation.studyDetailGraph
+import com.together.study.studymember.navigation.navigateToMemberEditScreen
 import com.together.study.studymember.navigation.navigateToMemberListScreen
 import com.together.study.studymember.navigation.studyMemberGraph
+import com.together.study.studysettings.navigation.MemberSettings
 import com.together.study.studysettings.navigation.navigateToLeaderSettingsScreen
 import com.together.study.studysettings.navigation.navigateToMemberSettingsScreen
 import com.together.study.studysettings.navigation.studySettingsGraph
@@ -107,6 +110,15 @@ private fun MainNavHost(
 
         studyMemberGraph(
             navigateToUp = navigator::navigateUp,
+            navigateToMemberSettings = { id ->
+                navigator.navController.navigateToMemberSettingsScreen(
+                    studyId = id,
+                    navOptions = navOptions {
+                        popUpTo(MemberSettings) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
+            },
             navController = navigator.navController,
             modifier = modifier,
         )
@@ -114,6 +126,7 @@ private fun MainNavHost(
         studySettingsGraph(
             navigateToUp = navigator::navigateUp,
             navigateToStudyMain = navigator.navController::navigateToStudy,
+            navigateToStudyMemberEdit = navigator.navController::navigateToMemberEditScreen,
             navigateToStudyMemberList = navigator.navController::navigateToMemberListScreen,
             navController = navigator.navController,
             modifier = modifier,
