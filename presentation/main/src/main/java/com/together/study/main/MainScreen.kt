@@ -21,6 +21,8 @@ import com.together.study.study.navigation.studyGraph
 import com.together.study.study.type.StudyRole
 import com.together.study.studydetail.navigation.navigateToStudyDetail
 import com.together.study.studydetail.navigation.studyDetailGraph
+import com.together.study.studymember.navigation.navigateToMemberListScreen
+import com.together.study.studymember.navigation.studyMemberGraph
 import com.together.study.studysettings.navigation.navigateToLeaderSettingsScreen
 import com.together.study.studysettings.navigation.navigateToMemberSettingsScreen
 import com.together.study.studysettings.navigation.studySettingsGraph
@@ -103,9 +105,16 @@ private fun MainNavHost(
             modifier = modifier,
         )
 
+        studyMemberGraph(
+            navigateToUp = navigator::navigateUp,
+            navController = navigator.navController,
+            modifier = modifier,
+        )
+
         studySettingsGraph(
             navigateToUp = navigator::navigateUp,
             navigateToStudyMain = navigator.navController::navigateToStudy,
+            navigateToStudyMemberList = navigator.navController::navigateToMemberListScreen,
             navController = navigator.navController,
             modifier = modifier,
         )

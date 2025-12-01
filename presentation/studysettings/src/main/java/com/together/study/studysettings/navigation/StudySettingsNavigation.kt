@@ -11,7 +11,6 @@ import com.together.study.studysettings.main.LeaderSettingsRoute
 import com.together.study.studysettings.main.MemberSettingsRoute
 import com.together.study.studysettings.subsettings.MemberCountEditScreen
 import com.together.study.studysettings.subsettings.MemberEditScreen
-import com.together.study.studysettings.subsettings.MemberListScreen
 import com.together.study.studysettings.type.MemberEditType
 import kotlinx.serialization.Serializable
 
@@ -36,15 +35,11 @@ fun NavController.navigateToMemberCountEditScreen(
     navOptions: NavOptions? = null,
 ) = navigate(MemberCountEdit(studyId), navOptions)
 
-fun NavController.navigateToMemberListScreen(
-    studyId: Long,
-    navOptions: NavOptions? = null,
-) = navigate(MemberList(studyId), navOptions)
-
 
 fun NavGraphBuilder.studySettingsGraph(
     navigateToUp: () -> Unit,
     navigateToStudyMain: () -> Unit,
+    navigateToStudyMemberList: (Long) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -69,7 +64,7 @@ fun NavGraphBuilder.studySettingsGraph(
     composable<MemberSettings> {
         MemberSettingsRoute(
             onBackClick = navigateToUp,
-            onMemberNavigate = navController::navigateToMemberListScreen,
+            onMemberNavigate = navigateToStudyMemberList,
             onReportNavigate = { /* 추후 신고화면 연결*/ },
             onStudyMainNavigate = navigateToStudyMain,
             modifier = modifier,
@@ -98,16 +93,7 @@ fun NavGraphBuilder.studySettingsGraph(
             modifier = modifier,
         )
     }
-
-    composable<MemberList> {
-        MemberListScreen(
-            onBackClick = navigateToUp,
-            onMemberDetailNavigate = {},
-            modifier = modifier,
-        )
-    }
 }
-
 
 @Serializable
 data class LeaderSettings(val studyId: Long) : Route
@@ -120,6 +106,3 @@ data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
 
 @Serializable
 data class MemberCountEdit(val studyId: Long) : Route
-
-@Serializable
-data class MemberList(val studyId: Long) : Route
