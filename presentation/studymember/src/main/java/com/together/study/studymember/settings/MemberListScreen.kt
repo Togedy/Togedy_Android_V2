@@ -51,7 +51,7 @@ import com.together.study.util.noRippleClickable
 @Composable
 fun MemberListScreen(
     onBackClick: () -> Unit,
-    onMemberDetailNavigate: (Long) -> Unit,
+    onMemberDetailNavigate: (Long, Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MemberListViewModel = hiltViewModel(),
 ) {
@@ -118,7 +118,12 @@ fun MemberListScreen(
                     itemsIndexed(memberList) { index, item ->
                         Box(
                             modifier = Modifier
-                                .noRippleClickable { onMemberDetailNavigate(item.userId) },
+                                .noRippleClickable {
+                                    onMemberDetailNavigate(
+                                        viewModel.studyId,
+                                        item.userId
+                                    )
+                                },
                             contentAlignment = Alignment.BottomCenter,
                         ) {
                             Row(
@@ -197,7 +202,7 @@ private fun MemberListScreenPreview() {
     TogedyTheme {
         MemberListScreen(
             onBackClick = {},
-            onMemberDetailNavigate = {},
+            onMemberDetailNavigate = { studyId, memberId -> },
         )
     }
 }

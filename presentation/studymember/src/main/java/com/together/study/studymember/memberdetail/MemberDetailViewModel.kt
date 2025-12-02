@@ -1,5 +1,6 @@
-package com.together.study.studydetail.detailmain
+package com.together.study.studymember.memberdetail
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
@@ -7,7 +8,7 @@ import com.together.study.study.model.StudyMemberPlanner
 import com.together.study.study.model.StudyMemberProfile
 import com.together.study.study.model.StudyMemberTimeBlocks
 import com.together.study.study.repository.StudyMemberRepository
-import com.together.study.studydetail.detailmain.state.MemberUiState
+import com.together.study.studymember.memberdetail.state.MemberUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,11 +22,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class UserInfoViewModel @Inject constructor(
+internal class MemberDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val studyMemberRepository: StudyMemberRepository,
 ) : ViewModel() {
-    var studyId: Long = 0
-    var userId: Long = 0
+    var studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
+    var memberId: Long = savedStateHandle.get<Long>(MEMBER_ID_KEY) ?: 0
 
     private val _isPlannerVisibleToggle = MutableStateFlow(false)
     val isPlannerVisibleToggle: StateFlow<Boolean> = _isPlannerVisibleToggle
@@ -54,9 +56,13 @@ internal class UserInfoViewModel @Inject constructor(
         )
     )
 
-    fun getStudyMemberInfo(id: Long, user: Long) = viewModelScope.launch {
-        studyId = id
-        userId = user
+    fun getStudyMemberInfo(studyId: Long?, memberId: Long?) = viewModelScope.launch {
+        if (studyId != null && memberId != null) {
+            this@MemberDetailViewModel.studyId = studyId
+            this@MemberDetailViewModel.memberId = memberId
+        }
+
+        if (this@MemberDetailViewModel.studyId == 0L || this@MemberDetailViewModel.memberId == 0L) return@launch
 
         getStudyMemberProfile()
         getStudyMemberTimeBlocks()
@@ -64,19 +70,19 @@ internal class UserInfoViewModel @Inject constructor(
     }
 
     fun getStudyMemberProfile() = viewModelScope.launch {
-        studyMemberRepository.getStudyMemberProfile(studyId, userId)
+        studyMemberRepository.getStudyMemberProfile(studyId, memberId)
             .onSuccess { _profileState.value = UiState.Success(it) }
             .onFailure { _profileState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun getStudyMemberTimeBlocks() = viewModelScope.launch {
-        studyMemberRepository.getStudyMemberTimeBlocks(studyId, userId)
+        studyMemberRepository.getStudyMemberTimeBlocks(studyId, memberId)
             .onSuccess { _timeBlockState.value = UiState.Success(it) }
             .onFailure { _timeBlockState.value = UiState.Failure(it.message.toString()) }
     }
 
     fun getStudyMemberPlanner() = viewModelScope.launch {
-        studyMemberRepository.getStudyMemberPlanner(studyId, userId)
+        studyMemberRepository.getStudyMemberPlanner(studyId, memberId)
             .onSuccess { _plannerState.value = UiState.Success(it) }
             .onFailure { _plannerState.value = UiState.Failure(it.message.toString()) }
     }
@@ -93,12 +99,17 @@ internal class UserInfoViewModel @Inject constructor(
             if (_isPlannerVisibleToggle.value != initialValue) {
                 studyMemberRepository.updatePlannerVisibility(
                     studyId,
-                    userId,
+                    memberId,
                     _isPlannerVisibleToggle.value
                 )
             }
 
             toggleJob = null
         }
+    }
+
+    companion object {
+        const val STUDY_ID_KEY = "studyId"
+        const val MEMBER_ID_KEY = "memberId"
     }
 }

@@ -7,6 +7,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
 import com.together.study.study.type.MemberEditType
+import com.together.study.studymember.memberdetail.MemberDetailScreen
 import com.together.study.studymember.settings.MemberEditScreen
 import com.together.study.studymember.settings.MemberListScreen
 import kotlinx.serialization.Serializable
@@ -21,6 +22,12 @@ fun NavController.navigateToMemberListScreen(
     studyId: Long,
     navOptions: NavOptions? = null,
 ) = navigate(MemberList(studyId), navOptions)
+
+fun NavController.navigateToMemberDetailScreen(
+    studyId: Long,
+    memberId: Long,
+    navOptions: NavOptions? = null,
+) = navigate(MemberDetail(studyId, memberId), navOptions)
 
 fun NavGraphBuilder.studyMemberGraph(
     navigateToUp: () -> Unit,
@@ -39,7 +46,16 @@ fun NavGraphBuilder.studyMemberGraph(
     composable<MemberList> {
         MemberListScreen(
             onBackClick = navigateToUp,
-            onMemberDetailNavigate = {},
+            onMemberDetailNavigate = { studyId, memberId ->
+                navController.navigateToMemberDetailScreen(studyId, memberId)
+            },
+            modifier = modifier,
+        )
+    }
+
+    composable<MemberDetail> {
+        MemberDetailScreen(
+            onBackClick = navigateToUp,
             modifier = modifier,
         )
     }
@@ -50,3 +66,6 @@ data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
 
 @Serializable
 data class MemberList(val studyId: Long) : Route
+
+@Serializable
+data class MemberDetail(val studyId: Long, val memberId: Long) : Route

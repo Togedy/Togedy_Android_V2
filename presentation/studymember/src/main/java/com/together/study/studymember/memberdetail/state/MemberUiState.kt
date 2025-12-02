@@ -1,4 +1,4 @@
-package com.together.study.studydetail.detailmain.state
+package com.together.study.studymember.memberdetail.state
 
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState

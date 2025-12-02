@@ -1,4 +1,4 @@
-package com.together.study.studydetail.detailmain.component
+package com.together.study.studymember.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
