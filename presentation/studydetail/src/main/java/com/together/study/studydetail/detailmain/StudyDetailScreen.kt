@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,8 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -179,10 +182,21 @@ private fun StudyDetailSuccessScreen(
     val isCurrentWeek = isCurrentWeek(selectedDate)
     var selectedUserId by remember { mutableLongStateOf(0) }
 
+    val listState = rememberLazyListState()
+    var iconColor by remember { mutableStateOf(Color.White) }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemScrollOffset }
+            .collect { scrollOffset ->
+                iconColor = if (scrollOffset > 60) Color.Black else Color.White
+            }
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.white),
+        state = listState,
     ) {
         item {
             Box(
@@ -357,7 +371,7 @@ private fun StudyDetailSuccessScreen(
             Icon(
                 imageVector = ImageVector.vectorResource(ic_left_chevron),
                 contentDescription = "뒤로 가기 버튼",
-                tint = TogedyTheme.colors.white,
+                tint = iconColor,
                 modifier = Modifier
                     .size(24.dp)
                     .noRippleClickable(onBackClick),
@@ -368,7 +382,7 @@ private fun StudyDetailSuccessScreen(
             Icon(
                 imageVector = ImageVector.vectorResource(ic_share_20),
                 contentDescription = "공유 버튼",
-                tint = TogedyTheme.colors.white,
+                tint = iconColor,
                 modifier = Modifier
                     .size(20.dp)
                     .noRippleClickable(onShareButtonClick),
@@ -380,7 +394,7 @@ private fun StudyDetailSuccessScreen(
                 Icon(
                     imageVector = ImageVector.vectorResource(ic_settings_24),
                     contentDescription = "설정 버튼",
-                    tint = TogedyTheme.colors.white,
+                    tint = iconColor,
                     modifier = Modifier
                         .size(24.dp)
                         .noRippleClickable {
