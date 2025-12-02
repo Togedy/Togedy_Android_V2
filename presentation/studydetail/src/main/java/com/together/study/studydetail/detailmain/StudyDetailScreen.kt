@@ -350,8 +350,8 @@ private fun StudyDetailSuccessScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(TogedyTheme.colors.black)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp)
+                .padding(top = 24.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
