@@ -111,15 +111,8 @@ private fun MainNavHost(
 
         studyUpdateGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToStudyUpdateDone = { studyName, studyIntroduce, studyCategory, studyImage, memberCount, isChallenge ->
-                navigator.navController.navigateToStudyUpdateDone(
-                    studyName = studyName,
-                    studyIntroduce = studyIntroduce,
-                    studyCategory = studyCategory,
-                    studyImage = studyImage,
-                    memberCount = memberCount,
-                    isChallenge = isChallenge
-                )
+            navigateToStudyUpdateDone = { studyId ->
+                navigator.navController.navigateToStudyUpdateDone(studyId = studyId)
             },
             modifier = modifier,
         )

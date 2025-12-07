@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -38,19 +35,41 @@ import com.together.study.designsystem.theme.TogedyTheme
 @Composable
 internal fun StudyUpdateRoute(
     onBackClick: () -> Unit,
-    onNextClick: (String, String, String?, Uri?, Int?, Boolean) -> Unit,
+    onNextClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(Unit) {
-    }
+    val studyName by viewModel.studyName.collectAsState()
+    val studyIntroduce by viewModel.studyIntroduce.collectAsState()
+    val studyCategory by viewModel.studyCategory.collectAsState()
+    val studyImage by viewModel.studyImage.collectAsState()
+    val studyPassword by viewModel.studyPassword.collectAsState()
+    val selectedMemberCount by viewModel.selectedMemberCount.collectAsState()
+    val selectedStudyTime by viewModel.selectedStudyTime.collectAsState()
+    val isChallenge by viewModel.isChallenge.collectAsState()
+    val isNextButtonEnabled by viewModel.isNextButtonEnabled.collectAsState()
 
     StudyUpdateScreen(
         modifier = modifier,
         onBackClick = onBackClick,
-        onNextClick = onNextClick,
+        onNextClick = { onNextClick(viewModel.studyId) },
         type = StudyUpdateType.CREATE,
-        isChallenge = viewModel.isChallenge,
+        isChallenge = isChallenge,
+        studyName = studyName,
+        studyIntroduce = studyIntroduce,
+        studyCategory = studyCategory,
+        studyImage = studyImage,
+        studyPassword = studyPassword,
+        selectedMemberCount = selectedMemberCount,
+        selectedStudyTime = selectedStudyTime,
+        isNextButtonEnabled = isNextButtonEnabled,
+        onStudyNameChange = { viewModel.updateStudyName(it) },
+        onStudyIntroduceChange = { viewModel.updateStudyIntroduce(it) },
+        onStudyCategoryChange = { viewModel.updateStudyCategory(it) },
+        onStudyImageChange = { viewModel.updateStudyImage(it) },
+        onStudyPasswordChange = { viewModel.updateStudyPassword(it) },
+        onSelectedMemberCountChange = { viewModel.updateSelectedMemberCount(it) },
+        onSelectedStudyTimeChange = { viewModel.updateSelectedStudyTime(it) },
     )
 }
 
@@ -59,36 +78,33 @@ internal fun StudyUpdateRoute(
 fun StudyUpdateScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onNextClick: (String, String, String?, Uri?, Int?, Boolean) -> Unit = { _, _, _, _, _, _ -> },
+    onNextClick: () -> Unit = {},
     type: StudyUpdateType,
     isChallenge: Boolean = false,
+    studyName: String = "",
+    studyIntroduce: String = "",
+    studyCategory: String? = null,
+    studyImage: Uri? = null,
+    studyPassword: String = "",
+    selectedMemberCount: Int? = null,
+    selectedStudyTime: StudyTimeOption = StudyTimeOption.FIVE_HOURS,
+    isNextButtonEnabled: Boolean = false,
+    onStudyNameChange: (String) -> Unit = {},
+    onStudyIntroduceChange: (String) -> Unit = {},
+    onStudyCategoryChange: (String?) -> Unit = {},
+    onStudyImageChange: (Uri?) -> Unit = {},
+    onStudyPasswordChange: (String) -> Unit = {},
+    onSelectedMemberCountChange: (Int?) -> Unit = {},
+    onSelectedStudyTimeChange: (StudyTimeOption) -> Unit = {},
 ) {
     val title = if (type == StudyUpdateType.CREATE) "스터디 생성" else "스터디 수정"
-
-    // 상태 관리
-    var studyName by remember { mutableStateOf("") }
-    var studyIntroduce by remember { mutableStateOf("") }
-    var studyCategory by remember { mutableStateOf<String?>(null) }
-    var studyImage by remember { mutableStateOf<Uri?>(null) }
-    var studyPassWord by remember { mutableStateOf("") }
-    var selectedMemberCount by remember { mutableStateOf<Int?>(null) }
-    var selectedStudyTime by remember { mutableStateOf(StudyTimeOption.FIVE_HOURS) }
 
     // 갤러리 이미지 선택 런처
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let { studyImage = it }
+        onStudyImageChange(uri)
     }
-
-    // 필수 태그 만족 요건
-    val isNextButtonEnabled =
-        remember(studyName, studyIntroduce, selectedMemberCount, studyCategory) {
-            studyName.isNotBlank() &&
-                    studyIntroduce.isNotBlank() &&
-                    selectedMemberCount != null &&
-                    studyCategory != null
-        }
 
     Column(
         modifier = modifier
@@ -111,7 +127,7 @@ fun StudyUpdateScreen(
                 item {
                     StudyUpdateTime(
                         selectedTime = selectedStudyTime,
-                        onSelect = { selectedStudyTime = it },
+                        onSelect = onSelectedStudyTimeChange,
                         modifier = Modifier.padding(top = 20.dp)
                     )
                 }
@@ -120,7 +136,7 @@ fun StudyUpdateScreen(
             item {
                 StudyUpdateName(
                     value = studyName,
-                    onValueChange = { studyName = it },
+                    onValueChange = onStudyNameChange,
                     onDupCheckClick = {
                         // 중복 확인 로직
                     }
@@ -130,21 +146,21 @@ fun StudyUpdateScreen(
             item {
                 StudyUpdateIntroduce(
                     value = studyIntroduce,
-                    onValueChange = { studyIntroduce = it }
+                    onValueChange = onStudyIntroduceChange
                 )
             }
 
             item {
                 StudyUpdateMemberCount(
                     selectedCount = selectedMemberCount,
-                    onSelect = { selectedMemberCount = it }
+                    onSelect = onSelectedMemberCountChange
                 )
             }
 
             item {
                 StudyUpdateTag(
                     selectedCategory = studyCategory,
-                    onSelect = { studyCategory = it }
+                    onSelect = onStudyCategoryChange
                 )
             }
 
@@ -154,14 +170,14 @@ fun StudyUpdateScreen(
                     onImageClick = {
                         galleryLauncher.launch("image/*")
                     },
-                    onDeleteClick = { studyImage = null }
+                    onDeleteClick = { onStudyImageChange(null) }
                 )
             }
 
             item {
                 StudyUpdatePassword(
-                    value = studyPassWord,
-                    onValueChange = { studyPassWord = it }
+                    value = studyPassword,
+                    onValueChange = onStudyPasswordChange
                 )
             }
 
@@ -169,14 +185,7 @@ fun StudyUpdateScreen(
                 StudyUpdateNext(
                     isEnabled = isNextButtonEnabled,
                     onClick = {
-                        onNextClick(
-                            studyName,
-                            studyIntroduce,
-                            studyCategory,
-                            studyImage,
-                            selectedMemberCount,
-                            isChallenge
-                        )
+                        onNextClick()
                     }
                 )
             }

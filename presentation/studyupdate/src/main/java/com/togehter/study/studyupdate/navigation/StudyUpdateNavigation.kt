@@ -1,6 +1,5 @@
 package com.togehter.study.studyupdate.navigation
 
-import android.net.Uri
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -18,34 +17,21 @@ fun NavController.navigateToStudyUpdate(
 ) = navigate(StudyUpdate(studyId, isChallenge), navOptions)
 
 fun NavController.navigateToStudyUpdateDone(
-    studyName: String,
-    studyIntroduce: String,
-    studyCategory: String?,
-    studyImage: Uri?,
-    memberCount: Int?,
-    isChallenge: Boolean,
+    studyId: Long = 0L,
     navOptions: NavOptions? = null,
-) = navigate(
-    StudyUpdateDone(
-        studyName = studyName,
-        studyIntroduce = studyIntroduce,
-        studyCategory = studyCategory ?: "",
-        studyImageUri = studyImage?.toString() ?: "",
-        memberCount = memberCount ?: 0,
-        isChallenge = isChallenge
-    ),
-    navOptions
-)
+) = navigate(StudyUpdateDone(studyId), navOptions)
 
 fun NavGraphBuilder.studyUpdateGraph(
     navigateToUp: () -> Unit,
-    navigateToStudyUpdateDone: (String, String, String?, Uri?, Int?, Boolean) -> Unit,
+    navigateToStudyUpdateDone: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<StudyUpdate> {
         StudyUpdateRoute(
             onBackClick = navigateToUp,
-            onNextClick = navigateToStudyUpdateDone,
+            onNextClick = { studyId ->
+                navigateToStudyUpdateDone(studyId)
+            },
             modifier = modifier
         )
     }
@@ -62,11 +48,4 @@ fun NavGraphBuilder.studyUpdateGraph(
 data class StudyUpdate(val studyId: Long, val isChallenge: Boolean = false) : Route
 
 @Serializable
-data class StudyUpdateDone(
-    val studyName: String,
-    val studyIntroduce: String,
-    val studyCategory: String,
-    val studyImageUri: String,
-    val memberCount: Int,
-    val isChallenge: Boolean
-) : Route
+data class StudyUpdateDone(val studyId: Long) : Route

@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,17 +44,24 @@ import com.together.study.util.noRippleClickable
 internal fun StudyUpdateDoneRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: StudyUpdateDoneViewModel = hiltViewModel(),
+    viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
+    val studyName by viewModel.studyName.collectAsState()
+    val studyIntroduce by viewModel.studyIntroduce.collectAsState()
+    val studyCategory by viewModel.studyCategory.collectAsState()
+    val studyImage by viewModel.studyImage.collectAsState()
+    val memberCount by viewModel.selectedMemberCount.collectAsState()
+    val isChallenge by viewModel.isChallenge.collectAsState()
+
     StudyUpdateDoneScreen(
         modifier = modifier,
         onBackClick = onBackClick,
-        studyName = viewModel.studyName,
-        studyIntroduce = viewModel.studyIntroduce,
-        studyCategory = viewModel.studyCategory,
-        studyImage = viewModel.studyImageUri,
-        memberCount = viewModel.memberCount,
-        isChallenge = viewModel.isChallenge
+        studyName = studyName,
+        studyIntroduce = studyIntroduce,
+        studyCategory = studyCategory,
+        studyImage = studyImage,
+        memberCount = memberCount,
+        isChallenge = isChallenge
     )
 }
 
