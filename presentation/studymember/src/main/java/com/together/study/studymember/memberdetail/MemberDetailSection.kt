@@ -70,7 +70,7 @@ internal fun MemberDetailSection(
     val isPlannerVisible by viewModel.isPlannerVisibleToggle.collectAsStateWithLifecycle()
     val memberUiState by viewModel.memberUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(studyId, memberId) {
         viewModel.getStudyMemberInfo(studyId, memberId)
     }
 

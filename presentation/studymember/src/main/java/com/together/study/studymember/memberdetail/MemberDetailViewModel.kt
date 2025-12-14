@@ -26,8 +26,8 @@ internal class MemberDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val studyMemberRepository: StudyMemberRepository,
 ) : ViewModel() {
-    var studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
-    var memberId: Long = savedStateHandle.get<Long>(MEMBER_ID_KEY) ?: 0
+    private var studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
+    private var memberId: Long = savedStateHandle.get<Long>(MEMBER_ID_KEY) ?: 0
 
     private val _isPlannerVisibleToggle = MutableStateFlow(false)
     val isPlannerVisibleToggle: StateFlow<Boolean> = _isPlannerVisibleToggle
