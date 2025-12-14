@@ -31,7 +31,6 @@ fun NavGraphBuilder.studySettingsGraph(
     navigateToUp: () -> Unit,
     navigateToStudyMain: () -> Unit,
     navigateToStudyMemberEdit: (Long, MemberEditType) -> Unit,
-    navigateToStudyMemberList: (Long) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -54,7 +53,9 @@ fun NavGraphBuilder.studySettingsGraph(
     composable<MemberSettings> {
         MemberSettingsRoute(
             onBackClick = navigateToUp,
-            onMemberNavigate = navigateToStudyMemberList,
+            onMemberNavigate = { id ->
+                navigateToStudyMemberEdit(id, MemberEditType.SHOW)
+            },
             onReportNavigate = { /* 추후 신고화면 연결*/ },
             onStudyMainNavigate = navigateToStudyMain,
             modifier = modifier,

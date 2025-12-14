@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +31,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,22 +46,51 @@ import com.together.study.designsystem.R.drawable.ic_leader
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.TogedySearchBar
+import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.study.type.MemberEditType
 import com.together.study.study.type.StudyRole
+import com.together.study.studymember.settings.event.MemberEditEvent
 import com.together.study.util.noRippleClickable
 
 @Composable
-fun MemberListScreen(
+fun MemberSettingsScreen(
     onBackClick: () -> Unit,
     onMemberDetailNavigate: (Long, Long) -> Unit,
+    onMemberSettingsNavigate: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MemberListViewModel = hiltViewModel(),
+    viewModel: MemberSettingsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+
     var searchTerm by remember { mutableStateOf("") }
+    val selectedUser by viewModel.selectedUser.collectAsStateWithLifecycle()
+    var isMemberDialogVisible by remember { mutableStateOf(false) }
     val uiState by viewModel.memberState.collectAsStateWithLifecycle()
+    val eventFlow = viewModel.eventFlow
+    val type = viewModel.type
+
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is MemberEditEvent.DeleteMemberSuccess -> {
+                    isMemberDialogVisible = false
+                    // toast
+                }
+
+                is MemberEditEvent.DelegateSuccess -> {
+                    onMemberSettingsNavigate(viewModel.studyId)
+                }
+
+                is MemberEditEvent.ShowError -> {
+                    isMemberDialogVisible = false
+                    // toast
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -66,7 +99,7 @@ fun MemberListScreen(
             .padding(top = 22.dp),
     ) {
         TogedyTopBar(
-            title = "스터디 멤버",
+            title = type.title,
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             modifier = Modifier.padding(bottom = 4.dp),
             onLeftClicked = onBackClick,
@@ -119,10 +152,17 @@ fun MemberListScreen(
                         Box(
                             modifier = Modifier
                                 .noRippleClickable {
-                                    onMemberDetailNavigate(
-                                        viewModel.studyId,
-                                        item.userId
-                                    )
+                                    when (type) {
+                                        MemberEditType.SHOW -> onMemberDetailNavigate(
+                                            viewModel.studyId,
+                                            item.userId
+                                        )
+
+                                        else -> {
+                                            isMemberDialogVisible = true
+                                            viewModel.updateSelectedUSer(item)
+                                        }
+                                    }
                                 },
                             contentAlignment = Alignment.BottomCenter,
                         ) {
@@ -157,17 +197,7 @@ fun MemberListScreen(
                                     maxLines = 1,
                                 )
 
-                                if (item.studyRole == StudyRole.LEADER) {
-                                    Spacer(Modifier.width(2.dp))
-
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(id = ic_leader),
-                                        contentDescription = null,
-                                        tint = Color.Unspecified,
-                                    )
-                                }
-
-                                if (item.userId == 1L) { // TODO DTO 수정 시 변경
+                                if (index == 0) {
                                     Spacer(Modifier.width(2.dp))
 
                                     TogedyBasicTextChip(
@@ -175,6 +205,16 @@ fun MemberListScreen(
                                         textStyle = TogedyTheme.typography.chip10sb,
                                         textColor = TogedyTheme.colors.green,
                                         backgroundColor = TogedyTheme.colors.greenBg,
+                                    )
+                                }
+
+                                if (item.studyRole == StudyRole.LEADER) {
+                                    Spacer(Modifier.width(2.dp))
+
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = ic_leader),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified,
                                     )
                                 }
                             }
@@ -194,15 +234,66 @@ fun MemberListScreen(
             }
         }
     }
+
+    if (isMemberDialogVisible) {
+        when (type) {
+            MemberEditType.EDIT -> {
+                TogedyBasicDialog(
+                    title = "멤버 내보내기",
+                    subTitle = {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
+                                    append(selectedUser.userName)
+                                }
+                                append("님을 내보낼까요?")
+                            },
+                            style = TogedyTheme.typography.body14m,
+                            color = TogedyTheme.colors.gray900,
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+                    buttonText = "내보내기",
+                    onDismissRequest = { isMemberDialogVisible = false },
+                    onButtonClick = viewModel::deleteStudyMember,
+                )
+            }
+
+            MemberEditType.LEADER_CHANGE -> {
+                TogedyBasicDialog(
+                    title = "방장 위임하기",
+                    subTitle = {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(style = TogedyTheme.typography.body14b.toSpanStyle()) {
+                                    append(selectedUser.userName)
+                                }
+                                append("님을 방장으로 설정할까요?\n위임 후에는 일반 멤버로 변경됩니다.")
+                            },
+                            style = TogedyTheme.typography.body14m,
+                            color = TogedyTheme.colors.gray900,
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+                    buttonText = "설정하기",
+                    onDismissRequest = { isMemberDialogVisible = false },
+                    onButtonClick = viewModel::delegateLeader,
+                )
+            }
+
+            else -> {}
+        }
+    }
 }
 
 @Preview
 @Composable
 private fun MemberListScreenPreview() {
     TogedyTheme {
-        MemberListScreen(
+        MemberSettingsScreen(
             onBackClick = {},
             onMemberDetailNavigate = { studyId, memberId -> },
+            onMemberSettingsNavigate = { studyId -> },
         )
     }
 }

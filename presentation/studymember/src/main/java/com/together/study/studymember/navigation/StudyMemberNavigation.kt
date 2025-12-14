@@ -8,20 +8,14 @@ import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
 import com.together.study.study.type.MemberEditType
 import com.together.study.studymember.memberdetail.MemberDetailScreen
-import com.together.study.studymember.settings.MemberEditScreen
-import com.together.study.studymember.settings.MemberListScreen
+import com.together.study.studymember.settings.MemberSettingsScreen
 import kotlinx.serialization.Serializable
-
-fun NavController.navigateToMemberEditScreen(
-    studyId: Long,
-    type: MemberEditType,
-    navOptions: NavOptions? = null,
-) = navigate(MemberEdit(studyId, type), navOptions)
 
 fun NavController.navigateToMemberListScreen(
     studyId: Long,
+    type: MemberEditType,
     navOptions: NavOptions? = null,
-) = navigate(MemberList(studyId), navOptions)
+) = navigate(MemberList(studyId, type), navOptions)
 
 fun NavController.navigateToMemberDetailScreen(
     studyId: Long,
@@ -35,20 +29,13 @@ fun NavGraphBuilder.studyMemberGraph(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    composable<MemberEdit> {
-        MemberEditScreen(
-            onBackClick = navigateToUp,
-            onMemberSettingsNavigate = navigateToMemberSettings,
-            modifier = modifier,
-        )
-    }
-
     composable<MemberList> {
-        MemberListScreen(
+        MemberSettingsScreen(
             onBackClick = navigateToUp,
             onMemberDetailNavigate = { studyId, memberId ->
                 navController.navigateToMemberDetailScreen(studyId, memberId)
             },
+            onMemberSettingsNavigate = navigateToMemberSettings,
             modifier = modifier,
         )
     }
@@ -62,10 +49,7 @@ fun NavGraphBuilder.studyMemberGraph(
 }
 
 @Serializable
-data class MemberEdit(val studyId: Long, val type: MemberEditType) : Route
-
-@Serializable
-data class MemberList(val studyId: Long) : Route
+data class MemberList(val studyId: Long, val type: MemberEditType) : Route
 
 @Serializable
 data class MemberDetail(val studyId: Long, val memberId: Long) : Route
