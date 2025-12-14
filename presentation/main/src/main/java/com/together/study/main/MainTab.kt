@@ -15,6 +15,7 @@ import com.together.study.designsystem.R.drawable.ic_planner
 import com.together.study.designsystem.R.drawable.ic_planner_selected
 import com.together.study.designsystem.R.drawable.ic_study
 import com.together.study.designsystem.R.drawable.ic_study_selected
+import com.together.study.planner.navigation.Planner
 import com.together.study.study.navigation.Study
 import kotlinx.serialization.Serializable
 
@@ -30,16 +31,16 @@ enum class MainTab(
         contentDescription = "캘린더",
         route = Calendar,
     ),
+    PLANNER(
+        defaultIcon = ic_planner,
+        selectedIcon = ic_planner_selected,
+        contentDescription = "플래너",
+        route = Planner,
+    ),
     DUMMY2(
         defaultIcon = ic_ai,
         selectedIcon = ic_ai_selected,
         contentDescription = "입시GPT",
-        route = Dummy,
-    ),
-    DUMMY3(
-        defaultIcon = ic_planner,
-        selectedIcon = ic_planner_selected,
-        contentDescription = "플래너",
         route = Dummy,
     ),
     STUDY(
