@@ -59,7 +59,8 @@ class MemberEditViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<MemberEditEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private val _selectedUser = MutableStateFlow(StudyMemberBriefInfo(0, "", StudyRole.MEMBER))
+    private val _selectedUser =
+        MutableStateFlow(StudyMemberBriefInfo(0, "", null, StudyRole.MEMBER))
     val selectedUser = _selectedUser.asStateFlow()
 
     init {
