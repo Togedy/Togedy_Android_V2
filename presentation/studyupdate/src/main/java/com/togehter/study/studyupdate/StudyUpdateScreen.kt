@@ -35,7 +35,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 @Composable
 internal fun StudyUpdateRoute(
     onBackClick: () -> Unit,
-    onNextClick: (Long) -> Unit,
+    onNextClick: (Long, String, String, String?, String?, String, Int?, Boolean, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
@@ -52,7 +52,24 @@ internal fun StudyUpdateRoute(
     StudyUpdateScreen(
         modifier = modifier,
         onBackClick = onBackClick,
-        onNextClick = { onNextClick(viewModel.studyId) },
+        onNextClick = {
+            val imageUriString = studyImage?.toString()
+            android.util.Log.d(
+                "taejung",
+                "StudyUpdateRoute - onNextClick: studyId=${viewModel.studyId}, studyName=$studyName, studyIntroduce=$studyIntroduce, studyCategory=$studyCategory, studyImageUri=$imageUriString, studyPassword=$studyPassword, memberCount=$selectedMemberCount, isChallenge=$isChallenge, selectedStudyTime=${selectedStudyTime.name}"
+            )
+            onNextClick(
+                viewModel.studyId,
+                studyName,
+                studyIntroduce,
+                studyCategory,
+                imageUriString,
+                studyPassword,
+                selectedMemberCount,
+                isChallenge,
+                selectedStudyTime.name
+            )
+        },
         type = StudyUpdateType.CREATE,
         isChallenge = isChallenge,
         studyName = studyName,

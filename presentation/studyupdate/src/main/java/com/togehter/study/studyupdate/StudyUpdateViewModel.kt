@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class StudyUpdateViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>("studyId") ?: 0L
 

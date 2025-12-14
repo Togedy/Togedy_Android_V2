@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,9 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.togehter.study.studyupdate.component.StudyTimeOption
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.R.drawable.img_character_done
 import com.together.study.designsystem.R.drawable.img_no_image
@@ -44,14 +45,18 @@ import com.together.study.util.noRippleClickable
 internal fun StudyUpdateDoneRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: StudyUpdateViewModel = hiltViewModel(),
+    studyName: String = "",
+    studyIntroduce: String = "",
+    studyCategory: String? = null,
+    studyImageUri: String? = null,
+    studyPassword: String = "",
+    memberCount: Int? = null,
+    isChallenge: Boolean = false,
+    selectedStudyTime: String = "FIVE_HOURS",
 ) {
-    val studyName by viewModel.studyName.collectAsState()
-    val studyIntroduce by viewModel.studyIntroduce.collectAsState()
-    val studyCategory by viewModel.studyCategory.collectAsState()
-    val studyImage by viewModel.studyImage.collectAsState()
-    val memberCount by viewModel.selectedMemberCount.collectAsState()
-    val isChallenge by viewModel.isChallenge.collectAsState()
+    val studyImage = studyImageUri?.toUri()
+    val studyTimeOption = runCatching { StudyTimeOption.valueOf(selectedStudyTime) }.getOrNull()
+        ?: StudyTimeOption.FIVE_HOURS
 
     StudyUpdateDoneScreen(
         modifier = modifier,
@@ -59,9 +64,11 @@ internal fun StudyUpdateDoneRoute(
         studyName = studyName,
         studyIntroduce = studyIntroduce,
         studyCategory = studyCategory,
+        studyPassword = studyPassword,
         studyImage = studyImage,
         memberCount = memberCount,
-        isChallenge = isChallenge
+        isChallenge = isChallenge,
+        selectedStudyTime = studyTimeOption
     )
 }
 
@@ -74,9 +81,11 @@ fun StudyUpdateDoneScreen(
     studyName: String = "",
     studyIntroduce: String = "",
     studyCategory: String? = null,
+    studyPassword: String = "",
     studyImage: Uri? = null,
     memberCount: Int? = null,
-    isChallenge: Boolean = false
+    isChallenge: Boolean = false,
+    selectedStudyTime: StudyTimeOption = StudyTimeOption.FIVE_HOURS
 ) {
     val context = LocalContext.current
     Column(
@@ -262,7 +271,55 @@ fun StudyUpdateDoneScreen(
                             style = TogedyTheme.typography.body12m.copy(
                                 color = TogedyTheme.colors.black
                             ),
+                            modifier = Modifier.padding(end = 3.dp),
                         )
+
+                        if (isChallenge || studyPassword.isNotEmpty()) {
+                            Spacer(
+                                modifier = Modifier
+                                    .width(1.dp)
+                                    .background(color = TogedyTheme.colors.gray300)
+                            )
+
+                            if (isChallenge) {
+                                Text(
+                                    text = "매일",
+                                    style = TogedyTheme.typography.body12m.copy(
+                                        color = TogedyTheme.colors.gray500
+                                    ),
+                                    modifier = Modifier.padding(horizontal = 3.dp)
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(1.dp)
+                                        .background(
+                                            shape = RoundedCornerShape(100.dp),
+                                            color = TogedyTheme.colors.gray500
+                                        )
+                                        .padding(start = 3.dp)
+                                )
+
+                                Text(
+                                    text = selectedStudyTime.displayName,
+                                    style = TogedyTheme.typography.body12m.copy(
+                                        color = TogedyTheme.colors.gray500
+                                    ),
+                                    modifier = Modifier.padding(start = 3.dp)
+                                )
+                            }
+
+                            if (studyPassword.isNotEmpty()) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(ic_left_chevron_green),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .padding(start = 3.dp),
+                                    tint = TogedyTheme.colors.gray500
+                                )
+                            }
+                        }
                     }
 
 
