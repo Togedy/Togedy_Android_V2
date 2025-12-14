@@ -123,6 +123,17 @@ fun MemberSettingsScreen(
             is UiState.Success<*> -> {
                 val memberList = (uiState as UiState.Success).data
 
+                val filteredMemberList = remember(searchTerm, memberList) {
+                    if (searchTerm.isBlank()) {
+                        memberList
+                    } else {
+                        memberList.filter {
+                            it.userName.contains(searchTerm, ignoreCase = true)
+                        }
+                    }
+                }
+
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -148,7 +159,7 @@ fun MemberSettingsScreen(
                     modifier = Modifier
                         .padding(horizontal = 26.dp),
                 ) {
-                    itemsIndexed(memberList) { index, item ->
+                    itemsIndexed(filteredMemberList) { index, item ->
                         Box(
                             modifier = Modifier
                                 .noRippleClickable {
