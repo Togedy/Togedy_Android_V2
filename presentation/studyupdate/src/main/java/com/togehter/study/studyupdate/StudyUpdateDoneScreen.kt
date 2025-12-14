@@ -149,26 +149,52 @@ fun StudyUpdateDoneScreen(
                     .padding(8.dp)
             ) {
                 // 스터디 이미지
-                if (studyImage != null) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data(studyImage)
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth(84f / 320f)
-                            .aspectRatio(1f)
-                            .clip(RoundedCornerShape(4.dp))
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(img_no_image),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth(84f / 320f)
-                            .aspectRatio(1f)
-                    )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(84f / 320f)
+                        .aspectRatio(1f)
+                ) {
+                    if (studyImage != null) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(studyImage)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(8.dp))
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(img_no_image),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(8.dp))
+                        )
+                    }
+
+                    if (isChallenge) {
+                        Text(
+                            text = "${selectedStudyTime.hours}H",
+                            style = TogedyTheme.typography.chip10sb.copy(
+                                color = TogedyTheme.colors.white
+                            ),
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .background(
+                                    color = TogedyTheme.colors.green,
+                                    shape = RoundedCornerShape(
+                                        topStart = 7.dp,
+                                        topEnd = 4.dp,
+                                        bottomStart = 4.dp,
+                                        bottomEnd = 4.dp
+                                    )
+                                )
+                                .padding(horizontal = 10.dp, vertical = 3.dp)
+                        )
+                    }
                 }
 
                 Column(
