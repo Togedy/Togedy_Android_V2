@@ -43,8 +43,10 @@ import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun StudyUpdateDoneRoute(
-    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    onEditClick: () -> Unit = {},
+    onStartClick: () -> Unit = {},
     studyName: String = "",
     studyIntroduce: String = "",
     studyCategory: String? = null,
@@ -61,6 +63,8 @@ internal fun StudyUpdateDoneRoute(
     StudyUpdateDoneScreen(
         modifier = modifier,
         onBackClick = onBackClick,
+        onEditClick = onEditClick,
+        onStartClick = onStartClick,
         studyName = studyName,
         studyIntroduce = studyIntroduce,
         studyCategory = studyCategory,

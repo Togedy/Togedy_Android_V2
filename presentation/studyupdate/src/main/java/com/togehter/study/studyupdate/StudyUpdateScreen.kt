@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -116,6 +118,12 @@ fun StudyUpdateScreen(
 ) {
     val title = if (type == StudyUpdateType.CREATE) "스터디 생성" else "스터디 수정"
 
+    // 스크롤 상태
+    val listState = rememberLazyListState()
+    LaunchedEffect(Unit) {
+        listState.scrollToItem(0)
+    }
+
     // 갤러리 이미지 선택 런처
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -138,7 +146,8 @@ fun StudyUpdateScreen(
         )
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            state = listState
         ) {
             if (isChallenge) {
                 item {

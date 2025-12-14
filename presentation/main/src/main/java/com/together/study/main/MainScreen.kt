@@ -124,6 +124,7 @@ private fun MainNavHost(
                     selectedStudyTime = selectedStudyTime
                 )
             },
+            navController = navigator.navController,
             modifier = modifier,
         )
 

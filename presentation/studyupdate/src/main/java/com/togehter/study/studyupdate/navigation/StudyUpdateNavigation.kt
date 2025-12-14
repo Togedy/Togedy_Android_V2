@@ -46,6 +46,7 @@ fun NavController.navigateToStudyUpdateDone(
 fun NavGraphBuilder.studyUpdateGraph(
     navigateToUp: () -> Unit,
     navigateToStudyUpdateDone: (Long, String, String, String?, String?, String, Int?, Boolean, String) -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     composable<StudyUpdate> {
@@ -72,6 +73,14 @@ fun NavGraphBuilder.studyUpdateGraph(
         val route = backStackEntry.toRoute<StudyUpdateDone>()
         StudyUpdateDoneRoute(
             onBackClick = navigateToUp,
+            onEditClick = {
+                navController.popBackStack()
+            },
+            onStartClick = {
+                // TODO: 서버 호출 로직 추가
+                navController.popBackStack()
+                navController.popBackStack()
+            },
             studyName = route.studyName,
             studyIntroduce = route.studyIntroduce,
             studyCategory = route.studyCategory,
