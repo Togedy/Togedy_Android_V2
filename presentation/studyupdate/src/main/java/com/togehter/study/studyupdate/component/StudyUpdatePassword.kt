@@ -1,8 +1,10 @@
 package com.togehter.study.studyupdate.component
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.togehter.study.studyupdate.StudyUpdateTextItem
@@ -23,11 +25,15 @@ internal fun StudyUpdatePassword(
     ) {
         TogedyTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { newValue ->
+                val filtered = newValue.filter { it.isDigit() }
+                onValueChange(filtered)
+            },
             showBorder = false,
             backgroundColor = TogedyTheme.colors.white,
             visualTransformation = PasswordVisualTransformation(),
             placeholderText = "비밀번호를 입력해주세요",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
         )
     }
 }

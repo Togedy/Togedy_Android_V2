@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,6 +71,7 @@ import com.together.study.util.noRippleClickable
  * @param errorMessageStyle 에러 메시지 텍스트의 스타일 (색상은 errorColor로 자동 적용됨)
  * @param errorMessagePadding 에러 메시지 패딩 값
  * @param errorColor 에러 상태일 때 테두리, 아이콘, 텍스트에 사용될 색상 (기본값: TogedyTheme.colors.red)
+ * @param keyboardOptions 키보드 옵션 (기본값 KeyboardOptions.Default)
  */
 @Composable
 fun TogedyTextField(
@@ -99,6 +101,7 @@ fun TogedyTextField(
     errorMessageStyle: TextStyle = TogedyTheme.typography.body12m,
     errorMessagePadding: PaddingValues = PaddingValues(top = 4.dp),
     errorColor: Color = TogedyTheme.colors.red,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -149,6 +152,7 @@ fun TogedyTextField(
         enabled = enabled,
         interactionSource = interactionSource,
         cursorBrush = Brush.verticalGradient(listOf(textColor, textColor)),
+        keyboardOptions = keyboardOptions,
         modifier = textFieldModifier,
         decorationBox = { innerTextField ->
             Column(
