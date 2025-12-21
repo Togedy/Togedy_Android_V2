@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.R.drawable.img_character_done
-import com.together.study.designsystem.R.drawable.img_no_image
+import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studyupdate.component.StudyTimeOption
@@ -153,6 +153,7 @@ fun StudyUpdateDoneScreen(
                     modifier = Modifier
                         .fillMaxWidth(84f / 320f)
                         .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp))
                 ) {
                     if (studyImage != null) {
                         AsyncImage(
@@ -161,17 +162,14 @@ fun StudyUpdateDoneScreen(
                                 .build(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(8.dp))
+                            modifier = Modifier.fillMaxSize()
                         )
                     } else {
                         Image(
-                            painter = painterResource(img_no_image),
+                            painter = painterResource(img_study_background),
                             contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(8.dp))
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
 
@@ -276,9 +274,7 @@ fun StudyUpdateDoneScreen(
                         Image(
                             painter = painterResource(img_character_done),
                             contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth(20f / 320f)
-                                .aspectRatio(1f),
+                            modifier = Modifier.size(20.dp),
                         )
 
                         Text(
