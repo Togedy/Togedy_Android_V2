@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate.type
+package com.together.study.studyupdate.type
 
 enum class StudyUpdateType {
     CREATE,

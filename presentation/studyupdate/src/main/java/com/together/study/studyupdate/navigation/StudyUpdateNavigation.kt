@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate.navigation
+package com.together.study.studyupdate.navigation
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -6,9 +6,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.togehter.study.studyupdate.StudyUpdateDoneRoute
-import com.togehter.study.studyupdate.StudyUpdateRoute
 import com.together.study.common.navigation.Route
+import com.together.study.studyupdate.StudyUpdateDoneRoute
+import com.together.study.studyupdate.StudyUpdateRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToStudyUpdate(

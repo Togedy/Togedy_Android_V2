@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate
+package com.together.study.studyupdate
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

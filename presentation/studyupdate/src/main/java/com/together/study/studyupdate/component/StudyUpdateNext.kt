@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate.component
+package com.together.study.studyupdate.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

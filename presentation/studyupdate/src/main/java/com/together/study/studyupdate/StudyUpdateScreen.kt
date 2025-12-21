@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate
+package com.together.study.studyupdate
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,19 +20,19 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.togehter.study.studyupdate.component.StudyTimeOption
-import com.togehter.study.studyupdate.component.StudyUpdateImage
-import com.togehter.study.studyupdate.component.StudyUpdateIntroduce
-import com.togehter.study.studyupdate.component.StudyUpdateMemberCount
-import com.togehter.study.studyupdate.component.StudyUpdateName
-import com.togehter.study.studyupdate.component.StudyUpdateNext
-import com.togehter.study.studyupdate.component.StudyUpdatePassword
-import com.togehter.study.studyupdate.component.StudyUpdateTag
-import com.togehter.study.studyupdate.component.StudyUpdateTime
-import com.togehter.study.studyupdate.type.StudyUpdateType
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studyupdate.component.StudyTimeOption
+import com.together.study.studyupdate.component.StudyUpdateImage
+import com.together.study.studyupdate.component.StudyUpdateIntroduce
+import com.together.study.studyupdate.component.StudyUpdateMemberCount
+import com.together.study.studyupdate.component.StudyUpdateName
+import com.together.study.studyupdate.component.StudyUpdateNext
+import com.together.study.studyupdate.component.StudyUpdatePassword
+import com.together.study.studyupdate.component.StudyUpdateTag
+import com.together.study.studyupdate.component.StudyUpdateTime
+import com.together.study.studyupdate.type.StudyUpdateType
 
 @Composable
 internal fun StudyUpdateRoute(

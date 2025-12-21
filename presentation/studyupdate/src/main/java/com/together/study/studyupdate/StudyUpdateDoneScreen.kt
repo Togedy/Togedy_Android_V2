@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate
+package com.together.study.studyupdate
 
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -33,12 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.togehter.study.studyupdate.component.StudyTimeOption
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.R.drawable.img_character_done
 import com.together.study.designsystem.R.drawable.img_no_image
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studyupdate.component.StudyTimeOption
 import com.together.study.util.noRippleClickable
 
 @Composable

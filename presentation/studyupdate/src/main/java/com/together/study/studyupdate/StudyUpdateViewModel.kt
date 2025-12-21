@@ -1,10 +1,10 @@
-package com.togehter.study.studyupdate
+package com.together.study.studyupdate
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.togehter.study.studyupdate.component.StudyTimeOption
+import com.together.study.studyupdate.component.StudyTimeOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

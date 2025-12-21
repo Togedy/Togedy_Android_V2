@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate
+package com.together.study.studyupdate
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
