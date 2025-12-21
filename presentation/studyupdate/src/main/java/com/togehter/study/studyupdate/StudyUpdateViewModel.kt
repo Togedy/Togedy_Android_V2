@@ -51,9 +51,21 @@ internal class StudyUpdateViewModel @Inject constructor(
     private val _selectedStudyTime = MutableStateFlow(StudyTimeOption.FIVE_HOURS)
     val selectedStudyTime: StateFlow<StudyTimeOption> = _selectedStudyTime.asStateFlow()
 
+    // 추후 중복확인 로딩 상태 설정
+    private val _isDuplicateCheckLoading = MutableStateFlow(false)
+    val isDuplicateCheckLoading: StateFlow<Boolean> = _isDuplicateCheckLoading.asStateFlow()
+
+    private val _isStudyNameDuplicate = MutableStateFlow<Boolean?>(null)
+    val isStudyNameDuplicate: StateFlow<Boolean?> = _isStudyNameDuplicate.asStateFlow()
+
+    private val _studyNameErrorMessage = MutableStateFlow<String?>(null)
+    val studyNameErrorMessage: StateFlow<String?> = _studyNameErrorMessage.asStateFlow()
+
     // 상태 저장 함수
     fun updateStudyName(name: String) {
         _studyName.update { name }
+        _isStudyNameDuplicate.update { null }
+        _studyNameErrorMessage.update { null }
     }
 
     fun updateStudyIntroduce(introduce: String) {
@@ -85,17 +97,50 @@ internal class StudyUpdateViewModel @Inject constructor(
         _studyName,
         _studyIntroduce,
         _selectedMemberCount,
-        _studyCategory
-    ) { name, introduce, memberCount, category ->
+        _studyCategory,
+        _isStudyNameDuplicate
+    ) { name, introduce, memberCount, category, isDuplicate ->
         name.isNotBlank() &&
                 introduce.isNotBlank() &&
                 memberCount != null &&
-                category != null
+                category != null &&
+                (isDuplicate == false)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = false
     )
+
+    // 스터디 이름 중복 확인
+    fun checkStudyNameDuplicate() = viewModelScope.launch {
+        val name = _studyName.value
+        if (name.isBlank()) {
+            _studyNameErrorMessage.update { "스터디 이름을 입력해주세요" }
+            _isStudyNameDuplicate.update { true }
+            return@launch
+        }
+
+        _isDuplicateCheckLoading.update { true }
+        _studyNameErrorMessage.update { null }
+
+        studyUpdateRepository.checkStudyNameDuplicate(name).fold(
+            onSuccess = { studyNameDuplicate ->
+                val isDuplicate = studyNameDuplicate.isDuplicate
+                _isStudyNameDuplicate.update { isDuplicate }
+                if (isDuplicate) {
+                    _studyNameErrorMessage.update { "이미 사용 중인 스터디 이름입니다" }
+                } else {
+                    _studyNameErrorMessage.update { null }
+                }
+            },
+            onFailure = { throwable ->
+                _studyNameErrorMessage.update { "중복 확인에 실패했습니다" }
+                _isStudyNameDuplicate.update { null }
+            }
+        )
+
+        _isDuplicateCheckLoading.update { false }
+    }
 
     // 스터디 생성
     fun createStudy(
