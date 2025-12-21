@@ -37,5 +37,8 @@ class StudyUpdateDataSource @Inject constructor(
             MultipartBody.Part.createFormData("studyImage", file.name, requestFile)
         },
     )
+
+    suspend fun checkStudyNameDuplicate(name: String) =
+        studyUpdateService.checkStudyNameDuplicate(name)
 }
 
