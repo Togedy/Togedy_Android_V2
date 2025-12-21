@@ -24,6 +24,9 @@ import com.together.study.studydetail.navigation.studyDetailGraph
 import com.together.study.studysettings.navigation.navigateToLeaderSettingsScreen
 import com.together.study.studysettings.navigation.navigateToMemberSettingsScreen
 import com.together.study.studysettings.navigation.studySettingsGraph
+import com.together.study.studyupdate.navigation.navigateToStudyUpdate
+import com.together.study.studyupdate.navigation.navigateToStudyUpdateDone
+import com.together.study.studyupdate.navigation.studyUpdateGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -87,6 +90,9 @@ private fun MainNavHost(
 
         studyGraph(
             navigateToUp = navigator::navigateUp,
+            navigateToStudyUpdate = { isChallenge ->
+                navigator.navController.navigateToStudyUpdate(isChallenge = isChallenge)
+            },
             navigateToStudySearch = navigator.navController::navigateToStudySearch,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
             modifier = modifier,
@@ -100,6 +106,25 @@ private fun MainNavHost(
                     StudyRole.MEMBER -> navigator.navController.navigateToMemberSettingsScreen(id)
                 }
             },
+            modifier = modifier,
+        )
+
+        studyUpdateGraph(
+            navigateToUp = navigator::navigateUp,
+            navigateToStudyUpdateDone = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime ->
+                navigator.navController.navigateToStudyUpdateDone(
+                    studyId = studyId,
+                    studyName = studyName,
+                    studyIntroduce = studyIntroduce,
+                    studyCategory = studyCategory,
+                    studyImageUri = studyImageUri,
+                    studyPassword = studyPassword,
+                    memberCount = memberCount,
+                    isChallenge = isChallenge,
+                    selectedStudyTime = selectedStudyTime
+                )
+            },
+            navController = navigator.navController,
             modifier = modifier,
         )
 
