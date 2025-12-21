@@ -37,7 +37,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 @Composable
 internal fun StudyUpdateRoute(
     onBackClick: () -> Unit,
-    onNextClick: (Long, String, String, String?, String?, String, Int?, Boolean, String) -> Unit,
+    onNextClick: (Long, String, String, String?, String?, String, Int?, Boolean, String, StudyUpdateType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
@@ -75,7 +75,8 @@ internal fun StudyUpdateRoute(
                 studyPassword,
                 selectedMemberCount,
                 isChallenge,
-                selectedStudyTime.name
+                selectedStudyTime.name,
+                updateType
             )
         },
         type = updateType,

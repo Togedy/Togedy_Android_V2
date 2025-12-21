@@ -58,6 +58,7 @@ internal fun StudyUpdateDoneRoute(
     memberCount: Int? = null,
     isChallenge: Boolean = false,
     selectedStudyTime: String = "FIVE_HOURS",
+    updateType: StudyUpdateType = StudyUpdateType.CREATE,
     viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
     val studyImage = studyImageUri?.toUri()
@@ -69,8 +70,6 @@ internal fun StudyUpdateDoneRoute(
     } else {
         null
     }
-
-    val updateType = viewModel.updateType
 
     StudyUpdateDoneScreen(
         modifier = modifier,

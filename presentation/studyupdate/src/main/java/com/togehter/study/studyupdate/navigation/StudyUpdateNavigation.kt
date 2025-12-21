@@ -29,6 +29,7 @@ fun NavController.navigateToStudyUpdateDone(
     memberCount: Int? = null,
     isChallenge: Boolean = false,
     selectedStudyTime: String = "FIVE_HOURS",
+    updateType: StudyUpdateType = StudyUpdateType.CREATE,
     navOptions: NavOptions? = null,
 ) = navigate(
     StudyUpdateDone(
@@ -40,22 +41,22 @@ fun NavController.navigateToStudyUpdateDone(
         studyPassword = studyPassword,
         memberCount = memberCount,
         isChallenge = isChallenge,
-        selectedStudyTime = selectedStudyTime
+        selectedStudyTime = selectedStudyTime,
+        updateType = updateType
     ),
     navOptions
 )
 
 fun NavGraphBuilder.studyUpdateGraph(
     navigateToUp: () -> Unit,
-    navigateToStudyUpdateDone: (Long, String, String, String?, String?, String, Int?, Boolean, String) -> Unit,
+    navigateToStudyUpdateDone: (Long, String, String, String?, String?, String, Int?, Boolean, String, StudyUpdateType) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     composable<StudyUpdate> { backStackEntry ->
-        val route = backStackEntry.toRoute<StudyUpdate>()
         StudyUpdateRoute(
             onBackClick = navigateToUp,
-            onNextClick = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime ->
+            onNextClick = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime, updateType ->
                 navigateToStudyUpdateDone(
                     studyId,
                     studyName,
@@ -65,7 +66,8 @@ fun NavGraphBuilder.studyUpdateGraph(
                     studyPassword,
                     memberCount,
                     isChallenge,
-                    selectedStudyTime
+                    selectedStudyTime,
+                    updateType
                 )
             },
             modifier = modifier
@@ -91,6 +93,7 @@ fun NavGraphBuilder.studyUpdateGraph(
             memberCount = route.memberCount,
             isChallenge = route.isChallenge,
             selectedStudyTime = route.selectedStudyTime,
+            updateType = route.updateType,
             modifier = modifier
         )
     }
@@ -113,5 +116,6 @@ data class StudyUpdateDone(
     val studyPassword: String = "",
     val memberCount: Int? = null,
     val isChallenge: Boolean = false,
-    val selectedStudyTime: String = "FIVE_HOURS"
+    val selectedStudyTime: String = "FIVE_HOURS",
+    val updateType: StudyUpdateType = StudyUpdateType.CREATE
 ) : Route

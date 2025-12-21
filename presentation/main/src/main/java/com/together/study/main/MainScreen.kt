@@ -13,9 +13,9 @@ import androidx.navigation.compose.composable
 import com.togehter.study.studyupdate.navigation.navigateToStudyUpdate
 import com.togehter.study.studyupdate.navigation.navigateToStudyUpdateDone
 import com.togehter.study.studyupdate.navigation.studyUpdateGraph
-import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
+import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.main.component.MainBottomBar
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
@@ -112,7 +112,7 @@ private fun MainNavHost(
 
         studyUpdateGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToStudyUpdateDone = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime ->
+            navigateToStudyUpdateDone = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime, updateType ->
                 navigator.navController.navigateToStudyUpdateDone(
                     studyId = studyId,
                     studyName = studyName,
@@ -122,7 +122,8 @@ private fun MainNavHost(
                     studyPassword = studyPassword,
                     memberCount = memberCount,
                     isChallenge = isChallenge,
-                    selectedStudyTime = selectedStudyTime
+                    selectedStudyTime = selectedStudyTime,
+                    updateType = updateType
                 )
             },
             navController = navigator.navController,
