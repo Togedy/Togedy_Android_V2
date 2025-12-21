@@ -82,13 +82,13 @@ internal fun StudyUpdateRoute(
         selectedMemberCount = selectedMemberCount,
         selectedStudyTime = selectedStudyTime,
         isNextButtonEnabled = isNextButtonEnabled,
-        onStudyNameChange = { viewModel.updateStudyName(it) },
-        onStudyIntroduceChange = { viewModel.updateStudyIntroduce(it) },
-        onStudyCategoryChange = { viewModel.updateStudyCategory(it) },
-        onStudyImageChange = { viewModel.updateStudyImage(it) },
-        onStudyPasswordChange = { viewModel.updateStudyPassword(it) },
-        onSelectedMemberCountChange = { viewModel.updateSelectedMemberCount(it) },
-        onSelectedStudyTimeChange = { viewModel.updateSelectedStudyTime(it) },
+        onStudyNameChange = viewModel::updateStudyName,
+        onStudyIntroduceChange = viewModel::updateStudyIntroduce,
+        onStudyCategoryChange = viewModel::updateStudyCategory,
+        onStudyImageChange = viewModel::updateStudyImage,
+        onStudyPasswordChange = viewModel::updateStudyPassword,
+        onSelectedMemberCountChange = viewModel::updateSelectedMemberCount,
+        onSelectedStudyTimeChange = viewModel::updateSelectedStudyTime,
     )
 }
 
