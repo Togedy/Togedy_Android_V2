@@ -1,10 +1,13 @@
 package com.togehter.study.studyupdate
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.togehter.study.studyupdate.component.StudyTimeOption
+import com.together.study.common.type.study.StudyUpdateType
+import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudyUpdateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,14 +24,22 @@ import javax.inject.Inject
 internal class StudyUpdateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val studyUpdateRepository: StudyUpdateRepository,
+    private val studyDetailRepository: StudyDetailRepository,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>("studyId") ?: 0L
+    val updateType: StudyUpdateType = savedStateHandle.get<StudyUpdateType>("updateType") ?: StudyUpdateType.CREATE
 
     // 상태 관리
-    private val _isChallenge = MutableStateFlow(
-        savedStateHandle.get<Boolean>("isChallenge") == true
-    )
+    private val _isChallenge = MutableStateFlow(savedStateHandle.get<Boolean>("isChallenge") == true)
     val isChallenge: StateFlow<Boolean> = _isChallenge.asStateFlow()
+
+    // 스터디 수정 원본 데이터 저장
+    private var originalStudyName: String = ""
+    private var originalStudyIntroduce: String = ""
+    private var originalStudyCategory: String? = null
+    private var originalStudyImageUri: Uri? = null
+    private var originalStudyPassword: String = ""
+    private var originalSelectedMemberCount: Int? = null
 
     private val _studyName = MutableStateFlow("")
     val studyName: StateFlow<String> = _studyName.asStateFlow()
@@ -100,16 +111,32 @@ internal class StudyUpdateViewModel @Inject constructor(
         _studyCategory,
         _isStudyNameDuplicate
     ) { name, introduce, memberCount, category, isDuplicate ->
-        name.isNotBlank() &&
+        val isValid = name.isNotBlank() &&
                 introduce.isNotBlank() &&
                 memberCount != null &&
                 category != null &&
                 (isDuplicate == false)
+
+        if (updateType == StudyUpdateType.UPDATE) {
+            isValid && hasChanges()
+        } else {
+            isValid
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = false
     )
+
+    // 스터디 수정 시 변경사항 확인
+    private fun hasChanges(): Boolean {
+        return _studyName.value != originalStudyName ||
+                _studyIntroduce.value != originalStudyIntroduce ||
+                _studyCategory.value != originalStudyCategory ||
+                _studyImage.value?.toString() != originalStudyImageUri?.toString() ||
+                _studyPassword.value != originalStudyPassword ||
+                _selectedMemberCount.value != originalSelectedMemberCount
+    }
 
     // 스터디 이름 중복 확인
     fun checkStudyNameDuplicate() = viewModelScope.launch {
@@ -142,6 +169,35 @@ internal class StudyUpdateViewModel @Inject constructor(
         _isDuplicateCheckLoading.update { false }
     }
 
+    // 스터디 수정 정보 로드
+    fun loadStudyDetailInfo() = viewModelScope.launch {
+        if (studyId == 0L || updateType != StudyUpdateType.UPDATE) return@launch
+        
+        studyDetailRepository.getStudyDetailInfo(studyId).fold(
+            onSuccess = { studyDetailInfo ->
+                // 원본 데이터 저장
+                originalStudyName = studyDetailInfo.studyName
+                originalStudyIntroduce = studyDetailInfo.studyDescription ?: ""
+                originalStudyCategory = studyDetailInfo.studyTag
+                originalStudyImageUri = studyDetailInfo.studyImageUrl?.toUri()
+                originalStudyPassword = studyDetailInfo.studyPassword ?: ""
+                originalSelectedMemberCount = studyDetailInfo.studyMemberLimit
+
+                // 현재 상태 업데이트
+                _studyName.update { studyDetailInfo.studyName }
+                _studyIntroduce.update { studyDetailInfo.studyDescription ?: "" }
+                _studyCategory.update { studyDetailInfo.studyTag }
+                _studyImage.update { studyDetailInfo.studyImageUrl?.toUri() }
+                _studyPassword.update { studyDetailInfo.studyPassword ?: "" }
+                _selectedMemberCount.update { studyDetailInfo.studyMemberLimit }
+                _isChallenge.update { studyDetailInfo.studyType == "CHALLENGE" }
+            },
+            onFailure = {
+                // 에러 처리
+            }
+        )
+    }
+
     // 스터디 생성
     fun createStudy(
         challengeGoalTime: Int?,
@@ -168,6 +224,37 @@ internal class StudyUpdateViewModel @Inject constructor(
             },
             onFailure = { throwable ->
                 onFailure(throwable.message ?: "스터디 생성에 실패했습니다.")
+            }
+        )
+    }
+
+    // 스터디 정보 수정
+    fun updateStudy(
+        challengeGoalTime: Int?,
+        studyName: String,
+        studyDescription: String?,
+        studyMemberLimit: Int,
+        studyTag: String,
+        studyPassword: String?,
+        studyImageUri: Uri?,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) = viewModelScope.launch {
+        studyUpdateRepository.updateStudy(
+            studyId = studyId,
+            challengeGoalTime = challengeGoalTime,
+            studyName = studyName,
+            studyDescription = studyDescription,
+            studyMemberLimit = studyMemberLimit,
+            studyTag = studyTag,
+            studyPassword = studyPassword,
+            studyImageUri = studyImageUri?.toString(),
+        ).fold(
+            onSuccess = {
+                onSuccess()
+            },
+            onFailure = { throwable ->
+                onFailure(throwable.message ?: "스터디 수정에 실패했습니다.")
             }
         )
     }
