@@ -29,7 +29,7 @@ import com.togehter.study.studyupdate.component.StudyUpdateNext
 import com.togehter.study.studyupdate.component.StudyUpdatePassword
 import com.togehter.study.studyupdate.component.StudyUpdateTag
 import com.togehter.study.studyupdate.component.StudyUpdateTime
-import com.togehter.study.studyupdate.type.StudyUpdateType
+import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -52,6 +52,14 @@ internal fun StudyUpdateRoute(
     val isNextButtonEnabled by viewModel.isNextButtonEnabled.collectAsState()
     val isStudyNameDuplicate by viewModel.isStudyNameDuplicate.collectAsState()
     val studyNameErrorMessage by viewModel.studyNameErrorMessage.collectAsState()
+    val updateType = viewModel.updateType
+
+    // 수정인 경우
+    LaunchedEffect(Unit) {
+        if (updateType == StudyUpdateType.UPDATE && viewModel.studyId != 0L) {
+            viewModel.loadStudyDetailInfo()
+        }
+    }
 
     StudyUpdateScreen(
         modifier = modifier,
@@ -70,7 +78,7 @@ internal fun StudyUpdateRoute(
                 selectedStudyTime.name
             )
         },
-        type = StudyUpdateType.CREATE,
+        type = updateType,
         isChallenge = isChallenge,
         studyName = studyName,
         studyIntroduce = studyIntroduce,

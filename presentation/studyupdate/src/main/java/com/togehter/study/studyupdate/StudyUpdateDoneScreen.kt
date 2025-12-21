@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.togehter.study.studyupdate.component.StudyTimeOption
+import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.R.drawable.img_character_done
 import com.together.study.designsystem.R.drawable.img_no_image
@@ -69,26 +70,46 @@ internal fun StudyUpdateDoneRoute(
         null
     }
 
+    val updateType = viewModel.updateType
+
     StudyUpdateDoneScreen(
         modifier = modifier,
         onBackClick = onBackClick,
         onEditClick = onEditClick,
         onStartClick = {
-            viewModel.createStudy(
-                challengeGoalTime = challengeGoalTime,
-                studyName = studyName,
-                studyDescription = studyIntroduce.ifBlank { null },
-                studyMemberLimit = memberCount ?: 30,
-                studyTag = studyCategory ?: "",
-                studyPassword = studyPassword.ifBlank { null },
-                studyImageUri = studyImage,
-                onSuccess = {
-                    onStartClick()
-                },
-                onFailure = { errorMessage ->
-                    Timber.tag("taejung").d(errorMessage)
-                }
-            )
+            if (updateType == StudyUpdateType.UPDATE) {
+                viewModel.updateStudy(
+                    challengeGoalTime = challengeGoalTime,
+                    studyName = studyName,
+                    studyDescription = studyIntroduce.ifBlank { null },
+                    studyMemberLimit = memberCount ?: 30,
+                    studyTag = studyCategory ?: "",
+                    studyPassword = studyPassword.ifBlank { null },
+                    studyImageUri = studyImage,
+                    onSuccess = {
+                        onStartClick()
+                    },
+                    onFailure = { errorMessage ->
+                        Timber.tag("taejung").d(errorMessage)
+                    }
+                )
+            } else {
+                viewModel.createStudy(
+                    challengeGoalTime = challengeGoalTime,
+                    studyName = studyName,
+                    studyDescription = studyIntroduce.ifBlank { null },
+                    studyMemberLimit = memberCount ?: 30,
+                    studyTag = studyCategory ?: "",
+                    studyPassword = studyPassword.ifBlank { null },
+                    studyImageUri = studyImage,
+                    onSuccess = {
+                        onStartClick()
+                    },
+                    onFailure = { errorMessage ->
+                        Timber.tag("taejung").d(errorMessage)
+                    }
+                )
+            }
         },
         studyName = studyName,
         studyIntroduce = studyIntroduce,
@@ -97,7 +118,8 @@ internal fun StudyUpdateDoneRoute(
         studyImage = studyImage,
         memberCount = memberCount,
         isChallenge = isChallenge,
-        selectedStudyTime = studyTimeOption
+        selectedStudyTime = studyTimeOption,
+        updateType = updateType
     )
 }
 
@@ -114,7 +136,8 @@ fun StudyUpdateDoneScreen(
     studyImage: Uri? = null,
     memberCount: Int? = null,
     isChallenge: Boolean = false,
-    selectedStudyTime: StudyTimeOption = StudyTimeOption.FIVE_HOURS
+    selectedStudyTime: StudyTimeOption = StudyTimeOption.FIVE_HOURS,
+    updateType: StudyUpdateType = StudyUpdateType.CREATE
 ) {
     val context = LocalContext.current
     Column(
@@ -125,7 +148,7 @@ fun StudyUpdateDoneScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TogedyTopBar(
-            title = "스터디 생성",
+            title = if (updateType == StudyUpdateType.UPDATE) "스터디 수정" else "스터디 생성",
             modifier = Modifier.padding(top = 23.dp),
             leftIcon = ImageVector.vectorResource(ic_left_chevron_green),
             leftIconColor = TogedyTheme.colors.gray800,
