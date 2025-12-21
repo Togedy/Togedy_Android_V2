@@ -1,5 +1,7 @@
 package com.together.study.study.repository
 
+import com.together.study.study.model.StudyNameDuplicate
+
 interface StudyUpdateRepository {
     suspend fun createStudy(
         challengeGoalTime: Int?,
@@ -10,5 +12,7 @@ interface StudyUpdateRepository {
         studyPassword: String?,
         studyImageUri: String?,
     ): Result<Unit>
+
+    suspend fun checkStudyNameDuplicate(name: String): Result<StudyNameDuplicate>
 }
 
