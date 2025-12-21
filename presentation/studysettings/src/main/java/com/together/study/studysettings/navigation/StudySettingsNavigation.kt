@@ -7,6 +7,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.common.navigation.Route
+import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.studysettings.main.LeaderSettingsRoute
 import com.together.study.studysettings.main.MemberSettingsRoute
 import com.together.study.studysettings.subsettings.MemberCountEditScreen
@@ -45,13 +46,16 @@ fun NavController.navigateToMemberListScreen(
 fun NavGraphBuilder.studySettingsGraph(
     navigateToUp: () -> Unit,
     navigateToStudyMain: () -> Unit,
+    navigateToStudyUpdate: (Long, StudyUpdateType) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     composable<LeaderSettings> {
         LeaderSettingsRoute(
             onBackClick = navigateToUp,
-            onInfoClick = { /* 정보 수정 화면 */ },
+            onInfoClick = { studyId ->
+                navigateToStudyUpdate(studyId, StudyUpdateType.UPDATE)
+            },
             onMemberClick = { id ->
                 navController.navigateToMemberEditScreen(id, MemberEditType.EDIT)
             },

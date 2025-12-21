@@ -9,13 +9,15 @@ import androidx.navigation.toRoute
 import com.togehter.study.studyupdate.StudyUpdateDoneRoute
 import com.togehter.study.studyupdate.StudyUpdateRoute
 import com.together.study.common.navigation.Route
+import com.together.study.common.type.study.StudyUpdateType
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToStudyUpdate(
     isChallenge: Boolean = false,
     studyId: Long = 0,
+    updateType: StudyUpdateType = StudyUpdateType.CREATE,
     navOptions: NavOptions? = null,
-) = navigate(StudyUpdate(studyId, isChallenge), navOptions)
+) = navigate(StudyUpdate(studyId, isChallenge, updateType), navOptions)
 
 fun NavController.navigateToStudyUpdateDone(
     studyId: Long = 0L,
@@ -49,7 +51,8 @@ fun NavGraphBuilder.studyUpdateGraph(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    composable<StudyUpdate> {
+    composable<StudyUpdate> { backStackEntry ->
+        val route = backStackEntry.toRoute<StudyUpdate>()
         StudyUpdateRoute(
             onBackClick = navigateToUp,
             onNextClick = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime ->
@@ -94,7 +97,11 @@ fun NavGraphBuilder.studyUpdateGraph(
 }
 
 @Serializable
-data class StudyUpdate(val studyId: Long, val isChallenge: Boolean = false) : Route
+data class StudyUpdate(
+    val studyId: Long,
+    val isChallenge: Boolean = false,
+    val updateType: StudyUpdateType = StudyUpdateType.CREATE
+) : Route
 
 @Serializable
 data class StudyUpdateDone(
