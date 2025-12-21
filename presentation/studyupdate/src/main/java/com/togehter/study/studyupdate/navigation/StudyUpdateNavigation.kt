@@ -77,7 +77,6 @@ fun NavGraphBuilder.studyUpdateGraph(
                 navController.popBackStack()
             },
             onStartClick = {
-                // TODO: 서버 호출 로직 추가
                 navController.popBackStack()
                 navController.popBackStack()
             },
