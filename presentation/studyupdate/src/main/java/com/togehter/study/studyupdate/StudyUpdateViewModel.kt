@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.togehter.study.studyupdate.component.StudyTimeOption
+import com.together.study.study.repository.StudyUpdateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,11 +14,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class StudyUpdateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val studyUpdateRepository: StudyUpdateRepository,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>("studyId") ?: 0L
 
@@ -93,5 +96,35 @@ internal class StudyUpdateViewModel @Inject constructor(
         started = SharingStarted.Eagerly,
         initialValue = false
     )
+
+    // 스터디 생성
+    fun createStudy(
+        challengeGoalTime: Int?,
+        studyName: String,
+        studyDescription: String?,
+        studyMemberLimit: Int,
+        studyTag: String,
+        studyPassword: String?,
+        studyImageUri: Uri?,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) = viewModelScope.launch {
+        studyUpdateRepository.createStudy(
+            challengeGoalTime = challengeGoalTime,
+            studyName = studyName,
+            studyDescription = studyDescription,
+            studyMemberLimit = studyMemberLimit,
+            studyTag = studyTag,
+            studyPassword = studyPassword,
+            studyImageUri = studyImageUri?.toString(),
+        ).fold(
+            onSuccess = {
+                onSuccess()
+            },
+            onFailure = { throwable ->
+                onFailure(throwable.message ?: "스터디 생성에 실패했습니다.")
+            }
+        )
+    }
 }
 
