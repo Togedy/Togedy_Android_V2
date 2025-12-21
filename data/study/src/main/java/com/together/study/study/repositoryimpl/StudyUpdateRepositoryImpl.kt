@@ -2,6 +2,7 @@ package com.together.study.study.repositoryimpl
 
 import androidx.core.net.toUri
 import com.together.study.study.datasource.StudyUpdateDataSource
+import com.together.study.study.mapper.toDomain
 import com.together.study.study.repository.StudyUpdateRepository
 import javax.inject.Inject
 
@@ -28,5 +29,11 @@ class StudyUpdateRepositoryImpl @Inject constructor(
             studyImageUri = uri,
         )
     }
+
+    override suspend fun checkStudyNameDuplicate(name: String) =
+        runCatching {
+            val response = studyUpdateDataSource.checkStudyNameDuplicate(name).response
+            response.toDomain()
+        }
 }
 
