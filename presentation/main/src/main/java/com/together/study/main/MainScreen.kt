@@ -10,9 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.togehter.study.studyupdate.navigation.navigateToStudyUpdate
-import com.togehter.study.studyupdate.navigation.navigateToStudyUpdateDone
-import com.togehter.study.studyupdate.navigation.studyUpdateGraph
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.common.type.study.StudyUpdateType
@@ -28,6 +25,9 @@ import com.together.study.studydetail.navigation.studyDetailGraph
 import com.together.study.studysettings.navigation.navigateToLeaderSettingsScreen
 import com.together.study.studysettings.navigation.navigateToMemberSettingsScreen
 import com.together.study.studysettings.navigation.studySettingsGraph
+import com.together.study.studyupdate.navigation.navigateToStudyUpdate
+import com.together.study.studyupdate.navigation.navigateToStudyUpdateDone
+import com.together.study.studyupdate.navigation.studyUpdateGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable

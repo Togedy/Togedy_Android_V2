@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate.component
+package com.together.study.studyupdate.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.togehter.study.studyupdate.StudyUpdateTextItem
 import com.together.study.designsystem.component.textfield.TogedyTextField
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studyupdate.StudyUpdateTextItem
 
 @Composable
 internal fun StudyUpdatePassword(

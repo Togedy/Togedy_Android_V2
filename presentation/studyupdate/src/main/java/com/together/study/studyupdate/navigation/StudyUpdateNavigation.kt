@@ -1,15 +1,18 @@
-package com.togehter.study.studyupdate.navigation
+package com.together.study.studyupdate.navigation
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import androidx.navigation.toRoute
-import com.togehter.study.studyupdate.StudyUpdateDoneRoute
-import com.togehter.study.studyupdate.StudyUpdateRoute
 import com.together.study.common.navigation.Route
 import com.together.study.common.type.study.StudyUpdateType
+import com.together.study.study.navigation.Study
+import com.together.study.study.navigation.navigateToStudy
+import com.together.study.studyupdate.StudyUpdateDoneRoute
+import com.together.study.studyupdate.StudyUpdateRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToStudyUpdate(
@@ -79,11 +82,20 @@ fun NavGraphBuilder.studyUpdateGraph(
         StudyUpdateDoneRoute(
             onBackClick = navigateToUp,
             onEditClick = {
-                navController.popBackStack()
+                navController.navigateToStudy(
+                    navOptions = navOptions {
+                        popUpTo(Study) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
             },
             onStartClick = {
-                navController.popBackStack()
-                navController.popBackStack()
+                navController.navigateToStudy(
+                    navOptions = navOptions {
+                        popUpTo(Study) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
             },
             studyName = route.studyName,
             studyIntroduce = route.studyIntroduce,

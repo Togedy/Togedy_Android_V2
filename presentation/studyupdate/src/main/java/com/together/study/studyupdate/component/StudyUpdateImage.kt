@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate.component
+package com.together.study.studyupdate.component
 
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -21,9 +21,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.togehter.study.studyupdate.StudyUpdateTextItem
 import com.together.study.designsystem.R.drawable.ic_no_image
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studyupdate.StudyUpdateTextItem
 import com.together.study.util.noRippleClickable
 
 @Composable

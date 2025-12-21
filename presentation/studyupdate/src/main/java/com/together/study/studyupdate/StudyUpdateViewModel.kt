@@ -1,14 +1,14 @@
-package com.togehter.study.studyupdate
+package com.together.study.studyupdate
 
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.togehter.study.studyupdate.component.StudyTimeOption
 import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudyUpdateRepository
+import com.together.study.studyupdate.component.StudyTimeOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -172,7 +172,7 @@ internal class StudyUpdateViewModel @Inject constructor(
     // 스터디 수정 정보 로드
     fun loadStudyDetailInfo() = viewModelScope.launch {
         if (studyId == 0L || updateType != StudyUpdateType.UPDATE) return@launch
-        
+
         studyDetailRepository.getStudyDetailInfo(studyId).fold(
             onSuccess = { studyDetailInfo ->
                 // 원본 데이터 저장

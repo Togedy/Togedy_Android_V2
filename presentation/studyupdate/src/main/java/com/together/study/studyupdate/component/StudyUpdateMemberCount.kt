@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate.component
+package com.together.study.studyupdate.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.togehter.study.studyupdate.StudyUpdateTextItem
 import com.together.study.designsystem.R.drawable.ic_arrow_down_24
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.wheelpicker.PickerPosition
 import com.together.study.designsystem.component.wheelpicker.TogedyScrollPicker
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.studyupdate.StudyUpdateTextItem
 import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)

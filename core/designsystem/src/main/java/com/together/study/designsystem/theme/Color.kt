@@ -120,7 +120,7 @@ class TogedyColors(
         private set
     var red30 by mutableStateOf(red30)
         private set
-    var red50 by mutableStateOf(red30)
+    var red50 by mutableStateOf(red50)
         private set
     var blue by mutableStateOf(blue)
         private set

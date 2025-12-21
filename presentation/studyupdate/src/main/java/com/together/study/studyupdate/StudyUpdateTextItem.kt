@@ -1,4 +1,4 @@
-package com.togehter.study.studyupdate
+package com.together.study.studyupdate
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
