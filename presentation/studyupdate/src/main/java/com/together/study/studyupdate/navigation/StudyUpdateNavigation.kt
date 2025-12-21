@@ -5,8 +5,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import androidx.navigation.toRoute
 import com.together.study.common.navigation.Route
+import com.together.study.study.navigation.Study
+import com.together.study.study.navigation.navigateToStudy
 import com.together.study.studyupdate.StudyUpdateDoneRoute
 import com.together.study.studyupdate.StudyUpdateRoute
 import kotlinx.serialization.Serializable
@@ -74,12 +77,20 @@ fun NavGraphBuilder.studyUpdateGraph(
         StudyUpdateDoneRoute(
             onBackClick = navigateToUp,
             onEditClick = {
-                navController.popBackStack()
+                navController.navigateToStudy(
+                    navOptions = navOptions {
+                        popUpTo(Study) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
             },
             onStartClick = {
-                // TODO: 서버 호출 로직 추가
-                navController.popBackStack()
-                navController.popBackStack()
+                navController.navigateToStudy(
+                    navOptions = navOptions {
+                        popUpTo(Study) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                )
             },
             studyName = route.studyName,
             studyIntroduce = route.studyIntroduce,
