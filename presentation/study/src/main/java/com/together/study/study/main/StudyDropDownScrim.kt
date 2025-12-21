@@ -102,7 +102,7 @@ fun StudyDropDownScrimItem(
                 Spacer(Modifier.width(26.dp))
                 Text(
                     text = text,
-                    style = TogedyTheme.typography.title16sb.copy(
+                    style = TogedyTheme.typography.body13b.copy(
                         color = TogedyTheme.colors.gray800
                     )
                 )
