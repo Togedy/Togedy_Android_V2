@@ -59,7 +59,10 @@ class StudyUpdateDataSource @Inject constructor(
         studyMemberLimit = studyMemberLimit.toString().toRequestBody("text/plain".toMediaType()),
         studyTag = studyTag.toRequestBody("text/plain".toMediaType()),
         studyPassword = studyPassword?.toRequestBody("text/plain".toMediaType()),
-        studyImage = studyImageUri?.let { uri ->
+        studyImage = studyImageUri?.takeIf { uri ->
+            // HTTP/HTTPS URL인 경우 이미 서버에 업로드된 이미지이므로 업로드하지 않음
+            uri.scheme != "http" && uri.scheme != "https"
+        }?.let { uri ->
             val file = ImageConverter.uriToFile(context, uri)
             val requestFile = file.asRequestBody("image/*".toMediaType())
             MultipartBody.Part.createFormData("studyImage", file.name, requestFile)
