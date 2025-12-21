@@ -14,5 +14,16 @@ interface StudyUpdateRepository {
     ): Result<Unit>
 
     suspend fun checkStudyNameDuplicate(name: String): Result<StudyNameDuplicate>
+
+    suspend fun updateStudy(
+        studyId: Long,
+        challengeGoalTime: Int?,
+        studyName: String,
+        studyDescription: String?,
+        studyMemberLimit: Int,
+        studyTag: String,
+        studyPassword: String?,
+        studyImageUri: String?,
+    ): Result<Unit>
 }
 

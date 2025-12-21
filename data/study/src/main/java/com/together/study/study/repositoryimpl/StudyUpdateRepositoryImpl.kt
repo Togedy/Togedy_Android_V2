@@ -35,5 +35,28 @@ class StudyUpdateRepositoryImpl @Inject constructor(
             val response = studyUpdateDataSource.checkStudyNameDuplicate(name).response
             response.toDomain()
         }
+
+    override suspend fun updateStudy(
+        studyId: Long,
+        challengeGoalTime: Int?,
+        studyName: String,
+        studyDescription: String?,
+        studyMemberLimit: Int,
+        studyTag: String,
+        studyPassword: String?,
+        studyImageUri: String?,
+    ): Result<Unit> = runCatching {
+        val uri = studyImageUri?.toUri()
+        studyUpdateDataSource.updateStudy(
+            studyId = studyId,
+            challengeGoalTime = challengeGoalTime,
+            studyName = studyName,
+            studyDescription = studyDescription,
+            studyMemberLimit = studyMemberLimit,
+            studyTag = studyTag,
+            studyPassword = studyPassword,
+            studyImageUri = uri,
+        )
+    }
 }
 

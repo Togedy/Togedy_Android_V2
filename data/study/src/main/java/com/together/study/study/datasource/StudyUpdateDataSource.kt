@@ -40,5 +40,30 @@ class StudyUpdateDataSource @Inject constructor(
 
     suspend fun checkStudyNameDuplicate(name: String) =
         studyUpdateService.checkStudyNameDuplicate(name)
+
+    suspend fun updateStudy(
+        studyId: Long,
+        challengeGoalTime: Int?,
+        studyName: String,
+        studyDescription: String?,
+        studyMemberLimit: Int,
+        studyTag: String,
+        studyPassword: String?,
+        studyImageUri: Uri?,
+    ) = studyUpdateService.updateStudy(
+        studyId = studyId,
+        challengeGoalTime = challengeGoalTime?.toString()
+            ?.toRequestBody("text/plain".toMediaType()),
+        studyName = studyName.toRequestBody("text/plain".toMediaType()),
+        studyDescription = studyDescription?.toRequestBody("text/plain".toMediaType()),
+        studyMemberLimit = studyMemberLimit.toString().toRequestBody("text/plain".toMediaType()),
+        studyTag = studyTag.toRequestBody("text/plain".toMediaType()),
+        studyPassword = studyPassword?.toRequestBody("text/plain".toMediaType()),
+        studyImage = studyImageUri?.let { uri ->
+            val file = ImageConverter.uriToFile(context, uri)
+            val requestFile = file.asRequestBody("image/*".toMediaType())
+            MultipartBody.Part.createFormData("studyImage", file.name, requestFile)
+        },
+    )
 }
 
