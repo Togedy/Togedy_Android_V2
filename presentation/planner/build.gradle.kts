@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
 
-    implementation(projects.domain.study)
+    implementation(projects.domain.calendar)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
