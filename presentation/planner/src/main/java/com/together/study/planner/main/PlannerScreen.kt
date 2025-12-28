@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +45,8 @@ import com.together.study.designsystem.R.drawable.ic_add_image
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_play_button
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
+import com.together.study.designsystem.component.tabbar.PlannerMainTab
+import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 import java.time.LocalDate
@@ -52,6 +57,12 @@ fun PlannerScreen(
 ) {
     val context = LocalContext.current
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedTab by remember { mutableStateOf(PlannerMainTab.PLANNER) }
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { 3 }
+    )
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -78,6 +89,27 @@ fun PlannerScreen(
             onImageEditButtonClick = { },
         )
 
+        Spacer(Modifier.height(32.dp))
+
+        TogedyTabBar(
+            selectedTab = selectedTab,
+            onTabChange = { selectedTab = it },
+            tabList = PlannerMainTab.entries,
+        )
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            when (page) {
+                0 -> PlannerItemsScreen()
+                1 -> { /* TODO: 타임테이블 연결 */
+                }
+
+                2 -> { /* TODO: 통계 연결 */
+                }
+            }
+        }
     }
 }
 
