@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
@@ -59,10 +61,26 @@ fun PlannerScreen(
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedTab by remember { mutableStateOf(PlannerMainTab.PLANNER) }
     val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { 3 }
+        initialPage = PlannerMainTab.entries.indexOf(selectedTab),
+        pageCount = { PlannerMainTab.entries.size }
     )
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(selectedTab) {
+        val targetIndex = PlannerMainTab.entries.indexOf(selectedTab)
+        if (pagerState.currentPage != targetIndex) {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(targetIndex)
+            }
+        }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        val currentTab = PlannerMainTab.entries[pagerState.currentPage]
+        if (selectedTab != currentTab) {
+            selectedTab = currentTab
+        }
+    }
 
     Column(
         modifier = modifier
