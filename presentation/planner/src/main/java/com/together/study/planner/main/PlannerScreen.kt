@@ -124,8 +124,7 @@ fun PlannerScreen(
                 1 -> { /* TODO: 타임테이블 연결 */
                 }
 
-                2 -> { /* TODO: 통계 연결 */
-                }
+                2 -> StatisticsScreen()
             }
         }
     }
