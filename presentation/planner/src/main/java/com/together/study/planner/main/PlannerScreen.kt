@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,7 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -33,10 +38,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.calendar.model.DDay
+import com.together.study.designsystem.R.drawable.ic_add_image
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_play_button
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
-import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 import java.time.LocalDate
@@ -70,6 +75,7 @@ fun PlannerScreen(
             timerImageUrl = "",
             timer = "00:00:00",
             onPlayButtonClick = { },
+            onImageEditButtonClick = { },
         )
 
     }
@@ -170,16 +176,18 @@ private fun TimerSection(
     timer: String,
     modifier: Modifier = Modifier,
     onPlayButtonClick: () -> Unit,
+    onImageEditButtonClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.TopCenter,
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(114.dp)
+                .wrapContentHeight()
                 .padding(top = 20.dp)
                 .clip(RoundedCornerShape(16.dp)),
         ) {
@@ -187,16 +195,22 @@ private fun TimerSection(
                 model = ImageRequest
                     .Builder(context)
                     .data(timerImageUrl)
-                    .placeholder(img_study_background)
-                    .error(img_study_background)
-                    .fallback(img_study_background)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
+                colorFilter = ColorFilter.tint(
+                    color = TogedyTheme.colors.gray500.copy(alpha = 0.5f),
+                    blendMode = BlendMode.Darken
+                ),
+                modifier = Modifier.height(114.dp),
+                error = ColorPainter(Color.White),
+                placeholder = ColorPainter(Color.White),
+                fallback = ColorPainter(Color.White),
             )
 
             Row(
                 modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {
                     Text(
@@ -204,6 +218,8 @@ private fun TimerSection(
                         style = TogedyTheme.typography.body12m,
                         color = TogedyTheme.colors.white,
                     )
+
+                    Spacer(Modifier.height(16.dp))
 
                     Text(
                         text = timer,
@@ -223,7 +239,16 @@ private fun TimerSection(
             }
         }
 
-
+        Icon(
+            imageVector = ImageVector.vectorResource(ic_add_image),
+            contentDescription = "이미지 추가 버튼",
+            tint = TogedyTheme.colors.gray500,
+            modifier = Modifier
+                .shadow(4.dp, RoundedCornerShape(50.dp))
+                .background(TogedyTheme.colors.white, RoundedCornerShape(16.dp))
+                .padding(8.dp)
+                .noRippleClickable(onImageEditButtonClick),
+        )
     }
 }
 
