@@ -22,7 +22,9 @@ dependencies {
     implementation(projects.presentation.search)
     implementation(projects.presentation.study)
     implementation(projects.presentation.studydetail)
+    implementation(projects.presentation.studymember)
     implementation(projects.presentation.studysettings)
+    implementation(projects.presentation.studyupdate)
     implementation(projects.domain.study)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)

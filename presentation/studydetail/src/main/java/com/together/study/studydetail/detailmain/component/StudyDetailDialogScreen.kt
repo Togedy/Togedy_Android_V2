@@ -3,9 +3,9 @@ package com.together.study.studydetail.detailmain.component
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.together.study.studydetail.component.JoinStudyDialog
-import com.together.study.studydetail.detailmain.UserInfoBottomSheet
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
+import com.together.study.studymember.memberdetail.MemberDetailBottomSheet
 
 @Composable
 fun StudyDetailDialogScreen(
@@ -39,9 +39,9 @@ fun StudyDetailDialogScreen(
         }
 
         if (isUserBottomSheetVisible) {
-            UserInfoBottomSheet(
+            MemberDetailBottomSheet(
                 studyId = studyId,
-                userId = userId,
+                memberId = userId,
                 modifier = modifier,
                 onDismissRequest = { onDismissRequest(StudyDetailDialogType.USER) },
             )
