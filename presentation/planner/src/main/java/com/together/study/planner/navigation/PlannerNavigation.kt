@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.MainTabRoute
+import com.together.study.planner.main.PlannerScreen
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToPlanner(
@@ -17,6 +18,9 @@ fun NavGraphBuilder.plannerGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<Planner> {
+        PlannerScreen(
+            modifier = modifier,
+        )
     }
 }
 

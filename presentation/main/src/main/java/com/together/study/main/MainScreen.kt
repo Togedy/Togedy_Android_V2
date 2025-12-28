@@ -14,6 +14,7 @@ import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.main.component.MainBottomBar
+import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
 import com.together.study.study.navigation.navigateToStudy
@@ -152,6 +153,11 @@ private fun MainNavHost(
             navigateToStudyMain = navigator.navController::navigateToStudy,
             navigateToStudyMemberEdit = navigator.navController::navigateToMemberListScreen,
             navController = navigator.navController,
+            modifier = modifier,
+        )
+
+        plannerGraph(
+            navigateToUp = navigator.navController::popBackStack,
             modifier = modifier,
         )
 
