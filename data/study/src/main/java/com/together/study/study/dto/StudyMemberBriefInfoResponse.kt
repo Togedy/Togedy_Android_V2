@@ -8,5 +8,6 @@ import kotlinx.serialization.Serializable
 data class StudyMemberBriefInfoResponse(
     @SerialName("userId") val userId: Long,
     @SerialName("userName") val userName: String,
+    @SerialName("userProfileImageUrl") val userProfileImageUrl: String?,
     @SerialName("studyRole") val studyRole: StudyRole,
 )

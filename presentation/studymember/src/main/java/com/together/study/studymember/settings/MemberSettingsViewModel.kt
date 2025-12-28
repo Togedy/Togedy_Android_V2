@@ -1,76 +1,44 @@
-package com.together.study.studysettings.subsettings
+package com.together.study.studymember.settings
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
-import com.together.study.study.model.StudyDetailInfo
 import com.together.study.study.model.StudyMemberBriefInfo
-import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudySettingsRepository
+import com.together.study.study.type.MemberEditType
 import com.together.study.study.type.StudyRole
-import com.together.study.studysettings.subsettings.event.MemberEditEvent
-import com.together.study.studysettings.subsettings.state.MemberEditUiState
-import com.together.study.studysettings.type.MemberEditType
+import com.together.study.studymember.settings.event.MemberEditEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class MemberEditViewModel @Inject constructor(
+class MemberSettingsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val studyDetailRepository: StudyDetailRepository,
     private val studySettingsRepository: StudySettingsRepository,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
     val type: MemberEditType = savedStateHandle.get<MemberEditType>(TYPE_KEY) ?: MemberEditType.SHOW
 
-    private val _studyInfoState = MutableStateFlow<UiState<StudyDetailInfo>>(UiState.Loading)
-    private val _membersState =
-        MutableStateFlow<UiState<List<StudyMemberBriefInfo>>>(UiState.Loading)
-
-    val studyDetailUiState: StateFlow<MemberEditUiState> = combine(
-        _studyInfoState, _membersState
-    ) { studyInfoState, membersState ->
-        MemberEditUiState(
-            studyInfoState = studyInfoState,
-            membersState = membersState,
-        )
-    }.distinctUntilChanged().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = MemberEditUiState(
-            studyInfoState = UiState.Loading,
-            membersState = UiState.Loading,
-        )
-    )
-
     private val _eventFlow = MutableSharedFlow<MemberEditEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
-
-    private val _selectedUser = MutableStateFlow(StudyMemberBriefInfo(0, "", StudyRole.MEMBER))
+    private val _selectedUser =
+        MutableStateFlow(StudyMemberBriefInfo(0, "", null, StudyRole.MEMBER))
     val selectedUser = _selectedUser.asStateFlow()
 
-    init {
-        getStudyInfo()
-        getMembers()
-    }
+    private val _membersState =
+        MutableStateFlow<UiState<List<StudyMemberBriefInfo>>>(UiState.Loading)
+    val memberState = _membersState.asStateFlow()
 
-    fun getStudyInfo() = viewModelScope.launch {
-        studyDetailRepository.getStudyDetailInfo(studyId)
-            .onSuccess { _studyInfoState.value = UiState.Success(it) }
-            .onFailure { _studyInfoState.value = UiState.Failure(it.message.toString()) }
+    init {
+        getMembers()
     }
 
     fun getMembers() = viewModelScope.launch {
@@ -105,7 +73,7 @@ class MemberEditViewModel @Inject constructor(
     }
 
     companion object {
-        const val TAG = "MemberEditViewModel"
+        const val TAG = "MemberSettingsViewModel"
         const val STUDY_ID_KEY = "studyId"
         const val TYPE_KEY = "type"
     }
