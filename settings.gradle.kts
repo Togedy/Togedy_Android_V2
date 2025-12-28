@@ -49,4 +49,5 @@ include(
     ":presentation:studydetail",
     ":presentation:studysettings",
     ":presentation:studymember",
+    ":presentation:studyupdate"
 )

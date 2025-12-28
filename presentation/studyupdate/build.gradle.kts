@@ -1,3 +1,4 @@
+import com.together.study.buildlogic.dsl.implementation
 import com.together.study.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -7,26 +8,19 @@ plugins {
 }
 
 android {
-    setNameSpace("main")
+    setNameSpace("presentation.studyUpdate")
 }
 
 dependencies {
 
-    implementation(projects.presentation.calendar)
-
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
-    implementation(projects.presentation.calendar)
-    implementation(projects.presentation.search)
-    implementation(projects.presentation.study)
-    implementation(projects.presentation.studydetail)
-    implementation(projects.presentation.studymember)
-    implementation(projects.presentation.studysettings)
-    implementation(projects.presentation.studyupdate)
     implementation(projects.domain.study)
+    implementation(projects.presentation.study)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.timber)
 }
