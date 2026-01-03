@@ -29,11 +29,10 @@ import com.together.study.util.noRippleClickable
 @Composable
 internal fun SubjectItem(
     plannerSubject: PlannerSubject,
-    onSubjectClick: () -> Unit,
+    isSubjectEditMode: Boolean = false,
+    onSubjectClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
-    isSubjectSelected: Boolean = false,
-    isSubjectEditMode: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val subjectColor = plannerSubject.color.toPlannerSubjectColorOrDefault()
@@ -70,18 +69,7 @@ internal fun SubjectItem(
             )
         }
 
-        if (isSubjectSelected) {
-//            Icon(
-//                imageVector = ImageVector.vectorResource()
-//            )
-            Spacer(Modifier.width(4.dp))
-            Box(
-                // TODO: 추후 체크 icon 으로 변경
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(TogedyTheme.colors.gray500),
-            )
-        } else if (isSubjectEditMode) {
+        if (isSubjectEditMode) {
             Spacer(Modifier.width(4.dp))
 
             Icon(
@@ -104,7 +92,6 @@ private fun SubjectItemPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         SubjectItem(
             plannerSubject = PlannerSubject(0, "hi", "SUBJECT_COLOR1", emptyList()),
-            isSubjectSelected = false,
             onSubjectClick = {},
             modifier = modifier,
         )
