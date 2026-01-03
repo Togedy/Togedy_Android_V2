@@ -15,10 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,26 +28,19 @@ import com.together.study.util.noRippleClickable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SubjectBottomSheet(
-    plannerSubject: PlannerSubject?,
     plannerSubjects: List<PlannerSubject>,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     onDismissRequest: () -> Unit,
-    onDoneClick: (PlannerSubject) -> Unit,
     onAddSubjectClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
 ) {
-    var selectedSubject by remember { mutableStateOf(plannerSubject) }
-
     LaunchedEffect(Unit) { sheetState.expand() }
 
     TogedyBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
         title = "과목",
-        showDone = true,
-        isDoneActivate = selectedSubject != null,
-        onDoneClick = { onDoneClick(selectedSubject!!) },
         modifier = modifier.fillMaxHeight(0.528f),
     ) {
         LazyColumn(
@@ -82,11 +71,7 @@ internal fun SubjectBottomSheet(
             }
 
             items(plannerSubjects) { subjectItem ->
-                SubjectItem(
-                    plannerSubject = subjectItem,
-                    isSubjectSelected = subjectItem.id == selectedSubject?.id,
-                    onSubjectClick = { selectedSubject = subjectItem },
-                )
+                SubjectItem(plannerSubject = subjectItem)
             }
 
             item {
@@ -102,10 +87,8 @@ internal fun SubjectBottomSheet(
 private fun SubjectBottomSheetPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         SubjectBottomSheet(
-            plannerSubject = null,
             plannerSubjects = emptyList(),
             onDismissRequest = {},
-            onDoneClick = {},
             onAddSubjectClick = {},
             onEditSubjectClick = {},
             modifier = modifier,
