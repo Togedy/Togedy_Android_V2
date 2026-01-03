@@ -29,7 +29,7 @@ enum class PlannerSubjectColor(val color: Color) {
 
         fun fromStringToCategoryColorEnum(name: String?): PlannerSubjectColor {
             return try {
-                valueOf(name ?: "CATEGORY_COLOR1")
+                valueOf(name ?: "SUBJECT_COLOR1")
             } catch (e: IllegalArgumentException) {
                 SUBJECT_COLOR1
             }
