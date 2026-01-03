@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
     implementation(projects.presentation.calendar)
+    implementation(projects.presentation.planner)
     implementation(projects.presentation.search)
     implementation(projects.presentation.study)
     implementation(projects.presentation.studydetail)

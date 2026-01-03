@@ -20,3 +20,10 @@ enum class StudyMemberTab(override val typeName: String) : TabType {
     STUDY_TIME("공부시간"),
     PLANNER("플래너"),
 }
+
+// PLANNER
+enum class PlannerMainTab(override val typeName: String) : TabType {
+    PLANNER("플래너"),
+    TIMETABLE("타임테이블"),
+    STATISTICS("통계"),
+}
