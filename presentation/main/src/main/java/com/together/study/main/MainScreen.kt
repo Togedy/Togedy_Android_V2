@@ -167,6 +167,7 @@ private fun MainNavHost(
 
         plannerGraph(
             navigateToUp = navigator.navController::popBackStack,
+            navigateToSharePlanner = { /*navigator.navController::navigateToSharePlanner*/ },
             modifier = modifier,
         )
 
