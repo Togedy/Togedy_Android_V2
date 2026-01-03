@@ -95,7 +95,7 @@ internal fun StudyUpdateMemberCount(
                 onSelect(tempSelectedCount)
                 isBottomSheetVisible = false
             },
-            modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 22.dp)
         ) {
             Column(
                 modifier = Modifier

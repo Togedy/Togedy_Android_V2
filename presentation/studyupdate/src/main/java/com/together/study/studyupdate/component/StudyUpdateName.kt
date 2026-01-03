@@ -13,6 +13,8 @@ internal fun StudyUpdateName(
     value: String,
     onValueChange: (String) -> Unit,
     onDupCheckClick: () -> Unit,
+    isError: Boolean = false,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
     StudyUpdateTextItem(
@@ -27,7 +29,9 @@ internal fun StudyUpdateName(
             placeholderText = "이름을 입력해주세요 (최대 nn자)",
             showBorder = false,
             showDupCheck = true,
-            onDupCheckClick = onDupCheckClick
+            onDupCheckClick = onDupCheckClick,
+            isError = isError,
+            errorMessage = errorMessage
         )
     }
 }

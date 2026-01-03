@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
+import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.main.component.MainBottomBar
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
@@ -116,7 +117,7 @@ private fun MainNavHost(
 
         studyUpdateGraph(
             navigateToUp = navigator::navigateUp,
-            navigateToStudyUpdateDone = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime ->
+            navigateToStudyUpdateDone = { studyId, studyName, studyIntroduce, studyCategory, studyImageUri, studyPassword, memberCount, isChallenge, selectedStudyTime, updateType ->
                 navigator.navController.navigateToStudyUpdateDone(
                     studyId = studyId,
                     studyName = studyName,
@@ -126,7 +127,8 @@ private fun MainNavHost(
                     studyPassword = studyPassword,
                     memberCount = memberCount,
                     isChallenge = isChallenge,
-                    selectedStudyTime = selectedStudyTime
+                    selectedStudyTime = selectedStudyTime,
+                    updateType = updateType
                 )
             },
             navController = navigator.navController,
@@ -151,6 +153,13 @@ private fun MainNavHost(
         studySettingsGraph(
             navigateToUp = navigator::navigateUp,
             navigateToStudyMain = navigator.navController::navigateToStudy,
+            navigateToStudyUpdate = { studyId, updateType: StudyUpdateType ->
+                navigator.navController.navigateToStudyUpdate(
+                    studyId = studyId,
+                    updateType = updateType,
+                    isChallenge = false
+                )
+            },
             navigateToStudyMemberEdit = navigator.navController::navigateToMemberListScreen,
             navController = navigator.navController,
             modifier = modifier,
