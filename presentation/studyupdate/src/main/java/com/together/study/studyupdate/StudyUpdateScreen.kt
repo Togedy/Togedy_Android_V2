@@ -20,6 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -32,12 +33,11 @@ import com.together.study.studyupdate.component.StudyUpdateNext
 import com.together.study.studyupdate.component.StudyUpdatePassword
 import com.together.study.studyupdate.component.StudyUpdateTag
 import com.together.study.studyupdate.component.StudyUpdateTime
-import com.together.study.studyupdate.type.StudyUpdateType
 
 @Composable
 internal fun StudyUpdateRoute(
     onBackClick: () -> Unit,
-    onNextClick: (Long, String, String, String?, String?, String, Int?, Boolean, String) -> Unit,
+    onNextClick: (Long, String, String, String?, String?, String, Int?, Boolean, String, StudyUpdateType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
@@ -50,16 +50,22 @@ internal fun StudyUpdateRoute(
     val selectedStudyTime by viewModel.selectedStudyTime.collectAsState()
     val isChallenge by viewModel.isChallenge.collectAsState()
     val isNextButtonEnabled by viewModel.isNextButtonEnabled.collectAsState()
+    val isStudyNameDuplicate by viewModel.isStudyNameDuplicate.collectAsState()
+    val studyNameErrorMessage by viewModel.studyNameErrorMessage.collectAsState()
+    val updateType = viewModel.updateType
+
+    // 수정인 경우
+    LaunchedEffect(Unit) {
+        if (updateType == StudyUpdateType.UPDATE && viewModel.studyId != 0L) {
+            viewModel.loadStudyDetailInfo()
+        }
+    }
 
     StudyUpdateScreen(
         modifier = modifier,
         onBackClick = onBackClick,
         onNextClick = {
             val imageUriString = studyImage?.toString()
-            android.util.Log.d(
-                "taejung",
-                "StudyUpdateRoute - onNextClick: studyId=${viewModel.studyId}, studyName=$studyName, studyIntroduce=$studyIntroduce, studyCategory=$studyCategory, studyImageUri=$imageUriString, studyPassword=$studyPassword, memberCount=$selectedMemberCount, isChallenge=$isChallenge, selectedStudyTime=${selectedStudyTime.name}"
-            )
             onNextClick(
                 viewModel.studyId,
                 studyName,
@@ -69,10 +75,11 @@ internal fun StudyUpdateRoute(
                 studyPassword,
                 selectedMemberCount,
                 isChallenge,
-                selectedStudyTime.name
+                selectedStudyTime.name,
+                updateType
             )
         },
-        type = StudyUpdateType.CREATE,
+        type = updateType,
         isChallenge = isChallenge,
         studyName = studyName,
         studyIntroduce = studyIntroduce,
@@ -89,6 +96,9 @@ internal fun StudyUpdateRoute(
         onStudyPasswordChange = viewModel::updateStudyPassword,
         onSelectedMemberCountChange = viewModel::updateSelectedMemberCount,
         onSelectedStudyTimeChange = viewModel::updateSelectedStudyTime,
+        onDupCheckClick = viewModel::checkStudyNameDuplicate,
+        isStudyNameDuplicate = isStudyNameDuplicate == true,
+        studyNameErrorMessage = studyNameErrorMessage,
     )
 }
 
@@ -115,6 +125,9 @@ fun StudyUpdateScreen(
     onStudyPasswordChange: (String) -> Unit = {},
     onSelectedMemberCountChange: (Int?) -> Unit = {},
     onSelectedStudyTimeChange: (StudyTimeOption) -> Unit = {},
+    onDupCheckClick: () -> Unit = {},
+    isStudyNameDuplicate: Boolean = false,
+    studyNameErrorMessage: String? = null,
 ) {
     val title = if (type == StudyUpdateType.CREATE) "스터디 생성" else "스터디 수정"
 
@@ -163,9 +176,9 @@ fun StudyUpdateScreen(
                 StudyUpdateName(
                     value = studyName,
                     onValueChange = onStudyNameChange,
-                    onDupCheckClick = {
-                        // 중복 확인 로직
-                    }
+                    onDupCheckClick = onDupCheckClick,
+                    isError = isStudyNameDuplicate,
+                    errorMessage = studyNameErrorMessage
                 )
             }
 

@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
+import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.study.type.MemberEditType
 import com.together.study.studysettings.main.LeaderSettingsRoute
 import com.together.study.studysettings.main.MemberSettingsRoute
@@ -31,13 +32,16 @@ fun NavGraphBuilder.studySettingsGraph(
     navigateToUp: () -> Unit,
     navigateToStudyMain: () -> Unit,
     navigateToStudyMemberEdit: (Long, MemberEditType) -> Unit,
+    navigateToStudyUpdate: (Long, StudyUpdateType) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     composable<LeaderSettings> {
         LeaderSettingsRoute(
             onBackClick = navigateToUp,
-            onInfoClick = { /* 정보 수정 화면 */ },
+            onInfoClick = { studyId ->
+                navigateToStudyUpdate(studyId, StudyUpdateType.UPDATE)
+            },
             onMemberClick = { id ->
                 navigateToStudyMemberEdit(id, MemberEditType.EDIT)
             },

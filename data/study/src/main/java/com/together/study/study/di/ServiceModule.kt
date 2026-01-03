@@ -4,6 +4,7 @@ import com.together.study.study.service.StudyDetailService
 import com.together.study.study.service.StudyExploreService
 import com.together.study.study.service.StudyMemberService
 import com.together.study.study.service.StudySettingsService
+import com.together.study.study.service.StudyUpdateService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,5 +34,10 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideStudySettingsService(retrofit: Retrofit): StudySettingsService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideStudyUpdateService(retrofit: Retrofit): StudyUpdateService =
         retrofit.create()
 }
