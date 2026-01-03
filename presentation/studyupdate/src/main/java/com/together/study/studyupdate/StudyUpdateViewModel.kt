@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -192,8 +193,8 @@ internal class StudyUpdateViewModel @Inject constructor(
                 _selectedMemberCount.update { studyDetailInfo.studyMemberLimit }
                 _isChallenge.update { studyDetailInfo.studyType == "CHALLENGE" }
             },
-            onFailure = {
-                // 에러 처리
+            onFailure = { throwable ->
+                Timber.e(throwable, "스터디 호출에 실패")
             }
         )
     }
