@@ -1,4 +1,4 @@
-package com.together.study.studysettings.subsettings.state
+package com.together.study.studymember.settings.state
 
 import androidx.compose.runtime.Immutable
 import com.together.study.common.state.UiState

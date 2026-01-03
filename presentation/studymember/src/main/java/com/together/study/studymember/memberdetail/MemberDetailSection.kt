@@ -1,4 +1,4 @@
-package com.together.study.studydetail.detailmain
+package com.together.study.studymember.memberdetail
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -19,11 +19,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,65 +54,55 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.model.StudyMemberPlanner
 import com.together.study.study.model.StudyMemberProfile
 import com.together.study.study.model.StudyMemberTimeBlocks
-import com.together.study.studydetail.detailmain.component.StudyMonthlyColorBlock
+import com.together.study.studymember.component.StudyMonthlyColorBlock
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun UserInfoBottomSheet(
-    studyId: Long,
-    userId: Long,
+internal fun MemberDetailSection(
     modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
-    viewModel: UserInfoViewModel = hiltViewModel(),
+    studyId: Long? = null,
+    memberId: Long? = null,
+    viewModel: MemberDetailViewModel = hiltViewModel(),
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var selectedTab by remember { mutableStateOf(StudyMemberTab.STUDY_TIME) }
     val context = LocalContext.current
+    var selectedTab by remember { mutableStateOf(StudyMemberTab.STUDY_TIME) }
 
     val isPlannerVisible by viewModel.isPlannerVisibleToggle.collectAsStateWithLifecycle()
     val memberUiState by viewModel.memberUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.getStudyMemberInfo(studyId, userId)
+    LaunchedEffect(studyId, memberId) {
+        viewModel.getStudyMemberInfo(studyId, memberId)
     }
 
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = onDismissRequest,
-        modifier = modifier.fillMaxWidth(),
-        containerColor = TogedyTheme.colors.white,
-    ) {
-        when (memberUiState.isLoaded) {
-            is UiState.Empty -> {}
-            is UiState.Failure -> {}
-            is UiState.Loading -> {}
-            is UiState.Success<*> -> {
-                val user = (memberUiState.profileState as UiState.Success).data
-                val dailyPlanner = (memberUiState.plannerState as UiState.Success).data
+    when (memberUiState.isLoaded) {
+        is UiState.Empty -> {}
+        is UiState.Failure -> {}
+        is UiState.Loading -> {}
+        is UiState.Success<*> -> {
+            val user = (memberUiState.profileState as UiState.Success).data
+            val dailyPlanner = (memberUiState.plannerState as UiState.Success).data
 
-                UserInfoSuccessScreen(
-                    context = context,
-                    selectedTab = selectedTab,
-                    isPlannerVisible = isPlannerVisible,
-                    user = user,
-                    studyTimeBlocks = (memberUiState.timeBlocksState as UiState.Success<StudyMemberTimeBlocks>).data,
-                    dailyPlanner = dailyPlanner,
-                    modifier = modifier,
-                    onTabChange = { selectedTab = it },
-                    onPlannerVisibleToggleClick = {
-                        viewModel.onPlannerVisibleToggleClicked(
-                            isPlannerVisible
-                        )
-                    }
-                )
-            }
+            MemberDetailSuccessScreen(
+                context = context,
+                selectedTab = selectedTab,
+                isPlannerVisible = isPlannerVisible,
+                user = user,
+                studyTimeBlocks = (memberUiState.timeBlocksState as UiState.Success<StudyMemberTimeBlocks>).data,
+                dailyPlanner = dailyPlanner,
+                modifier = modifier,
+                onTabChange = { selectedTab = it },
+                onPlannerVisibleToggleClick = {
+                    viewModel.onPlannerVisibleToggleClicked(
+                        isPlannerVisible
+                    )
+                }
+            )
         }
     }
 }
 
 @Composable
-private fun UserInfoSuccessScreen(
+private fun MemberDetailSuccessScreen(
     context: Context,
     selectedTab: StudyMemberTab,
     isPlannerVisible: Boolean,
@@ -489,7 +476,7 @@ private fun PlannerTitleSection(
 }
 
 @Composable
-fun UserRecordBlock(
+private fun UserRecordBlock(
     record: String,
     type: String,
     unit: String = "",
@@ -552,12 +539,36 @@ private fun checkMaxValue(value: Int): String {
 
 @Preview
 @Composable
-private fun UserInfoBottomSheetPreview() {
+private fun MemberDetailSectionPreview() {
+    val context = LocalContext.current
+
     TogedyTheme {
-        UserInfoBottomSheet(
-            studyId = 1,
-            userId = 1,
-            onDismissRequest = {},
+        MemberDetailSuccessScreen(
+            context = context,
+            selectedTab = StudyMemberTab.STUDY_TIME,
+            isPlannerVisible = true,
+            user = StudyMemberProfile(
+                userName = "감자도리",
+                userStatus = "",
+                userProfileImageUrl = null,
+                userProfileMessage = "",
+                totalStudyTime = "2:00",
+                attendanceStreak = 1,
+                elapsedDays = 1
+            ),
+            studyTimeBlocks = StudyMemberTimeBlocks(
+                studyTimeCount = 0,
+                monthlyStudyTimeList = emptyList()
+            ),
+            dailyPlanner = StudyMemberPlanner(
+                isMyPlanner = true,
+                isPlannerVisible = true,
+                completedPlanCount = 0,
+                totalPlanCount = 0,
+                dailyPlanner = null
+            ),
+            onTabChange = {},
+            onPlannerVisibleToggleClick = {},
         )
     }
 }
