@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.type.toCategoryColorOrDefault
+import com.together.study.designsystem.R.drawable.ic_search_cancel_16
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.presentation.calendar.R.drawable.ic_category_box
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -48,10 +49,12 @@ internal fun CategoryItem(
             },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_category_box),
-            contentDescription = null,
-            tint = categoryColor,
+        Box(
+            modifier = Modifier
+                .padding(2.dp)
+                .padding(2.dp)
+                .size(16.dp)
+                .background(categoryColor, RoundedCornerShape(6.dp)),
         )
 
         Spacer(Modifier.width(8.dp))
@@ -80,11 +83,13 @@ internal fun CategoryItem(
             )
         } else if (isCategoryEditMode) {
             Spacer(Modifier.width(4.dp))
-            Box(
-                // TODO: 추후 삭제 icon 으로 변경
+
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_search_cancel_16),
+                contentDescription = "삭제 버튼",
+                tint = Color.Unspecified,
                 modifier = Modifier
                     .size(24.dp)
-                    .background(TogedyTheme.colors.gray300)
                     .noRippleClickable(onDeleteClick),
             )
         } else {
