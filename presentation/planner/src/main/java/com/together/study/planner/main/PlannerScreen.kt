@@ -223,10 +223,10 @@ private fun PlannerTopSection(
         }
 
         if (dDay.hasDday) {
-            val dDayText = when {
-                dDay.remainingDays == 0 -> "D-DAY"
-                dDay.remainingDays!! < 0 -> "D${dDay.remainingDays}"
-                else -> "D+${dDay.remainingDays}"
+            val dDayText = when (val days = dDay.remainingDays) {
+                null -> ""
+                0 -> "D-DAY"
+                else -> if (days < 0) "D$days" else "D+$days"
             }
 
             Row(
