@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.widget.Toast
 import androidx.core.graphics.scale
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import kotlin.math.min
 
 object ImageConverter {
@@ -27,33 +27,37 @@ object ImageConverter {
         maxWidth: Int = 1024,
         maxHeight: Int = 1024,
         quality: Int = 85
-    ): File {
-        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+    ): File? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+            val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
 
-        inputStream?.use { input ->
-            // 이미지를 Bitmap으로 로드
-            val originalBitmap = BitmapFactory.decodeStream(input) ?: return@use
+            inputStream.use { input ->
+                // 이미지를 Bitmap으로 로드
+                val originalBitmap = BitmapFactory.decodeStream(input) ?: return null
 
-            try {
-                // 이미지 리사이징 및 압축
-                val compressedBitmap = compressImage(originalBitmap, maxWidth, maxHeight)
+                try {
+                    // 이미지 리사이징 및 압축
+                    val compressedBitmap = compressImage(originalBitmap, maxWidth, maxHeight)
 
-                // 압축된 이미지를 파일로 저장
-                FileOutputStream(file).use { output ->
-                    compressedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, output)
+                    // 압축된 이미지를 파일로 저장
+                    FileOutputStream(file).use { output ->
+                        compressedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, output)
+                    }
+
+                    // 리사이징된 bitmap이 원본과 다르면 recycle
+                    if (compressedBitmap != originalBitmap) {
+                        compressedBitmap.recycle()
+                    }
+                } finally {
+                    originalBitmap.recycle()
                 }
-
-                // 리사이징된 bitmap이 원본과 다르면 recycle
-                if (compressedBitmap != originalBitmap) {
-                    compressedBitmap.recycle()
-                }
-            } finally {
-                originalBitmap.recycle()
             }
+            file
+        } catch (e: Exception) {
+            Toast.makeText(context, "이미지 변환에 실패하였습니다", Toast.LENGTH_SHORT).show()
+            null
         }
-
-        return file
     }
 
     /**
