@@ -37,6 +37,7 @@ import com.together.study.util.noRippleClickable
 internal fun PlannerItemsScreen(
     subjects: List<PlannerSubject> = listOf(
         PlannerSubject(
+            0,
             "카테고리1",
             "SUBJECT_COLOR1",
             listOf(Todo(0, "할 일1"), Todo(1, null), Todo(2, "할 일3"))
