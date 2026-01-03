@@ -30,7 +30,7 @@ import com.together.study.designsystem.component.studyblock.StudyBlock
 import com.together.study.designsystem.theme.TogedyTheme
 import java.time.LocalDate
 
-val daysOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
+private val daysOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
 
 @Composable
 internal fun StatisticsScreen(
