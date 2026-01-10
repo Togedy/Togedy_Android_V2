@@ -16,7 +16,6 @@ internal fun PlannerBottomSheetScreen(
     with(bottomSheetState) {
         if (isSubjectOpen) {
             SubjectBottomSheet(
-                plannerSubjects = emptyList(),
                 onDismissRequest = {
                     onDismissRequest(PlannerBottomSheetType.SUBJECT)
                 },

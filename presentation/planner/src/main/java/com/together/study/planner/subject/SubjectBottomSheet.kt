@@ -15,27 +15,35 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.SubjectItem
-import com.together.study.planner.model.PlannerSubject
 import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SubjectBottomSheet(
-    plannerSubjects: List<PlannerSubject>,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     onDismissRequest: () -> Unit,
     onAddSubjectClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
+    viewModel: SubjectBottomSheetViewModel = hiltViewModel(),
 ) {
+    val subjects by viewModel.subjects.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) { sheetState.expand() }
+
+    LaunchedEffect(true) {
+        viewModel.getPlannerSubject()
+    }
 
     TogedyBottomSheet(
         sheetState = sheetState,
@@ -70,7 +78,7 @@ internal fun SubjectBottomSheet(
                 }
             }
 
-            items(plannerSubjects) { subjectItem ->
+            items(subjects) { subjectItem ->
                 SubjectItem(plannerSubject = subjectItem)
             }
 
@@ -87,7 +95,6 @@ internal fun SubjectBottomSheet(
 private fun SubjectBottomSheetPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         SubjectBottomSheet(
-            plannerSubjects = emptyList(),
             onDismissRequest = {},
             onAddSubjectClick = {},
             onEditSubjectClick = {},
