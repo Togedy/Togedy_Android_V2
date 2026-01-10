@@ -122,10 +122,6 @@ private fun PlannerSuccessScreen(
         }
     }
 
-    LaunchedEffect(pagerState.currentPage) {
-        val currentTab = PlannerMainTab.entries[pagerState.currentPage]
-        if (selectedTab != currentTab) onTabClick(currentTab)
-    }
 
     Column(
         modifier = modifier
