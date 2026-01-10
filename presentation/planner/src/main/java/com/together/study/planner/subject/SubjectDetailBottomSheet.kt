@@ -64,18 +64,18 @@ internal fun SubjectDetailBottomSheet(
         onDoneClick = {
             if (plannerSubject == null) onDoneClick(
                 PlannerSubject(
-                    null,
-                    subjectName,
-                    selectedColor,
-                    emptyList()
+                    id = null,
+                    name = subjectName,
+                    color = selectedColor,
+                    todoItems = null,
                 )
             )
             else onDoneClick(
                 PlannerSubject(
-                    plannerSubject.id,
-                    subjectName,
-                    selectedColor,
-                    emptyList()
+                    id = plannerSubject.id,
+                    name = subjectName,
+                    color = selectedColor,
+                    todoItems = plannerSubject.todoItems,
                 )
             )
         },
@@ -110,7 +110,7 @@ internal fun SubjectDetailBottomSheet(
                     decorationBox = { innerTextField ->
                         if (subjectName.isEmpty()) {
                             Text(
-                                text = "제목을 입력하세요..",
+                                text = "과목명을 입력하세요..",
                                 style = textStyle.copy(color = TogedyTheme.colors.gray300)
                             )
                         }
