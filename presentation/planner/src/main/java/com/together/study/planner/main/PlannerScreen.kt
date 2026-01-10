@@ -43,9 +43,8 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.PlannerDropDownScrim
 import com.together.study.planner.component.TimerSection
 import com.together.study.planner.main.state.PlannerInfo
-import com.together.study.planner.subject.PlannerBottomSheetScreen
-import com.together.study.planner.subject.state.PlannerBottomSheetState
-import com.together.study.planner.subject.state.PlannerBottomSheetType
+import com.together.study.planner.main.state.PlannerSheetState
+import com.together.study.planner.type.PlannerSheetType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -61,7 +60,7 @@ internal fun PlannerScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
-    val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
+    val bottomSheetState by viewModel.sheetState.collectAsStateWithLifecycle()
 
     LaunchedEffect(selectedDate) {
         viewModel.getPlannerInfo(selectedDate)
@@ -78,7 +77,7 @@ internal fun PlannerScreen(
                 onTabClick = viewModel::updateSelectedTab,
                 onSelectedDateChange = viewModel::updateSelectedDate,
                 onShareButtonClick = onShareNavigate,
-                onBottomSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
+                onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
                 onPlayButtonClick = onTimerNavigate,
                 onEditSubjectClick = onEditSubjectNavigate,
             )
@@ -95,12 +94,12 @@ private fun PlannerSuccessScreen(
     plannerInfo: PlannerInfo,
     selectedTab: PlannerMainTab,
     selectedDate: LocalDate,
-    bottomSheetState: PlannerBottomSheetState,
+    bottomSheetState: PlannerSheetState,
     modifier: Modifier = Modifier,
     onTabClick: (PlannerMainTab) -> Unit,
     onSelectedDateChange: (LocalDate) -> Unit,
     onShareButtonClick: () -> Unit,
-    onBottomSheetVisibilityChange: (PlannerBottomSheetType) -> Unit,
+    onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
 ) {
@@ -135,16 +134,18 @@ private fun PlannerSuccessScreen(
             showDropdown = showDropdown,
             onDayBeforeClick = { onSelectedDateChange(selectedDate.minusDays(1)) },
             onDayAfterClick = { onSelectedDateChange(selectedDate.plusDays(1)) },
-            onCalendarClick = { },
+            onCalendarClick = {
+                onSheetVisibilityChange(PlannerSheetType.CALENDAR)
+            },
             onKebabMenuClick = { showDropdown = true },
             onDismissRequestDropdown = { showDropdown = false },
             onPlusPlannerSubjectClick = {
                 showDropdown = false
-                onBottomSheetVisibilityChange(PlannerBottomSheetType.SUBJECT_ADD)
+                onSheetVisibilityChange(PlannerSheetType.SUBJECT_ADD)
             },
             onEditPlannerSubjectClick = {
                 showDropdown = false
-                onBottomSheetVisibilityChange(PlannerBottomSheetType.SUBJECT)
+                onSheetVisibilityChange(PlannerSheetType.SUBJECT)
             },
             onShareButtonClick = {
                 showDropdown = false
@@ -183,10 +184,12 @@ private fun PlannerSuccessScreen(
         }
     }
 
-    PlannerBottomSheetScreen(
+    PlannerSheetScreen(
         bottomSheetState = bottomSheetState,
-        onDismissRequest = onBottomSheetVisibilityChange,
+        selectedDate = selectedDate,
+        onDismissRequest = onSheetVisibilityChange,
         onEditSubjectClick = onEditSubjectClick,
+        onDateChange = onSelectedDateChange,
     )
 }
 

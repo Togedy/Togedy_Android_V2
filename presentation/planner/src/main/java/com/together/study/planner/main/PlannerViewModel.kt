@@ -5,9 +5,9 @@ import com.together.study.calendar.model.DDay
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.planner.main.state.PlannerInfo
+import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.main.state.PlannerUiState
-import com.together.study.planner.subject.state.PlannerBottomSheetState
-import com.together.study.planner.subject.state.PlannerBottomSheetType
+import com.together.study.planner.type.PlannerSheetType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,9 +21,9 @@ internal class PlannerViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlannerUiState())
     val uiState = _uiState.asStateFlow()
-    private val _bottomSheetState: MutableStateFlow<PlannerBottomSheetState> =
-        MutableStateFlow(PlannerBottomSheetState())
-    val bottomSheetState = _bottomSheetState.asStateFlow()
+    private val _sheetState: MutableStateFlow<PlannerSheetState> =
+        MutableStateFlow(PlannerSheetState())
+    val sheetState = _sheetState.asStateFlow()
 
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
@@ -53,17 +53,23 @@ internal class PlannerViewModel @Inject constructor(
         _selectedTab.update { new }
     }
 
-    fun updateBottomSheetVisibility(type: PlannerBottomSheetType) {
+    fun updateBottomSheetVisibility(type: PlannerSheetType) {
         when (type) {
-            PlannerBottomSheetType.SUBJECT -> {
-                _bottomSheetState.update {
-                    it.copy(isSubjectOpen = !_bottomSheetState.value.isSubjectOpen)
+            PlannerSheetType.SUBJECT -> {
+                _sheetState.update {
+                    it.copy(isSubjectOpen = !_sheetState.value.isSubjectOpen)
                 }
             }
 
-            PlannerBottomSheetType.SUBJECT_ADD -> {
-                _bottomSheetState.update {
-                    it.copy(isSubjectAddOpen = !_bottomSheetState.value.isSubjectAddOpen)
+            PlannerSheetType.SUBJECT_ADD -> {
+                _sheetState.update {
+                    it.copy(isSubjectAddOpen = !_sheetState.value.isSubjectAddOpen)
+                }
+            }
+
+            PlannerSheetType.CALENDAR -> {
+                _sheetState.update {
+                    it.copy(isCalendarOpen = !_sheetState.value.isCalendarOpen)
                 }
             }
         }
