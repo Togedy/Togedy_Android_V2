@@ -35,6 +35,7 @@ import com.together.study.calendar.model.Category
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.AddButton
+import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 
@@ -108,7 +109,7 @@ fun CategoryDetailScreen(
                         isAddBottomSheetOpen = true
                     },
                     onDeleteClick = { id ->
-                        onDeleteClick(id)
+                        selectedCategory = Category(id, "", "")
                         isDeleteDialogOpen = true
                     },
                 )
@@ -137,7 +138,23 @@ fun CategoryDetailScreen(
     }
 
     if (isDeleteDialogOpen) {
-
+        TogedyBasicDialog(
+            title = "카테고리 삭제",
+            subTitle = {
+                Text(
+                    text = "정말로 삭제하시겠습니까?",
+                    style = TogedyTheme.typography.body14b,
+                    color = TogedyTheme.colors.gray900,
+                )
+            },
+            buttonText = "삭제",
+            onDismissRequest = { isDeleteDialogOpen = false },
+            onButtonClick = {
+                onDeleteClick(selectedCategory!!.categoryId!!)
+                selectedCategory = null
+                isDeleteDialogOpen = false
+            },
+        )
     }
 }
 
