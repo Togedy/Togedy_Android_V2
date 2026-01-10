@@ -40,9 +40,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.calendar.model.DDay
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_add_image
 import com.together.study.designsystem.R.drawable.ic_kebap_menu_circle
 import com.together.study.designsystem.R.drawable.ic_left_chevron
@@ -52,19 +55,70 @@ import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.PlannerDropDownScrim
+import com.together.study.planner.main.state.PlannerInfo
+import com.together.study.planner.subject.PlannerBottomSheetScreen
+import com.together.study.planner.subject.state.PlannerBottomSheetState
+import com.together.study.planner.subject.state.PlannerBottomSheetType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
-fun PlannerScreen(
+internal fun PlannerScreen(
     modifier: Modifier = Modifier,
     onShareNavigate: () -> Unit,
+    onTimerNavigate: () -> Unit,
+    onEditSubjectNavigate: () -> Unit,
+    viewModel: PlannerViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
+    val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+    val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(selectedDate) {
+        viewModel.getPlannerInfo(selectedDate)
+    }
+
+    when (val plannerInfoState = uiState.plannerInfo) {
+        is UiState.Success<*> -> {
+            PlannerSuccessScreen(
+                plannerInfo = plannerInfoState.data as PlannerInfo,
+                selectedTab = selectedTab,
+                selectedDate = selectedDate,
+                bottomSheetState = bottomSheetState,
+                modifier = modifier,
+                onTabClick = viewModel::updateSelectedTab,
+                onSelectedDateChange = viewModel::updateSelectedDate,
+                onShareButtonClick = onShareNavigate,
+                onBottomSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
+                onPlayButtonClick = onTimerNavigate,
+                onEditSubjectClick = onEditSubjectNavigate,
+            )
+        }
+
+        is UiState.Failure -> {}
+        is UiState.Loading -> {}
+        is UiState.Empty -> {}
+    }
+}
+
+@Composable
+private fun PlannerSuccessScreen(
+    plannerInfo: PlannerInfo,
+    selectedTab: PlannerMainTab,
+    selectedDate: LocalDate,
+    bottomSheetState: PlannerBottomSheetState,
+    modifier: Modifier = Modifier,
+    onTabClick: (PlannerMainTab) -> Unit,
+    onSelectedDateChange: (LocalDate) -> Unit,
+    onShareButtonClick: () -> Unit,
+    onBottomSheetVisibilityChange: (PlannerBottomSheetType) -> Unit,
+    onPlayButtonClick: () -> Unit,
+    onEditSubjectClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedTab by remember { mutableStateOf(PlannerMainTab.PLANNER) }
     val pagerState = rememberPagerState(
         initialPage = PlannerMainTab.entries.indexOf(selectedTab),
         pageCount = { PlannerMainTab.entries.size }
@@ -83,9 +137,7 @@ fun PlannerScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         val currentTab = PlannerMainTab.entries[pagerState.currentPage]
-        if (selectedTab != currentTab) {
-            selectedTab = currentTab
-        }
+        if (selectedTab != currentTab) onTabClick(currentTab)
     }
 
     Column(
@@ -96,22 +148,24 @@ fun PlannerScreen(
     ) {
         PlannerTopSection(
             selectedDate = selectedDate,
-            dDay = DDay(true, "수능", -100),
+            dDay = plannerInfo.dDay,
             showDropdown = showDropdown,
-            onDayBeforeClick = { selectedDate = selectedDate.minusDays(1) },
-            onDayAfterClick = { selectedDate = selectedDate.plusDays(1) },
+            onDayBeforeClick = { onSelectedDateChange(selectedDate.minusDays(1)) },
+            onDayAfterClick = { onSelectedDateChange(selectedDate.plusDays(1)) },
             onCalendarClick = { },
             onKebabMenuClick = { showDropdown = true },
             onDismissRequestDropdown = { showDropdown = false },
             onPlusPlannerSubjectClick = {
                 showDropdown = false
+                onBottomSheetVisibilityChange(PlannerBottomSheetType.SUBJECT_ADD)
             },
             onEditPlannerSubjectClick = {
                 showDropdown = false
+                onBottomSheetVisibilityChange(PlannerBottomSheetType.SUBJECT)
             },
             onShareButtonClick = {
                 showDropdown = false
-                onShareNavigate()
+                onShareButtonClick()
             },
         )
 
@@ -119,17 +173,17 @@ fun PlannerScreen(
 
         TimerSection(
             context = context,
-            timerImageUrl = "",
-            timer = "00:00:00",
-            onPlayButtonClick = { },
-            onImageEditButtonClick = { },
+            timerImageUrl = plannerInfo.timerImageUrl,
+            timer = plannerInfo.timer,
+            onPlayButtonClick = onPlayButtonClick,
+            onImageEditButtonClick = { /* TODO: 갤러리 연결 */ },
         )
 
         Spacer(Modifier.height(32.dp))
 
         TogedyTabBar(
             selectedTab = selectedTab,
-            onTabChange = { selectedTab = it },
+            onTabChange = onTabClick,
             tabList = PlannerMainTab.entries,
         )
 
@@ -141,11 +195,16 @@ fun PlannerScreen(
                 0 -> PlannerItemsScreen()
                 1 -> { /* TODO: 타임테이블 연결 */
                 }
-
                 2 -> StatisticsScreen()
             }
         }
     }
+
+    PlannerBottomSheetScreen(
+        bottomSheetState = bottomSheetState,
+        onDismissRequest = onBottomSheetVisibilityChange,
+        onEditSubjectClick = onEditSubjectClick,
+    )
 }
 
 @Composable
@@ -341,6 +400,8 @@ private fun PlannerScreenPreview() {
     TogedyTheme {
         PlannerScreen(
             onShareNavigate = {},
+            onTimerNavigate = {},
+            onEditSubjectNavigate = {},
         )
     }
 }

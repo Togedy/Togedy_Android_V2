@@ -22,6 +22,8 @@ fun NavGraphBuilder.plannerGraph(
         PlannerScreen(
             modifier = modifier,
             onShareNavigate = navigateToSharePlanner,
+            onTimerNavigate = { },
+            onEditSubjectNavigate = { },
         )
     }
 }

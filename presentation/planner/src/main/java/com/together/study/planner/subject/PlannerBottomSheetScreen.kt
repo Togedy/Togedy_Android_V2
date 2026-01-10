@@ -10,18 +10,13 @@ import com.together.study.planner.subject.state.PlannerBottomSheetType
 internal fun PlannerBottomSheetScreen(
     bottomSheetState: PlannerBottomSheetState,
     onDismissRequest: (PlannerBottomSheetType) -> Unit,
-    onPostSubject: (String, String) -> Unit,
     onEditSubjectClick: () -> Unit,
 ) {
     with(bottomSheetState) {
         if (isSubjectOpen) {
             SubjectBottomSheet(
-                onDismissRequest = {
-                    onDismissRequest(PlannerBottomSheetType.SUBJECT)
-                },
-                onAddSubjectClick = {
-                    onDismissRequest(PlannerBottomSheetType.SUBJECT_ADD)
-                },
+                onDismissRequest = { onDismissRequest(PlannerBottomSheetType.SUBJECT) },
+                onAddSubjectClick = { onDismissRequest(PlannerBottomSheetType.SUBJECT_ADD) },
                 onEditSubjectClick = onEditSubjectClick,
             )
         }
@@ -29,13 +24,8 @@ internal fun PlannerBottomSheetScreen(
         if (isSubjectAddOpen) {
             SubjectDetailBottomSheet(
                 plannerSubject = null,
-                onDismissRequest = {
-                    onDismissRequest(PlannerBottomSheetType.SUBJECT_ADD)
-                },
-                onDoneClick = { subject ->
-                    onPostSubject(subject.name, subject.color)
-                    onDismissRequest(PlannerBottomSheetType.SUBJECT_ADD)
-                },
+                onDismissRequest = { onDismissRequest(PlannerBottomSheetType.SUBJECT_ADD) },
+                onDoneClick = { onDismissRequest(PlannerBottomSheetType.SUBJECT_ADD) },
             )
         }
     }
