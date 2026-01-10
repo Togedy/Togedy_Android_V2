@@ -150,6 +150,7 @@ fun SubjectDetailScreen(
             onDismissRequest = { isDeleteDialogOpen = false },
             onButtonClick = {
                 onDeleteButtonClick(selectedSubject!!.id!!)
+                selectedSubject = null
                 isDeleteDialogOpen = false
             },
         )
