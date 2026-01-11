@@ -39,6 +39,7 @@ include(
     ":domain:dummy",
     ":domain:calendar",
     ":domain:study",
+    ":domain:planner",
 )
 include(
     ":presentation:main",
@@ -49,5 +50,6 @@ include(
     ":presentation:studydetail",
     ":presentation:studysettings",
     ":presentation:studymember",
-    ":presentation:studyupdate"
+    ":presentation:studyupdate",
+    ":presentation:planner",
 )

@@ -25,6 +25,7 @@ val PretendardLight = FontFamily(Font(R.font.pretendard_light, FontWeight.Light)
 class TogedyTypography(
     val title18b: TextStyle,
     val title16sb: TextStyle,
+    val body16m: TextStyle,
     val body14b: TextStyle,
     val body14m: TextStyle,
     val body13b: TextStyle,
@@ -65,6 +66,11 @@ fun TogedyTypography() = TogedyTypography(
         fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
         lineHeight = 26.sp,
+    ),
+    body16m = TogedyTextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
     ),
     body14b = TogedyTextStyle(
         fontFamily = PretendardBold,
@@ -135,6 +141,7 @@ fun TogedyTypographyPreview() {
         Column {
             Text("title18b - TogedyTheme", style = TogedyTheme.typography.title18b)
             Text("title16sb - TogedyTheme", style = TogedyTheme.typography.title16sb)
+            Text("body16m - TogedyTheme", style = TogedyTheme.typography.body16m)
             Text("body14b - TogedyTheme", style = TogedyTheme.typography.body14b)
             Text("body14m - TogedyTheme", style = TogedyTheme.typography.body14m)
             Text("body13b - TogedyTheme", style = TogedyTheme.typography.body13b)
