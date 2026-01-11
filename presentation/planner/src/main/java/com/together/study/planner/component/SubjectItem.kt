@@ -1,4 +1,4 @@
-package com.together.study.calendar.component
+package com.together.study.planner.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,23 +20,22 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.together.study.calendar.model.Category
-import com.together.study.calendar.type.toCategoryColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_search_cancel_16
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.type.toPlannerSubjectColorOrDefault
 import com.together.study.util.noRippleClickable
 
 @Composable
-internal fun CategoryItem(
-    category: Category,
-    onCategoryClick: () -> Unit,
+internal fun SubjectItem(
+    plannerSubject: PlannerSubject,
+    isSubjectEditMode: Boolean = false,
+    onSubjectClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
-    isCategorySelected: Boolean = false,
-    isCategoryEditMode: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val categoryColor = category.categoryColor.toCategoryColorOrDefault()
+    val subjectColor = plannerSubject.color.toPlannerSubjectColorOrDefault()
 
     Row(
         modifier = modifier
@@ -44,8 +43,8 @@ internal fun CategoryItem(
             .background(TogedyTheme.colors.gray50, RoundedCornerShape(8.dp))
             .padding(16.dp)
             .noRippleClickable {
-                if (isCategoryEditMode) onEditClick()
-                else onCategoryClick()
+                if (isSubjectEditMode) onEditClick()
+                else onSubjectClick()
             },
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -53,7 +52,7 @@ internal fun CategoryItem(
             modifier = Modifier
                 .padding(4.dp)
                 .size(16.dp)
-                .background(categoryColor, RoundedCornerShape(6.dp)),
+                .background(subjectColor, RoundedCornerShape(6.dp)),
         )
 
         Spacer(Modifier.width(8.dp))
@@ -62,25 +61,14 @@ internal fun CategoryItem(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = category.categoryName.toString(),
-                style = TogedyTheme.typography.chip14b.copy(categoryColor),
+                text = plannerSubject.name,
+                style = TogedyTheme.typography.chip14b.copy(subjectColor),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
 
-        if (isCategorySelected) {
-//            Icon(
-//                imageVector = ImageVector.vectorResource()
-//            )
-            Spacer(Modifier.width(4.dp))
-            Box(
-                // TODO: 추후 체크 icon 으로 변경
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(TogedyTheme.colors.gray500),
-            )
-        } else if (isCategoryEditMode) {
+        if (isSubjectEditMode) {
             Spacer(Modifier.width(4.dp))
 
             Icon(
@@ -99,12 +87,11 @@ internal fun CategoryItem(
 
 @Preview
 @Composable
-private fun CategoryItemPreview(modifier: Modifier = Modifier) {
+private fun SubjectItemPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
-        CategoryItem(
-            category = Category.mock,
-            isCategorySelected = false,
-            onCategoryClick = {},
+        SubjectItem(
+            plannerSubject = PlannerSubject(0, "hi", "SUBJECT_COLOR1", emptyList()),
+            onSubjectClick = {},
             modifier = modifier,
         )
     }

@@ -15,11 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.component.studyblock.StudyBlock
 import com.together.study.designsystem.theme.TogedyTheme
+import java.time.LocalDate
 
 @Composable
 internal fun StudyMonthlyColorBlock(
-    year: Int,
-    month: Int,
+    currentDate: LocalDate,
     studyTimeList: List<Int>,
     modifier: Modifier = Modifier,
 ) {
@@ -39,21 +39,20 @@ internal fun StudyMonthlyColorBlock(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = year.toString(),
+                text = currentDate.year.toString(),
                 style = TogedyTheme.typography.body12m,
                 color = TogedyTheme.colors.gray500,
             )
 
             Text(
-                text = "${month}월",
+                text = "${currentDate.monthValue}월",
                 style = TogedyTheme.typography.body10m,
                 color = TogedyTheme.colors.gray800,
             )
         }
 
         StudyBlock(
-            year = year,
-            month = month,
+            currentDate = currentDate,
             studyTimeList = studyTimeList,
         )
     }
@@ -64,8 +63,7 @@ internal fun StudyMonthlyColorBlock(
 private fun StudyMonthlyColorBlockPreview() {
     TogedyTheme {
         StudyMonthlyColorBlock(
-            year = 2025,
-            month = 10,
+            currentDate = LocalDate.now(),
             studyTimeList = emptyList(),
         )
     }

@@ -22,18 +22,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.component.calendar.DayOfWeek
 import com.together.study.designsystem.theme.TogedyTheme
-import java.time.DayOfWeek
-import java.time.YearMonth
-import java.time.temporal.WeekFields
+import com.together.study.util.getDaysInMonthGrid
+import java.time.LocalDate
 
 @Composable
 fun StudyBlock(
-    year: Int,
-    month: Int,
+    currentDate: LocalDate,
     studyTimeList: List<Int>,
     blockSize: Dp? = null,
 ) {
-    val days = getDaysInMonthGrid(year, month)
+    val days = currentDate.getDaysInMonthGrid()
 
     Column {
         DayOfWeek()
@@ -115,32 +113,12 @@ private fun CalendarDayBlock(
     }
 }
 
-private fun getDaysInMonthGrid(year: Int, month: Int): List<String> {
-    val yearMonth = YearMonth.of(year, month)
-    val firstDayOfMonth = yearMonth.atDay(1)
-    val weekFields = WeekFields.of(DayOfWeek.SUNDAY, 1)
-    val firstDayOfWeekIndex = firstDayOfMonth.get(weekFields.dayOfWeek())
-    val daysInMonth = yearMonth.lengthOfMonth()
-    val daysList = mutableListOf<String>()
-
-    repeat(firstDayOfWeekIndex - 1) {
-        daysList.add("")
-    }
-
-    (1..daysInMonth).forEach { day ->
-        daysList.add(day.toString())
-    }
-
-    return daysList
-}
-
 @Preview
 @Composable
 private fun StudyBlockPreview() {
     TogedyTheme {
         StudyBlock(
-            year = 2025,
-            month = 10,
+            currentDate = LocalDate.now(),
             studyTimeList = emptyList(),
         )
     }
