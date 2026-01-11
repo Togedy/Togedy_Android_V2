@@ -71,6 +71,7 @@ fun SubjectDetailScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetOpen by remember { mutableStateOf(false) }
     var selectedSubject by remember { mutableStateOf<PlannerSubject?>(null) }
+    var selectedIdForDelete: Long? by remember { mutableStateOf(null) }
     var isDeleteDialogOpen by remember { mutableStateOf(false) }
 
     Column(
@@ -108,7 +109,7 @@ fun SubjectDetailScreen(
                         isBottomSheetOpen = true
                     },
                     onItemDeleteClick = { id ->
-                        selectedSubject = PlannerSubject(id, "", "", emptyList())
+                        selectedIdForDelete = id
                         isDeleteDialogOpen = true
                     },
                 )
@@ -149,8 +150,10 @@ fun SubjectDetailScreen(
             buttonText = "삭제",
             onDismissRequest = { isDeleteDialogOpen = false },
             onButtonClick = {
-                onDeleteButtonClick(selectedSubject!!.id!!)
-                selectedSubject = null
+                selectedIdForDelete?.let {
+                    onDeleteButtonClick(selectedIdForDelete!!)
+                }
+                selectedIdForDelete = null
                 isDeleteDialogOpen = false
             },
         )
