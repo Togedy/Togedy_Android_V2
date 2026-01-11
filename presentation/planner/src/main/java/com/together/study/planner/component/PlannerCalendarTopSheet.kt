@@ -34,11 +34,9 @@ import com.together.study.designsystem.component.calendar.DayOfWeek
 import com.together.study.designsystem.component.sheet.TogedyTopSheet
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.util.getDaysInMonthGrid
 import com.together.study.util.noRippleClickable
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.WeekFields
 
 @Composable
 fun PlannerCalendarTopSheet(
@@ -49,9 +47,7 @@ fun PlannerCalendarTopSheet(
     onDismissRequest: () -> Unit,
     onDateChange: (LocalDate) -> Unit,
 ) {
-    var days by remember(selectedDate) {
-        mutableStateOf(getDaysInMonthGrid(selectedDate.year, selectedDate.monthValue))
-    }
+    var days by remember(selectedDate) { mutableStateOf(selectedDate.getDaysInMonthGrid()) }
 
     TogedyTopSheet(
         visible = isCalendarOpen,
@@ -224,25 +220,6 @@ private fun CalendarDayBlock(
             )
         }
     }
-}
-
-private fun getDaysInMonthGrid(year: Int, month: Int): List<String> {
-    val yearMonth = YearMonth.of(year, month)
-    val firstDayOfMonth = yearMonth.atDay(1)
-    val weekFields = WeekFields.of(DayOfWeek.SUNDAY, 1)
-    val firstDayOfWeekIndex = firstDayOfMonth.get(weekFields.dayOfWeek())
-    val daysInMonth = yearMonth.lengthOfMonth()
-    val daysList = mutableListOf<String>()
-
-    repeat(firstDayOfWeekIndex - 1) {
-        daysList.add("")
-    }
-
-    (1..daysInMonth).forEach { day ->
-        daysList.add(day.toString())
-    }
-
-    return daysList
 }
 
 @Preview
