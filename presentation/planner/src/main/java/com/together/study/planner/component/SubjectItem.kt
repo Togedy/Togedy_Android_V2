@@ -50,8 +50,7 @@ internal fun SubjectItem(
     ) {
         Box(
             modifier = Modifier
-                .padding(2.dp)
-                .padding(2.dp)
+                .padding(4.dp)
                 .size(16.dp)
                 .background(subjectColor, RoundedCornerShape(6.dp)),
         )
@@ -62,7 +61,7 @@ internal fun SubjectItem(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = plannerSubject.name.toString(),
+                text = plannerSubject.name,
                 style = TogedyTheme.typography.chip14b.copy(subjectColor),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

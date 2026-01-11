@@ -51,8 +51,7 @@ internal fun CategoryItem(
     ) {
         Box(
             modifier = Modifier
-                .padding(2.dp)
-                .padding(2.dp)
+                .padding(4.dp)
                 .size(16.dp)
                 .background(categoryColor, RoundedCornerShape(6.dp)),
         )
