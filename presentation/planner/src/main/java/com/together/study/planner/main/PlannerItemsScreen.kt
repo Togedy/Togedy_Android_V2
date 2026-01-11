@@ -85,7 +85,7 @@ internal fun PlannerItemsScreen(
         }
 
         itemsIndexed(subjects) { index, subject ->
-            var todoItems by remember { mutableStateOf(subject.todoItems) }
+            var todoItems by remember(subject.todoItems) { mutableStateOf(subject.todoItems) }
 
             SubjectSection(
                 subjectName = subject.name,
@@ -169,7 +169,7 @@ fun SubjectSection(
         if (todoItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
 
         todoItems.forEachIndexed { index, todoItem ->
-            var currentTodoContent by remember { mutableStateOf(todoItem.content) }
+            var currentTodoContent by remember(todoItem.content) { mutableStateOf(todoItem.content) }
             val bottomPadding = if (index == todoItems.lastIndex) 0.dp else 12.dp
 
             Row(

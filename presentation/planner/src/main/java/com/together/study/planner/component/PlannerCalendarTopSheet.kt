@@ -49,13 +49,8 @@ fun PlannerCalendarTopSheet(
     onDismissRequest: () -> Unit,
     onDateChange: (LocalDate) -> Unit,
 ) {
-    var days by remember {
-        mutableStateOf(
-            getDaysInMonthGrid(
-                selectedDate.year,
-                selectedDate.monthValue
-            )
-        )
+    var days by remember(selectedDate) {
+        mutableStateOf(getDaysInMonthGrid(selectedDate.year, selectedDate.monthValue))
     }
 
     TogedyTopSheet(
