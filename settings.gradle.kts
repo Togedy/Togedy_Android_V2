@@ -34,10 +34,13 @@ include(
     ":data:calendar",
     ":data:search",
     ":data:dummy",
+    ":data:study",
 )
 include(
     ":domain:dummy",
     ":domain:calendar",
+    ":domain:study",
+    ":domain:planner",
     ":domain:search",
 )
 include(
@@ -45,4 +48,10 @@ include(
     ":presentation:dummy",
     ":presentation:calendar",
     ":presentation:search",
+    ":presentation:study",
+    ":presentation:studydetail",
+    ":presentation:studysettings",
+    ":presentation:studymember",
+    ":presentation:studyupdate",
+    ":presentation:planner",
 )

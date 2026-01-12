@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -17,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,7 @@ import com.together.study.util.noRippleClickable
 @Composable
 internal fun CategoryBottomSheet(
     category: Category?,
+    categories: List<Category>,
     onDismissRequest: () -> Unit,
     onDoneClick: (Category) -> Unit,
     onAddCategoryClick: () -> Unit,
@@ -39,7 +42,6 @@ internal fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
 ) {
     var selectedCategory by remember { mutableStateOf(category) }
-    val categoryList = Category.mockList
 
     LaunchedEffect(Unit) { sheetState.expand() }
 
@@ -79,7 +81,7 @@ internal fun CategoryBottomSheet(
                 }
             }
 
-            items(categoryList) { categoryItem ->
+            items(categories) { categoryItem ->
                 CategoryItem(
                     category = categoryItem,
                     isCategorySelected = categoryItem.categoryId == selectedCategory?.categoryId,
@@ -98,12 +100,10 @@ internal fun CategoryBottomSheet(
 @Preview(showBackground = true)
 @Composable
 private fun CategoryBottomSheetPreview(modifier: Modifier = Modifier) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
     TogedyTheme {
         CategoryBottomSheet(
-            sheetState = sheetState,
             category = null,
+            categories = emptyList(),
             onDismissRequest = {},
             onDoneClick = {},
             onAddCategoryClick = {},

@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,13 +44,17 @@ internal fun CategoryDetailRoute(
     modifier: Modifier = Modifier,
     viewModel: CategoryDetailViewModel = hiltViewModel(),
 ) {
-    val categoryState = viewModel.categoryState.collectAsStateWithLifecycle()
+    val categoryState by viewModel.categoryState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchCategoryItems()
+    }
 
     CategoryDetailScreen(
-        categoryState = categoryState.value,
+        categoryState = categoryState,
         onBackButtonClick = onBackButtonClick,
-//        onAddDoneBtnClick = viewModel::saveNewCategory,
-//        onEditDoneBtnClick = viewModel::updateCategory,
+        onAddDoneBtnClick = { viewModel.saveNewCategory(it.categoryName!!, it.categoryColor!!) },
+        onEditDoneBtnClick = viewModel::updateCategory,
         onDeleteClick = viewModel::deleteCategory,
         modifier = modifier,
     )
@@ -59,8 +65,8 @@ internal fun CategoryDetailRoute(
 fun CategoryDetailScreen(
     categoryState: UiState<List<Category>>,
     onBackButtonClick: () -> Unit,
-//    onAddDoneBtnClick: (Category) -> Unit,
-//    onEditDoneBtnClick: (Category) -> Unit,
+    onAddDoneBtnClick: (Category) -> Unit,
+    onEditDoneBtnClick: (Category) -> Unit,
     onDeleteClick: (Long) -> Unit,
     modifier: Modifier,
 ) {
@@ -123,8 +129,8 @@ fun CategoryDetailScreen(
             },
             onDoneClick = { category ->
                 isAddBottomSheetOpen = false
-//                if (selectedCategory == null) onAddDoneBtnClick(category)
-//                else onEditDoneBtnClick(category)
+                if (selectedCategory == null) onAddDoneBtnClick(category)
+                else onEditDoneBtnClick(category)
                 selectedCategory = null
             },
         )
@@ -148,7 +154,7 @@ internal fun CategoryItems(
             .fillMaxSize()
             .background(TogedyTheme.colors.white)
             .padding(horizontal = 16.dp)
-            .padding(top = 36.dp, end = 20.dp),
+            .padding(top = 36.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(categoryItems) { categoryItem ->
@@ -194,8 +200,8 @@ private fun CategoryDetailPreview(modifier: Modifier = Modifier) {
         CategoryDetailScreen(
             categoryState = UiState.Success(Category.mockList),
             onBackButtonClick = {},
-//            onAddDoneBtnClick = {},
-//            onEditDoneBtnClick = {},
+            onAddDoneBtnClick = {},
+            onEditDoneBtnClick = {},
             onDeleteClick = {},
             modifier = modifier,
         )

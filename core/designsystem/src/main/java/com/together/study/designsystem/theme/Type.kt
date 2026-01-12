@@ -19,17 +19,25 @@ val PretendardBold = FontFamily(Font(R.font.pretendard_bold, FontWeight.Bold))
 val PretendardSemiBold = FontFamily(Font(R.font.pretendard_semibold, FontWeight.SemiBold))
 val PretendardMedium = FontFamily(Font(R.font.pretendard_medium, FontWeight.Medium))
 val PretendardRegular = FontFamily(Font(R.font.pretendard_regular, FontWeight.Normal))
+val PretendardLight = FontFamily(Font(R.font.pretendard_light, FontWeight.Light))
 
 @Immutable
 class TogedyTypography(
+    val title18b: TextStyle,
     val title16sb: TextStyle,
+    val body16m: TextStyle,
+    val body14b: TextStyle,
     val body14m: TextStyle,
+    val body13b: TextStyle,
+    val body13m: TextStyle,
     val body12m: TextStyle,
     val body10m: TextStyle,
+    val toast13sb: TextStyle,
     val toast12sb: TextStyle,
     val toast12r: TextStyle,
     val chip14b: TextStyle,
     val chip10sb: TextStyle,
+    val time40l: TextStyle,
 )
 
 private fun TogedyTextStyle(
@@ -49,15 +57,40 @@ private fun TogedyTextStyle(
 )
 
 fun TogedyTypography() = TogedyTypography(
+    title18b = TogedyTextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 18.sp,
+        lineHeight = 29.sp,
+    ),
     title16sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
         lineHeight = 26.sp,
     ),
+    body16m = TogedyTextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+    ),
+    body14b = TogedyTextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 14.sp,
+        lineHeight = 22.sp,
+    ),
     body14m = TogedyTextStyle(
         fontFamily = PretendardMedium,
         fontSize = 14.sp,
-        lineHeight = 20.sp,
+        lineHeight = 22.sp,
+    ),
+    body13b = TogedyTextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 13.sp,
+        lineHeight = 21.sp,
+    ),
+    body13m = TogedyTextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 13.sp,
+        lineHeight = 21.sp,
     ),
     body12m = TogedyTextStyle(
         fontFamily = PretendardMedium,
@@ -67,7 +100,12 @@ fun TogedyTypography() = TogedyTypography(
     body10m = TogedyTextStyle(
         fontFamily = PretendardMedium,
         fontSize = 10.sp,
-        lineHeight = 12.sp,
+        lineHeight = 14.sp,
+    ),
+    toast13sb = TogedyTextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 13.sp,
+        lineHeight = 16.sp,
     ),
     toast12sb = TogedyTextStyle(
         fontFamily = PretendardSemiBold,
@@ -89,6 +127,11 @@ fun TogedyTypography() = TogedyTypography(
         fontSize = 10.sp,
         lineHeight = 12.sp,
     ),
+    time40l = TogedyTextStyle(
+        fontFamily = PretendardLight,
+        fontSize = 40.sp,
+        lineHeight = 48.sp,
+    )
 )
 
 @Preview(showBackground = true)
@@ -96,38 +139,21 @@ fun TogedyTypography() = TogedyTypography(
 fun TogedyTypographyPreview() {
     TogedyTheme {
         Column {
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.title16sb
-            )
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.body14m
-            )
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.body12m
-            )
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.body10m
-            )
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.toast12sb
-            )
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.toast12r
-            )
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.chip14b
-            )
-            Text(
-                "TogedyTheme",
-                style = TogedyTheme.typography.chip10sb
-            )
+            Text("title18b - TogedyTheme", style = TogedyTheme.typography.title18b)
+            Text("title16sb - TogedyTheme", style = TogedyTheme.typography.title16sb)
+            Text("body16m - TogedyTheme", style = TogedyTheme.typography.body16m)
+            Text("body14b - TogedyTheme", style = TogedyTheme.typography.body14b)
+            Text("body14m - TogedyTheme", style = TogedyTheme.typography.body14m)
+            Text("body13b - TogedyTheme", style = TogedyTheme.typography.body13b)
+            Text("body13m - TogedyTheme", style = TogedyTheme.typography.body13m)
+            Text("body12m - TogedyTheme", style = TogedyTheme.typography.body12m)
+            Text("body10m - TogedyTheme", style = TogedyTheme.typography.body10m)
+            Text("toast13sb - TogedyTheme", style = TogedyTheme.typography.toast13sb)
+            Text("toast12sb - TogedyTheme", style = TogedyTheme.typography.toast12sb)
+            Text("toast12r - TogedyTheme", style = TogedyTheme.typography.toast12r)
+            Text("chip14b - TogedyTheme", style = TogedyTheme.typography.chip14b)
+            Text("chip10sb - TogedyTheme", style = TogedyTheme.typography.chip10sb)
+            Text("time40l - TogedyTheme", style = TogedyTheme.typography.time40l)
         }
     }
 }

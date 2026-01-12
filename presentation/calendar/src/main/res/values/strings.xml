@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="university_schedule_name">%s %s [%s]</string>
-
     <string name="calendar_year_month">%s년 %s월</string>
 </resources>

@@ -22,9 +22,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,14 +32,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.calendar.category.CategoryDetailBottomSheet
 import com.together.study.calendar.component.GrayBoxText
 import com.together.study.calendar.component.ScheduleDateTimeSection
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.model.UserSchedule
-import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubBottomSheetType
+import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubSheetType
 import com.together.study.calendar.type.toCategoryColorOrDefault
-import com.together.study.common.ScheduleType
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.theme.TogedyTheme
@@ -55,12 +50,12 @@ import java.time.LocalDate
 @Composable
 internal fun ScheduleBottomSheet(
     onDismissRequest: () -> Unit,
+    startDate: LocalDate,
     onDoneClick: (UserSchedule) -> Unit,
-    scheduleId: Long? = null,
-    startDate: LocalDate = LocalDate.now(),
     onEditCategoryClick: () -> Unit,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier,
+    scheduleId: Long? = null,
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     viewModel: ScheduleBottomSheetViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,6 +64,9 @@ internal fun ScheduleBottomSheet(
 
     LaunchedEffect(Unit) {
         if (scheduleId != null) viewModel.getUserSchedule(scheduleId, startDate)
+        else viewModel.initUserSchedule()
+
+        viewModel.updateStartDate(startDate)
         sheetState.expand()
     }
 
@@ -104,10 +102,13 @@ internal fun ScheduleBottomSheet(
                     endDateTime = Pair(endDateValue, endTimeValue),
                     onCalendarOpen = {
                         viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.CALENDAR
+                            ScheduleSubSheetType.CALENDAR
                         )
                     },
-                    onClockOpen = { },
+                    onTimeChange = { startTime, endTime ->
+                        viewModel.updateStartTime(startTime?.toString())
+                        viewModel.updateEndTime(endTime?.toString())
+                    }
                 )
 
                 Spacer(Modifier.height(24.dp))
@@ -116,7 +117,7 @@ internal fun ScheduleBottomSheet(
                     category = categoryValue,
                     onCategoryClick = {
                         viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.CATEGORY
+                            ScheduleSubSheetType.CATEGORY
                         )
                     },
                 )
@@ -127,7 +128,7 @@ internal fun ScheduleBottomSheet(
                     memo = memoValue ?: "",
                     onMemoClick = {
                         viewModel.updateBottomSheetVisibility(
-                            ScheduleSubBottomSheetType.MEMO
+                            ScheduleSubSheetType.MEMO
                         )
                     },
                 )
@@ -140,70 +141,17 @@ internal fun ScheduleBottomSheet(
                 )
             }
 
-            with(bottomSheetState) {
-                if (isMemoOpen) {
-                    MemoBottomSheet(
-                        scheduleMemo = memoValue ?: "",
-                        onValueChange = { viewModel.updateMemo(it) },
-                        onDismissRequest = {
-                            viewModel.updateBottomSheetVisibility(
-                                ScheduleSubBottomSheetType.MEMO
-                            )
-                        },
-                    )
-                }
-
-                if (isCategoryOpen) {
-                    CategoryBottomSheet(
-                        category = null,
-                        onDismissRequest = {
-                            viewModel.updateBottomSheetVisibility(
-                                ScheduleSubBottomSheetType.CATEGORY
-                            )
-                        },
-                        onAddCategoryClick = {},
-                        onEditCategoryClick = onEditCategoryClick,
-                        onDoneClick = {
-                            viewModel::updateCategory
-                            viewModel.updateBottomSheetVisibility(
-                                ScheduleSubBottomSheetType.CATEGORY
-                            )
-                        },
-                    )
-                }
-
-                if (isCategoryAddOpen) {
-                    CategoryDetailBottomSheet(
-                        sheetState = sheetState,
-                        category = null,
-                        onDismissRequest = {
-                            viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
-                        },
-                        onDoneClick = { category ->
-                            viewModel.updateBottomSheetVisibility(ScheduleSubBottomSheetType.CATEGORY_ADD)
-                        },
-                    )
-                }
-
-                if (isCalendarOpen) {
-                    CalendarBottomSheet(
-                        startDate = startDateValue,
-                        endDate = endDateValue,
-                        onDismissRequest = {
-                            viewModel.updateBottomSheetVisibility(
-                                ScheduleSubBottomSheetType.CALENDAR
-                            )
-                        },
-                        onDoneClick = { start, end ->
-                            viewModel.updateBottomSheetVisibility(
-                                ScheduleSubBottomSheetType.CALENDAR
-                            )
-                            viewModel.updateStartDate(start)
-                            viewModel.updateEndDate(end)
-                        }
-                    )
-                }
-            }
+            ScheduleSubScreen(
+                bottomSheetState,
+                uiState = uiState,
+                onDismissRequest = viewModel::updateBottomSheetVisibility,
+                onMemoChange = viewModel::updateMemo,
+                onPostCategory = viewModel::postCategory,
+                onEditCategoryClick = onEditCategoryClick,
+                onCategoryChange = viewModel::updateCategory,
+                onStartDateChange = viewModel::updateStartDate,
+                onEndDateChange = viewModel::updateEndDate,
+            )
         }
     }
 }
@@ -380,6 +328,7 @@ private fun ScheduleBottomSheetPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         ScheduleBottomSheet(
             scheduleId = null,
+            startDate = LocalDate.now(),
             sheetState = sheetState,
             onDismissRequest = {},
             onDoneClick = {},

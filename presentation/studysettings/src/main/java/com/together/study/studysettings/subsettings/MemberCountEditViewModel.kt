@@ -1,0 +1,63 @@
+package com.together.study.studysettings.subsettings
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.together.study.study.model.StudyDetailInfo
+import com.together.study.study.repository.StudyDetailRepository
+import com.together.study.study.repository.StudySettingsRepository
+import com.together.study.studysettings.main.LeaderSettingsViewModel
+import com.together.study.studysettings.subsettings.event.MemberCountEditEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
+
+@HiltViewModel
+class MemberCountEditViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val studyDetailRepository: StudyDetailRepository,
+    private val studySettingsRepository: StudySettingsRepository,
+) : ViewModel() {
+    val studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
+
+    private val _studyInfo = MutableStateFlow<StudyDetailInfo?>(null)
+    val studyInfo = _studyInfo.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<MemberCountEditEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
+    init {
+        getStudyInfo()
+    }
+
+    fun getStudyInfo() = viewModelScope.launch {
+        studyDetailRepository.getStudyDetailInfo(studyId)
+            .onSuccess { newInfo -> _studyInfo.update { newInfo } }
+            .onFailure {
+                Timber.tag(LeaderSettingsViewModel.Companion.TAG).d("getStudyInfo failed: $it")
+            }
+    }
+
+    fun postNewMemberLimit(new: Int) = viewModelScope.launch {
+        studySettingsRepository.updateStudyMemberLimit(studyId, new)
+            .onSuccess {
+                _eventFlow.emit(MemberCountEditEvent.UpdateSuccess)
+                getStudyInfo()
+            }
+            .onFailure {
+                _eventFlow.emit(MemberCountEditEvent.ShowError("인원 수 변경에 실패했습니다."))
+                Timber.tag(TAG).d("postNewMemberLimit failed: $it")
+            }
+    }
+
+    companion object {
+        const val TAG = "MemberCountEditViewModel"
+        const val STUDY_ID_KEY = "studyId"
+    }
+}
