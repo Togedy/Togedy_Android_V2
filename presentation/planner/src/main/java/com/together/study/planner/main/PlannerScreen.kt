@@ -121,9 +121,7 @@ fun PlannerScreen(
         ) { page ->
             when (page) {
                 0 -> PlannerItemsScreen()
-                1 -> { /* TODO: 타임테이블 연결 */
-                }
-
+                1 -> TimeTableScreen()
                 2 -> StatisticsScreen()
             }
         }
