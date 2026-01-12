@@ -250,7 +250,6 @@ private fun SearchSuccessScreen(
             onDismissRequest = {
                 onCloseBottomSheet()
             },
-            title = "대학 일정",
             showDone = false,
             onDoneClick = {
                 onCloseBottomSheet()
