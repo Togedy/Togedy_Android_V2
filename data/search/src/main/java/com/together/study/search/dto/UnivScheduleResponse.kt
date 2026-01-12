@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class UnivScheduleListResponse(
+    @SerialName("hasNext") val hasNext: Boolean,
+    @SerialName("universityList") val universityList: List<UnivScheduleResponse>,
+)
+
+@Serializable
 data class UnivScheduleResponse(
     @SerialName("universityId") val universityId: Int,
     @SerialName("universityName") val universityName: String,

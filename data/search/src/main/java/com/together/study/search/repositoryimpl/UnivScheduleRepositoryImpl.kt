@@ -5,7 +5,7 @@ import com.together.study.search.mapper.toData
 import com.together.study.search.mapper.toDomain
 import com.together.study.search.model.AdmissionMethod
 import com.together.study.search.model.UnivDetailSchedule
-import com.together.study.search.model.UnivSchedule
+import com.together.study.search.model.UnivScheduleList
 import com.together.study.search.repository.UnivScheduleRepository
 import javax.inject.Inject
 
@@ -17,10 +17,10 @@ class UnivScheduleRepositoryImpl @Inject constructor(
         admissionType: String,
         page: Int,
         size: Int
-    ): Result<List<UnivSchedule>> =
+    ): Result<UnivScheduleList> =
         runCatching {
             val response = univScheduleDataSource.getUnivSchedule(name, admissionType, page, size).response
-            response.map { it.toDomain() }
+            response.toDomain()
         }
 
     override suspend fun getUnivDetailSchedule(universityId: Int): Result<UnivDetailSchedule> =
@@ -36,7 +36,6 @@ class UnivScheduleRepositoryImpl @Inject constructor(
             val response = univScheduleDataSource.deleteUnivDetailSchedule(
                 universityAdmissionMethodId = universityAdmissionMethodId
             )
-            response.isSuccess
         }
 
     override suspend fun addUnivDetailSchedule(request: AdmissionMethod): Result<Unit> =
@@ -44,6 +43,5 @@ class UnivScheduleRepositoryImpl @Inject constructor(
             val response = univScheduleDataSource.addUnivDetailSchedule(
                 univDetailScheduleAddRequest = request.toData()
             )
-            response.isSuccess
         }
 }

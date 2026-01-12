@@ -3,7 +3,7 @@ package com.together.study.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
-import com.together.study.search.model.UnivSchedule
+import com.together.study.search.model.UnivScheduleList
 import com.together.study.search.repository.UnivScheduleRepository
 import com.together.study.search.type.AdmissionType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +26,8 @@ internal class SearchViewModel @Inject constructor(
     
     private val _admissionType = MutableStateFlow(AdmissionType.ALL)
     val admissionType = _admissionType.asStateFlow()
-    
-    private val _univScheduleState = MutableStateFlow<UiState<List<UnivSchedule>>>(UiState.Loading)
+
+    private val _univScheduleState = MutableStateFlow<UiState<UnivScheduleList>>(UiState.Loading)
     val univScheduleState = _univScheduleState.asStateFlow()
 
     private var searchJob: Job? = null
@@ -61,11 +61,13 @@ internal class SearchViewModel @Inject constructor(
                 page = 0,
                 size = 20
             )
-                .onSuccess { schedules -> 
-                    _univScheduleState.value = UiState.Success(
-                        schedules.sortedByDescending { univSchedule -> 
-                            univSchedule.addedAdmissionMethodList.isNotEmpty() 
+                .onSuccess { scheduleList ->
+                    val sortedSchedules =
+                        scheduleList.schedules.sortedByDescending { univSchedule ->
+                            univSchedule.addedAdmissionMethodList.isNotEmpty()
                         }
+                    _univScheduleState.value = UiState.Success(
+                        scheduleList.copy(schedules = sortedSchedules)
                     )
                 }
                 .onFailure { exception -> 

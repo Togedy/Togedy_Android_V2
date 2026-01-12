@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +47,7 @@ import com.together.study.search.component.SearchSelectorChip
 import com.together.study.search.component.SearchSelectorChipHeader
 import com.together.study.search.model.UnivDetailSchedule
 import com.together.study.search.model.UnivSchedule
+import com.together.study.search.model.UnivScheduleList
 import com.together.study.search.type.AdmissionType
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
@@ -77,7 +77,7 @@ internal fun SearchRoute(
 private fun SearchScreen(
     searchQuery: String,
     admissionType: AdmissionType,
-    univScheduleState: UiState<List<UnivSchedule>>,
+    univScheduleState: UiState<UnivScheduleList>,
     onBackButtonClicked: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onAdmissionTypeChanged: (AdmissionType) -> Unit,
@@ -130,7 +130,8 @@ private fun SearchScreen(
 
             is UiState.Success -> {
                 SearchSuccessScreen(
-                    univSchedules = univScheduleState.data
+                    univSchedules = univScheduleState.data.schedules,
+                    hasNext = univScheduleState.data.hasNext
                 )
             }
         }
@@ -197,7 +198,8 @@ private fun SearchEmptyScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchSuccessScreen(
-    univSchedules: List<UnivSchedule>
+    univSchedules: List<UnivSchedule>,
+    hasNext: Boolean
 ) {
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

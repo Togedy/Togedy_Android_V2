@@ -4,7 +4,7 @@ import com.together.study.remote.model.BaseResponse
 import com.together.study.remote.model.EmptyDataResponse
 import com.together.study.search.dto.UnivDetailScheduleAddRequest
 import com.together.study.search.dto.UnivDetailScheduleResponse
-import com.together.study.search.dto.UnivScheduleResponse
+import com.together.study.search.dto.UnivScheduleListResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,7 +19,7 @@ interface UnivScheduleService {
         @Query("admission-type") admissionType : String,
         @Query("page") page: Int,
         @Query("size") size: Int
-    ): BaseResponse<List<UnivScheduleResponse>>
+    ): BaseResponse<UnivScheduleListResponse>
 
     @GET("calendars/universities/{universityId}/schedule")
     suspend fun getUnivDetailSchedule(
