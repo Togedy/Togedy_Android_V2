@@ -15,11 +15,13 @@ fun NavController.navigateToPlanner(
 
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
+    navigateToSharePlanner: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Planner> {
         PlannerScreen(
             modifier = modifier,
+            onShareNavigate = navigateToSharePlanner,
         )
     }
 }

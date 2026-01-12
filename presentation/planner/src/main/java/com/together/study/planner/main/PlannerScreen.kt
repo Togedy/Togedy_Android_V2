@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,12 +44,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.calendar.model.DDay
 import com.together.study.designsystem.R.drawable.ic_add_image
+import com.together.study.designsystem.R.drawable.ic_kebap_menu_circle
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_play_button
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.planner.component.PlannerDropDownScrim
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -56,15 +59,18 @@ import java.time.LocalDate
 @Composable
 fun PlannerScreen(
     modifier: Modifier = Modifier,
+    onShareNavigate: () -> Unit,
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedTab by remember { mutableStateOf(PlannerMainTab.PLANNER) }
     val pagerState = rememberPagerState(
         initialPage = PlannerMainTab.entries.indexOf(selectedTab),
         pageCount = { PlannerMainTab.entries.size }
     )
-    val coroutineScope = rememberCoroutineScope()
+
+    var showDropdown by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedTab) {
         val targetIndex = PlannerMainTab.entries.indexOf(selectedTab)
@@ -91,10 +97,22 @@ fun PlannerScreen(
         PlannerTopSection(
             selectedDate = selectedDate,
             dDay = DDay(true, "수능", -100),
+            showDropdown = showDropdown,
             onDayBeforeClick = { selectedDate = selectedDate.minusDays(1) },
             onDayAfterClick = { selectedDate = selectedDate.plusDays(1) },
             onCalendarClick = { },
-            onShareClick = { },
+            onKebabMenuClick = { showDropdown = true },
+            onDismissRequestDropdown = { showDropdown = false },
+            onPlusPlannerSubjectClick = {
+                showDropdown = false
+            },
+            onEditPlannerSubjectClick = {
+                showDropdown = false
+            },
+            onShareButtonClick = {
+                showDropdown = false
+                onShareNavigate()
+            },
         )
 
         Spacer(Modifier.height(16.dp))
@@ -132,16 +150,22 @@ fun PlannerScreen(
 private fun PlannerTopSection(
     selectedDate: LocalDate,
     dDay: DDay,
+    showDropdown: Boolean,
     onDayBeforeClick: () -> Unit,
     onDayAfterClick: () -> Unit,
     onCalendarClick: () -> Unit,
-    onShareClick: () -> Unit,
+    onKebabMenuClick: () -> Unit,
+    onDismissRequestDropdown: () -> Unit,
+    onPlusPlannerSubjectClick: () -> Unit,
+    onEditPlannerSubjectClick: () -> Unit,
+    onShareButtonClick: () -> Unit,
 ) {
     Column {
         Box(
             modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.TopEnd,
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.CenterEnd,
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -176,21 +200,31 @@ private fun PlannerTopSection(
                 )
             }
 
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_right_chevron_green),
-                contentDescription = "공유 버튼",
-                tint = TogedyTheme.colors.gray500,
-                modifier = Modifier
-                    .size(20.dp)
-                    .noRippleClickable(onShareClick),
-            )
+            Box(
+                modifier = Modifier.wrapContentSize(Alignment.TopEnd),
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(ic_kebap_menu_circle),
+                    contentDescription = "더보기 버튼",
+                    tint = TogedyTheme.colors.gray700,
+                    modifier = Modifier.noRippleClickable(onKebabMenuClick),
+                )
+
+                PlannerDropDownScrim(
+                    expanded = showDropdown,
+                    onDismissRequest = onDismissRequestDropdown,
+                    onPlusPlannerSubjectClick = onPlusPlannerSubjectClick,
+                    onEditPlannerSubjectClick = onEditPlannerSubjectClick,
+                    onShareButtonClick = onShareButtonClick,
+                )
+            }
         }
 
         if (dDay.hasDday) {
-            val dDayText = when {
-                dDay.remainingDays == 0 -> "D-DAY"
-                dDay.remainingDays!! < 0 -> "D${dDay.remainingDays}"
-                else -> "D+${dDay.remainingDays}"
+            val dDayText = when (val days = dDay.remainingDays) {
+                null -> ""
+                0 -> "D-DAY"
+                else -> if (days < 0) "D$days" else "D+$days"
             }
 
             Row(
@@ -303,6 +337,8 @@ private fun TimerSection(
 @Composable
 private fun PlannerScreenPreview() {
     TogedyTheme {
-        PlannerScreen()
+        PlannerScreen(
+            onShareNavigate = {},
+        )
     }
 }
