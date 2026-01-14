@@ -1,6 +1,5 @@
 package com.together.study.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
@@ -41,8 +40,8 @@ internal class SearchDetailViewModel @Inject constructor(
     fun deleteAddedItem(admissionMethodId: Int) {
         viewModelScope.launch {
             univScheduleRepository.deleteUnivDetailSchedule(admissionMethodId)
-                .onSuccess { 
-                    loadUniversityDetail(currentUniversityId)
+                .onSuccess {
+                    updateDetailData(admissionMethodId, isAdd = false)
                 }
                 .onFailure { exception ->
                 }
@@ -53,11 +52,32 @@ internal class SearchDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val admissionMethod = AdmissionMethod(universityAdmissionMethodId = admissionMethodId)
             univScheduleRepository.addUnivDetailSchedule(admissionMethod)
-                .onSuccess { 
-                    loadUniversityDetail(currentUniversityId)
+                .onSuccess {
+                    updateDetailData(admissionMethodId, isAdd = true)
                 }
                 .onFailure { exception ->
                 }
+        }
+    }
+
+    private fun updateDetailData(admissionMethodId: Int, isAdd: Boolean) {
+        val currentState = _univDetailScheduleState.value
+        if (currentState is UiState.Success) {
+            val currentData = currentState.data
+            val methodName = currentData.universityAdmissionMethodList
+                .find { it.universityAdmissionMethodId == admissionMethodId }
+                ?.universityAdmissionMethod ?: return
+
+            val updatedList = if (isAdd) {
+                if (currentData.addedAdmissionMethodList.contains(methodName)) return
+                currentData.addedAdmissionMethodList + methodName
+            } else {
+                currentData.addedAdmissionMethodList.filter { it != methodName }
+            }
+
+            _univDetailScheduleState.value = UiState.Success(
+                currentData.copy(addedAdmissionMethodList = updatedList)
+            )
         }
     }
 }
