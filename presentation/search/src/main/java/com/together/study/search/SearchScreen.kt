@@ -1,5 +1,10 @@
 package com.together.study.search
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +47,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.search.component.SearchDetailAdmissionAdd
 import com.together.study.search.component.SearchDetailAdmissionSelector
 import com.together.study.search.component.SearchDetailMyAdded
+import com.together.study.search.component.SearchDetailSnackBar
 import com.together.study.search.component.SearchSelectorAdmissionType
 import com.together.study.search.component.SearchSelectorChip
 import com.together.study.search.component.SearchSelectorChipHeader
@@ -50,6 +56,8 @@ import com.together.study.search.model.UnivSchedule
 import com.together.study.search.model.UnivScheduleList
 import com.together.study.search.type.AdmissionType
 import com.together.study.util.noRippleClickable
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -206,6 +214,26 @@ private fun SearchSuccessScreen(
     var selectedUniversityId by remember { mutableStateOf<Int?>(null) }
     var isSheetVisible by remember { mutableStateOf(false) }
 
+    // snackBar 상태
+    var snackBarVisible by remember { mutableStateOf(false) }
+    var snackBarAdmissionMethod by remember { mutableStateOf("") }
+    var snackBarIsAdded by remember { mutableStateOf(true) }
+    var snackBarDismissJob by remember { mutableStateOf<Job?>(null) }
+    var lastDeletedAdmissionId by remember { mutableStateOf<Int?>(null) }
+
+    val showSnackBar: (String, Boolean, Int?) -> Unit = { method, isAdded, deletedId ->
+        snackBarDismissJob?.cancel()
+        snackBarAdmissionMethod = method
+        snackBarIsAdded = isAdded
+        lastDeletedAdmissionId = deletedId
+        snackBarVisible = true
+
+        snackBarDismissJob = coroutineScope.launch {
+            delay(1000)
+            snackBarVisible = false
+        }
+    }
+
     val onCloseBottomSheet: () -> Unit = {
         coroutineScope.launch {
             isSheetVisible = false
@@ -256,54 +284,80 @@ private fun SearchSuccessScreen(
             },
             modifier = Modifier.height(height = 614.dp),
         ) {
-            val currentDetailState = detailState
-            when (currentDetailState) {
-                is UiState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(48.dp),
-                            color = TogedyTheme.colors.green
-                        )
+            Box(modifier = Modifier.fillMaxSize()) {
+                val currentDetailState = detailState
+                when (currentDetailState) {
+                    is UiState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(48.dp),
+                                color = TogedyTheme.colors.green
+                            )
+                        }
+                    }
+
+                    is UiState.Success -> {
+                        val data = currentDetailState.data
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            SearchSelectorChipHeader(
+                                admissionType = data.universityAdmissionType,
+                                universityName = data.universityName,
+                                isAdded = data.addedAdmissionMethodList.isNotEmpty(),
+                                isSearchDetail = true,
+                                modifier = Modifier.padding(16.dp)
+                            )
+
+                            BottomSheetContent(
+                                detailState = data,
+                                onDeleteAdmission = { admissionMethodId, methodName ->
+                                    detailViewModel.deleteAddedItem(admissionMethodId)
+                                    showSnackBar(methodName, false, admissionMethodId)
+                                },
+                                onAddAdmission = { admissionMethodId, methodName ->
+                                    detailViewModel.addAdmissionMethod(admissionMethodId)
+                                    showSnackBar(methodName, true, null)
+                                }
+                            )
+                        }
+                    }
+
+                    is UiState.Empty -> {
+                    }
+
+                    is UiState.Failure -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "해당 대학 데이터를 불러오는데 실패했습니다",
+                                color = TogedyTheme.colors.gray600
+                            )
+                        }
                     }
                 }
 
-                is UiState.Success -> {
-                    val data = currentDetailState.data
-                    SearchSelectorChipHeader(
-                        admissionType = data.universityAdmissionType,
-                        universityName = data.universityName,
-                        isAdded = data.addedAdmissionMethodList.isNotEmpty(),
-                        isSearchDetail = true,
-                        modifier = Modifier.padding(16.dp)
-                    )
-
-                    BottomSheetContent(
-                        detailState = data,
-                        onDeleteAdmission = { admissionMethodId ->
-                            detailViewModel.deleteAddedItem(admissionMethodId)
-                        },
-                        onAddAdmission = { admissionMethodId ->
-                            detailViewModel.addAdmissionMethod(admissionMethodId)
+                AnimatedVisibility(
+                    visible = snackBarVisible,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp)
+                ) {
+                    SearchDetailSnackBar(
+                        admissionMethod = snackBarAdmissionMethod,
+                        isAdded = snackBarIsAdded,
+                        onUndoClick = {
+                            lastDeletedAdmissionId?.let { id ->
+                                detailViewModel.addAdmissionMethod(id)
+                                snackBarVisible = false
+                            }
                         }
                     )
-                }
-
-                is UiState.Empty -> {
-                }
-
-                is UiState.Failure -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "해당 대학 데이터를 불러오는데 실패했습니다",
-                            color = TogedyTheme.colors.gray600
-                        )
-                    }
                 }
             }
         }
@@ -313,8 +367,8 @@ private fun SearchSuccessScreen(
 @Composable
 fun BottomSheetContent(
     detailState: UnivDetailSchedule,
-    onDeleteAdmission: (Int) -> Unit = {},
-    onAddAdmission: (Int) -> Unit = {}
+    onDeleteAdmission: (Int, String) -> Unit = { _, _ -> },
+    onAddAdmission: (Int, String) -> Unit = { _, _ -> }
 ) {
     val admissionList = detailState.universityAdmissionMethodList
     var selectedIndex by remember { mutableIntStateOf(-1) } // -1은 선택되지 않은 상태
@@ -376,6 +430,7 @@ fun BottomSheetContent(
                 if (!isAlreadyAdded) {
                     SearchDetailAdmissionAdd(
                         admissionMethodId = admission.universityAdmissionMethodId,
+                        admissionMethodName = admission.universityAdmissionMethod,
                         onAddClick = onAddAdmission,
                         modifier = Modifier.padding(top = 12.dp)
                     )

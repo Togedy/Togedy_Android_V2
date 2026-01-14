@@ -28,7 +28,7 @@ fun SearchDetailMyAdded(
     modifier: Modifier = Modifier,
     addedData: List<String>,
     universityAdmissionMethodList: List<UnivDetailAdmissionMethod>,
-    onDeleteAdmission: (Int) -> Unit = {},
+    onDeleteAdmission: (Int, String) -> Unit = { _, _ -> },
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -90,7 +90,7 @@ fun SearchDetailMyAdded(
                                 .padding(start = 4.dp, end = 8.dp)
                                 .noRippleClickable {
                                     admissionMethod?.let { method ->
-                                        onDeleteAdmission(method.universityAdmissionMethodId)
+                                        onDeleteAdmission(method.universityAdmissionMethodId, item)
                                     }
                                 },
                             tint = TogedyTheme.colors.gray500
