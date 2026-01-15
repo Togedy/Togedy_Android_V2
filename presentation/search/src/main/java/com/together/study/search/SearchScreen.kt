@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -26,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -69,14 +72,17 @@ internal fun SearchRoute(
     val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
     val admissionType by searchViewModel.admissionType.collectAsStateWithLifecycle()
     val univScheduleState by searchViewModel.univScheduleState.collectAsStateWithLifecycle()
+    val isLoadingMore by searchViewModel.isLoadingMore.collectAsStateWithLifecycle()
 
     SearchScreen(
         searchQuery = searchQuery,
         admissionType = admissionType,
         univScheduleState = univScheduleState,
+        isLoadingMore = isLoadingMore,
         onBackButtonClicked = onBackButtonClicked,
         onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
         onAdmissionTypeChanged = searchViewModel::onAdmissionTypeChanged,
+        onLoadNextPage = searchViewModel::onLoadNextPage,
         modifier = modifier
     )
 }
@@ -86,9 +92,11 @@ private fun SearchScreen(
     searchQuery: String,
     admissionType: AdmissionType,
     univScheduleState: UiState<UnivScheduleList>,
+    isLoadingMore: Boolean,
     onBackButtonClicked: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onAdmissionTypeChanged: (AdmissionType) -> Unit,
+    onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -139,7 +147,9 @@ private fun SearchScreen(
             is UiState.Success -> {
                 SearchSuccessScreen(
                     univSchedules = univScheduleState.data.schedules,
-                    hasNext = univScheduleState.data.hasNext
+                    hasNext = univScheduleState.data.hasNext,
+                    isLoadingMore = isLoadingMore,
+                    onLoadNextPage = onLoadNextPage
                 )
             }
         }
@@ -207,12 +217,30 @@ private fun SearchEmptyScreen() {
 @Composable
 private fun SearchSuccessScreen(
     univSchedules: List<UnivSchedule>,
-    hasNext: Boolean
+    hasNext: Boolean,
+    isLoadingMore: Boolean,
+    onLoadNextPage: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var selectedUniversityId by remember { mutableStateOf<Int?>(null) }
     var isSheetVisible by remember { mutableStateOf(false) }
+
+    // 무한 스크롤 상태
+    val listState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val totalItems = listState.layoutInfo.totalItemsCount
+            lastVisibleItem >= totalItems - 3 && hasNext && !isLoadingMore
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) {
+            onLoadNextPage()
+        }
+    }
 
     // snackBar 상태
     var snackBarVisible by remember { mutableStateOf(false) }
@@ -255,6 +283,7 @@ private fun SearchSuccessScreen(
     with(univSchedules) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
+            state = listState,
             contentPadding = PaddingValues(vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -266,6 +295,22 @@ private fun SearchSuccessScreen(
                         onOpenBottomSheetInternal(data.universityId)
                     }
                 )
+            }
+
+            if (isLoadingMore) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = TogedyTheme.colors.green
+                        )
+                    }
+                }
             }
         }
     }
