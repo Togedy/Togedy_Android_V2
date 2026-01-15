@@ -26,12 +26,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_arrow_down_24
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.search.UniversityAdmissionMethod
+import com.together.study.search.model.UnivDetailAdmissionMethod
 import com.together.study.util.noRippleClickable
 
 @Composable
 fun SearchDetailAdmissionSelector(
-    admissionList: List<UniversityAdmissionMethod>,
+    admissionList: List<UnivDetailAdmissionMethod>,
     selectedIndex: Int,
     onSelectionChanged: (Int) -> Unit,
     modifier: Modifier = Modifier

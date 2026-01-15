@@ -1,23 +1,34 @@
 package com.together.study.search
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +39,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.TogedyScheduleChip
@@ -41,46 +50,55 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.search.component.SearchDetailAdmissionAdd
 import com.together.study.search.component.SearchDetailAdmissionSelector
 import com.together.study.search.component.SearchDetailMyAdded
+import com.together.study.search.component.SearchDetailSnackBar
 import com.together.study.search.component.SearchSelectorAdmissionType
 import com.together.study.search.component.SearchSelectorChip
 import com.together.study.search.component.SearchSelectorChipHeader
+import com.together.study.search.model.UnivDetailSchedule
+import com.together.study.search.model.UnivSchedule
+import com.together.study.search.model.UnivScheduleList
+import com.together.study.search.type.AdmissionType
 import com.together.study.util.noRippleClickable
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+internal fun SearchRoute(
     modifier: Modifier,
     onBackButtonClicked: () -> Unit = {},
-    viewModel: SearchViewModel = viewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
 ) {
-    val searchValue by viewModel.searchQuery.collectAsStateWithLifecycle()
-    val admissionType by viewModel.admissionType.collectAsStateWithLifecycle()
-    val filteredList by viewModel.filteredList.collectAsStateWithLifecycle()
+    val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
+    val admissionType by searchViewModel.admissionType.collectAsStateWithLifecycle()
+    val univScheduleState by searchViewModel.univScheduleState.collectAsStateWithLifecycle()
+    val isLoadingMore by searchViewModel.isLoadingMore.collectAsStateWithLifecycle()
 
-    val coroutineScope = rememberCoroutineScope()
+    SearchScreen(
+        searchQuery = searchQuery,
+        admissionType = admissionType,
+        univScheduleState = univScheduleState,
+        isLoadingMore = isLoadingMore,
+        onBackButtonClicked = onBackButtonClicked,
+        onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
+        onAdmissionTypeChanged = searchViewModel::onAdmissionTypeChanged,
+        onLoadNextPage = searchViewModel::onLoadNextPage,
+        modifier = modifier
+    )
+}
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var selectedUniversityId by remember { mutableStateOf<Int?>(null) }
-    var isSheetVisible by remember { mutableStateOf(false) }
-
-    val sheetViewModelStore = remember { ViewModelStore() }
-
-    val onCloseBottomSheet: () -> Unit = {
-        coroutineScope.launch {
-            isSheetVisible = false
-            sheetState.hide()
-        }
-    }
-
-    val onOpenBottomSheet: (Int) -> Unit = { universityId ->
-        selectedUniversityId = universityId
-        coroutineScope.launch {
-            isSheetVisible = true
-            sheetState.show()
-        }
-    }
-
+@Composable
+private fun SearchScreen(
+    searchQuery: String,
+    admissionType: AdmissionType,
+    univScheduleState: UiState<UnivScheduleList>,
+    isLoadingMore: Boolean,
+    onBackButtonClicked: () -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
+    onAdmissionTypeChanged: (AdmissionType) -> Unit,
+    onLoadNextPage: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -100,78 +118,289 @@ fun SearchScreen(
                     .noRippleClickable(onBackButtonClicked)
             )
             TogedySearchBar(
-                value = searchValue,
-                onValueChange = { viewModel.onSearchQueryChanged(it) }
+                value = searchQuery,
+                onValueChange = onSearchQueryChanged
             )
         }
 
         SearchSelectorAdmissionType(
             selectedType = admissionType,
-            onSelect = { viewModel.onAdmissionTypeChanged(it) },
+            onSelect = onAdmissionTypeChanged,
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(filteredList.size) { index ->
-                val data = filteredList[index]
-                SearchSelectorChip(
-                    data = data,
-                    onSelectorClicked = {
-                        onOpenBottomSheet(data.universityId)
-                    }
+        when (univScheduleState) {
+            is UiState.Loading -> {
+                SearchLoadingScreen()
+            }
+
+            is UiState.Failure -> {
+                SearchFailureScreen(
+                    errorMessage = univScheduleState.msg
+                )
+            }
+
+            is UiState.Empty -> {
+                SearchEmptyScreen()
+            }
+
+            is UiState.Success -> {
+                SearchSuccessScreen(
+                    univSchedules = univScheduleState.data.schedules,
+                    hasNext = univScheduleState.data.hasNext,
+                    isLoadingMore = isLoadingMore,
+                    onLoadNextPage = onLoadNextPage
                 )
             }
         }
     }
+}
+
+@Composable
+private fun SearchLoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(48.dp),
+            color = TogedyTheme.colors.green
+        )
+    }
+}
+
+@Composable
+private fun SearchFailureScreen(
+    errorMessage: String
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "데이터를 불러오는데 실패했습니다",
+                color = TogedyTheme.colors.gray600
+            )
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+            Text(
+                text = errorMessage,
+                color = TogedyTheme.colors.gray500,
+                style = TogedyTheme.typography.body12m
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchEmptyScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "검색어를 입력해주세요",
+            color = TogedyTheme.colors.gray600
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchSuccessScreen(
+    univSchedules: List<UnivSchedule>,
+    hasNext: Boolean,
+    isLoadingMore: Boolean,
+    onLoadNextPage: () -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var selectedUniversityId by remember { mutableStateOf<Int?>(null) }
+    var isSheetVisible by remember { mutableStateOf(false) }
+
+    // 무한 스크롤 상태
+    val listState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val totalItems = listState.layoutInfo.totalItemsCount
+            lastVisibleItem >= totalItems - 3 && hasNext && !isLoadingMore
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) {
+            onLoadNextPage()
+        }
+    }
+
+    // snackBar 상태
+    var snackBarVisible by remember { mutableStateOf(false) }
+    var snackBarAdmissionMethod by remember { mutableStateOf("") }
+    var snackBarIsAdded by remember { mutableStateOf(true) }
+    var snackBarDismissJob by remember { mutableStateOf<Job?>(null) }
+    var lastDeletedAdmissionId by remember { mutableStateOf<Int?>(null) }
+
+    val showSnackBar: (String, Boolean, Int?) -> Unit = { method, isAdded, deletedId ->
+        snackBarDismissJob?.cancel()
+        snackBarAdmissionMethod = method
+        snackBarIsAdded = isAdded
+        lastDeletedAdmissionId = deletedId
+        snackBarVisible = true
+
+        snackBarDismissJob = coroutineScope.launch {
+            delay(1000)
+            snackBarVisible = false
+        }
+    }
+
+    val onCloseBottomSheet: () -> Unit = {
+        coroutineScope.launch {
+            isSheetVisible = false
+            sheetState.hide()
+        }
+    }
+
+    val detailViewModel: SearchDetailViewModel = hiltViewModel()
+
+    val onOpenBottomSheetInternal: (Int) -> Unit = { universityId ->
+        selectedUniversityId = universityId
+        detailViewModel.loadUniversityDetail(universityId)
+        coroutineScope.launch {
+            isSheetVisible = true
+            sheetState.show()
+        }
+    }
+
+    with(univSchedules) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            state = listState,
+            contentPadding = PaddingValues(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(size) { index ->
+                val data = get(index)
+                SearchSelectorChip(
+                    data = data,
+                    onSelectorClicked = {
+                        onOpenBottomSheetInternal(data.universityId)
+                    }
+                )
+            }
+
+            if (isLoadingMore) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = TogedyTheme.colors.green
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    val detailState by detailViewModel.univDetailScheduleState.collectAsStateWithLifecycle()
 
     if (isSheetVisible) {
-        // 바텀 시트 스코프에 따라 뷰모델 생성 파괴
-        CompositionLocalProvider(
-            LocalViewModelStoreOwner provides object : ViewModelStoreOwner {
-                override val viewModelStore: ViewModelStore
-                    get() = sheetViewModelStore
-            }
+        TogedyBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {
+                onCloseBottomSheet()
+            },
+            showDone = false,
+            onDoneClick = {
+                onCloseBottomSheet()
+            },
+            modifier = Modifier.height(height = 614.dp),
         ) {
-            val detailViewModel: SearchDetailViewModel = viewModel()
-            
-            selectedUniversityId?.let { universityId ->
-                detailViewModel.loadUniversityDetail(universityId)
-            }
-            
-            val detailState by detailViewModel.searchDummy.collectAsStateWithLifecycle()
+            Box(modifier = Modifier.fillMaxSize()) {
+                val currentDetailState = detailState
+                when (currentDetailState) {
+                    is UiState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(48.dp),
+                                color = TogedyTheme.colors.green
+                            )
+                        }
+                    }
 
-            TogedyBottomSheet(
-                sheetState = sheetState,
-                onDismissRequest = {
-                    onCloseBottomSheet()
-                },
-                title = "대학 일정",
-                showDone = false,
-                onDoneClick = {
-                    onCloseBottomSheet()
-                },
-                modifier = Modifier.height(height = 614.dp),
-            ) {
-                detailState?.let { data ->
-                    SearchSelectorChipHeader(
-                        admissionType = data.universityAdmissionType,
-                        universityName = data.universityName,
-                        isAdded = data.addedAdmissionMethodList.isNotEmpty(),
-                        isSearchDetail = true,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    is UiState.Success -> {
+                        val data = currentDetailState.data
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            SearchSelectorChipHeader(
+                                admissionType = data.universityAdmissionType,
+                                universityName = data.universityName,
+                                isAdded = data.addedAdmissionMethodList.isNotEmpty(),
+                                isSearchDetail = true,
+                                modifier = Modifier.padding(16.dp)
+                            )
 
-                    BottomSheetContent(
-                        detailState = data,
-                        onDeleteAdmission = { admissionMethodId ->
-                            detailViewModel.deleteAddedItem(admissionMethodId)
-                        },
-                        onAddAdmission = {admissionMethodId ->
-                            detailViewModel.addAdmissionMethod(admissionMethodId)
+                            BottomSheetContent(
+                                detailState = data,
+                                onDeleteAdmission = { admissionMethodId, methodName ->
+                                    detailViewModel.deleteAddedItem(admissionMethodId)
+                                    showSnackBar(methodName, false, admissionMethodId)
+                                },
+                                onAddAdmission = { admissionMethodId, methodName ->
+                                    detailViewModel.addAdmissionMethod(admissionMethodId)
+                                    showSnackBar(methodName, true, null)
+                                }
+                            )
+                        }
+                    }
+
+                    is UiState.Empty -> {
+                    }
+
+                    is UiState.Failure -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "해당 대학 데이터를 불러오는데 실패했습니다",
+                                color = TogedyTheme.colors.gray600
+                            )
+                        }
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = snackBarVisible,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp)
+                ) {
+                    SearchDetailSnackBar(
+                        admissionMethod = snackBarAdmissionMethod,
+                        isAdded = snackBarIsAdded,
+                        onUndoClick = {
+                            lastDeletedAdmissionId?.let { id ->
+                                detailViewModel.addAdmissionMethod(id)
+                                snackBarVisible = false
+                            }
                         }
                     )
                 }
@@ -182,9 +411,9 @@ fun SearchScreen(
 
 @Composable
 fun BottomSheetContent(
-    detailState: SearchDetailDummy,
-    onDeleteAdmission: (Int) -> Unit = {},
-    onAddAdmission: (Int) -> Unit = {}
+    detailState: UnivDetailSchedule,
+    onDeleteAdmission: (Int, String) -> Unit = { _, _ -> },
+    onAddAdmission: (Int, String) -> Unit = { _, _ -> }
 ) {
     val admissionList = detailState.universityAdmissionMethodList
     var selectedIndex by remember { mutableIntStateOf(-1) } // -1은 선택되지 않은 상태
@@ -241,10 +470,12 @@ fun BottomSheetContent(
 
             // 선택된 전형이 있고, 아직 추가되지 않은 경우에만 추가 버튼 표시
             selectedAdmission?.let { admission ->
-                val isAlreadyAdded = detailState.addedAdmissionMethodList.contains(admission.universityAdmissionMethod)
+                val isAlreadyAdded =
+                    detailState.addedAdmissionMethodList.contains(admission.universityAdmissionMethod)
                 if (!isAlreadyAdded) {
                     SearchDetailAdmissionAdd(
                         admissionMethodId = admission.universityAdmissionMethodId,
+                        admissionMethodName = admission.universityAdmissionMethod,
                         onAddClick = onAddAdmission,
                         modifier = Modifier.padding(top = 12.dp)
                     )

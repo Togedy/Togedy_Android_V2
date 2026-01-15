@@ -20,15 +20,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.search.UniversityAdmissionMethod
+import com.together.study.search.model.UnivDetailAdmissionMethod
 import com.together.study.util.noRippleClickable
 
 @Composable
 fun SearchDetailMyAdded(
     modifier: Modifier = Modifier,
     addedData: List<String>,
-    universityAdmissionMethodList: List<UniversityAdmissionMethod>,
-    onDeleteAdmission: (Int) -> Unit = {},
+    universityAdmissionMethodList: List<UnivDetailAdmissionMethod>,
+    onDeleteAdmission: (Int, String) -> Unit = { _, _ -> },
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -41,48 +41,61 @@ fun SearchDetailMyAdded(
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            itemsIndexed(addedData) { index, item ->
-                // 해당 아이템의 admissionMethodId
-                val admissionMethod = universityAdmissionMethodList.find {
-                    it.universityAdmissionMethod == item
-                }
+        if (addedData.isEmpty()) {
+            Text(
+                text = "선택된 전형이 없습니다. 아래에서 전형을 추가해주세요",
+                style = TogedyTheme.typography.body14m.copy(
+                    color = TogedyTheme.colors.gray600
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp, bottom = 8.dp)
+                    .padding(horizontal = 16.dp)
+            )
+        } else {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                itemsIndexed(addedData) { index, item ->
+                    // 해당 아이템의 admissionMethodId
+                    val admissionMethod = universityAdmissionMethodList.find {
+                        it.universityAdmissionMethod == item
+                    }
 
-                Row(
-                    modifier = Modifier
-                        .background(
-                            color = TogedyTheme.colors.gray100,
-                            shape = RoundedCornerShape(6.dp)
-                        )
-                        .padding(vertical = 4.dp)
-                        .padding(start = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = item,
-                        style = TogedyTheme.typography.body14m.copy(
-                            color = TogedyTheme.colors.gray600
-                        )
-                    )
-
-                    Icon(
-                        imageVector = ImageVector.vectorResource(ic_delete_x_16),
-                        contentDescription = null,
+                    Row(
                         modifier = Modifier
-                            .padding(start = 4.dp, end = 8.dp)
-                            .noRippleClickable {
-                                admissionMethod?.let { method ->
-                                    onDeleteAdmission(method.universityAdmissionMethodId)
-                                }
-                            },
-                        tint = TogedyTheme.colors.gray500
-                    )
+                            .background(
+                                color = TogedyTheme.colors.gray100,
+                                shape = RoundedCornerShape(6.dp)
+                            )
+                            .padding(vertical = 4.dp)
+                            .padding(start = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = item,
+                            style = TogedyTheme.typography.body14m.copy(
+                                color = TogedyTheme.colors.gray600
+                            )
+                        )
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ic_delete_x_16),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 4.dp, end = 8.dp)
+                                .noRippleClickable {
+                                    admissionMethod?.let { method ->
+                                        onDeleteAdmission(method.universityAdmissionMethodId, item)
+                                    }
+                                },
+                            tint = TogedyTheme.colors.gray500
+                        )
+                    }
                 }
             }
         }

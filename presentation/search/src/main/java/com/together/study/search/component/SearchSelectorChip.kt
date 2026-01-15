@@ -12,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.search.SearchDummy
+import com.together.study.search.model.UnivSchedule
 import com.together.study.util.noRippleClickable
 
 @Composable
 fun SearchSelectorChip(
-    data: SearchDummy,
+    data: UnivSchedule,
     modifier: Modifier = Modifier,
     onSelectorClicked: () -> Unit = {}
 ) {
