@@ -1,4 +1,4 @@
-package com.together.study.calendar.category
+package com.together.study.planner.subject
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -22,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -30,50 +27,51 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.calendar.component.CategoryItem
-import com.together.study.calendar.model.Category
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
+import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.util.noRippleClickable
+import com.together.study.planner.component.SubjectItem
+import com.together.study.planner.model.PlannerSubject
 
 @Composable
-internal fun CategoryDetailRoute(
+internal fun SubjectDetailRoute(
     onBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CategoryDetailViewModel = hiltViewModel(),
+    viewModel: SubjectDetailViewModel = hiltViewModel(),
 ) {
-    val categoryState by viewModel.categoryState.collectAsStateWithLifecycle()
+    val subjectState by viewModel.subjectState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchCategoryItems()
+        viewModel.fetchSubjectItems()
     }
 
-    CategoryDetailScreen(
-        categoryState = categoryState,
+    SubjectDetailScreen(
+        subjectState = subjectState,
         onBackButtonClick = onBackButtonClick,
-        onAddDoneBtnClick = { viewModel.saveNewCategory(it.categoryName!!, it.categoryColor!!) },
-        onEditDoneBtnClick = viewModel::updateCategory,
-        onDeleteClick = viewModel::deleteCategory,
+        onAddDoneBtnClick = { viewModel.saveNewSubject(it.name, it.color) },
+        onEditDoneBtnClick = viewModel::updateSubject,
+        onDeleteButtonClick = viewModel::deleteSubject,
         modifier = modifier,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun CategoryDetailScreen(
-    categoryState: UiState<List<Category>>,
+fun SubjectDetailScreen(
+    subjectState: UiState<List<PlannerSubject>>,
     onBackButtonClick: () -> Unit,
-    onAddDoneBtnClick: (Category) -> Unit,
-    onEditDoneBtnClick: (Category) -> Unit,
-    onDeleteClick: (Long) -> Unit,
+    onAddDoneBtnClick: (PlannerSubject) -> Unit,
+    onEditDoneBtnClick: (PlannerSubject) -> Unit,
+    onDeleteButtonClick: (Long) -> Unit,
     modifier: Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var isAddBottomSheetOpen by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf<Category?>(null) }
+    var isBottomSheetOpen by remember { mutableStateOf(false) }
+    var selectedSubject by remember { mutableStateOf<PlannerSubject?>(null) }
+    var selectedIdForDelete: Long? by remember { mutableStateOf(null) }
     var isDeleteDialogOpen by remember { mutableStateOf(false) }
 
     Column(
@@ -81,8 +79,10 @@ fun CategoryDetailScreen(
             .fillMaxSize()
             .background(TogedyTheme.colors.white),
     ) {
-        CategoryTopSection(
-            onBackButtonClick = onBackButtonClick,
+        TogedyTopBar(
+            title = "과목 편집",
+            leftIcon = ImageVector.vectorResource(ic_left_chevron),
+            onLeftClicked = onBackButtonClick,
         )
 
         Spacer(Modifier.height(24.dp))
@@ -91,25 +91,25 @@ fun CategoryDetailScreen(
             modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             AddButton(
-                title = "카테고리 추가",
+                title = "과목 추가",
                 onClick = {
-                    selectedCategory = null
-                    isAddBottomSheetOpen = true
+                    selectedSubject = null
+                    isBottomSheetOpen = true
                 },
             )
         }
 
-        when (categoryState) {
+        when (subjectState) {
             is UiState.Loading -> {}
             is UiState.Success -> {
-                CategoryItems(
-                    categoryItems = categoryState.data,
+                SubjectItems(
+                    subjects = subjectState.data,
                     onEditClick = { selectedItem ->
-                        selectedCategory = selectedItem
-                        isAddBottomSheetOpen = true
+                        selectedSubject = selectedItem
+                        isBottomSheetOpen = true
                     },
-                    onDeleteClick = { id ->
-                        selectedCategory = Category(id, "", "")
+                    onItemDeleteClick = { id ->
+                        selectedIdForDelete = id
                         isDeleteDialogOpen = true
                     },
                 )
@@ -120,26 +120,26 @@ fun CategoryDetailScreen(
         }
     }
 
-    if (isAddBottomSheetOpen) {
-        CategoryDetailBottomSheet(
+    if (isBottomSheetOpen) {
+        SubjectDetailBottomSheet(
             sheetState = sheetState,
-            category = selectedCategory,
+            plannerSubject = selectedSubject,
             onDismissRequest = {
-                isAddBottomSheetOpen = false
-                selectedCategory = null
+                isBottomSheetOpen = false
+                selectedSubject = null
             },
-            onDoneClick = { category ->
-                isAddBottomSheetOpen = false
-                if (selectedCategory == null) onAddDoneBtnClick(category)
-                else onEditDoneBtnClick(category)
-                selectedCategory = null
+            onDoneClick = { subject ->
+                isBottomSheetOpen = false
+                if (selectedSubject == null) onAddDoneBtnClick(subject)
+                else onEditDoneBtnClick(subject)
+                selectedSubject = null
             },
         )
     }
 
     if (isDeleteDialogOpen) {
         TogedyBasicDialog(
-            title = "카테고리 삭제",
+            title = "과목 삭제",
             subTitle = {
                 Text(
                     text = "정말로 삭제하시겠습니까?",
@@ -150,8 +150,10 @@ fun CategoryDetailScreen(
             buttonText = "삭제",
             onDismissRequest = { isDeleteDialogOpen = false },
             onButtonClick = {
-                onDeleteClick(selectedCategory!!.categoryId!!)
-                selectedCategory = null
+                selectedIdForDelete?.let {
+                    onDeleteButtonClick(selectedIdForDelete!!)
+                }
+                selectedIdForDelete = null
                 isDeleteDialogOpen = false
             },
         )
@@ -160,10 +162,10 @@ fun CategoryDetailScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun CategoryItems(
-    categoryItems: List<Category>,
-    onEditClick: (Category) -> Unit,
-    onDeleteClick: (Long) -> Unit,
+internal fun SubjectItems(
+    subjects: List<PlannerSubject>,
+    onEditClick: (PlannerSubject) -> Unit,
+    onItemDeleteClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -174,52 +176,27 @@ internal fun CategoryItems(
             .padding(top = 36.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(categoryItems) { categoryItem ->
-            CategoryItem(
-                category = categoryItem,
-                onEditClick = { onEditClick(categoryItem) },
-                onCategoryClick = { onDeleteClick(categoryItem.categoryId!!) },
-                isCategoryEditMode = true,
+        items(subjects) { subjectItem ->
+            SubjectItem(
+                plannerSubject = subjectItem,
+                isSubjectEditMode = true,
+                onEditClick = { onEditClick(subjectItem) },
+                onDeleteClick = { onItemDeleteClick(subjectItem.id!!) }
             )
         }
     }
 }
 
-@Composable
-fun CategoryTopSection(
-    onBackButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 16.dp),
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_left_chevron),
-            contentDescription = "뒤로가기",
-            tint = TogedyTheme.colors.gray700,
-            modifier = Modifier.noRippleClickable(onBackButtonClick),
-        )
-
-        Text(
-            text = "카테고리 편집",
-            style = TogedyTheme.typography.title16sb.copy(TogedyTheme.colors.gray700),
-            modifier = Modifier.align(Alignment.Center),
-        )
-    }
-}
-
 @Preview
 @Composable
-private fun CategoryDetailPreview(modifier: Modifier = Modifier) {
+private fun SubjectDetailPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
-        CategoryDetailScreen(
-            categoryState = UiState.Success(Category.mockList),
+        SubjectDetailScreen(
+            subjectState = UiState.Success(emptyList()),
             onBackButtonClick = {},
             onAddDoneBtnClick = {},
             onEditDoneBtnClick = {},
-            onDeleteClick = {},
+            onDeleteButtonClick = {},
             modifier = modifier,
         )
     }

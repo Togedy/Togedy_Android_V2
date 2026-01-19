@@ -150,8 +150,7 @@ internal fun StatisticsScreen(
                 Spacer(Modifier.height(12.dp))
 
                 StudyBlock(
-                    year = currentDate.year,
-                    month = currentDate.monthValue,
+                    currentDate = currentDate,
                     studyTimeList = monthlyStudyTimeList,
                     blockSize = 20.dp,
                 )

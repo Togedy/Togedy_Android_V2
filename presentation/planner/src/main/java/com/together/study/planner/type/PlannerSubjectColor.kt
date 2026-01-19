@@ -21,9 +21,9 @@ enum class PlannerSubjectColor(val color: Color) {
     companion object {
         fun fromString(name: String?): PlannerSubjectColor {
             return try {
-                valueOf(name ?: "UNKNOWN_COLOR")
+                valueOf(name ?: "SUBJECT_COLOR1")
             } catch (e: IllegalArgumentException) {
-                UNKNOWN_COLOR
+                SUBJECT_COLOR1
             }
         }
 
