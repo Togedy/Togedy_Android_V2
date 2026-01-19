@@ -8,11 +8,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 
 private val LocalTogedyColors = staticCompositionLocalOf<TogedyColors> {
-    error("No NapzakColors provided")
+    error("No TogedyColors provided")
 }
 
 private val LocalTogedyTypography = staticCompositionLocalOf<TogedyTypography> {
-    error("No NapzakTypography provided")
+    error("No TogedyColors provided")
 }
 
 object TogedyTheme {

@@ -1,8 +1,8 @@
 package com.together.study.buildlogic.convention
 
-import com.together.study.buildlogic.dsl.libs
 import com.together.study.buildlogic.dsl.androidApplicationExtension
 import com.together.study.buildlogic.dsl.configureAndroidLibrary
+import com.together.study.buildlogic.dsl.libs
 import com.together.study.buildlogic.dsl.version
 import com.together.study.buildlogic.primitive.CommonAndroidPlugin
 import com.together.study.buildlogic.primitive.ComposePlugin
@@ -32,7 +32,7 @@ class ApplicationPlugin : Plugin<Project> {
                 }
 
                 defaultConfig {
-                    applicationId = "com.napzak.market"
+                    applicationId = "com.together.study"
                     versionCode = libs.version("versionCode").toInt()
                     versionName = libs.version("versionName")
                 }
