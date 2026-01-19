@@ -48,6 +48,7 @@ appcompatVersion = "1.7.0"
 materialVersion = "1.12.0"
 runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
+googleServices = "4.4.4"
 
 [libraries]
 ## android
@@ -136,3 +137,4 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
