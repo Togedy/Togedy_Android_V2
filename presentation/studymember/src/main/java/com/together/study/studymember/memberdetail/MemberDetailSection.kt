@@ -206,15 +206,11 @@ private fun MemberDetailSuccessScreen(
                         item { Spacer(Modifier.width(6.dp)) }
 
                         items(monthsToShow) { date ->
-                            val year = date.year
-                            val month = date.monthValue
                             val daysInMonth = date.lengthOfMonth()
-
                             val emptyStudyTimeList = List(daysInMonth) { 1 }
 
                             StudyMonthlyColorBlock(
-                                year = year,
-                                month = month,
+                                currentDate = date,
                                 studyTimeList = emptyStudyTimeList,
                             )
                         }
@@ -231,8 +227,7 @@ private fun MemberDetailSuccessScreen(
 
                         itemsIndexed(studyTimeBlocks.monthlyStudyTimeList.reversed()) { index, item ->
                             StudyMonthlyColorBlock(
-                                year = item.year,
-                                month = item.month,
+                                currentDate = LocalDate.of(item.year, item.month, 1),
                                 studyTimeList = item.studyTimeList,
                             )
                         }
