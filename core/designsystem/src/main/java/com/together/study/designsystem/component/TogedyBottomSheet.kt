@@ -20,18 +20,17 @@ import com.together.study.util.noRippleClickable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TogedyBottomSheet(
-    modifier: Modifier = Modifier,
     sheetState: SheetState,
-    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
     title: String? = null,
-    titleStyle: TextStyle =
-        TogedyTheme.typography.title16sb.copy(
-            color = TogedyTheme.colors.black
-        ),
+    titleStyle: TextStyle = TogedyTheme.typography.title16sb.copy(
+        color = TogedyTheme.colors.black
+    ),
     showDone: Boolean = false,
     isDoneActivate: Boolean = true,
-    onDoneClick: () -> Unit = {},
+    onDismissRequest: () -> Unit,
     content: @Composable () -> Unit,
+    onDoneClick: () -> Unit = {},
 ) {
     val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
 
