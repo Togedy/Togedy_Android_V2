@@ -137,7 +137,7 @@ private fun StudyMainScreen(
     }
 
     var showStudyTypeDropdown by remember { mutableStateOf(false) }
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()

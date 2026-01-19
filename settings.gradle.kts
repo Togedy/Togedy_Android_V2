@@ -32,6 +32,7 @@ include(
     ":data:local",
     ":data:remote",
     ":data:calendar",
+    ":data:search",
     ":data:dummy",
     ":data:study",
 )
@@ -40,6 +41,7 @@ include(
     ":domain:calendar",
     ":domain:study",
     ":domain:planner",
+    ":domain:search",
 )
 include(
     ":presentation:main",
