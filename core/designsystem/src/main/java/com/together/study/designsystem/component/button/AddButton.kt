@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_add_24
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.util.noRippleClickable
+import com.together.study.util.scaleDimClickable
 
 /**
  * plus icon이 있는 추가 버튼 컴포넌트입니다.
@@ -33,14 +33,16 @@ fun AddButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val shape = RoundedCornerShape(8.dp)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .scaleDimClickable(shape, onClick)
             .background(
                 color = TogedyTheme.colors.gray200,
-                shape = RoundedCornerShape(8.dp),
+                shape = shape,
             )
-            .noRippleClickable(onClick)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
