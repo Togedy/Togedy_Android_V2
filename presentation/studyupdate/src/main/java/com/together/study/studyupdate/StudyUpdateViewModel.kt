@@ -28,10 +28,12 @@ internal class StudyUpdateViewModel @Inject constructor(
     private val studyDetailRepository: StudyDetailRepository,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>("studyId") ?: 0L
-    val updateType: StudyUpdateType = savedStateHandle.get<StudyUpdateType>("updateType") ?: StudyUpdateType.CREATE
+    val updateType: StudyUpdateType =
+        savedStateHandle.get<StudyUpdateType>("updateType") ?: StudyUpdateType.CREATE
 
     // 상태 관리
-    private val _isChallenge = MutableStateFlow(savedStateHandle.get<Boolean>("isChallenge") == true)
+    private val _isChallenge =
+        MutableStateFlow(savedStateHandle.get<Boolean>("isChallenge") == true)
     val isChallenge: StateFlow<Boolean> = _isChallenge.asStateFlow()
 
     // 스터디 수정 원본 데이터 저장
