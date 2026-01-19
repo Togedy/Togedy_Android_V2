@@ -12,7 +12,7 @@ private val LocalTogedyColors = staticCompositionLocalOf<TogedyColors> {
 }
 
 private val LocalTogedyTypography = staticCompositionLocalOf<TogedyTypography> {
-    error("No TogedyColors provided")
+    error("No TogedyTypography provided")
 }
 
 object TogedyTheme {
