@@ -29,8 +29,8 @@ fun TogedyBottomSheet(
     showDone: Boolean = false,
     isDoneActivate: Boolean = true,
     onDismissRequest: () -> Unit,
-    content: @Composable () -> Unit,
     onDoneClick: () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
 
