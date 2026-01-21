@@ -36,6 +36,7 @@ class MemberSettingsViewModel @Inject constructor(
     private val _membersState =
         MutableStateFlow<UiState<List<StudyMemberBriefInfo>>>(UiState.Loading)
     val memberState = _membersState.asStateFlow()
+    private val _userId = MutableStateFlow(0L)
 
     init {
         getMembers()
@@ -43,7 +44,10 @@ class MemberSettingsViewModel @Inject constructor(
 
     fun getMembers() = viewModelScope.launch {
         studySettingsRepository.getStudyMembers(studyId)
-            .onSuccess { _membersState.value = UiState.Success(it) }
+            .onSuccess {
+                _membersState.value = UiState.Success(it)
+                _userId.value = it.first().userId
+            }
             .onFailure { _membersState.value = UiState.Failure(it.message.toString()) }
     }
 
@@ -68,8 +72,30 @@ class MemberSettingsViewModel @Inject constructor(
             }
     }
 
-    fun updateSelectedUSer(user: StudyMemberBriefInfo) = viewModelScope.launch {
+    fun updateSelectedUser(user: StudyMemberBriefInfo) = viewModelScope.launch {
         _selectedUser.update { user }
+    }
+
+    fun checkIdIsUser(): Boolean {
+        viewModelScope.launch {
+            if (_selectedUser.value.userId == _userId.value) {
+                when (type) {
+                    MemberEditType.EDIT ->
+                        _eventFlow.emit(
+                            MemberEditEvent.ShowError("자신을 멤버에서 삭제할 수 없습니다.")
+                        )
+
+                    MemberEditType.LEADER_CHANGE ->
+                        _eventFlow.emit(
+                            MemberEditEvent.ShowError("이미 방장입니다.")
+                        )
+
+                    else -> {}
+                }
+            }
+        }
+
+        return _selectedUser.value.userId == _userId.value
     }
 
     companion object {
