@@ -48,6 +48,7 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.img_character_sleeping
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.button.TogedyToggleButton
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.tabbar.StudyMemberTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -77,7 +78,7 @@ internal fun MemberDetailSection(
     when (memberUiState.isLoaded) {
         is UiState.Empty -> {}
         is UiState.Failure -> {}
-        is UiState.Loading -> {}
+        is UiState.Loading -> TogedyLoadingScreen()
         is UiState.Success<*> -> {
             val user = (memberUiState.profileState as UiState.Success).data
             val dailyPlanner = (memberUiState.plannerState as UiState.Success).data

@@ -38,6 +38,7 @@ import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.R.drawable.ic_search_24
 import com.together.study.designsystem.R.drawable.img_character_challenge
 import com.together.study.designsystem.R.drawable.img_character_speaker_no_gradient
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.component.SortBottomSheet
@@ -178,7 +179,7 @@ private fun StudyMainScreen(
                     when (uiState.myStudyState) {
                         is UiState.Empty -> {}
                         is UiState.Failure -> {}
-                        is UiState.Loading -> {}
+                        is UiState.Loading -> TogedyLoadingScreen()
                         is UiState.Success -> {
                             LazyColumn(modifier = Modifier.fillMaxSize()) {
                                 with(uiState.myStudyState.data) {
@@ -229,7 +230,7 @@ private fun StudyMainScreen(
                     when (uiState.exploreStudyState) {
                         is UiState.Empty -> {}
                         is UiState.Failure -> {}
-                        is UiState.Loading -> {}
+                        is UiState.Loading -> TogedyLoadingScreen()
                         is UiState.Success -> {
                             LazyColumn(
                                 modifier = Modifier

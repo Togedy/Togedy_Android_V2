@@ -49,6 +49,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
@@ -136,7 +137,7 @@ fun MemberSettingsScreen(
         )
 
         when (uiState) {
-            is UiState.Loading -> {}
+            is UiState.Loading -> TogedyLoadingScreen()
             is UiState.Empty -> {}
             is UiState.Failure -> {}
             is UiState.Success<*> -> {
