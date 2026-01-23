@@ -7,13 +7,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.common.type.study.StudyUpdateType
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.TogedyToast
 import com.together.study.main.component.MainBottomBar
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
@@ -39,6 +45,10 @@ import kotlinx.collections.immutable.toImmutableList
 fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val togedyToast = remember { TogedyToast(context, lifecycleOwner) }
+
     Scaffold(
         bottomBar = {
             MainBottomBar(
@@ -50,13 +60,17 @@ fun MainScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.fillMaxSize()
+        CompositionLocalProvider(
+            LocalTogedyToast provides togedyToast
         ) {
-            MainNavHost(
-                navigator = navigator,
-                modifier = Modifier.padding(innerPadding)
-            )
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                MainNavHost(
+                    navigator = navigator,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
         }
     }
 }

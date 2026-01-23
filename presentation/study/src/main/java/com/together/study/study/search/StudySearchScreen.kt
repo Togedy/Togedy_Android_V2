@@ -34,6 +34,7 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.R.drawable.ic_arrow_left_24
 import com.together.study.designsystem.component.TogedySearchBar
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.component.SortBottomSheet
 import com.together.study.study.component.SortingFilterSection
@@ -143,7 +144,7 @@ fun StudySearchScreen(
             }
 
             is UiState.Failure -> {}
-            is UiState.Loading -> {}
+            is UiState.Loading -> TogedyLoadingScreen()
             is UiState.Success<*> -> {
                 with(filterState) {
                     SuccessResultScreen(

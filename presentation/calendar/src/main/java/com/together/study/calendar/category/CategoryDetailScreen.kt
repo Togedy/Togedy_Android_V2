@@ -36,6 +36,7 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 
@@ -100,7 +101,7 @@ fun CategoryDetailScreen(
         }
 
         when (categoryState) {
-            is UiState.Loading -> {}
+            is UiState.Loading -> TogedyLoadingScreen()
             is UiState.Success -> {
                 CategoryItems(
                     categoryItems = categoryState.data,
