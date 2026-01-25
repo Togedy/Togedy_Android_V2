@@ -53,7 +53,7 @@ import java.time.LocalDate
 @Composable
 internal fun PlannerScreen(
     modifier: Modifier = Modifier,
-    onShareNavigate: () -> Unit,
+    onShareNavigate: (Int, Int, Int) -> Unit,
     onTimerNavigate: () -> Unit,
     onEditSubjectNavigate: () -> Unit,
     viewModel: PlannerViewModel = hiltViewModel(),
@@ -99,7 +99,7 @@ private fun PlannerSuccessScreen(
     modifier: Modifier = Modifier,
     onTabClick: (PlannerMainTab) -> Unit,
     onSelectedDateChange: (LocalDate) -> Unit,
-    onShareButtonClick: () -> Unit,
+    onShareButtonClick: (Int, Int, Int) -> Unit,
     onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
@@ -150,7 +150,11 @@ private fun PlannerSuccessScreen(
             },
             onShareButtonClick = {
                 showDropdown = false
-                onShareButtonClick()
+                onShareButtonClick(
+                    selectedDate.year,
+                    selectedDate.monthValue,
+                    selectedDate.dayOfMonth,
+                )
             },
         )
 
@@ -279,7 +283,7 @@ private fun PlannerTopSection(
 private fun PlannerScreenPreview() {
     TogedyTheme {
         PlannerScreen(
-            onShareNavigate = {},
+            onShareNavigate = { _, _, _ -> },
             onTimerNavigate = {},
             onEditSubjectNavigate = {},
         )

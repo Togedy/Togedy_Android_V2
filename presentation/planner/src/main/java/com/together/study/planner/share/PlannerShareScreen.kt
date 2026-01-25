@@ -11,8 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +32,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.Todo
 import com.together.study.planner.share.component.PlannerContent
+import com.together.study.planner.share.component.ShareOptionBottomSheet
 import com.together.study.planner.share.component.ShareTimerSection
 import java.time.LocalDate
 
@@ -47,6 +53,7 @@ fun PlannerShareRoute(modifier: Modifier = Modifier) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlannerShareScreen(
     context: Context,
@@ -58,6 +65,8 @@ fun PlannerShareScreen(
     onBackButtonClick: () -> Unit,
     onConfirmButtonClick: () -> Unit,
 ) {
+    var isShareOptionVisible by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -140,12 +149,29 @@ fun PlannerShareScreen(
                 containerColor = TogedyTheme.colors.gray300,
                 contentColor = TogedyTheme.colors.gray600,
                 textStyle = TogedyTheme.typography.title16sb,
-                onClick = {},
+                onClick = { isShareOptionVisible = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 30.dp),
             )
         }
+    }
+
+    if (isShareOptionVisible) {
+        ShareOptionBottomSheet(
+            subjects = listOf(
+                PlannerSubject(1, "수학", "SUBJECT_COLOR2", null),
+                PlannerSubject(2, "수sd학", "SUBJECT_COLOR4", null),
+                PlannerSubject(3, "수학", "SUBJECT_COLOR7", null),
+            ),
+            onDismissRequest = { isShareOptionVisible = false },
+            showTodo = true,
+            selectAllSubject = true,
+            selectedSubjects = listOf(1),
+            onShowTodoChanged = { },
+            onSelectAllSubjectChanged = { },
+            onSubjectClick = { },
+        )
     }
 }
 
