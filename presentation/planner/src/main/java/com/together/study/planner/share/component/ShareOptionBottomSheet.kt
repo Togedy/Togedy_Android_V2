@@ -86,7 +86,7 @@ internal fun ShareOptionBottomSheet(
                         subjectName = subject.name,
                         subjectColor = subject.color,
                         isSelected = subject.id in selectedSubjects,
-                        onItemClick = { onSubjectClick(subject.id!!) },
+                        onItemClick = { subject.id?.let { onSubjectClick(it) } },
                     )
                 }
             }

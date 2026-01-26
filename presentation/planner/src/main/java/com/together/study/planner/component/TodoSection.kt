@@ -29,7 +29,7 @@ internal fun TodoSection(
         horizontalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "${dDay.userScheduleName}",
+            text = dDay.userScheduleName ?: "",
             style = TogedyTheme.typography.body10m,
             color = TogedyTheme.colors.green,
             modifier = Modifier.padding(horizontal = 3.dp),
