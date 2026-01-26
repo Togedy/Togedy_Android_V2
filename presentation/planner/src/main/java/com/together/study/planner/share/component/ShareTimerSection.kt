@@ -30,7 +30,7 @@ import coil.request.ImageRequest
 import com.together.study.calendar.model.DDay
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.TodoSection
-import com.together.study.util.formatToScheduleDate
+import com.together.study.util.formatToYearMonthDate
 import java.time.LocalDate
 
 @Composable
@@ -73,7 +73,7 @@ internal fun ShareTimerSection(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 Text(
                     text = "Study Time",
@@ -82,7 +82,7 @@ internal fun ShareTimerSection(
                 )
 
                 Text(
-                    text = currentDate.formatToScheduleDate(),
+                    text = currentDate.formatToYearMonthDate(),
                     style = TogedyTheme.typography.body12m,
                     color = TogedyTheme.colors.white,
                 )
@@ -91,9 +91,9 @@ internal fun ShareTimerSection(
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = timer,
+                text = timer.toTimerType(),
                 style = TogedyTheme.typography.time40l,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 color = TogedyTheme.colors.white,
             )
 
@@ -107,6 +107,11 @@ internal fun ShareTimerSection(
             }
         }
     }
+}
+
+private fun String.toTimerType(): String {
+    val (h, m, s) = this.split(":")
+    return "${h}h ${m}m ${s}s"
 }
 
 @Preview
