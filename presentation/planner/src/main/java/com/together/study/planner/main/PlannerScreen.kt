@@ -42,6 +42,7 @@ import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.PlannerDropDownScrim
 import com.together.study.planner.component.TimerSection
+import com.together.study.planner.component.TodoSection
 import com.together.study.planner.main.state.PlannerInfo
 import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.type.PlannerSheetType
@@ -52,7 +53,7 @@ import java.time.LocalDate
 @Composable
 internal fun PlannerScreen(
     modifier: Modifier = Modifier,
-    onShareNavigate: () -> Unit,
+    onShareNavigate: (Int, Int, Int) -> Unit,
     onTimerNavigate: () -> Unit,
     onEditSubjectNavigate: () -> Unit,
     viewModel: PlannerViewModel = hiltViewModel(),
@@ -98,7 +99,7 @@ private fun PlannerSuccessScreen(
     modifier: Modifier = Modifier,
     onTabClick: (PlannerMainTab) -> Unit,
     onSelectedDateChange: (LocalDate) -> Unit,
-    onShareButtonClick: () -> Unit,
+    onShareButtonClick: (Int, Int, Int) -> Unit,
     onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
@@ -149,7 +150,11 @@ private fun PlannerSuccessScreen(
             },
             onShareButtonClick = {
                 showDropdown = false
-                onShareButtonClick()
+                onShareButtonClick(
+                    selectedDate.year,
+                    selectedDate.monthValue,
+                    selectedDate.dayOfMonth,
+                )
             },
         )
 
@@ -268,31 +273,7 @@ private fun PlannerTopSection(
         }
 
         if (dDay.hasDday) {
-            val dDayText = when (val days = dDay.remainingDays) {
-                null -> ""
-                0 -> "D-DAY"
-                else -> if (days < 0) "D$days" else "D+$days"
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = "${dDay.userScheduleName}",
-                    style = TogedyTheme.typography.body10m,
-                    color = TogedyTheme.colors.green,
-                    modifier = Modifier.padding(horizontal = 3.dp),
-                )
-
-                Text(
-                    text = dDayText,
-                    style = TogedyTheme.typography.body10m,
-                    color = TogedyTheme.colors.gray700,
-                    modifier = Modifier.padding(horizontal = 3.dp),
-                )
-            }
+            TodoSection(dDay)
         }
     }
 }
@@ -302,7 +283,7 @@ private fun PlannerTopSection(
 private fun PlannerScreenPreview() {
     TogedyTheme {
         PlannerScreen(
-            onShareNavigate = {},
+            onShareNavigate = { _, _, _ -> },
             onTimerNavigate = {},
             onEditSubjectNavigate = {},
         )

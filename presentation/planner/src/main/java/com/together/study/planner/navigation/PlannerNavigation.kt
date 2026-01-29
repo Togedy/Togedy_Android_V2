@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
 import com.together.study.planner.main.PlannerScreen
+import com.together.study.planner.share.PlannerShareRoute
 import com.together.study.planner.subject.SubjectDetailRoute
 import kotlinx.serialization.Serializable
 
@@ -19,6 +20,13 @@ fun NavController.navigateToSubjectDetail(
     navOptions: NavOptions? = null,
 ) = navigate(SubjectDetail)
 
+fun NavController.navigateToSharePlanner(
+    year: Int,
+    month: Int,
+    day: Int,
+    navOptions: NavOptions? = null,
+) = navigate(PlannerShare(year, month, day))
+
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
     navigateToSharePlanner: () -> Unit,
@@ -28,7 +36,7 @@ fun NavGraphBuilder.plannerGraph(
     composable<Planner> {
         PlannerScreen(
             modifier = modifier,
-            onShareNavigate = navigateToSharePlanner,
+            onShareNavigate = navController::navigateToSharePlanner,
             onTimerNavigate = { },
             onEditSubjectNavigate = navController::navigateToSubjectDetail,
         )
@@ -40,6 +48,12 @@ fun NavGraphBuilder.plannerGraph(
             modifier = modifier,
         )
     }
+
+    composable<PlannerShare> {
+        PlannerShareRoute(
+            modifier = modifier,
+        )
+    }
 }
 
 @Serializable
@@ -47,3 +61,10 @@ data object Planner : MainTabRoute
 
 @Serializable
 data object SubjectDetail : Route
+
+@Serializable
+data class PlannerShare(
+    val year: Int,
+    val month: Int,
+    val day: Int,
+) : Route

@@ -27,6 +27,9 @@ fun LocalDate?.formatToScheduleDate(): String {
             "${this.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.KOREAN)}"
 }
 
+fun LocalDate.formatToYearMonthDate(): String =
+    "${this.year}년 ${this.monthValue}월 ${this.dayOfMonth}일"
+
 fun LocalDate.getDaysInMonthGrid(): List<String> {
     val yearMonth = YearMonth.of(this.year, this.month)
     val firstDayOfMonth = yearMonth.atDay(1)
