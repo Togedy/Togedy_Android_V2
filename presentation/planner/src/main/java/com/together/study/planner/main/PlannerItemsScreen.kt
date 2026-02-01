@@ -1,6 +1,7 @@
 package com.together.study.planner.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,9 +20,16 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +45,7 @@ import com.together.study.util.noRippleClickable
 internal fun PlannerItemsScreen(
     subjects: List<PlannerSubject> = listOf(
         PlannerSubject(
+            0,
             "카테고리1",
             "SUBJECT_COLOR1",
             listOf(Todo(0, "할 일1"), Todo(1, null), Todo(2, "할 일3"))
@@ -45,13 +54,25 @@ internal fun PlannerItemsScreen(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(listState.isScrollInProgress) {
+        if (listState.isScrollInProgress) {
+            focusManager.clearFocus()
+        }
+    }
 
     LazyColumn(
         state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .padding(14.dp),
+            .padding(14.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { focusManager.clearFocus() }
+                )
+            },
     ) {
         item {
             Text(
@@ -64,11 +85,15 @@ internal fun PlannerItemsScreen(
         }
 
         itemsIndexed(subjects) { index, subject ->
+            var todoItems by remember(subject.todoItems) { mutableStateOf(subject.todoItems) }
+
             SubjectSection(
                 subjectName = subject.name,
                 subjectColor = subject.color,
-                todoItems = subject.todoItems ?: emptyList(),
-                onPlusButtonClick = {},
+                todoItems = todoItems ?: emptyList(),
+                onPlusButtonClick = {
+                    todoItems = todoItems?.plus(Todo())
+                },
                 onTodoContentChange = { id, content -> },
                 onTodoEditButtonClick = {},
             )
@@ -88,7 +113,7 @@ fun SubjectSection(
     todoItems: List<Todo>,
     modifier: Modifier = Modifier,
     onPlusButtonClick: () -> Unit,
-    onTodoContentChange: (Long, String) -> Unit,
+    onTodoContentChange: (Long?, String) -> Unit,
     onTodoEditButtonClick: () -> Unit,
 ) {
     val subjectColor = subjectColor.toPlannerSubjectColorOrDefault()
@@ -144,13 +169,14 @@ fun SubjectSection(
         if (todoItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
 
         todoItems.forEachIndexed { index, todoItem ->
+            var currentTodoContent by remember(todoItem.content) { mutableStateOf(todoItem.content) }
             val bottomPadding = if (index == todoItems.lastIndex) 0.dp else 12.dp
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = bottomPadding),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Top,
             ) {
                 val stateColor =
                     when (todoItem.state) {
@@ -167,11 +193,14 @@ fun SubjectSection(
                 Spacer(Modifier.width(8.dp))
 
                 BasicTextField(
-                    value = todoItem.content ?: "",
-                    onValueChange = { it -> onTodoContentChange(todoItem.id, it) },
+                    value = currentTodoContent ?: "",
+                    onValueChange = { it ->
+                        currentTodoContent = it
+                        onTodoContentChange(todoItem.id, it)
+                    },
                     textStyle = TogedyTheme.typography.body13m,
                     decorationBox = { innerTextField ->
-                        if (todoItem.content.isNullOrEmpty()) {
+                        if (currentTodoContent.isNullOrEmpty()) {
                             Text(
                                 text = "To do...",
                                 style = TogedyTheme.typography.body13m,

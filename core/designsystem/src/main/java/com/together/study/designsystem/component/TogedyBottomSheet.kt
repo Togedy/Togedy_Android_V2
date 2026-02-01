@@ -3,6 +3,7 @@ package com.together.study.designsystem.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -20,21 +21,18 @@ import com.together.study.util.noRippleClickable
 @Composable
 fun TogedyBottomSheet(
     sheetState: SheetState,
-    onDismissRequest: () -> Unit,
-    title: String = "",
-    titleStyle: TextStyle =
-        TogedyTheme.typography.title16sb.copy(
-            color = TogedyTheme.colors.black
-        ),
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    titleStyle: TextStyle = TogedyTheme.typography.title16sb.copy(
+        color = TogedyTheme.colors.black
+    ),
     showDone: Boolean = false,
     isDoneActivate: Boolean = true,
+    onDismissRequest: () -> Unit,
     onDoneClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
-    searchContent: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val doneColor = if (isDoneActivate) TogedyTheme.colors.green else TogedyTheme.colors.gray300
-    val isSearchDetail = searchContent != null
 
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
@@ -50,15 +48,16 @@ fun TogedyBottomSheet(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
             ) {
-                if (searchContent != null) searchContent()
-
-                if (!isSearchDetail) {
+                if (title != null) {
                     Text(
                         text = title,
-                        modifier = Modifier.align(
-                            alignment = Alignment.Companion.Center
-                        ),
+                        modifier = Modifier
+                            .padding(vertical = 17.dp)
+                            .align(
+                                alignment = Alignment.Companion.Center
+                            ),
                         style = titleStyle
                     )
 
@@ -68,6 +67,7 @@ fun TogedyBottomSheet(
                             style = TogedyTheme.typography.title16sb.copy(doneColor),
                             modifier = Modifier
                                 .align(alignment = Alignment.Companion.CenterEnd)
+                                .padding(horizontal = 14.dp)
                                 .then(
                                     if (isDoneActivate) Modifier.noRippleClickable(onDoneClick)
                                     else Modifier

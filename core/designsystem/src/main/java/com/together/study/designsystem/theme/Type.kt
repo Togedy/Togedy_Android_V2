@@ -34,6 +34,7 @@ class TogedyTypography(
     val body10m: TextStyle,
     val toast13sb: TextStyle,
     val toast12sb: TextStyle,
+    val toast13r: TextStyle,
     val toast12r: TextStyle,
     val chip14b: TextStyle,
     val chip10sb: TextStyle,
@@ -111,6 +112,11 @@ fun TogedyTypography() = TogedyTypography(
         fontFamily = PretendardSemiBold,
         fontSize = 12.sp,
         lineHeight = 14.sp,
+    ),
+    toast13r = TogedyTextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 13.sp,
+        lineHeight = 16.sp,
     ),
     toast12r = TogedyTextStyle(
         fontFamily = PretendardRegular,

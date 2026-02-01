@@ -53,6 +53,7 @@ import com.together.study.designsystem.R.drawable.ic_settings_24
 import com.together.study.designsystem.R.drawable.ic_share_20
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.button.TogedyButton
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
@@ -130,7 +131,7 @@ private fun StudyDetailScreen(
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
         is UiState.Failure -> {}
-        is UiState.Loading -> {}
+        is UiState.Loading -> TogedyLoadingScreen()
         is UiState.Success -> {
             StudyDetailSuccessScreen(
                 studyId = studyId,

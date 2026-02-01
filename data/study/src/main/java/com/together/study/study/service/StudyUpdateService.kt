@@ -1,8 +1,8 @@
 package com.together.study.study.service
 
 import com.together.study.remote.model.BaseResponse
-import com.together.study.study.dto.StudyDuplicateResponse
 import com.together.study.remote.model.EmptyDataResponse
+import com.together.study.study.dto.StudyDuplicateResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET

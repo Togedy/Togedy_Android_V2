@@ -42,12 +42,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
+import com.together.study.designsystem.R.drawable.ic_check_green
+import com.together.study.designsystem.R.drawable.ic_check_red
 import com.together.study.designsystem.R.drawable.ic_leader
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.type.MemberEditType
@@ -64,6 +69,7 @@ fun MemberSettingsScreen(
     viewModel: MemberSettingsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val toast = LocalTogedyToast.current
 
     var searchTerm by remember { mutableStateOf("") }
     val selectedUser by viewModel.selectedUser.collectAsStateWithLifecycle()
@@ -72,12 +78,19 @@ fun MemberSettingsScreen(
     val eventFlow = viewModel.eventFlow
     val type = viewModel.type
 
+    val yOffset = toast.toastBasicOffset()
+
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
             when (event) {
                 is MemberEditEvent.DeleteMemberSuccess -> {
                     isMemberDialogVisible = false
-                    // toast
+                    toast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = "멤버 내보내기가 완료되었습니다.",
+                        icon = ic_check_green,
+                        yOffset = yOffset,
+                    )
                 }
 
                 is MemberEditEvent.DelegateSuccess -> {
@@ -86,8 +99,15 @@ fun MemberSettingsScreen(
 
                 is MemberEditEvent.ShowError -> {
                     isMemberDialogVisible = false
-                    // toast
+                    toast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = event.message,
+                        icon = ic_check_red,
+                        yOffset = yOffset,
+                    )
                 }
+
+                else -> {}
             }
         }
     }
@@ -117,7 +137,7 @@ fun MemberSettingsScreen(
         )
 
         when (uiState) {
-            is UiState.Loading -> {}
+            is UiState.Loading -> TogedyLoadingScreen()
             is UiState.Empty -> {}
             is UiState.Failure -> {}
             is UiState.Success<*> -> {
@@ -170,8 +190,10 @@ fun MemberSettingsScreen(
                                         )
 
                                         else -> {
-                                            isMemberDialogVisible = true
-                                            viewModel.updateSelectedUSer(item)
+                                            viewModel.updateSelectedUser(item)
+                                            if (!viewModel.checkIdIsUser()) {
+                                                isMemberDialogVisible = true
+                                            }
                                         }
                                     }
                                 },
@@ -186,7 +208,7 @@ fun MemberSettingsScreen(
                                 AsyncImage(
                                     model = ImageRequest
                                         .Builder(context)
-                                        .data("") // TODO DTO 수정 시 변경
+                                        .data(item.userProfileImageUrl)
                                         .placeholder(img_study_background)
                                         .error(img_study_background)
                                         .fallback(img_study_background)

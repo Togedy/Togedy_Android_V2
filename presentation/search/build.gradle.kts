@@ -16,6 +16,8 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
 
+    implementation(projects.domain.search)
+
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)

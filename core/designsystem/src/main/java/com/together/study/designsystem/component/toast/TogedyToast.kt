@@ -106,4 +106,8 @@ class TogedyToast(
     fun toastOffsetWithBottomBar(): Int {
         return with(Density(context)) { 100.dp.toPx() }.toInt()
     }
+
+    fun toastBasicOffset(): Int {
+        return with(Density(context)) { 30.dp.toPx() }.toInt()
+    }
 }

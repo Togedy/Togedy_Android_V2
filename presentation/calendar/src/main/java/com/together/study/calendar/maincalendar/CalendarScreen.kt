@@ -49,6 +49,7 @@ import com.together.study.common.type.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.component.calendar.DayOfWeek
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_volume_16
 import com.together.study.presentation.calendar.R.string.calendar_year_month
@@ -103,8 +104,7 @@ private fun CalendarScreen(
     modifier: Modifier = Modifier,
 ) {
     when (uiState.isLoaded) {
-        is UiState.Loading -> {
-        }
+        is UiState.Loading -> TogedyLoadingScreen()
 
         is UiState.Empty -> {
         }
