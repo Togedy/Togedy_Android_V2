@@ -51,6 +51,7 @@ fun NavGraphBuilder.plannerGraph(
 
     composable<PlannerShare> {
         PlannerShareRoute(
+            onBackButtonClick = navigateToUp,
             modifier = modifier,
         )
     }

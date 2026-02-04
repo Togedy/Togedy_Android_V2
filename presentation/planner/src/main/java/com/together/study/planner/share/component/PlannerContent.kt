@@ -21,21 +21,21 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.model.Todo
+import com.together.study.planner.model.PlannerItem
+import com.together.study.planner.model.TaskItem
 import com.together.study.planner.type.toPlannerSubjectColorOrDefault
 
 @Composable
 internal fun PlannerContent(
     showTodo: Boolean,
-    plans: List<PlannerSubject>,
+    plans: List<PlannerItem>,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.wrapContentHeight(),
     ) {
         plans.forEach { plan ->
-            val subjectColor = plan.color.toPlannerSubjectColorOrDefault()
+            val subjectColor = plan.subjectColor.toPlannerSubjectColorOrDefault()
 
             Row(
                 modifier = Modifier.padding(bottom = 4.dp),
@@ -51,7 +51,7 @@ internal fun PlannerContent(
                 Spacer(Modifier.width(4.dp))
 
                 Text(
-                    text = plan.name,
+                    text = plan.subjectName,
                     style = TogedyTheme.typography.body12m,
                     color = TogedyTheme.colors.gray700,
                 )
@@ -59,13 +59,13 @@ internal fun PlannerContent(
                 Spacer(Modifier.weight(1f))
 
                 Text(
-                    text = "${plan.todoItems?.size ?: 0}",
+                    text = "${plan.checkedTaskCount}",
                     style = TogedyTheme.typography.body10m,
                     color = TogedyTheme.colors.green,
                 )
 
                 Text(
-                    text = "/${plan.todoItems?.size ?: 0}",
+                    text = "/${plan.totalTaskCount}",
                     style = TogedyTheme.typography.body10m,
                     color = TogedyTheme.colors.gray700,
                 )
@@ -73,13 +73,13 @@ internal fun PlannerContent(
 
             HorizontalDivider(color = TogedyTheme.colors.gray200)
 
-            if (showTodo && plan.todoItems != null) {
-                plan.todoItems!!.take(5).forEach { todo ->
+            if (showTodo && plan.taskList.isNotEmpty()) {
+                plan.taskList.take(5).forEach { todo ->
                     val textColor =
-                        if (todo.state == 0) TogedyTheme.colors.gray500
+                        if (todo.isChecked) TogedyTheme.colors.gray500
                         else TogedyTheme.colors.black
                     val textDeco =
-                        if (todo.state != 0) TextDecoration.LineThrough
+                        if (todo.isChecked) TextDecoration.LineThrough
                         else null
 
                     Row(
@@ -95,7 +95,7 @@ internal fun PlannerContent(
                         )
 
                         Text(
-                            text = todo.content ?: "알수없음",
+                            text = todo.taskName,
                             style = TogedyTheme.typography.body10m,
                             color = textColor,
                             textDecoration = textDeco,
@@ -118,20 +118,16 @@ private fun PlannerContentPreview() {
         PlannerContent(
             showTodo = true,
             plans = listOf(
-                PlannerSubject(
-                    id = 1,
-                    name = "국어",
-                    color = "SUBJECT_COLOR1",
-                    todoItems = listOf(
-                        Todo(1, "할 일1", 0),
-                        Todo(2, "EBS 수능", 1),
+                PlannerItem(
+                    subjectId = 1,
+                    subjectName = "수학",
+                    subjectColor = "SUBJECT_COLOR2",
+                    totalTaskCount = 10,
+                    checkedTaskCount = 5,
+                    taskList = listOf(
+                        TaskItem(1, "할 일1", false),
+                        TaskItem(2, "EBS 수학", true),
                     )
-                ),
-                PlannerSubject(
-                    id = 1,
-                    name = "수학",
-                    color = "SUBJECT_COLOR2",
-                    todoItems = null,
                 ),
             ),
         )

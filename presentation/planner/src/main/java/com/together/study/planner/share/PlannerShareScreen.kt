@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,46 +24,78 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.model.DDay
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.TogedyBasicButton
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.model.Todo
 import com.together.study.planner.share.component.PlannerContent
 import com.together.study.planner.share.component.ShareOptionBottomSheet
 import com.together.study.planner.share.component.ShareTimerSection
+import com.together.study.planner.share.state.PlannerShareInfo
+import com.together.study.util.toLocalDate
 import java.time.LocalDate
 
 @Composable
-fun PlannerShareRoute(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+internal fun PlannerShareRoute(
+    onBackButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: PlannerShareViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedSubjects by viewModel.selectedSubjects.collectAsStateWithLifecycle()
+    val isAllSelected by viewModel.isAllSelected.collectAsStateWithLifecycle()
+    val showTodo by viewModel.showTodo.collectAsStateWithLifecycle()
 
-    PlannerShareScreen(
-        context = context,
-        timerImageUrl = "",
-        timer = "00:00:00",
-        currentDate = LocalDate.now(),
-        dDay = DDay(true, "수능", 100),
-        modifier = modifier,
-        onBackButtonClick = {},
-        onConfirmButtonClick = {},
-    )
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        // api 호출
+    }
+
+    when (uiState.plannerShareInfo) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> TogedyLoadingScreen()
+        is UiState.Success -> {
+            PlannerShareScreen(
+                context = context,
+                plannerShareInfo = (uiState.plannerShareInfo as UiState.Success).data,
+                selectedSubjects = selectedSubjects,
+                isAllSelected = isAllSelected,
+                showTodo = showTodo,
+                modifier = modifier,
+                onBackButtonClick = onBackButtonClick,
+                onConfirmButtonClick = { /* TODO : 갤러리 연결*/ },
+                onShowTodoChanged = viewModel::updateShowTodo,
+                onSelectAllSubjectChanged = viewModel::updateIsAllSelected,
+                onSubjectClick = viewModel::updateSelectedSubjects,
+            )
+        }
+
+        is UiState.Failure -> {}
+        else -> {}
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlannerShareScreen(
     context: Context,
-    timerImageUrl: String,
-    timer: String,
-    currentDate: LocalDate,
-    dDay: DDay,
+    plannerShareInfo: PlannerShareInfo,
+    selectedSubjects: List<Long>,
+    isAllSelected: Boolean,
+    showTodo: Boolean,
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
     onConfirmButtonClick: () -> Unit,
+    onShowTodoChanged: () -> Unit,
+    onSelectAllSubjectChanged: () -> Unit,
+    onSubjectClick: (Long) -> Unit,
 ) {
     var isShareOptionVisible by remember { mutableStateOf(false) }
 
@@ -91,10 +123,10 @@ fun PlannerShareScreen(
 
             ShareTimerSection(
                 context = context,
-                timerImageUrl = timerImageUrl,
-                currentDate = currentDate,
-                timer = timer,
-                dDay = dDay,
+                timerImageUrl = plannerShareInfo.image,
+                currentDate = plannerShareInfo.date.toLocalDate() ?: LocalDate.now(),
+                timer = plannerShareInfo.totalStudyTime,
+                dDay = plannerShareInfo.dDay,
             )
 
             Row(
@@ -105,27 +137,7 @@ fun PlannerShareScreen(
             ) {
                 PlannerContent(
                     showTodo = true,
-                    plans = listOf(
-                        PlannerSubject(
-                            id = 1,
-                            name = "국어",
-                            color = "SUBJECT_COLOR1",
-                            todoItems = listOf(
-                                Todo(1, "할 일1", 0),
-                                Todo(
-                                    2,
-                                    "EBS 수능특강 13강 -135page ~180page 반복 + 문풀 회독 & 14강 미리 예습해오기",
-                                    1
-                                ),
-                            ),
-                        ),
-                        PlannerSubject(
-                            id = 1,
-                            name = "수학",
-                            color = "SUBJECT_COLOR2",
-                            todoItems = null,
-                        ),
-                    ),
+                    plans = plannerShareInfo.plannerItemList,
                     modifier = Modifier.weight(1f),
                 )
 
@@ -165,12 +177,12 @@ fun PlannerShareScreen(
                 PlannerSubject(3, "수학", "SUBJECT_COLOR7", null),
             ),
             onDismissRequest = { isShareOptionVisible = false },
-            showTodo = true,
-            selectAllSubject = true,
-            selectedSubjects = listOf(1),
-            onShowTodoChanged = { },
-            onSelectAllSubjectChanged = { },
-            onSubjectClick = { },
+            showTodo = showTodo,
+            selectAllSubject = isAllSelected,
+            selectedSubjects = selectedSubjects,
+            onShowTodoChanged = onShowTodoChanged,
+            onSelectAllSubjectChanged = onSelectAllSubjectChanged,
+            onSubjectClick = onSubjectClick,
         )
     }
 }
@@ -181,12 +193,22 @@ private fun PlannerShareScreenPreview() {
     TogedyTheme {
         PlannerShareScreen(
             context = LocalContext.current,
-            timerImageUrl = "",
-            timer = "00:00:00",
-            currentDate = LocalDate.now(),
-            dDay = DDay(true, "수능", 100),
+            plannerShareInfo = PlannerShareInfo(
+                date = "2023-08-10",
+                dDay = DDay(true, "수능", -100),
+                totalStudyTime = "12:00:05",
+                image = "",
+                plannerItemList = listOf(),
+                timeTableList = listOf(),
+            ),
+            selectedSubjects = listOf(),
+            isAllSelected = false,
+            showTodo = true,
             onBackButtonClick = {},
             onConfirmButtonClick = {},
+            onShowTodoChanged = {},
+            onSelectAllSubjectChanged = {},
+            onSubjectClick = {},
         )
     }
 }
