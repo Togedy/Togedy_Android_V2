@@ -29,7 +29,6 @@ fun NavController.navigateToSharePlanner(
 
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
-    navigateToSharePlanner: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
