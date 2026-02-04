@@ -55,7 +55,7 @@ internal fun PlannerShareRoute(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        // api 호출
+        viewModel.getPlannerShareInfo()
     }
 
     when (uiState.plannerShareInfo) {
@@ -136,7 +136,7 @@ fun PlannerShareScreen(
                     .padding(top = 8.dp),
             ) {
                 PlannerContent(
-                    showTodo = true,
+                    showTodo = showTodo,
                     plans = plannerShareInfo.plannerItemList,
                     modifier = Modifier.weight(1f),
                 )

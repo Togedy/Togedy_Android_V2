@@ -7,7 +7,7 @@ import com.together.study.planner.model.PlannerItem
 
 @Immutable
 data class PlannerShareUiState(
-    val plannerShareInfo: UiState<PlannerShareInfo> = UiState.Loading,
+    var plannerShareInfo: UiState<PlannerShareInfo> = UiState.Loading,
 )
 
 data class PlannerShareInfo(
