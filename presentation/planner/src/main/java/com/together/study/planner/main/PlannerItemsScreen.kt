@@ -43,14 +43,7 @@ import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun PlannerItemsScreen(
-    subjects: List<PlannerSubject> = listOf(
-        PlannerSubject(
-            0,
-            "카테고리1",
-            "SUBJECT_COLOR1",
-            listOf(Todo(0, "할 일1"), Todo(1, null), Todo(2, "할 일3"))
-        )
-    ),
+    subjects: List<PlannerSubject>,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
@@ -85,14 +78,14 @@ internal fun PlannerItemsScreen(
         }
 
         itemsIndexed(subjects) { index, subject ->
-            var todoItems by remember(subject.todoItems) { mutableStateOf(subject.todoItems) }
+            var todoItems by remember(subject.tasks) { mutableStateOf(subject.tasks) }
 
             SubjectSection(
-                subjectName = subject.name,
-                subjectColor = subject.color,
-                todoItems = todoItems ?: emptyList(),
+                subjectName = subject.subjectName,
+                subjectColor = subject.subjectColor,
+                todoItems = todoItems,
                 onPlusButtonClick = {
-                    todoItems = todoItems?.plus(Todo())
+                    todoItems = todoItems.plus(Todo())
                 },
                 onTodoContentChange = { id, content -> },
                 onTodoEditButtonClick = {},
@@ -231,6 +224,8 @@ fun SubjectSection(
 @Composable
 private fun PlannerItemsScreenPreview() {
     TogedyTheme {
-        PlannerItemsScreen()
+        PlannerItemsScreen(
+            subjects = emptyList(),
+        )
     }
 }
