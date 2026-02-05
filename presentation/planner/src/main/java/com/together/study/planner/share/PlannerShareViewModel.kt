@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.together.study.calendar.model.DDay
 import com.together.study.common.state.UiState
 import com.together.study.planner.model.PlannerItem
+import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.TaskItem
 import com.together.study.planner.share.state.PlannerShareInfo
 import com.together.study.planner.share.state.PlannerShareUiState
@@ -19,7 +20,8 @@ internal class PlannerShareViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PlannerShareUiState())
     val uiState = _uiState.asStateFlow()
 
-    private var _subjects = listOf<PlannerItem>().map { it.subjectId }
+    private val _subjects: MutableStateFlow<List<PlannerSubject>> = MutableStateFlow(emptyList())
+    val subjects = _subjects.asStateFlow()
     private val _selectedSubjects: MutableStateFlow<List<Long>> = MutableStateFlow(emptyList())
     val selectedSubjects = _selectedSubjects.asStateFlow()
     private val _isAllSelected: MutableStateFlow<Boolean> = MutableStateFlow(true)
@@ -65,12 +67,23 @@ internal class PlannerShareViewModel @Inject constructor(
                 timeTableList = listOf(),
             )
         )
+
+        _subjects.value =
+            (_uiState.value.plannerShareInfo as UiState.Success).data.plannerItemList.map {
+                PlannerSubject(
+                    it.subjectId,
+                    it.subjectName,
+                    it.subjectColor,
+                )
+            }
+        _selectedSubjects.value = _subjects.value.map { it.subjectId.let { id -> id!! } }
     }
 
     fun updateIsAllSelected() {
         _isAllSelected.value = !_isAllSelected.value
 
-        if (_isAllSelected.value) _selectedSubjects.value = _subjects
+        if (_isAllSelected.value) _selectedSubjects.value =
+            subjects.value.map { it.subjectId.let { id -> id!! } }
         else _selectedSubjects.value = emptyList()
     }
 
@@ -79,6 +92,7 @@ internal class PlannerShareViewModel @Inject constructor(
     }
 
     fun updateSelectedSubjects(new: Long) {
-        _selectedSubjects.value += new
+        if (_selectedSubjects.value.contains(new)) _selectedSubjects.value -= new
+        else _selectedSubjects.value += new
     }
 }

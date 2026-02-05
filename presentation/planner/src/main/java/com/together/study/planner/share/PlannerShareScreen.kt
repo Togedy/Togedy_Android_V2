@@ -48,6 +48,7 @@ internal fun PlannerShareRoute(
     viewModel: PlannerShareViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val subjects by viewModel.subjects.collectAsStateWithLifecycle()
     val selectedSubjects by viewModel.selectedSubjects.collectAsStateWithLifecycle()
     val isAllSelected by viewModel.isAllSelected.collectAsStateWithLifecycle()
     val showTodo by viewModel.showTodo.collectAsStateWithLifecycle()
@@ -65,6 +66,7 @@ internal fun PlannerShareRoute(
             PlannerShareScreen(
                 context = context,
                 plannerShareInfo = (uiState.plannerShareInfo as UiState.Success).data,
+                subjects = subjects,
                 selectedSubjects = selectedSubjects,
                 isAllSelected = isAllSelected,
                 showTodo = showTodo,
@@ -78,7 +80,6 @@ internal fun PlannerShareRoute(
         }
 
         is UiState.Failure -> {}
-        else -> {}
     }
 }
 
@@ -87,6 +88,7 @@ internal fun PlannerShareRoute(
 fun PlannerShareScreen(
     context: Context,
     plannerShareInfo: PlannerShareInfo,
+    subjects: List<PlannerSubject>,
     selectedSubjects: List<Long>,
     isAllSelected: Boolean,
     showTodo: Boolean,
@@ -138,6 +140,7 @@ fun PlannerShareScreen(
                 PlannerContent(
                     showTodo = showTodo,
                     plans = plannerShareInfo.plannerItemList,
+                    selectedSubjects = selectedSubjects,
                     modifier = Modifier.weight(1f),
                 )
 
@@ -171,11 +174,7 @@ fun PlannerShareScreen(
 
     if (isShareOptionVisible) {
         ShareOptionBottomSheet(
-            subjects = listOf(
-                PlannerSubject(1, "수학", "SUBJECT_COLOR2", null),
-                PlannerSubject(2, "수sd학", "SUBJECT_COLOR4", null),
-                PlannerSubject(3, "수학", "SUBJECT_COLOR7", null),
-            ),
+            subjects = subjects,
             onDismissRequest = { isShareOptionVisible = false },
             showTodo = showTodo,
             selectAllSubject = isAllSelected,
@@ -201,6 +200,7 @@ private fun PlannerShareScreenPreview() {
                 plannerItemList = listOf(),
                 timeTableList = listOf(),
             ),
+            subjects = listOf(),
             selectedSubjects = listOf(),
             isAllSelected = false,
             showTodo = true,

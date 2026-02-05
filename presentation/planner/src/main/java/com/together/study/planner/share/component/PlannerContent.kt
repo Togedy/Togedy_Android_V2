@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import com.together.study.planner.type.toPlannerSubjectColorOrDefault
 internal fun PlannerContent(
     showTodo: Boolean,
     plans: List<PlannerItem>,
+    selectedSubjects: List<Long>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -50,11 +52,18 @@ internal fun PlannerContent(
 
                 Spacer(Modifier.width(4.dp))
 
-                Text(
-                    text = plan.subjectName,
-                    style = TogedyTheme.typography.body12m,
-                    color = TogedyTheme.colors.gray700,
-                )
+                Box(
+                    modifier = Modifier.then(
+                        if (plan.subjectId !in selectedSubjects) Modifier.blur(10.dp)
+                        else Modifier
+                    )
+                ) {
+                    Text(
+                        text = plan.subjectName,
+                        style = TogedyTheme.typography.body12m,
+                        color = TogedyTheme.colors.gray700,
+                    )
+                }
 
                 Spacer(Modifier.weight(1f))
 
@@ -130,6 +139,7 @@ private fun PlannerContentPreview() {
                     )
                 ),
             ),
+            selectedSubjects = listOf(),
         )
     }
 }
