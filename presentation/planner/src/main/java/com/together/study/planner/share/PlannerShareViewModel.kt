@@ -92,7 +92,10 @@ internal class PlannerShareViewModel @Inject constructor(
     }
 
     fun updateSelectedSubjects(new: Long) {
-        if (_selectedSubjects.value.contains(new)) _selectedSubjects.value -= new
+        if (_selectedSubjects.value.contains(new)) {
+            _selectedSubjects.value -= new
+            if (_selectedSubjects.value.isEmpty()) updateIsAllSelected()
+        }
         else _selectedSubjects.value += new
     }
 }

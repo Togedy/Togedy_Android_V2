@@ -82,7 +82,7 @@ internal fun PlannerContent(
 
             HorizontalDivider(color = TogedyTheme.colors.gray200)
 
-            if (showTodo && plan.taskList.isNotEmpty()) {
+            if (showTodo && plan.taskList.isNotEmpty() && plan.subjectId in selectedSubjects) {
                 plan.taskList.take(5).forEach { todo ->
                     val textColor =
                         if (todo.isChecked) TogedyTheme.colors.gray500
