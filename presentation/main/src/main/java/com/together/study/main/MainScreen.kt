@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
+import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.TogedyToast
@@ -183,6 +184,11 @@ private fun MainNavHost(
             navigateToUp = navigator.navController::popBackStack,
             navigateToSharePlanner = { /*navigator.navController::navigateToSharePlanner*/ },
             navController = navigator.navController,
+            modifier = modifier,
+        )
+
+        chatBotGraph(
+            navigateToUp = navigator.navController::popBackStack,
             modifier = modifier,
         )
 

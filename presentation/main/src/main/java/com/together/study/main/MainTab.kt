@@ -3,6 +3,7 @@ package com.together.study.main
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import com.together.study.calendar.maincalendar.navigation.Calendar
+import com.together.study.chatbot.navigation.ChatBot
 import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
 import com.together.study.designsystem.R.drawable.ic_ai
@@ -31,17 +32,17 @@ enum class MainTab(
         contentDescription = "캘린더",
         route = Calendar,
     ),
+    CHATBOT(
+        defaultIcon = ic_ai,
+        selectedIcon = ic_ai_selected,
+        contentDescription = "입시GPT",
+        route = ChatBot,
+    ),
     PLANNER(
         defaultIcon = ic_planner,
         selectedIcon = ic_planner_selected,
         contentDescription = "플래너",
         route = Planner,
-    ),
-    DUMMY2(
-        defaultIcon = ic_ai,
-        selectedIcon = ic_ai_selected,
-        contentDescription = "입시GPT",
-        route = Dummy,
     ),
     STUDY(
         defaultIcon = ic_study,
