@@ -51,7 +51,7 @@ internal fun SubjectDetailRoute(
     SubjectDetailScreen(
         subjectState = subjectState,
         onBackButtonClick = onBackButtonClick,
-        onAddDoneBtnClick = { viewModel.saveNewSubject(it.name, it.color) },
+        onAddDoneBtnClick = { viewModel.saveNewSubject(it.subjectName, it.subjectColor) },
         onEditDoneBtnClick = viewModel::updateSubject,
         onDeleteButtonClick = viewModel::deleteSubject,
         modifier = modifier,
@@ -181,7 +181,7 @@ internal fun SubjectItems(
                 plannerSubject = subjectItem,
                 isSubjectEditMode = true,
                 onEditClick = { onEditClick(subjectItem) },
-                onDeleteClick = { onItemDeleteClick(subjectItem.id!!) }
+                onDeleteClick = { onItemDeleteClick(subjectItem.subjectId!!) }
             )
         }
     }
