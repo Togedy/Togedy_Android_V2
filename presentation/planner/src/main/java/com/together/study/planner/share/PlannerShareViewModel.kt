@@ -1,11 +1,14 @@
 package com.together.study.planner.share
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.toRoute
 import com.together.study.calendar.model.DDay
 import com.together.study.common.state.UiState
 import com.together.study.planner.model.PlannerItem
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.TaskItem
+import com.together.study.planner.navigation.PlannerShare
 import com.together.study.planner.share.state.PlannerShareInfo
 import com.together.study.planner.share.state.PlannerShareUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +19,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class PlannerShareViewModel @Inject constructor(
-
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    private val route: PlannerShare = savedStateHandle.toRoute<PlannerShare>()
+    val year = route.year
+    val month = route.month
+    val day = route.day
+    val date = "$year$month$day"
+
     private val _uiState = MutableStateFlow(PlannerShareUiState())
     val uiState = _uiState.asStateFlow()
 

@@ -1,6 +1,7 @@
 package com.together.study.planner.share
 
 import android.content.Context
+import android.graphics.Rect
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,12 +42,15 @@ import com.together.study.planner.share.component.PlannerContent
 import com.together.study.planner.share.component.ShareOptionBottomSheet
 import com.together.study.planner.share.component.ShareTimerSection
 import com.together.study.planner.share.state.PlannerShareInfo
+import com.together.study.util.image.captureComposable
+import com.together.study.util.image.saveBitmapToGallery
 import com.together.study.util.toLocalDate
 import java.time.LocalDate
 
 @Composable
 internal fun PlannerShareRoute(
     onBackButtonClick: () -> Unit,
+    onImageSave: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PlannerShareViewModel = hiltViewModel(),
 ) {
@@ -54,8 +61,12 @@ internal fun PlannerShareRoute(
     val showTodo by viewModel.showTodo.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val view = LocalView.current
+    var targetBounds by remember { mutableStateOf<Rect?>(null) }
+    var showEditButton by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
+        showEditButton = true
         viewModel.getPlannerShareInfo()
     }
 
@@ -65,6 +76,7 @@ internal fun PlannerShareRoute(
         is UiState.Success -> {
             PlannerShareScreen(
                 context = context,
+                showEditButton = showEditButton,
                 plannerShareInfo = (uiState.plannerShareInfo as UiState.Success).data,
                 subjects = subjects,
                 selectedSubjects = selectedSubjects,
@@ -72,7 +84,15 @@ internal fun PlannerShareRoute(
                 showTodo = showTodo,
                 modifier = modifier,
                 onBackButtonClick = onBackButtonClick,
-                onConfirmButtonClick = { /* TODO : 갤러리 연결*/ },
+                getTargetBound = { targetBounds = it },
+                onConfirmButtonClick = {
+                    showEditButton = false
+                    targetBounds?.let { bounds ->
+                        val bitmap = captureComposable(view, bounds)
+                        saveBitmapToGallery(viewModel.date, context, bitmap)
+                    }
+                    onImageSave()
+                },
                 onShowTodoChanged = viewModel::updateShowTodo,
                 onSelectAllSubjectChanged = viewModel::updateIsAllSelected,
                 onSubjectClick = viewModel::updateSelectedSubjects,
@@ -87,6 +107,7 @@ internal fun PlannerShareRoute(
 @Composable
 fun PlannerShareScreen(
     context: Context,
+    showEditButton: Boolean,
     plannerShareInfo: PlannerShareInfo,
     subjects: List<PlannerSubject>,
     selectedSubjects: List<Long>,
@@ -94,6 +115,7 @@ fun PlannerShareScreen(
     showTodo: Boolean,
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
+    getTargetBound: (Rect) -> Unit,
     onConfirmButtonClick: () -> Unit,
     onShowTodoChanged: () -> Unit,
     onSelectAllSubjectChanged: () -> Unit,
@@ -105,9 +127,9 @@ fun PlannerShareScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
         Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(TogedyTheme.colors.white),
+            modifier = Modifier
+                .background(TogedyTheme.colors.white)
+                .padding(top = 24.dp),
         ) {
             TogedyTopBar(
                 title = "이미지로 공유",
@@ -121,54 +143,74 @@ fun PlannerShareScreen(
                 modifier = Modifier.padding(top = 10.dp)
             )
 
-            Spacer(Modifier.height(18.dp))
-
-            ShareTimerSection(
-                context = context,
-                timerImageUrl = plannerShareInfo.image,
-                currentDate = plannerShareInfo.date.toLocalDate() ?: LocalDate.now(),
-                timer = plannerShareInfo.totalStudyTime,
-                dDay = plannerShareInfo.dDay,
-            )
-
-            Row(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 8.dp),
+                    .fillMaxSize()
+                    .onGloballyPositioned { coordinates ->
+                        val rect = coordinates.boundsInWindow()
+                        getTargetBound(
+                            Rect(
+                                rect.left.toInt(),
+                                rect.top.toInt(),
+                                rect.right.toInt(),
+                                rect.bottom.toInt()
+                            )
+                        )
+                    },
             ) {
-                PlannerContent(
-                    showTodo = showTodo,
-                    plans = plannerShareInfo.plannerItemList,
-                    selectedSubjects = selectedSubjects,
-                    modifier = Modifier.weight(1f),
-                )
+                Column(
+                    modifier = Modifier.padding(vertical = 18.dp)
+                ) {
+                    ShareTimerSection(
+                        context = context,
+                        timerImageUrl = plannerShareInfo.image,
+                        currentDate = plannerShareInfo.date.toLocalDate() ?: LocalDate.now(),
+                        timer = plannerShareInfo.totalStudyTime,
+                        dDay = plannerShareInfo.dDay,
+                    )
 
-                Spacer(Modifier.width(10.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                            .padding(top = 8.dp),
+                    ) {
+                        PlannerContent(
+                            showTodo = showTodo,
+                            plans = plannerShareInfo.plannerItemList,
+                            selectedSubjects = selectedSubjects,
+                            modifier = Modifier.weight(1f),
+                        )
 
-                // TODO : TimeTable() 영역으로 변경
-                Box(
-                    modifier = Modifier
-                        .background(TogedyTheme.colors.gray200)
-                        .height(100.dp)
-                        .weight(1f),
-                )
+                        Spacer(Modifier.width(10.dp))
+
+                        // TODO : TimeTable() 영역으로 변경
+                        Box(
+                            modifier = Modifier
+                                .background(TogedyTheme.colors.gray200)
+                                .height(100.dp)
+                                .weight(1f),
+                        )
+                    }
+                }
             }
         }
 
-        Column {
-            Spacer(Modifier.weight(1f))
+        if (showEditButton) {
+            Column {
+                Spacer(Modifier.weight(1f))
 
-            TogedyBasicButton(
-                title = "할 일 편집",
-                containerColor = TogedyTheme.colors.gray300,
-                contentColor = TogedyTheme.colors.gray600,
-                textStyle = TogedyTheme.typography.title16sb,
-                onClick = { isShareOptionVisible = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 30.dp),
-            )
+                TogedyBasicButton(
+                    title = "할 일 편집",
+                    containerColor = TogedyTheme.colors.gray300,
+                    contentColor = TogedyTheme.colors.gray600,
+                    textStyle = TogedyTheme.typography.title16sb,
+                    onClick = { isShareOptionVisible = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 30.dp),
+                )
+            }
         }
     }
 
@@ -192,6 +234,7 @@ private fun PlannerShareScreenPreview() {
     TogedyTheme {
         PlannerShareScreen(
             context = LocalContext.current,
+            showEditButton = true,
             plannerShareInfo = PlannerShareInfo(
                 date = "2023-08-10",
                 dDay = DDay(true, "수능", -100),
@@ -205,6 +248,7 @@ private fun PlannerShareScreenPreview() {
             isAllSelected = false,
             showTodo = true,
             onBackButtonClick = {},
+            getTargetBound = {},
             onConfirmButtonClick = {},
             onShowTodoChanged = {},
             onSelectAllSubjectChanged = {},
