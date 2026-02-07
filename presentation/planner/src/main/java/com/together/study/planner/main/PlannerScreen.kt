@@ -181,9 +181,13 @@ private fun PlannerSuccessScreen(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> PlannerItemsScreen()
+                0 -> PlannerItemsScreen(
+                    subjects = emptyList(), //Todo: subjects 받아오기
+                )
+
                 1 -> { /* TODO: 타임테이블 연결 */
                 }
+
                 2 -> StatisticsScreen()
             }
         }

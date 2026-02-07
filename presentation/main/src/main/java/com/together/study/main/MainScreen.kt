@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,8 +20,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
+import com.together.study.common.event.TogedyUiEvent
+import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
 import com.together.study.main.component.MainBottomBar
 import com.together.study.planner.navigation.plannerGraph
@@ -48,8 +54,27 @@ fun MainScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val togedyToast = remember { TogedyToast(context, lifecycleOwner) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        TogedyUiEventBus.event.collect { event ->
+            when (event) {
+                is TogedyUiEvent.ShowToast -> {
+                    togedyToast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = event.message,
+                        icon = event.icon,
+                        yOffset = togedyToast.toastOffsetWithBottomBar(),
+                    )
+                }
+            }
+        }
+    }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
         bottomBar = {
             MainBottomBar(
                 isVisible = navigator.showBottomBar(),
@@ -181,7 +206,6 @@ private fun MainNavHost(
 
         plannerGraph(
             navigateToUp = navigator.navController::popBackStack,
-            navigateToSharePlanner = { /*navigator.navController::navigateToSharePlanner*/ },
             navController = navigator.navController,
             modifier = modifier,
         )

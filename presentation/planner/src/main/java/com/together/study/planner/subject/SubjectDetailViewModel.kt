@@ -32,14 +32,17 @@ class SubjectDetailViewModel @Inject constructor(
 
     fun updateSubject(new: PlannerSubject) = viewModelScope.launch {
         val updatedList = lastedSubjectItems.map { subject ->
-            if (subject.id == new.id) subject.copy(name = new.name, color = new.color)
+            if (subject.subjectId == new.subjectId) subject.copy(
+                subjectName = new.subjectName,
+                subjectColor = new.subjectColor
+            )
             else subject
         }
         updateState(UiState.Success(updatedList))
     }
 
     fun deleteSubject(id: Long) = viewModelScope.launch {
-        val updatedList = lastedSubjectItems.filter { it.id != id }
+        val updatedList = lastedSubjectItems.filter { it.subjectId != id }
         updateState(UiState.Success(updatedList))
     }
 
