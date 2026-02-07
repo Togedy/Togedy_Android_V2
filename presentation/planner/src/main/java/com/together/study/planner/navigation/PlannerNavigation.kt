@@ -29,7 +29,6 @@ fun NavController.navigateToSharePlanner(
 
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
-    navigateToSharePlanner: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -51,6 +50,7 @@ fun NavGraphBuilder.plannerGraph(
 
     composable<PlannerShare> {
         PlannerShareRoute(
+            onBackButtonClick = navigateToUp,
             modifier = modifier,
         )
     }

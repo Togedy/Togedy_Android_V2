@@ -83,10 +83,10 @@ internal fun ShareOptionBottomSheet(
             ) {
                 subjects.forEach { subject ->
                     SubjectItem(
-                        subjectName = subject.name,
-                        subjectColor = subject.color,
-                        isSelected = subject.id in selectedSubjects,
-                        onItemClick = { subject.id?.let { onSubjectClick(it) } },
+                        subjectName = subject.subjectName,
+                        subjectColor = subject.subjectColor,
+                        isSelected = subject.subjectId in selectedSubjects,
+                        onItemClick = { subject.subjectId?.let { onSubjectClick(it) } },
                     )
                 }
             }
@@ -165,20 +165,7 @@ private fun SubjectItem(
 private fun ShareOptionBottomSheetPreview() {
     TogedyTheme {
         ShareOptionBottomSheet(
-            subjects = listOf(
-                PlannerSubject(
-                    id = 1,
-                    name = "국어",
-                    color = "SUBJECT_COLOR1",
-                    todoItems = null,
-                ),
-                PlannerSubject(1, "수학1234", "SUBJECT_COLOR2", null),
-                PlannerSubject(1, "수asdfasdfsd학", "SUBJECT_COLOR2", null),
-                PlannerSubject(1, "수학", "SUBJECT_COLOR2", null),
-                PlannerSubject(1, "수sd학", "SUBJECT_COLOR4", null),
-                PlannerSubject(1, "수학", "SUBJECT_COLOR7", null),
-                PlannerSubject(1, "수학asdfasdfsdf", "SUBJECT_COLOR2", null),
-            ),
+            subjects = emptyList(),
             onDismissRequest = {},
             showTodo = true,
             selectAllSubject = true,

@@ -52,8 +52,12 @@ internal fun SubjectDetailBottomSheet(
     val title = if (plannerSubject == null) "과목 추가" else "과목 수정"
     val textStyle = TogedyTheme.typography.title16sb
 
-    var subjectName by remember { mutableStateOf(plannerSubject?.name ?: "") }
-    var selectedColor by remember { mutableStateOf(plannerSubject?.color ?: "SUBJECT_COLOR1") }
+    var subjectName by remember { mutableStateOf(plannerSubject?.subjectName ?: "") }
+    var selectedColor by remember {
+        mutableStateOf(
+            plannerSubject?.subjectColor ?: "SUBJECT_COLOR1"
+        )
+    }
 
     TogedyBottomSheet(
         sheetState = sheetState,
@@ -64,18 +68,16 @@ internal fun SubjectDetailBottomSheet(
         onDoneClick = {
             if (plannerSubject == null) onDoneClick(
                 PlannerSubject(
-                    id = null,
-                    name = subjectName,
-                    color = selectedColor,
-                    todoItems = null,
+                    subjectName = subjectName,
+                    subjectColor = selectedColor,
                 )
             )
             else onDoneClick(
                 PlannerSubject(
-                    id = plannerSubject.id,
-                    name = subjectName,
-                    color = selectedColor,
-                    todoItems = plannerSubject.todoItems,
+                    subjectId = plannerSubject.subjectId,
+                    subjectName = subjectName,
+                    subjectColor = selectedColor,
+                    tasks = plannerSubject.tasks,
                 )
             )
         },

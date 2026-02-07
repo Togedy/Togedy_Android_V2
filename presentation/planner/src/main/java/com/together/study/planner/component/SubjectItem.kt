@@ -35,7 +35,7 @@ internal fun SubjectItem(
     onDeleteClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val subjectColor = plannerSubject.color.toPlannerSubjectColorOrDefault()
+    val subjectColor = plannerSubject.subjectColor.toPlannerSubjectColorOrDefault()
 
     Row(
         modifier = modifier
@@ -61,7 +61,7 @@ internal fun SubjectItem(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = plannerSubject.name,
+                text = plannerSubject.subjectName,
                 style = TogedyTheme.typography.chip14b.copy(subjectColor),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
