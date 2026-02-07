@@ -25,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.img_character_heart
@@ -41,6 +43,8 @@ fun ChatBotRoute(modifier: Modifier = Modifier) {
 fun ChatBotScreen(
     modifier: Modifier = Modifier,
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidthPx = with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx() }
     var visible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -53,11 +57,11 @@ fun ChatBotScreen(
             .background(
                 brush = Brush.radialGradient(
                     colors = listOf(TogedyTheme.colors.green500, TogedyTheme.colors.white),
-                    center = Offset(x = 360f, y = 100f),
-                    radius = 600f,
+                    center = Offset(x = screenWidthPx / 2, y = 160f),
+                    radius = screenWidthPx * 0.6f,
                 ),
             ),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.TopCenter,
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 20.dp),
