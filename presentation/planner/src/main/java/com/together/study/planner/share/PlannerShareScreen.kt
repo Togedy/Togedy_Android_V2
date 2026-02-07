@@ -31,7 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.model.DDay
+import com.together.study.common.event.TogedyUiEvent
+import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.common.state.UiState
+import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.TogedyBasicButton
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
@@ -50,7 +53,6 @@ import java.time.LocalDate
 @Composable
 internal fun PlannerShareRoute(
     onBackButtonClick: () -> Unit,
-    onImageSave: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PlannerShareViewModel = hiltViewModel(),
 ) {
@@ -64,11 +66,31 @@ internal fun PlannerShareRoute(
     val view = LocalView.current
     var targetBounds by remember { mutableStateOf<Rect?>(null) }
     var showEditButton by remember { mutableStateOf(true) }
+    var captureRequested by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         showEditButton = true
         viewModel.getPlannerShareInfo()
     }
+
+    LaunchedEffect(captureRequested) {
+        if (captureRequested) {
+            kotlinx.coroutines.android.awaitFrame()
+            targetBounds?.let { bounds ->
+                val bitmap = captureComposable(view, bounds)
+                saveBitmapToGallery(viewModel.date, context, bitmap)
+            }
+            TogedyUiEventBus.send(
+                TogedyUiEvent.ShowToast(
+                    message = "이미지 저장 완료",
+                    icon = ic_check_green,
+                )
+            )
+            captureRequested = false
+            onBackButtonClick()
+        }
+    }
+
 
     when (uiState.plannerShareInfo) {
         is UiState.Empty -> {}
@@ -87,11 +109,7 @@ internal fun PlannerShareRoute(
                 getTargetBound = { targetBounds = it },
                 onConfirmButtonClick = {
                     showEditButton = false
-                    targetBounds?.let { bounds ->
-                        val bitmap = captureComposable(view, bounds)
-                        saveBitmapToGallery(viewModel.date, context, bitmap)
-                    }
-                    onImageSave()
+                    captureRequested = true
                 },
                 onShowTodoChanged = viewModel::updateShowTodo,
                 onSelectAllSubjectChanged = viewModel::updateIsAllSelected,

@@ -51,12 +51,6 @@ fun NavGraphBuilder.plannerGraph(
     composable<PlannerShare> {
         PlannerShareRoute(
             onBackButtonClick = navigateToUp,
-            onImageSave = {
-//                navController.previousBackStackEntry
-//                    ?.savedStateHandle
-//                    ?.set("capture_result", true)
-                navigateToUp()
-            },
             modifier = modifier,
         )
     }

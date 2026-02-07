@@ -58,9 +58,6 @@ internal fun PlannerScreen(
     onEditSubjectNavigate: () -> Unit,
     viewModel: PlannerViewModel = hiltViewModel(),
 ) {
-//    val toast = LocalTogedyToast.current
-//    val yOffset = toast.toastOffsetWithBottomBar()
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
@@ -69,31 +66,6 @@ internal fun PlannerScreen(
     LaunchedEffect(selectedDate) {
         viewModel.getPlannerInfo(selectedDate)
     }
-
-//    LaunchedEffect(Unit) {
-//        viewModel.eventFlow.collect { event ->
-//            when (event) {
-//                is ImageCaptureEvent.ShowError -> {
-//                    toast.makeText(
-//                        toastType = ToastType.COMMON,
-//                        message = event.message,
-//                        icon = ic_check_red,
-//                        yOffset = yOffset,
-//                    )
-//                }
-//
-//                is ImageCaptureEvent.CaptureSuccess -> {
-//                    toast.makeText(
-//                        toastType = ToastType.COMMON,
-//                        message = event.message,
-//                        icon = ic_check_green,
-//                        yOffset = yOffset,
-//                    )
-//
-//                }
-//            }
-//        }
-//    }
 
     when (val plannerInfoState = uiState.plannerInfo) {
         is UiState.Success<*> -> {
