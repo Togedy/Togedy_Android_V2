@@ -54,4 +54,5 @@ include(
     ":presentation:studymember",
     ":presentation:studyupdate",
     ":presentation:planner",
+    ":presentation:chatbot",
 )

@@ -23,6 +23,7 @@ val PretendardLight = FontFamily(Font(R.font.pretendard_light, FontWeight.Light)
 
 @Immutable
 class TogedyTypography(
+    val title24b: TextStyle,
     val title18b: TextStyle,
     val title16sb: TextStyle,
     val body16m: TextStyle,
@@ -58,6 +59,11 @@ private fun TogedyTextStyle(
 )
 
 fun TogedyTypography() = TogedyTypography(
+    title24b = TogedyTextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 24.sp,
+        lineHeight = 34.sp,
+    ),
     title18b = TogedyTextStyle(
         fontFamily = PretendardBold,
         fontSize = 18.sp,
