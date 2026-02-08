@@ -1,8 +1,8 @@
 package com.together.study.planner.model
 
 data class PlannerSubject(
-    val id: Long? = null,
-    val name: String = "",
-    val color: String = "",
-    val todoItems: List<Todo>?,
+    val subjectId: Long? = null,
+    val subjectName: String = "",
+    val subjectColor: String = "",
+    val tasks: List<Todo> = emptyList(),
 )

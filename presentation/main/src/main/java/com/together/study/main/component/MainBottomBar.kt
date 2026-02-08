@@ -13,6 +13,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,7 +39,10 @@ fun MainBottomBar(
         enter = fadeIn() + slideIn { IntOffset(0, 0) },
         exit = fadeOut() + slideOut { IntOffset(0, 0) }
     ) {
-        NavigationBar(containerColor = White) {
+        NavigationBar(
+            modifier = Modifier.shadow(4.dp),
+            containerColor = White,
+        ) {
             tabs.forEach { itemType ->
                 NavigationBarItem(
                     interactionSource = NoRippleInteractionSource,
