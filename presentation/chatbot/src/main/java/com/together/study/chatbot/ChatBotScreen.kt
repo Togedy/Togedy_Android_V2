@@ -54,6 +54,7 @@ fun ChatBotScreen(
 
     Box(
         modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 brush = Brush.radialGradient(
