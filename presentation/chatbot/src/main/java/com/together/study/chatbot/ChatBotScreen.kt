@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.together.study.chatbot.component.ChatInputBar
 import com.together.study.chatbot.component.ChatItem
 import com.together.study.designsystem.R.drawable.img_character_heart
 import com.together.study.designsystem.theme.TogedyTheme
@@ -47,13 +49,13 @@ fun ChatBotScreen(
     val configuration = LocalConfiguration.current
     val screenWidthPx = with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx() }
     var visible by remember { mutableStateOf(false) }
+    var inputText by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         visible = true
     }
 
     Box(
-        modifier = Modifier
         modifier = modifier
             .fillMaxSize()
             .background(
@@ -130,5 +132,16 @@ fun ChatBotScreen(
                 }
             }
         }
+
+        ChatInputBar(
+            value = inputText,
+            placeholderText = "입시에 대해 궁금한 것을 물어보세요",
+            onValueChange = { inputText = it },
+            onSendClick = { inputText = "" },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .imePadding()
+        )
     }
 }
