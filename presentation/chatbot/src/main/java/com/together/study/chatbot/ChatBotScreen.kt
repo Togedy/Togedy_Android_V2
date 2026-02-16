@@ -133,15 +133,22 @@ fun ChatBotScreen(
             }
         }
 
-        ChatInputBar(
-            value = inputText,
-            placeholderText = "입시에 대해 궁금한 것을 물어보세요",
-            onValueChange = { inputText = it },
-            onSendClick = { inputText = "" },
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(animationSpec = tween(900)) +
+                    slideInVertically(initialOffsetY = { it / 2 }),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .imePadding()
-        )
+                .imePadding(),
+        ) {
+            ChatInputBar(
+                value = inputText,
+                placeholderText = "입시에 대해 궁금한 것을 물어보세요",
+                onValueChange = { inputText = it },
+                onSendClick = { inputText = "" },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
