@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -32,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
@@ -42,6 +45,7 @@ import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
+import com.together.study.timer.component.SubjectTitle
 import com.together.study.timer.component.TimerButton
 import com.together.study.timer.component.TimerSelectedSubject
 import com.together.study.util.asColor
@@ -60,7 +64,7 @@ internal fun TimerRoute(
         while (isPlaying) {
             delay(1000L)
             timer += 1
-            totalTimer + 1
+            totalTimer += 1
         }
     }
 
@@ -70,7 +74,7 @@ internal fun TimerRoute(
         subject = PlannerSubject(
             subjectId = 1,
             subjectName = "수학",
-            subjectColor = "SUBJECT_COLOR10",
+            subjectColor = "SUBJECT_COLOR1",
         ),
         isPlaying = isPlaying,
         modifier = modifier,
@@ -115,7 +119,7 @@ private fun TimerScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.black)
-            .padding(top = 20.dp),
+            .padding(top = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TogedyTopBar(
@@ -166,7 +170,7 @@ private fun TimerScreen(
 
                     Text(
                         text = timer,
-                        style = TogedyTheme.typography.time40l,
+                        style = TogedyTheme.typography.time40b,
                         color = TogedyTheme.colors.white
                     )
 
@@ -189,7 +193,17 @@ private fun TimerScreen(
         scaffoldState = scaffoldState,
         totalTimer = totalTimer,
         selectedSubject = subject,
-        subject = listOf(subject, subject, subject),
+        subjects = listOf(
+            subject,
+            PlannerSubject(2, "과학", "SUBJECT_COLOR2"),
+            PlannerSubject(3, "영어", "SUBJECT_COLOR3"),
+            PlannerSubject(4, "국어", "SUBJECT_COLOR4"),
+            PlannerSubject(5, "수학", "SUBJECT_COLOR5"),
+            PlannerSubject(6, "사회", "SUBJECT_COLOR6"),
+            PlannerSubject(7, "과학", "SUBJECT_COLOR7"),
+            PlannerSubject(8, "영어", "SUBJECT_COLOR8"),
+            PlannerSubject(9, "국어", "SUBJECT_COLOR9"),
+        ),
         modifier = modifier,
     )
 }
@@ -200,34 +214,47 @@ fun TimerBottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     totalTimer: String,
     selectedSubject: PlannerSubject,
-    subject: List<PlannerSubject>,
+    subjects: List<PlannerSubject>,
     modifier: Modifier,
 ) {
     val subjectColor = selectedSubject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 100.dp,
-        sheetContainerColor = subjectColor.copy(alpha = 0.7f),
+        sheetPeekHeight = 130.dp,
+        sheetContainerColor = Color.Transparent,
+        containerColor = Color.Transparent,
         sheetDragHandle = {
-            Box(
-                Modifier
-                    .padding(14.dp)
-                    .size(42.dp, 2.dp)
-                    .background(TogedyTheme.colors.white)
-            )
         },
         sheetContent = {
             Column(
-                Modifier
-                    .padding(horizontal = 20.dp)
+                modifier
                     .fillMaxWidth()
-                    .height(300.dp)
+                    .aspectRatio(534f / 720f)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                subjectColor,
+                                subjectColor.copy(alpha = 0.7f)
+                            )
+                        ),
+                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                    )
+                    .padding(horizontal = 20.dp)
             ) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 12.dp, bottom = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .size(width = 42.dp, height = 2.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(Color.White.copy(alpha = 0.6f))
+                )
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 20.dp),
+                        .padding(start = 10.dp, bottom = 20.dp, end = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -239,17 +266,55 @@ fun TimerBottomSheet(
 
                     Text(
                         text = totalTimer,
-                        style = TogedyTheme.typography.time40l,
+                        style = TogedyTheme.typography.time46r,
                         color = TogedyTheme.colors.white,
                     )
                 }
 
                 HorizontalDivider(color = TogedyTheme.colors.white.copy(alpha = 0.2f))
+
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier
+                ) {
+                    item {
+                        Spacer(Modifier.height(10.dp))
+                    }
+
+                    items(subjects) { subject ->
+                        val backgroundModifier =
+                            if (subject.subjectId == selectedSubject.subjectId)
+                                Modifier.background(
+                                    TogedyTheme.colors.white.copy(alpha = 0.1f),
+                                    RoundedCornerShape(10.dp)
+                                )
+                            else Modifier
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(backgroundModifier)
+                                .padding(horizontal = 10.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            SubjectTitle(subject = subject)
+
+                            Text(
+                                text = totalTimer,
+                                style = TogedyTheme.typography.time40l,
+                                color = TogedyTheme.colors.white,
+                            )
+                        }
+                    }
+
+                    item {
+                        Spacer(Modifier.height(20.dp))
+                    }
+                }
             }
         }
-    ) {
-        // 메인 화면 컨텐츠
-    }
+    ) { }
 }
 
 private fun formatTime(totalSeconds: Int): String {
