@@ -21,10 +21,11 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerItem
 import com.together.study.planner.model.TaskItem
-import com.together.study.planner.type.toPlannerSubjectColorOrDefault
+import com.together.study.util.asColor
 
 @Composable
 internal fun PlannerContent(
@@ -37,7 +38,7 @@ internal fun PlannerContent(
         modifier = modifier.wrapContentHeight(),
     ) {
         plans.forEach { plan ->
-            val subjectColor = plan.subjectColor.toPlannerSubjectColorOrDefault()
+            val subjectColor = plan.subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
             Row(
                 modifier = Modifier.padding(bottom = 4.dp),
