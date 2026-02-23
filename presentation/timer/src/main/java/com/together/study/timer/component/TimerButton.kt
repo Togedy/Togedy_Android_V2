@@ -33,10 +33,10 @@ internal fun TimerButton(
         style = TogedyTheme.typography.body14b,
         color = textColor,
         modifier = Modifier
+            .noRippleClickable(onButtonClick)
             .background(backgroundColor, RoundedCornerShape(30.dp))
             .border(1.dp, borderColor, RoundedCornerShape(30.dp))
-            .padding(horizontal = 50.dp, vertical = 10.dp)
-            .noRippleClickable(onButtonClick),
+            .padding(horizontal = 50.dp, vertical = 10.dp),
     )
 }
 
