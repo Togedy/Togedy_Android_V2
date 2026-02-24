@@ -1,5 +1,9 @@
 package com.together.study.timer
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -99,18 +103,45 @@ private fun TimerScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     val subjectColor = subject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
+    val transition = updateTransition(
+        targetState = isPlaying,
+        label = "playingTransition"
+    )
+
+    val radius by transition.animateFloat(
+        transitionSpec = { tween(600) },
+        label = "radius"
+    ) { playing ->
+        if (playing) 600f else 0f
+    }
+
+    val alpha by transition.animateFloat(
+        transitionSpec = { tween(400) },
+        label = "alpha"
+    ) { playing ->
+        if (playing) 1f else 0f
+    }
+
     val subjectCircleModifier =
-        if (isPlaying)
+        if (alpha > 0f)
             Modifier.background(
                 brush = Brush.radialGradient(
-                    colors = listOf(subjectColor, TogedyTheme.colors.black),
-                    radius = 600f,
-                ),
+                    colors = listOf(
+                        subjectColor.copy(alpha = alpha),
+                        TogedyTheme.colors.black.copy(alpha = alpha)
+                    ),
+                    radius = radius
+                )
             )
         else Modifier
-    val borderColor =
-        if (isPlaying) subjectColor
-        else TogedyTheme.colors.gray700
+
+    val borderColor by transition.animateColor(
+        transitionSpec = { tween(300) },
+        label = "borderColor"
+    ) { playing ->
+        if (playing) subjectColor else TogedyTheme.colors.gray700
+    }
+
     val textColor =
         if (isPlaying) TogedyTheme.colors.gray600
         else TogedyTheme.colors.white
