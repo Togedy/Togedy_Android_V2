@@ -38,6 +38,7 @@ fun NavGraphBuilder.plannerGraph(
             onShareNavigate = navController::navigateToSharePlanner,
             onTimerNavigate = { },
             onEditSubjectNavigate = navController::navigateToSubjectDetail,
+            onImageEditNavigate = { },
         )
     }
 

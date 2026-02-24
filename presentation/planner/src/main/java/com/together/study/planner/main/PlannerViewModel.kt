@@ -72,6 +72,12 @@ internal class PlannerViewModel @Inject constructor(
                     it.copy(isCalendarOpen = !_sheetState.value.isCalendarOpen)
                 }
             }
+
+            PlannerSheetType.IMAGE_EDIT -> {
+                _sheetState.update {
+                    it.copy(isImageEditOpen = !_sheetState.value.isImageEditOpen)
+                }
+            }
         }
     }
 }

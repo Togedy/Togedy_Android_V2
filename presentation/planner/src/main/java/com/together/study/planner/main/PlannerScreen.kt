@@ -56,6 +56,7 @@ internal fun PlannerScreen(
     onShareNavigate: (Int, Int, Int) -> Unit,
     onTimerNavigate: () -> Unit,
     onEditSubjectNavigate: () -> Unit,
+    onImageEditNavigate: () -> Unit,
     viewModel: PlannerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -81,6 +82,7 @@ internal fun PlannerScreen(
                 onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
                 onPlayButtonClick = onTimerNavigate,
                 onEditSubjectClick = onEditSubjectNavigate,
+                onImageEditClick = onImageEditNavigate,
             )
         }
 
@@ -103,6 +105,7 @@ private fun PlannerSuccessScreen(
     onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
+    onImageEditClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -135,9 +138,7 @@ private fun PlannerSuccessScreen(
             showDropdown = showDropdown,
             onDayBeforeClick = { onSelectedDateChange(selectedDate.minusDays(1)) },
             onDayAfterClick = { onSelectedDateChange(selectedDate.plusDays(1)) },
-            onCalendarClick = {
-                onSheetVisibilityChange(PlannerSheetType.CALENDAR)
-            },
+            onCalendarClick = { onSheetVisibilityChange(PlannerSheetType.CALENDAR) },
             onKebabMenuClick = { showDropdown = true },
             onDismissRequestDropdown = { showDropdown = false },
             onPlusPlannerSubjectClick = {
@@ -165,7 +166,7 @@ private fun PlannerSuccessScreen(
             timerImageUrl = plannerInfo.timerImageUrl,
             timer = plannerInfo.timer,
             onPlayButtonClick = onPlayButtonClick,
-            onImageEditButtonClick = { /* TODO: 갤러리 연결 */ },
+            onImageEditButtonClick = { onSheetVisibilityChange(PlannerSheetType.IMAGE_EDIT) },
         )
 
         Spacer(Modifier.height(32.dp))
@@ -199,6 +200,11 @@ private fun PlannerSuccessScreen(
         onDismissRequest = onSheetVisibilityChange,
         onEditSubjectClick = onEditSubjectClick,
         onDateChange = onSelectedDateChange,
+        onImageDeleteClick = { /* TODO: 이미지 삭제 */ },
+        onImageEditClick = {
+            onImageEditClick()
+            onSheetVisibilityChange(PlannerSheetType.IMAGE_EDIT)
+        },
     )
 }
 
@@ -290,6 +296,7 @@ private fun PlannerScreenPreview() {
             onShareNavigate = { _, _, _ -> },
             onTimerNavigate = {},
             onEditSubjectNavigate = {},
+            onImageEditNavigate = {},
         )
     }
 }

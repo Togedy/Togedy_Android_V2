@@ -2,6 +2,7 @@ package com.together.study.planner.main
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import com.together.study.planner.component.ImageEditBottomSheet
 import com.together.study.planner.component.PlannerCalendarTopSheet
 import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.subject.SubjectBottomSheet
@@ -17,6 +18,8 @@ internal fun PlannerSheetScreen(
     onDismissRequest: (PlannerSheetType) -> Unit,
     onEditSubjectClick: () -> Unit,
     onDateChange: (LocalDate) -> Unit,
+    onImageDeleteClick: () -> Unit = {},
+    onImageEditClick: () -> Unit = {},
 ) {
     with(bottomSheetState) {
         if (isSubjectOpen) {
@@ -42,6 +45,14 @@ internal fun PlannerSheetScreen(
                 studyTimeList = emptyList(), //TODO: 추후 변경 필요
                 onDismissRequest = { onDismissRequest(PlannerSheetType.CALENDAR) },
                 onDateChange = onDateChange,
+            )
+        }
+
+        if (isImageEditOpen) {
+            ImageEditBottomSheet(
+                onDismissRequest = { onDismissRequest(PlannerSheetType.IMAGE_EDIT) },
+                onDeleteClick = onImageDeleteClick,
+                onEditClick = onImageEditClick,
             )
         }
     }
