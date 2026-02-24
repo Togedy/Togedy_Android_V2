@@ -35,6 +35,7 @@ include(
     ":data:search",
     ":data:dummy",
     ":data:study",
+    ":data:chatbot"
 )
 include(
     ":domain:dummy",
@@ -56,3 +57,4 @@ include(
     ":presentation:planner",
     ":presentation:chatbot",
 )
+include(":domain:chatbot")

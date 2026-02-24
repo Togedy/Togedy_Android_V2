@@ -1,3 +1,4 @@
+import com.together.study.buildlogic.dsl.implementation
 import com.together.study.buildlogic.dsl.setNameSpace
 
 plugins {
@@ -15,6 +16,8 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
+    implementation(projects.domain.chatbot)
+    implementation(projects.data.chatbot)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
