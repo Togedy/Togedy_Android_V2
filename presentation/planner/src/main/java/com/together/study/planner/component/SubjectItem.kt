@@ -20,10 +20,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_search_cancel_16
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.type.toPlannerSubjectColorOrDefault
+import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -35,7 +36,7 @@ internal fun SubjectItem(
     onDeleteClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val subjectColor = plannerSubject.subjectColor.toPlannerSubjectColorOrDefault()
+    val subjectColor = plannerSubject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
     Row(
         modifier = modifier

@@ -23,6 +23,7 @@ import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDet
 import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.event.TogedyUiEvent
 import com.together.study.common.event.TogedyUiEventBus
+import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
@@ -48,6 +49,8 @@ import com.together.study.studysettings.navigation.studySettingsGraph
 import com.together.study.studyupdate.navigation.navigateToStudyUpdate
 import com.together.study.studyupdate.navigation.navigateToStudyUpdateDone
 import com.together.study.studyupdate.navigation.studyUpdateGraph
+import com.together.study.timer.navigation.navigateToTimer
+import com.together.study.timer.navigation.timerGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -209,12 +212,18 @@ private fun MainNavHost(
 
         plannerGraph(
             navigateToUp = navigator.navController::popBackStack,
+            navigateToTimer = navigator.navController::navigateToTimer,
             navigateToGallery = navigator.navController::navigateToGallery,
             navController = navigator.navController,
             modifier = modifier,
         )
 
         chatBotGraph(
+            navigateToUp = navigator.navController::popBackStack,
+            modifier = modifier,
+        )
+
+        timerGraph(
             navigateToUp = navigator.navController::popBackStack,
             modifier = modifier,
         )

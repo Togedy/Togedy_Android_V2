@@ -14,22 +14,23 @@ import kotlinx.serialization.Serializable
 
 fun NavController.navigateToPlanner(
     navOptions: NavOptions? = null,
-) = navigate(Planner)
+) = navigate(Planner, navOptions)
 
 fun NavController.navigateToSubjectDetail(
     navOptions: NavOptions? = null,
-) = navigate(SubjectDetail)
+) = navigate(SubjectDetail, navOptions)
 
 fun NavController.navigateToSharePlanner(
     year: Int,
     month: Int,
     day: Int,
     navOptions: NavOptions? = null,
-) = navigate(PlannerShare(year, month, day))
+) = navigate(PlannerShare(year, month, day), navOptions)
 
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
     navigateToGallery: () -> Unit,
+    navigateToTimer: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -37,7 +38,7 @@ fun NavGraphBuilder.plannerGraph(
         PlannerScreen(
             modifier = modifier,
             onShareNavigate = navController::navigateToSharePlanner,
-            onTimerNavigate = { },
+            onTimerNavigate = navigateToTimer,
             onEditSubjectNavigate = navController::navigateToSubjectDetail,
             onImageEditNavigate = navigateToGallery,
         )

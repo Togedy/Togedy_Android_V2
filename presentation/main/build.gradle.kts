@@ -26,6 +26,7 @@ dependencies {
     implementation(projects.presentation.studymember)
     implementation(projects.presentation.studysettings)
     implementation(projects.presentation.studyupdate)
+    implementation(projects.presentation.timer)
     implementation(projects.presentation.gallery)
     implementation(projects.domain.study)
 

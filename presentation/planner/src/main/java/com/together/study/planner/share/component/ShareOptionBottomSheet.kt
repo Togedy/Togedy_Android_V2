@@ -27,12 +27,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.TogedyCheckBoxButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.type.toPlannerSubjectColorOrDefault
+import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -122,7 +123,7 @@ private fun SubjectItem(
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit,
 ) {
-    val subjectColor = subjectColor.toPlannerSubjectColorOrDefault()
+    val subjectColor = subjectColor.toPlannerSubjectColorOrDefault().asColor()
     val mainItemColor =
         if (isSelected) TogedyTheme.colors.green
         else TogedyTheme.colors.gray500
