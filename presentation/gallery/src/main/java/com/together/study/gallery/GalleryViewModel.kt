@@ -46,11 +46,10 @@ class GalleryViewModel : ViewModel() {
                 uiState = uiState.copy(
                     selectedAlbum = album,
                     images = images,
-                    monthSections = sections
+                    monthSections = sections,
+                    isAlbumSheetOpen = false,
                 )
             }
-
-            updateAlbumSheetState()
         }
     }
 }
