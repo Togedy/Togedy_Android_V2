@@ -23,21 +23,12 @@ enum class PlannerSubjectColor(val color: Long) {
                 SUBJECT_COLOR1
             }
         }
-
-        fun fromStringToCategoryColorEnum(name: String?): PlannerSubjectColor {
-            return try {
-                valueOf(name ?: "SUBJECT_COLOR1")
-            } catch (e: IllegalArgumentException) {
-                SUBJECT_COLOR1
-            }
-        }
     }
 }
 
-fun String?.toPlannerSubjectColorEnum(): PlannerSubjectColor {
-    return PlannerSubjectColor.fromStringToCategoryColorEnum(this)
-}
+fun String?.toPlannerSubjectColorEnum(): PlannerSubjectColor =
+    PlannerSubjectColor.fromString(this)
 
-fun String?.toPlannerSubjectColorOrDefault(): Long {
-    return PlannerSubjectColor.fromString(this).color
-}
+
+fun String?.toPlannerSubjectColorOrDefault(): Long =
+    PlannerSubjectColor.fromString(this).color
