@@ -28,6 +28,7 @@ import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
 import com.together.study.main.component.MainBottomBar
+import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
@@ -220,6 +221,11 @@ private fun MainNavHost(
         )
 
         timerGraph(
+            navigateToUp = navigator.navController::popBackStack,
+            modifier = modifier,
+        )
+
+        myPageGraph(
             navigateToUp = navigator.navController::popBackStack,
             modifier = modifier,
         )
