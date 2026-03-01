@@ -56,10 +56,16 @@ internal class ChatBotViewModel @Inject constructor(
                 it.copy(messages = it.messages + loadingMessage)
             }
 
-            // 실제 API 호출
+            val currentState = _uiState.value
+            val followUpAnswer = if (currentState.isFollowUpRequired) {
+                currentState.lastBotAnswer
+            } else {
+                null
+            }
+
             chatBotRepository.postQuestion(
                 question = message,
-                followUpAnswer = null,
+                followUpAnswer = followUpAnswer,
             ).onSuccess { answer ->
                 val fullResponse = answer.answer
 
@@ -78,6 +84,7 @@ internal class ChatBotViewModel @Inject constructor(
                             if (it.id == loadingMessage.id) typingMessage else it
                         },
                         isFollowUpRequired = answer.isFollowUpRequired,
+                        lastBotAnswer = if (answer.isFollowUpRequired) fullResponse else null,
                     )
                 }
 

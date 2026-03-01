@@ -6,5 +6,6 @@ data class ChatBotUiState(
     val inputText: String = "",
     val isChatMode: Boolean = false,
     val messages: List<ChatMessage> = emptyList(),
-    val isFollowUpRequired: Boolean = false
+    val isFollowUpRequired: Boolean = false,
+    val lastBotAnswer: String? = null,
 )
