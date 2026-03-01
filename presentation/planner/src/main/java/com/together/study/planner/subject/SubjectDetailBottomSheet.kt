@@ -29,12 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.type.planner.PlannerSubjectColor
+import com.together.study.common.type.planner.toPlannerSubjectColorEnum
+import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.type.PlannerSubjectColor
-import com.together.study.planner.type.toPlannerSubjectColorEnum
-import com.together.study.planner.type.toPlannerSubjectColorOrDefault
+import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +99,7 @@ internal fun SubjectDetailBottomSheet(
                         .padding(2.dp)
                         .size(16.dp)
                         .background(
-                            selectedColor.toPlannerSubjectColorOrDefault(),
+                            selectedColor.toPlannerSubjectColorOrDefault().asColor(),
                             RoundedCornerShape(6.dp)
                         ),
                 )
@@ -169,7 +170,7 @@ fun ColorItem(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val subjectColor = color.color
+    val subjectColor = color.color.asColor()
     val borderColor = if (isSelected) subjectColor else Color.Transparent
     val borderWidth = 2.dp
     val outerBorderWidth = 2.dp

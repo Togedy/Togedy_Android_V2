@@ -40,6 +40,8 @@ class TogedyTypography(
     val chip14b: TextStyle,
     val chip10sb: TextStyle,
     val time40l: TextStyle,
+    val time40b: TextStyle,
+    val time46r: TextStyle,
 )
 
 private fun TogedyTextStyle(
@@ -143,6 +145,16 @@ fun TogedyTypography() = TogedyTypography(
         fontFamily = PretendardLight,
         fontSize = 40.sp,
         lineHeight = 48.sp,
+    ),
+    time40b = TogedyTextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 40.sp,
+        lineHeight = 48.sp,
+    ),
+    time46r = TogedyTextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 46.sp,
+        lineHeight = 50.sp,
     )
 )
 

@@ -33,12 +33,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_add_24
 import com.together.study.designsystem.R.drawable.ic_kebap_menu
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.Todo
-import com.together.study.planner.type.toPlannerSubjectColorOrDefault
+import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -109,7 +110,7 @@ fun SubjectSection(
     onTodoContentChange: (Long?, String) -> Unit,
     onTodoEditButtonClick: () -> Unit,
 ) {
-    val subjectColor = subjectColor.toPlannerSubjectColorOrDefault()
+    val subjectColor = subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
     Column(
         modifier = modifier
