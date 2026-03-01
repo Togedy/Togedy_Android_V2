@@ -35,6 +35,7 @@ include(
     ":data:search",
     ":data:dummy",
     ":data:study",
+    ":data:gallery",
 )
 include(
     ":domain:dummy",
