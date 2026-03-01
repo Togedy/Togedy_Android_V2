@@ -78,6 +78,7 @@ object NetworkModule {
         .addInterceptor(loggingInterceptor)
         .addInterceptor(headerInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
     @Provides
