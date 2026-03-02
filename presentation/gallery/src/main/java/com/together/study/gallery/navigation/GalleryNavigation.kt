@@ -5,13 +5,20 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.together.study.common.navigation.Route
 import com.together.study.gallery.GalleryScreen
+import com.together.study.gallery.ImageCropScreen
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToGallery(
     navOptions: NavOptions? = null,
 ) = navigate(TogedyGallery, navOptions)
+
+fun NavController.navigateToCorpImage(
+    imageId: Long,
+    navOptions: NavOptions? = null,
+) = navigate(TogedyCorpImage(imageId), navOptions)
 
 fun NavGraphBuilder.galleryGraph(
     modifier: Modifier = Modifier,
@@ -21,7 +28,17 @@ fun NavGraphBuilder.galleryGraph(
     composable<TogedyGallery> {
         GalleryScreen(
             onBackClick = navigateToUp,
-            onImageClick = { },
+            onImageClick = navController::navigateToCorpImage,
+            modifier = modifier,
+        )
+    }
+
+    composable<TogedyCorpImage> { backStackEntry ->
+        val route = backStackEntry.toRoute<TogedyCorpImage>()
+        ImageCropScreen(
+            imageId = route.imageId,
+            onBackClick = navigateToUp,
+            onDoneClick = navigateToUp,
             modifier = modifier,
         )
     }
@@ -29,3 +46,8 @@ fun NavGraphBuilder.galleryGraph(
 
 @Serializable
 data object TogedyGallery : Route
+
+@Serializable
+data class TogedyCorpImage(
+    val imageId: Long,
+) : Route
