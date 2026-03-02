@@ -10,11 +10,13 @@ import com.together.study.gallery.state.GalleryUiState
 import com.together.study.gallery.usecase.GetAlbumsUseCase
 import com.together.study.gallery.usecase.GetImagesUseCase
 import com.together.study.gallery.usecase.GroupImagesByMonthUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class GalleryViewModel @Inject constructor(
     private val getAlbumsUseCase: GetAlbumsUseCase,
     private val getImagesUseCase: GetImagesUseCase,

@@ -5,8 +5,9 @@ import com.together.study.gallery.model.GalleryMonthSection
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneId
+import javax.inject.Inject
 
-class GroupImagesByMonthUseCase {
+class GroupImagesByMonthUseCase @Inject constructor() {
     operator fun invoke(images: List<GalleryImage>)
             : List<GalleryMonthSection> {
 

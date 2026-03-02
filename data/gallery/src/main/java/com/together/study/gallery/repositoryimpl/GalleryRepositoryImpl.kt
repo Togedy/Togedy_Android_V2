@@ -5,10 +5,11 @@ import android.provider.MediaStore.Images.Media
 import com.together.study.gallery.model.GalleryAlbum
 import com.together.study.gallery.model.GalleryImage
 import com.together.study.gallery.repository.GalleryRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class GalleryRepositoryImpl @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
 ) : GalleryRepository {
     override suspend fun getAlbums(): List<GalleryAlbum> {
         val albumMap = linkedMapOf<Long, GalleryAlbum>()
