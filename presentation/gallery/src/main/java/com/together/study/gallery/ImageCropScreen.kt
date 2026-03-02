@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,96 +23,171 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.gallery.type.CropShapeType
 import com.together.study.gallery.util.toUri
 import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun ImageCropScreen(
     imageId: Long,
+    cropShape: CropShapeType,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
 ) {
-    val context = LocalContext.current
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
     val uri = remember(imageId) { imageId.toUri() }
 
-    Column(
-        modifier = modifier
+    var imageWidth by remember { mutableFloatStateOf(0f) }
+    var imageHeight by remember { mutableFloatStateOf(0f) }
+
+    var cropWidth by remember { mutableFloatStateOf(0f) }
+    var cropHeight by remember { mutableFloatStateOf(0f) }
+
+    var minScale by remember { mutableFloatStateOf(1f) }
+
+    Box(
+        modifier = Modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.black),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            AsyncImage(
+                model = uri,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                        translationX = offset.x
+                        translationY = offset.y
+                    }
+                    .pointerInput(imageWidth, imageHeight, cropWidth, cropHeight, minScale) {
+                        detectTransformGestures { _, pan, zoom, _ ->
+
+                            val newScale = (scale * zoom).coerceAtLeast(minScale)
+
+                            val scaledWidth = imageWidth * newScale
+                            val scaledHeight = imageHeight * newScale
+
+                            val maxX = ((scaledWidth - cropWidth) / 2f).coerceAtLeast(0f)
+                            val maxY = ((scaledHeight - cropHeight) / 2f).coerceAtLeast(0f)
+
+                            val newOffset = offset + pan
+
+                            offset = Offset(
+                                newOffset.x.coerceIn(-maxX, maxX),
+                                newOffset.y.coerceIn(-maxY, maxY)
+                            )
+
+                            scale = newScale
+                        }
+                    },
+                onSuccess = { state ->
+                    val drawable = state.result.drawable
+                    imageWidth = drawable.intrinsicWidth.toFloat()
+                    imageHeight = drawable.intrinsicHeight.toFloat()
+                }
+            )
+        }
+
+        Box(
+            Modifier
+                .matchParentSize()
+                .graphicsLayer { alpha = 0.99f }
+                .drawWithContent {
+                    val cropLeft = (size.width - cropWidth) / 2f
+                    val cropTop = (size.height - cropHeight) / 2f
+
+                    drawContent()
+                    drawRect(color = Color.Black.copy(alpha = 0.5f))
+                    cropShape.drawMask(
+                        drawScope = this,
+                        cropLeft = cropLeft,
+                        cropTop = cropTop,
+                        cropWidth = cropWidth,
+                        cropHeight = cropHeight,
+                    )
+                }
+        )
+
+        Box(
+            Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .aspectRatio(
+                    when (cropShape) {
+                        is CropShapeType.Rect -> 328f / 114f
+                        is CropShapeType.Circle -> 1f
+                    }
+                )
+                .border(
+                    width = 1.dp,
+                    color = TogedyTheme.colors.white,
+                    shape = cropShape.borderShape,
+                )
+                .clip(cropShape.borderShape)
+                .onGloballyPositioned { coordinates ->
+                    cropWidth = coordinates.size.width.toFloat()
+                    cropHeight = coordinates.size.height.toFloat()
+
+                    if (imageWidth > 0 && imageHeight > 0) {
+                        minScale = cropShape.calculateMinScale(
+                            imageWidth,
+                            imageHeight,
+                            cropWidth,
+                            cropHeight
+                        )
+                        scale = minScale
+                        offset = Offset.Zero
+                    }
+                }
+        )
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
         ImageCropTopBar(
             onBackClick = onBackClick,
             onDoneClick = onDoneClick,
         )
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(300.dp) // 고정 크롭 박스
-                    .clipToBounds()
-            ) {
-                AsyncImage(
-                    model = uri,
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                            translationX = offset.x
-                            translationY = offset.y
-                        }
-                        .pointerInput(Unit) {
-                            detectTransformGestures { _, pan, zoom, _ ->
-                                scale *= zoom
-                                offset += pan
-                            }
-                        }
-                )
-            }
-
-            // 반투명 오버레이
-            Box(
-                Modifier
-                    .matchParentSize()
-                    .background(TogedyTheme.colors.black.copy(alpha = 0.5f)),
-            )
-
-            // 크롭 영역 테두리
-            Box(
-                Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .aspectRatio(328f / 114f)
-                    .border(1.dp, TogedyTheme.colors.white, RoundedCornerShape(16.dp)),
-            )
-        }
+        Spacer(Modifier.weight(1f))
 
         ImageCropBottomMenu(
-            onResetClick = { },
-            onFitClick = { },
+            onResetClick = {
+                scale = 1f
+                offset = Offset.Zero
+            },
+            onFitClick = {
+                if (imageWidth > 0f) {
+                    val cropFitScale = cropWidth / imageWidth
+                    scale = cropFitScale
+                    offset = Offset.Zero
+                }
+            },
         )
     }
 }
@@ -191,7 +264,7 @@ private fun ImageCropBottomMenu(
         Row(
             modifier = Modifier
                 .weight(1f)
-                .noRippleClickable(onResetClick),
+                .noRippleClickable(onFitClick),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
@@ -202,7 +275,7 @@ private fun ImageCropBottomMenu(
             )
             Spacer(Modifier.width(14.dp))
             Text(
-                text = "화면 맞춤",
+                text = "Fit",
                 style = TogedyTheme.typography.title16sb,
                 color = TogedyTheme.colors.gray500,
             )
@@ -212,10 +285,24 @@ private fun ImageCropBottomMenu(
 
 @Preview
 @Composable
-private fun ImageCropScreenPreview() {
+private fun RectImageCropScreenPreview() {
     TogedyTheme {
         ImageCropScreen(
             imageId = 1,
+            cropShape = CropShapeType.Rect(aspectRatio = 1f),
+            onBackClick = { },
+            onDoneClick = { },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun CircleImageCropScreenPreview() {
+    TogedyTheme {
+        ImageCropScreen(
+            imageId = 1,
+            cropShape = CropShapeType.Circle,
             onBackClick = { },
             onDoneClick = { },
         )

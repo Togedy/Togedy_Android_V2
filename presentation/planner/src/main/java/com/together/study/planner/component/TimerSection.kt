@@ -78,8 +78,8 @@ internal fun TimerSection(
 
             Row(
                 modifier = Modifier
-                    .noRippleClickable(onPlayButtonClick)
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .noRippleClickable(onPlayButtonClick),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {

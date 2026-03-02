@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import com.together.study.common.navigation.Route
 import com.together.study.gallery.GalleryScreen
 import com.together.study.gallery.ImageCropScreen
+import com.together.study.gallery.type.CropShapeType
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToGallery(
@@ -37,6 +38,7 @@ fun NavGraphBuilder.galleryGraph(
         val route = backStackEntry.toRoute<TogedyCorpImage>()
         ImageCropScreen(
             imageId = route.imageId,
+            cropShape = CropShapeType.Rect(aspectRatio = 1f),
             onBackClick = navigateToUp,
             onDoneClick = navigateToUp,
             modifier = modifier,
