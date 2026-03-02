@@ -112,6 +112,7 @@ private fun AnimatedChatItem(
             message = if (chatMessage.isMine) chatMessage.message else chatMessage.displayedText,
             isMine = chatMessage.isMine,
             hasIcon = !chatMessage.isMine,
+            isLoading = chatMessage.isLoading,
             textColor = if (chatMessage.isLoading) TogedyTheme.colors.gray500 else null,
         )
     }

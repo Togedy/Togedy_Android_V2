@@ -1,9 +1,16 @@
 package com.together.study.chatbot.component
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.StartOffset
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,9 +19,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +36,7 @@ internal fun ChatItem(
     message: String,
     isMine: Boolean,
     hasIcon: Boolean = false,
+    isLoading: Boolean = false,
     textColor: Color? = null,
     onItemClick: () -> Unit = {},
 ) {
@@ -61,11 +71,65 @@ internal fun ChatItem(
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
-            Text(
-                text = message,
-                style = TogedyTheme.typography.body13m,
-                color = textColor,
-            )
+            if (isLoading) {
+                AnimatedLoadingText(
+                    text = message,
+                    color = textColor,
+                )
+            } else {
+                Text(
+                    text = message,
+                    style = TogedyTheme.typography.body13m,
+                    color = textColor,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AnimatedLoadingText(
+    text: String,
+    color: Color,
+) {
+    val transition = rememberInfiniteTransition()
+
+    Row {
+        var dotIndex = 0
+        text.forEach { char ->
+            if (char == '.') {
+                val currentDotIndex = dotIndex++
+                val scale by transition.animateFloat(
+                    initialValue = 1f,
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = keyframes {
+                            durationMillis = 900
+                            1f at 0
+                            1.22f at 300 using FastOutSlowInEasing
+                            1f at 600
+                            1f at 900
+                        },
+                        initialStartOffset = StartOffset(currentDotIndex * 120),
+                    ),
+                )
+
+                Text(
+                    text = ".",
+                    style = TogedyTheme.typography.body13m,
+                    color = color,
+                    modifier = Modifier.graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    },
+                )
+            } else {
+                Text(
+                    text = char.toString(),
+                    style = TogedyTheme.typography.body13m,
+                    color = color,
+                )
+            }
         }
     }
 }
@@ -103,6 +167,7 @@ private fun LoadingChatItemPreview() {
             message = "생각중...",
             isMine = false,
             hasIcon = true,
+            isLoading = true,
             textColor = TogedyTheme.colors.gray500,
         )
     }
