@@ -6,16 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
-import com.together.study.gallery.GalleryImage
+import com.together.study.gallery.util.toUri
 
 @Composable
 internal fun GalleryItem(
-    image: GalleryImage,
+    imageId: Long,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AsyncImage(
-        model = image.uri,
+        model = imageId.toUri(),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier

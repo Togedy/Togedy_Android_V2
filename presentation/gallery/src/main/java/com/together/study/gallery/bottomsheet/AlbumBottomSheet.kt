@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.gallery.GalleryAlbum
+import com.together.study.gallery.model.GalleryAlbum
+import com.together.study.gallery.util.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +60,7 @@ internal fun AlbumBottomSheet(
             AlbumItem(
                 title = album.name,
                 subtitle = "${album.count}장",
-                coverUri = album.coverUri,
+                coverUri = album.bucketId.toUri(),
                 onClick = { onSelect(album) },
             )
         }

@@ -1,10 +1,7 @@
-package com.together.study.gallery
-
-import android.net.Uri
+package com.together.study.gallery.model
 
 data class GalleryAlbum(
     val bucketId: Long,
     val name: String,
-    val coverUri: Uri,
     val count: Int,
 )

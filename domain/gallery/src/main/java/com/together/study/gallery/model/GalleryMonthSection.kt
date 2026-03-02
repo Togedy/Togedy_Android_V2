@@ -1,4 +1,4 @@
-package com.together.study.gallery
+package com.together.study.gallery.model
 
 import java.time.YearMonth
 

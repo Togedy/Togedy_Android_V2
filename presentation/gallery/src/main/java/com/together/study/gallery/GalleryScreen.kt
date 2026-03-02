@@ -1,7 +1,6 @@
 package com.together.study.gallery
 
 import android.Manifest
-import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,16 +27,16 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.bottomsheet.AlbumBottomSheet
 import com.together.study.gallery.component.GalleryItem
 import com.together.study.gallery.component.GalleryTopBar
+import com.together.study.gallery.util.toUri
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun GalleryScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onImageClick: (Uri) -> Unit,
+    onImageClick: (Long) -> Unit,
     viewModel: GalleryViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current
     val uiState = viewModel.uiState
     val permission =
         if (Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_IMAGES
@@ -47,7 +45,7 @@ internal fun GalleryScreen(
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) viewModel.load(context)
+        if (granted) viewModel.load()
     }
 
     LaunchedEffect(Unit) {
@@ -86,8 +84,8 @@ internal fun GalleryScreen(
 
                 items(items = section.images, key = { it.id }) { image ->
                     GalleryItem(
-                        image = image,
-                        onClick = { onImageClick(image.uri) },
+                        imageId = image.id,
+                        onClick = { onImageClick(image.id) },
                         modifier = Modifier.aspectRatio(1f),
                     )
                 }
@@ -98,9 +96,9 @@ internal fun GalleryScreen(
     if (uiState.isAlbumSheetOpen) {
         AlbumBottomSheet(
             albums = uiState.albums,
-            entireAlbumCover = uiState.images.first().uri,
+            entireAlbumCover = uiState.images.first().id.toUri(),
             entireCount = uiState.images.size,
-            onSelect = { viewModel.selectAlbum(context, it) },
+            onSelect = { viewModel.selectAlbum(it) },
             onDismissRequest = viewModel::updateAlbumSheetState,
         )
     }

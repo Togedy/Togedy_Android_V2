@@ -1,8 +1,8 @@
 package com.together.study.gallery.state
 
-import com.together.study.gallery.GalleryAlbum
-import com.together.study.gallery.GalleryImage
-import com.together.study.gallery.GalleryMonthSection
+import com.together.study.gallery.model.GalleryAlbum
+import com.together.study.gallery.model.GalleryImage
+import com.together.study.gallery.model.GalleryMonthSection
 
 data class GalleryUiState(
     val albums: List<GalleryAlbum> = emptyList(),
