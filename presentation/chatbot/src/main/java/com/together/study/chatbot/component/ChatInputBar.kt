@@ -32,9 +32,10 @@ internal fun ChatInputBar(
     placeholderText: String,
     onValueChange: (String) -> Unit,
     onSendClick: () -> Unit,
+    isSendAvailable: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
-    val isSendEnabled = value.isNotBlank()
+    val isSendEnabled = value.isNotBlank() && isSendAvailable
     val sendColor = if (isSendEnabled) TogedyTheme.colors.green else TogedyTheme.colors.greenBg
 
     Row(

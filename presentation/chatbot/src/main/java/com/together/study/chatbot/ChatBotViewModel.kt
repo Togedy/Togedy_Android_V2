@@ -26,7 +26,8 @@ internal class ChatBotViewModel @Inject constructor(
     }
 
     fun sendMessage(message: String) {
-        if (message.isBlank()) return
+        val currentState = _uiState.value
+        if (message.isBlank() || currentState.isWaitingResponse) return
 
         val userMessage = ChatMessage(
             message = message,
@@ -38,6 +39,7 @@ internal class ChatBotViewModel @Inject constructor(
                 messages = it.messages + userMessage,
                 inputText = "",
                 isChatMode = true,
+                isWaitingResponse = true,
             )
         }
 
@@ -56,9 +58,9 @@ internal class ChatBotViewModel @Inject constructor(
                 it.copy(messages = it.messages + loadingMessage)
             }
 
-            val currentState = _uiState.value
-            val followUpAnswer = if (currentState.isFollowUpRequired) {
-                currentState.lastBotAnswer
+            val latestState = _uiState.value
+            val followUpAnswer = if (latestState.isFollowUpRequired) {
+                latestState.lastBotAnswer
             } else {
                 null
             }
@@ -85,11 +87,12 @@ internal class ChatBotViewModel @Inject constructor(
                         },
                         isFollowUpRequired = answer.isFollowUpRequired,
                         lastBotAnswer = if (answer.isFollowUpRequired) fullResponse else null,
+                        isWaitingResponse = false,
                     )
                 }
 
                 messageResponseAnimation(typingMessage.id, fullResponse)
-            }.onFailure { error ->
+            }.onFailure {
                 // 에러 발생 시 에러 메시지로 교체
                 val errorMessage = ChatMessage(
                     id = loadingMessage.id,
@@ -103,7 +106,8 @@ internal class ChatBotViewModel @Inject constructor(
                     state.copy(
                         messages = state.messages.map {
                             if (it.id == loadingMessage.id) errorMessage else it
-                        }
+                        },
+                        isWaitingResponse = false,
                     )
                 }
             }

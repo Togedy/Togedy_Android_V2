@@ -139,6 +139,7 @@ internal fun ChatBotScreen(
                 placeholderText = "입시에 대해 궁금한 것을 물어보세요",
                 onValueChange = onInputTextChange,
                 onSendClick = { onSendMessage(uiState.inputText) },
+                isSendAvailable = !uiState.isWaitingResponse,
                 modifier = Modifier.fillMaxWidth()
             )
         }

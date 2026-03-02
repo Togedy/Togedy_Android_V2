@@ -8,4 +8,5 @@ data class ChatBotUiState(
     val messages: List<ChatMessage> = emptyList(),
     val isFollowUpRequired: Boolean = false,
     val lastBotAnswer: String? = null,
+    val isWaitingResponse: Boolean = false,
 )
