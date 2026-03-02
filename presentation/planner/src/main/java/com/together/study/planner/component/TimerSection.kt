@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +57,7 @@ internal fun TimerSection(
                 .wrapContentHeight()
                 .padding(top = 20.dp)
                 .clip(RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.Center,
         ) {
             AsyncImage(
                 model = ImageRequest
@@ -68,14 +70,16 @@ internal fun TimerSection(
                     color = TogedyTheme.colors.gray500.copy(alpha = 0.5f),
                     blendMode = BlendMode.Darken
                 ),
-                modifier = Modifier.height(114.dp),
+                modifier = Modifier.aspectRatio(328f / 114f),
                 error = ColorPainter(Color.White),
                 placeholder = ColorPainter(Color.White),
                 fallback = ColorPainter(Color.White),
             )
 
             Row(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .noRippleClickable(onPlayButtonClick)
+                    .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {
@@ -100,7 +104,6 @@ internal fun TimerSection(
                     imageVector = ImageVector.vectorResource(ic_play_button),
                     contentDescription = "타이머버튼",
                     tint = Color.Unspecified,
-                    modifier = Modifier.noRippleClickable(onPlayButtonClick)
                 )
             }
         }
