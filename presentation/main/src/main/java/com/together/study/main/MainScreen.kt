@@ -230,6 +230,7 @@ private fun MainNavHost(
 
         myPageGraph(
             navigateToUp = navigator.navController::popBackStack,
+            navController = navigator.navController,
             modifier = modifier,
         )
 
