@@ -18,7 +18,9 @@ fun NavGraphBuilder.chatBotGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<ChatBot> {
-        ChatBotRoute()
+        ChatBotRoute(
+            modifier = modifier,
+        )
     }
 }
 
