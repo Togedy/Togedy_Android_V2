@@ -1,5 +1,6 @@
 package com.together.study.mypage
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,8 +25,11 @@ import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_settings_24
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.mypage.component.MenuList
 import com.together.study.mypage.component.UserProfile
 import com.together.study.mypage.component.UserStudyItem
+import com.together.study.mypage.type.LegalMenu
+import com.together.study.mypage.type.SupportMenu
 import com.together.study.study.model.UserStudyInfo
 import com.together.study.util.noRippleClickable
 
@@ -33,73 +38,125 @@ import com.together.study.util.noRippleClickable
 internal fun MyPageRoute(
     onBackButtonClick: () -> Unit,
     onSettingNavigate: () -> Unit,
+    onNoticeNavigate: () -> Unit,
+    onContactUsNavigate: () -> Unit,
+    onLeaveReviewNavigate: () -> Unit,
+    onTermsOfServiceNavigate: () -> Unit,
+    onPrivacyPolicyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
     MyPageScreen(
         modifier = modifier,
         onSettingClick = onSettingNavigate,
+        onNoticeClick = onNoticeNavigate,
+        onContactUsClick = onContactUsNavigate,
+        onLeaveReviewClick = onLeaveReviewNavigate,
+        onTermsOfServiceClick = onTermsOfServiceNavigate,
+        onPrivacyPolicyClick = onPrivacyPolicyNavigate,
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MyPageScreen(
     modifier: Modifier = Modifier,
     onSettingClick: () -> Unit,
+    onNoticeClick: () -> Unit,
+    onContactUsClick: () -> Unit,
+    onLeaveReviewClick: () -> Unit,
+    onTermsOfServiceClick: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
-            .padding(20.dp),
+            .padding(horizontal = 14.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "프로필",
-                style = TogedyTheme.typography.title18b,
-                color = TogedyTheme.colors.gray800,
+        stickyHeader {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(TogedyTheme.colors.gray50)
+                    .padding(top = 14.dp, bottom = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "프로필",
+                    style = TogedyTheme.typography.title18b,
+                    color = TogedyTheme.colors.gray800,
+                )
+
+                Icon(
+                    imageVector = ImageVector.vectorResource(ic_settings_24),
+                    contentDescription = "뒤로가기",
+                    modifier = Modifier.noRippleClickable(onSettingClick),
+                )
+            }
+        }
+
+        item {
+            Spacer(Modifier.height(10.dp))
+
+            UserProfile(
+                userName = "유저입니당",
+                userEmail = "user@gmail.com",
+                userProfileImageUrl = "http://~~",
+                totalStudyTime = "100:00:00",
+                attendanceStreak = 4,
+                onEditProfileClick = {},
             )
 
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_settings_24),
-                contentDescription = "뒤로가기",
-                modifier = Modifier.noRippleClickable(onSettingClick),
+            Spacer(Modifier.height(12.dp))
+
+            UserStudyInfo(
+                studies = listOf(
+                    UserStudyInfo(
+                        studyName = "토글디",
+                        studyImageUrl = "http://~~",
+                        studyMemberCount = 10,
+                        completedMemberCount = 5,
+                    ),
+                    UserStudyInfo(
+                        studyName = "토글디",
+                        studyImageUrl = "http://~~",
+                        studyMemberCount = 10,
+                        completedMemberCount = 5,
+                    ),
+                )
             )
         }
 
-        Spacer(Modifier.height(20.dp))
-
-        UserProfile(
-            userName = "유저입니당",
-            userEmail = "user@gmail.com",
-            userProfileImageUrl = "http://~~",
-            totalStudyTime = "100:00:00",
-            attendanceStreak = 4,
-            onEditProfileClick = {},
-        )
-
-        Spacer(Modifier.height(12.dp))
-
-        UserStudyInfo(
-            studies = listOf(
-                UserStudyInfo(
-                    studyName = "토글디",
-                    studyImageUrl = "http://~~",
-                    studyMemberCount = 10,
-                    completedMemberCount = 5,
-                ),
-                UserStudyInfo(
-                    studyName = "토글디",
-                    studyImageUrl = "http://~~",
-                    studyMemberCount = 10,
-                    completedMemberCount = 5,
-                ),
+        item {
+            MenuList(
+                title = "고객 지원",
+                items = SupportMenu.entries,
+                onClick = { menu ->
+                    when (menu) {
+                        SupportMenu.NOTICE -> onNoticeClick()
+                        SupportMenu.CONTACT_US -> onContactUsClick()
+                        SupportMenu.LEAVE_REVIEW -> onLeaveReviewClick()
+                    }
+                }
             )
-        )
+        }
+
+        item {
+            MenuList(
+                title = "앱 이용",
+                items = LegalMenu.entries,
+                onClick = { menu ->
+                    when (menu) {
+                        LegalMenu.TERMS_OF_SERVICE -> onTermsOfServiceClick()
+                        LegalMenu.PRIVACY_POLICY -> onPrivacyPolicyClick()
+                    }
+                }
+            )
+
+            Spacer(Modifier.height(14.dp))
+        }
     }
 }
 
@@ -163,13 +220,17 @@ fun UserStudyInfo(
 }
 
 
-
 @Preview
 @Composable
 private fun MyPageRoutePreview() {
     TogedyTheme {
         MyPageScreen(
             onSettingClick = {},
+            onNoticeClick = {},
+            onContactUsClick = {},
+            onLeaveReviewClick = {},
+            onTermsOfServiceClick = {},
+            onPrivacyPolicyClick = {},
         )
     }
 }

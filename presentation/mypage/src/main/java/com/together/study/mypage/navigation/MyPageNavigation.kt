@@ -20,6 +20,12 @@ fun NavGraphBuilder.myPageGraph(
     composable<MyPage> {
         MyPageRoute(
             onBackButtonClick = navigateToUp,
+            onSettingNavigate = {},
+            onNoticeNavigate = {},
+            onContactUsNavigate = {},
+            onLeaveReviewNavigate = {},
+            onTermsOfServiceNavigate = {},
+            onPrivacyPolicyNavigate = {},
             modifier = modifier,
         )
     }
