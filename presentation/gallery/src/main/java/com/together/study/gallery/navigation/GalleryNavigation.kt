@@ -40,7 +40,6 @@ fun NavGraphBuilder.galleryGraph(
             imageId = route.imageId,
             cropShape = CropShapeType.Rect(aspectRatio = 1f),
             onBackClick = navigateToUp,
-            onDoneClick = navigateToUp,
             modifier = modifier,
         )
     }

@@ -35,9 +35,11 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.gallery.model.CropRequest
 import com.together.study.gallery.type.CropShapeType
 import com.together.study.gallery.util.toUri
 import com.together.study.util.noRippleClickable
@@ -48,7 +50,7 @@ internal fun ImageCropScreen(
     cropShape: CropShapeType,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onDoneClick: () -> Unit,
+    viewModel: ImageCropViewModel = hiltViewModel(),
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
@@ -85,7 +87,6 @@ internal fun ImageCropScreen(
                     }
                     .pointerInput(imageWidth, imageHeight, cropWidth, cropHeight, minScale) {
                         detectTransformGestures { _, pan, zoom, _ ->
-
                             val newScale = (scale * zoom).coerceAtLeast(minScale)
 
                             val scaledWidth = imageWidth * newScale
@@ -171,7 +172,19 @@ internal fun ImageCropScreen(
     ) {
         ImageCropTopBar(
             onBackClick = onBackClick,
-            onDoneClick = onDoneClick,
+            onDoneClick = {
+                val cropRequest = CropRequest(
+                    imageId = imageId,
+                    scale = scale,
+                    offsetX = offset.x,
+                    offsetY = offset.y,
+                    cropWidth = cropWidth,
+                    cropHeight = cropHeight,
+                    originalWidth = imageWidth,
+                    originalHeight = imageHeight,
+                )
+                viewModel.cropAndUpload(cropRequest)
+            },
         )
 
         Spacer(Modifier.weight(1f))
@@ -291,7 +304,6 @@ private fun RectImageCropScreenPreview() {
             imageId = 1,
             cropShape = CropShapeType.Rect(aspectRatio = 1f),
             onBackClick = { },
-            onDoneClick = { },
         )
     }
 }
@@ -304,7 +316,6 @@ private fun CircleImageCropScreenPreview() {
             imageId = 1,
             cropShape = CropShapeType.Circle,
             onBackClick = { },
-            onDoneClick = { },
         )
     }
 }
