@@ -1,4 +1,4 @@
-package com.together.study.mypage
+package com.together.study.mypage.ui.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

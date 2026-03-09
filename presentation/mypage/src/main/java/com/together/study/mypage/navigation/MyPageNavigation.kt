@@ -7,8 +7,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
-import com.together.study.mypage.AccountSettingsRoute
-import com.together.study.mypage.MyPageRoute
+import com.together.study.mypage.ui.MyPageRoute
+import com.together.study.mypage.ui.account.AccountSettingsRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(
@@ -50,3 +50,6 @@ data object MyPage : MainTabRoute
 
 @Serializable
 data object AccountSettings : Route
+
+@Serializable
+data object DeleteAccount : Route

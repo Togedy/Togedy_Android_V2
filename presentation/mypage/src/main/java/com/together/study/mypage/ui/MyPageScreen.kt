@@ -1,4 +1,4 @@
-package com.together.study.mypage
+package com.together.study.mypage.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
