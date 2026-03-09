@@ -54,6 +54,7 @@ fun NavGraphBuilder.myPageGraph(
         DeleteAccountScreen(
             userName = "투게디짱", // 추후 변경
             onBackClick = navigateToUp,
+            modifier = modifier,
         )
     }
 }

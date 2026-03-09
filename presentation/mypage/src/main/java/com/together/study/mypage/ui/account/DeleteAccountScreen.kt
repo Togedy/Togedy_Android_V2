@@ -1,15 +1,22 @@
 package com.together.study.mypage.ui.account
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,12 +32,28 @@ import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 
+private const val FLOAT_ANIMATION_DURATION = 1200
+private const val FLOAT_OFFSET_START = -6f
+private const val FLOAT_OFFSET_END = 6f
+
 @Composable
 internal fun DeleteAccountScreen(
     userName: String,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "float")
+
+    val offsetY by infiniteTransition.animateFloat(
+        initialValue = FLOAT_OFFSET_START,
+        targetValue = FLOAT_OFFSET_END,
+        animationSpec = infiniteRepeatable(
+            animation = tween(FLOAT_ANIMATION_DURATION),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "floatY"
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -53,7 +76,9 @@ internal fun DeleteAccountScreen(
             Image(
                 painter = painterResource(id = R.drawable.img_character_crying),
                 contentDescription = null,
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier
+                    .size(100.dp)
+                    .offset(y = offsetY.dp),
             )
 
             Spacer(Modifier.height(4.dp))
