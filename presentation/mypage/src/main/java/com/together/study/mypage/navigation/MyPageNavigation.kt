@@ -9,6 +9,7 @@ import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
 import com.together.study.mypage.ui.MyPageRoute
 import com.together.study.mypage.ui.account.AccountSettingsRoute
+import com.together.study.mypage.ui.account.DeleteAccountScreen
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(
@@ -18,6 +19,10 @@ fun NavController.navigateToMyPage(
 fun NavController.navigateToAccountSettings(
     navOptions: NavOptions? = null,
 ) = navigate(AccountSettings, navOptions)
+
+fun NavController.navigateToDeleteAccount(
+    navOptions: NavOptions? = null,
+) = navigate(DeleteAccount, navOptions)
 
 fun NavGraphBuilder.myPageGraph(
     navigateToUp: () -> Unit,
@@ -40,7 +45,15 @@ fun NavGraphBuilder.myPageGraph(
     composable<AccountSettings> {
         AccountSettingsRoute(
             onBackButtonClick = navigateToUp,
+            onDeleteAccountNavigate = navController::navigateToDeleteAccount,
             modifier = modifier,
+        )
+    }
+
+    composable<DeleteAccount> {
+        DeleteAccountScreen(
+            userName = "투게디짱", // 추후 변경
+            onBackClick = navigateToUp,
         )
     }
 }

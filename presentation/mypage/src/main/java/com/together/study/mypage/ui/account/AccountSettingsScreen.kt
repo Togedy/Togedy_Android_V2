@@ -26,13 +26,14 @@ import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun AccountSettingsRoute(
-    onBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onBackButtonClick: () -> Unit,
+    onDeleteAccountNavigate: () -> Unit,
 ) {
     AccountSettingsScreen(
         modifier = modifier,
         onBackButtonClick = onBackButtonClick,
-        onSettingsClick = {},
+        onDeleteAccountClick = onDeleteAccountNavigate,
     )
 }
 
@@ -40,7 +41,7 @@ internal fun AccountSettingsRoute(
 private fun AccountSettingsScreen(
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
-    onSettingsClick: () -> Unit,
+    onDeleteAccountClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -58,7 +59,7 @@ private fun AccountSettingsScreen(
         AccountSection(
             userEmail = "togedy@gmail.com",
             onLogoutClick = {},
-            onDeleteAccountClick = {},
+            onDeleteAccountClick = onDeleteAccountClick,
         )
     }
 }
