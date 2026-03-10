@@ -31,7 +31,7 @@ internal fun NoticeTitleItem(
     date: String,
     isNew: Boolean,
     modifier: Modifier = Modifier,
-    onItemClick: () -> Unit,
+    onItemClick: () -> Unit = {},
 ) {
     Column(
         modifier = modifier

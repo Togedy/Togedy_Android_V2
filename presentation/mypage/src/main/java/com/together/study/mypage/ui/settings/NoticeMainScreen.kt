@@ -68,14 +68,14 @@ private fun NoticeMainScreen(
                 title = "[이벤트] 후기왕을 찾아요 당첨자 발표",
                 date = "2026.01.01",
                 isNew = true,
-                onItemClick = {},
+                onItemClick = { onNoticeClick(0) },
             )
 
             NoticeTitleItem(
                 title = "[업데이트] 오류 발생으로 인한 그룹 실시간 측정으로 발생한 오류",
                 date = "2026.01.01",
                 isNew = false,
-                onItemClick = {},
+                onItemClick = { onNoticeClick(0) },
             )
         }
 

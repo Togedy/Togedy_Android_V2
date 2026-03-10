@@ -11,6 +11,7 @@ import com.together.study.mypage.ui.MyPageRoute
 import com.together.study.mypage.ui.account.AccountSettingsRoute
 import com.together.study.mypage.ui.account.DeleteAccountScreen
 import com.together.study.mypage.ui.account.ProfileEditRoute
+import com.together.study.mypage.ui.settings.NoticeDetailRoute
 import com.together.study.mypage.ui.settings.NoticeMainRoute
 import kotlinx.serialization.Serializable
 
@@ -33,6 +34,11 @@ fun NavController.navigateToProfileEdit(
 fun NavController.navigateToNoticeMain(
     navOptions: NavOptions? = null,
 ) = navigate(NoticeMain, navOptions)
+
+fun NavController.navigateToNoticeDetail(
+    noticeId: Long,
+    navOptions: NavOptions? = null,
+) = navigate(NoticeDetail(noticeId), navOptions)
 
 fun NavGraphBuilder.myPageGraph(
     navigateToUp: () -> Unit,
@@ -80,7 +86,14 @@ fun NavGraphBuilder.myPageGraph(
     composable<NoticeMain> {
         NoticeMainRoute(
             onBackButtonClick = navigateToUp,
-            onNoticeDetailNavigate = {},
+            onNoticeDetailNavigate = navController::navigateToNoticeDetail,
+            modifier = modifier,
+        )
+    }
+
+    composable<NoticeDetail> {
+        NoticeDetailRoute(
+            onBackButtonClick = navigateToUp,
             modifier = modifier,
         )
     }
@@ -100,3 +113,8 @@ data object ProfileEdit : Route
 
 @Serializable
 data object NoticeMain : Route
+
+@Serializable
+data class NoticeDetail(
+    val noticeId: Long,
+) : Route
