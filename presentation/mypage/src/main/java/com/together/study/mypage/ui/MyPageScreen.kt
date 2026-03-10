@@ -38,6 +38,7 @@ import com.together.study.util.noRippleClickable
 internal fun MyPageRoute(
     onBackButtonClick: () -> Unit,
     onSettingNavigate: () -> Unit,
+    onProfileEditNavigate: () -> Unit,
     onNoticeNavigate: () -> Unit,
     onContactUsNavigate: () -> Unit,
     onLeaveReviewNavigate: () -> Unit,
@@ -49,6 +50,7 @@ internal fun MyPageRoute(
     MyPageScreen(
         modifier = modifier,
         onSettingClick = onSettingNavigate,
+        onEditProfileClick = onProfileEditNavigate,
         onNoticeClick = onNoticeNavigate,
         onContactUsClick = onContactUsNavigate,
         onLeaveReviewClick = onLeaveReviewNavigate,
@@ -62,6 +64,7 @@ internal fun MyPageRoute(
 private fun MyPageScreen(
     modifier: Modifier = Modifier,
     onSettingClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
     onNoticeClick: () -> Unit,
     onContactUsClick: () -> Unit,
     onLeaveReviewClick: () -> Unit,
@@ -106,7 +109,7 @@ private fun MyPageScreen(
                 userProfileImageUrl = "http://~~",
                 totalStudyTime = "100:00:00",
                 attendanceStreak = 4,
-                onEditProfileClick = {},
+                onEditProfileClick = onEditProfileClick,
             )
 
             Spacer(Modifier.height(12.dp))
@@ -226,6 +229,7 @@ private fun MyPageRoutePreview() {
     TogedyTheme {
         MyPageScreen(
             onSettingClick = {},
+            onEditProfileClick = {},
             onNoticeClick = {},
             onContactUsClick = {},
             onLeaveReviewClick = {},

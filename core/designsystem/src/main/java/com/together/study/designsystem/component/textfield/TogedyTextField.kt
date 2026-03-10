@@ -179,7 +179,7 @@ fun TogedyTextField(
                 )
 
                 // 에러 메시지 표시
-                if (errorMessage != null) {
+                if (isError && errorMessage != null) {
                     ErrorMessageRow(
                         errorMessage = errorMessage,
                         errorMessageStyle = errorMessageStyle,
@@ -246,7 +246,7 @@ private fun TextFieldContent(
                 onClick = onDupCheckClick,
                 enabled = enabled,
                 backgroundColor = backgroundColor,
-                borderColor = borderColor
+                borderColor = TogedyTheme.colors.gray200,
             )
         }
     }
