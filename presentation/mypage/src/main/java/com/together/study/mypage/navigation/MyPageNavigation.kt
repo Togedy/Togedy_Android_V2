@@ -11,6 +11,7 @@ import com.together.study.mypage.ui.MyPageRoute
 import com.together.study.mypage.ui.account.AccountSettingsRoute
 import com.together.study.mypage.ui.account.DeleteAccountScreen
 import com.together.study.mypage.ui.account.ProfileEditRoute
+import com.together.study.mypage.ui.settings.NoticeMainRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(
@@ -29,6 +30,10 @@ fun NavController.navigateToProfileEdit(
     navOptions: NavOptions? = null,
 ) = navigate(ProfileEdit, navOptions)
 
+fun NavController.navigateToNoticeMain(
+    navOptions: NavOptions? = null,
+) = navigate(NoticeMain, navOptions)
+
 fun NavGraphBuilder.myPageGraph(
     navigateToUp: () -> Unit,
     navController: NavController,
@@ -39,7 +44,7 @@ fun NavGraphBuilder.myPageGraph(
             onBackButtonClick = navigateToUp,
             onSettingNavigate = navController::navigateToAccountSettings,
             onProfileEditNavigate = navController::navigateToProfileEdit,
-            onNoticeNavigate = {},
+            onNoticeNavigate = navController::navigateToNoticeMain,
             onContactUsNavigate = {},
             onLeaveReviewNavigate = {},
             onTermsOfServiceNavigate = {},
@@ -71,6 +76,14 @@ fun NavGraphBuilder.myPageGraph(
             modifier = modifier,
         )
     }
+
+    composable<NoticeMain> {
+        NoticeMainRoute(
+            onBackButtonClick = navigateToUp,
+            onNoticeDetailNavigate = {},
+            modifier = modifier,
+        )
+    }
 }
 
 @Serializable
@@ -84,3 +97,6 @@ data object DeleteAccount : Route
 
 @Serializable
 data object ProfileEdit : Route
+
+@Serializable
+data object NoticeMain : Route
