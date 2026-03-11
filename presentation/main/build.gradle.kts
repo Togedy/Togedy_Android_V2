@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
+    implementation(projects.presentation.login)
     implementation(projects.presentation.calendar)
     implementation(projects.presentation.chatbot)
     implementation(projects.presentation.planner)

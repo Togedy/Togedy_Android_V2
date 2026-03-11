@@ -20,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
+import com.together.study.calendar.maincalendar.navigation.navigateToCalendar
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.event.TogedyUiEvent
@@ -28,6 +29,7 @@ import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
+import com.together.study.login.navigation.loginGraph
 import com.together.study.main.component.MainBottomBar
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
@@ -127,6 +129,11 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination
     ) {
+        loginGraph(
+            modifier = modifier,
+            navigateToCalendar = navigator.navController::navigateToCalendar,
+        )
+
         calendarGraph(
             navigateToUp = navigator.navController::popBackStack,
             navigateToUnivSearch = navigator.navController::navigateToUnivSearch,
