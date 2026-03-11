@@ -42,6 +42,7 @@ include(
     ":domain:study",
     ":domain:planner",
     ":domain:search",
+    ":domain:support",
 )
 include(
     ":presentation:main",
