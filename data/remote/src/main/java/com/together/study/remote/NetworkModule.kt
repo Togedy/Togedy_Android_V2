@@ -3,6 +3,7 @@ package com.together.study.remote
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.together.study.local.TokenDataStore
 import com.together.study.remote.qualifier.JWT
+import com.together.study.remote.qualifier.NoAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,11 @@ object NetworkModule {
     fun providerHeaderInterceptor(
         tokenDataStore: TokenDataStore,
     ): Interceptor = HeaderInterceptor(tokenDataStore)
+
+    @Singleton
+    fun providerAuthInterceptor(
+        tokenDataStore: TokenDataStore,
+    ): AuthInterceptor = AuthInterceptor(tokenDataStore)
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
@@ -88,4 +94,17 @@ object NetworkModule {
         .client(client)
         .addConverterFactory(factory)
         .build()
+
+    @Provides
+    @NoAuth
+    @Singleton
+    fun provideNoAuthRetrofit(
+        factory: Converter.Factory,
+        client: OkHttpClient,
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(client)
+        .addConverterFactory(factory)
+        .build()
+
 }
