@@ -47,6 +47,9 @@ fun NavController.navigateToFeedback(
 
 fun NavGraphBuilder.myPageGraph(
     navigateToUp: () -> Unit,
+    navigateToCreateStudy: () -> Unit,
+    navigateToStudyDetail: (Long) -> Unit,
+    navigateToStudy: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -54,6 +57,9 @@ fun NavGraphBuilder.myPageGraph(
         MyPageRoute(
             onSettingNavigate = navController::navigateToAccountSettings,
             onProfileEditNavigate = navController::navigateToProfileEdit,
+            onCreateStudyNavigate = navigateToCreateStudy,
+            onStudyDetailNavigate = navigateToStudyDetail,
+            onStudyMainNavigate = navigateToStudy,
             onNoticeNavigate = navController::navigateToNoticeMain,
             onContactUsNavigate = navController::navigateToFeedback,
             onLeaveReviewNavigate = {},

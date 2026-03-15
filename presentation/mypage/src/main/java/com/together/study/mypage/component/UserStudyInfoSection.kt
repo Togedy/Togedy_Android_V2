@@ -17,11 +17,15 @@ import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.user.model.UserStudyInfo
+import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun UserStudyInfoSection(
     studies: List<UserStudyInfo>,
     modifier: Modifier = Modifier,
+    onStartStudyClick: () -> Unit,
+    onStudyItemClick: (Long) -> Unit,
+    onStudyMoreButtonClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -49,7 +53,11 @@ internal fun UserStudyInfoSection(
                 text = comment,
                 style = TogedyTheme.typography.toast13sb,
                 color = TogedyTheme.colors.gray500,
-                modifier = Modifier.padding(vertical = 4.dp),
+                modifier = Modifier
+                    .noRippleClickable {
+                        if (comment == "전체보기") onStudyMoreButtonClick()
+                    }
+                    .padding(vertical = 4.dp),
             )
         }
 
@@ -59,14 +67,17 @@ internal fun UserStudyInfoSection(
             TogedyButton(
                 text = "스터디 시작하기",
                 enabled = true,
-                onClick = {},
+                onClick = onStartStudyClick,
                 modifier = Modifier.height(50.dp),
             )
         } else {
             studies.forEach { studyInfo ->
                 Spacer(Modifier.height(12.dp))
 
-                UserStudyItem(studyInfo = studyInfo)
+                UserStudyItem(
+                    studyInfo = studyInfo,
+                    onItemClick = { onStudyItemClick(studyInfo.studyId) }
+                )
             }
         }
     }

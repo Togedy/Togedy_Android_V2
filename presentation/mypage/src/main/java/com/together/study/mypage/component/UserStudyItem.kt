@@ -27,16 +27,19 @@ import coil.request.ImageRequest
 import com.together.study.designsystem.R.drawable.ic_circle_gray_24
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.user.model.UserStudyInfo
+import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun UserStudyItem(
     studyInfo: UserStudyInfo,
     modifier: Modifier = Modifier,
+    onItemClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
     Box(
         modifier = modifier
+            .noRippleClickable(onItemClick)
             .fillMaxWidth()
             .height(80.dp)
             .clip(RoundedCornerShape(12.dp)),

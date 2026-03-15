@@ -19,6 +19,7 @@ fun UserInfoResponse.toDomain(): UserInfo =
 
 fun UserStudyInfoResponse.toDomain(): UserStudyInfo =
     UserStudyInfo(
+        studyId = studyId,
         studyName = studyName,
         studyImageUrl = studyImageUrl,
         isCompleted = isCompleted,

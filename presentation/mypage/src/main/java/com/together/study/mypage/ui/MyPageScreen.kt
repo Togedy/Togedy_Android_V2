@@ -38,6 +38,9 @@ import com.together.study.util.noRippleClickable
 internal fun MyPageRoute(
     onSettingNavigate: () -> Unit,
     onProfileEditNavigate: () -> Unit,
+    onCreateStudyNavigate: () -> Unit,
+    onStudyDetailNavigate: (Long) -> Unit,
+    onStudyMainNavigate: () -> Unit,
     onNoticeNavigate: () -> Unit,
     onContactUsNavigate: () -> Unit,
     onLeaveReviewNavigate: () -> Unit,
@@ -60,6 +63,9 @@ internal fun MyPageRoute(
                 modifier = modifier,
                 onSettingClick = onSettingNavigate,
                 onEditProfileClick = onProfileEditNavigate,
+                onStartStudyClick = onCreateStudyNavigate,
+                onStudyItemClick = onStudyDetailNavigate,
+                onStudyMoreButtonClick = onStudyMainNavigate,
                 onNoticeClick = onNoticeNavigate,
                 onContactUsClick = onContactUsNavigate,
                 onLeaveReviewClick = onLeaveReviewNavigate,
@@ -79,6 +85,9 @@ private fun MyPageScreen(
     modifier: Modifier = Modifier,
     onSettingClick: () -> Unit,
     onEditProfileClick: () -> Unit,
+    onStartStudyClick: () -> Unit,
+    onStudyItemClick: (Long) -> Unit,
+    onStudyMoreButtonClick: () -> Unit,
     onNoticeClick: () -> Unit,
     onContactUsClick: () -> Unit,
     onLeaveReviewClick: () -> Unit,
@@ -130,6 +139,9 @@ private fun MyPageScreen(
 
             UserStudyInfoSection(
                 studies = userInfo.studies,
+                onStartStudyClick = onStartStudyClick,
+                onStudyItemClick = onStudyItemClick,
+                onStudyMoreButtonClick = onStudyMoreButtonClick,
             )
         }
 
@@ -179,6 +191,9 @@ private fun MyPageRoutePreview() {
             ),
             onSettingClick = {},
             onEditProfileClick = {},
+            onStartStudyClick = {},
+            onStudyItemClick = {},
+            onStudyMoreButtonClick = {},
             onNoticeClick = {},
             onContactUsClick = {},
             onLeaveReviewClick = {},
