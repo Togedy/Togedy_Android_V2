@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.study.model.UserStudyInfo
+import com.together.study.user.model.UserStudyInfo
 
 @Composable
 internal fun UserStudyInfoSection(

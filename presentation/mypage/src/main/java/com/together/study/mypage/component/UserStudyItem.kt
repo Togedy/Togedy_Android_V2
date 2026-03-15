@@ -26,7 +26,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.designsystem.R.drawable.ic_circle_gray_24
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.study.model.UserStudyInfo
+import com.together.study.user.model.UserStudyInfo
 
 @Composable
 internal fun UserStudyItem(
