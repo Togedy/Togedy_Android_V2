@@ -47,9 +47,7 @@ internal fun ProfileEditRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState.value.profileState) {
-        is UiState.Loading -> {
-            TogedyLoadingScreen()
-        }
+        is UiState.Loading -> TogedyLoadingScreen()
 
         is UiState.Empty -> {}
 
@@ -66,16 +64,14 @@ internal fun ProfileEditRoute(
                 modifier = modifier,
                 onBackClick = onBackClick,
                 onDoneClick = {
-                    // api 호출
+                    viewModel.updateProfile()
                     onBackClick()
                 },
                 onEditBottomSheetStateChange = viewModel::setEditBottomSheetVisible,
                 onImageDeleteButtonClick = viewModel::updateUserProfileImageUrl,
                 onImageEditButtonClick = onGalleryNavigate,
                 onNameChange = viewModel::updateUserName,
-                onDupCheckClick = {
-                    // 중복확인 api 호출
-                },
+                onDupCheckClick = viewModel::checkDuplication,
             )
         }
 
@@ -106,7 +102,7 @@ internal fun ProfileEditScreen(
         else TogedyTheme.colors.gray500
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
             .padding(vertical = 24.dp),
@@ -118,12 +114,7 @@ internal fun ProfileEditScreen(
             onLeftClicked = onBackClick,
             rightText = "완료",
             rightTextStyle = TogedyTheme.typography.title16sb.copy(color = doneTextColor),
-            onRightClicked = {
-                if (isDoneEnabled) {
-                    // api 호출
-                    onDoneClick()
-                }
-            },
+            onRightClicked = { if (isDoneEnabled) onDoneClick() },
             modifier = Modifier.padding(vertical = 10.dp),
         )
 
