@@ -65,7 +65,7 @@ private fun AccountSettingsScreen(
 }
 
 @Composable
-internal fun AccountSection(
+private fun AccountSection(
     userEmail: String,
     modifier: Modifier = Modifier,
     onLogoutClick: () -> Unit,
@@ -117,7 +117,7 @@ internal fun AccountSection(
             )
         }
 
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.height(12.dp))
 
         HorizontalDivider(color = TogedyTheme.colors.gray50)
 

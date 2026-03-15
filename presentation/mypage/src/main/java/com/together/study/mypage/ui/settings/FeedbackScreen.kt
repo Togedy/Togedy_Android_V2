@@ -100,11 +100,11 @@ private fun FeedbackScreen(
 
         TogedyButton(
             text = "제출하기",
-            enabled = content.isNotEmpty() && selectedTypeIdx != -1,
+            enabled = content.trim().isNotEmpty() && selectedTypeIdx != -1,
             onClick = {
                 onSubmitClick(
                     FeedbackType.entries[selectedTypeIdx].serverValue,
-                    content,
+                    content.trim(),
                     email,
                 )
             },

@@ -36,13 +36,10 @@ internal fun FeedbackTypeSelector(
     modifier: Modifier = Modifier,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-
-    val selectorText =
-        if (selectedIndex >= 0) typeList.getOrNull(selectedIndex)?.displayText ?: "문의유형을 선택하세요"
-        else "문의유형을 선택하세요"
-
+    val selectedType = typeList.getOrNull(selectedIndex)
+    val selectorText = selectedType?.displayText ?: "문의유형을 선택하세요"
     val selectorColor =
-        if (selectedIndex >= 0) TogedyTheme.colors.black
+        if (selectedType != null) TogedyTheme.colors.black
         else TogedyTheme.colors.gray400
 
     val rotation by animateFloatAsState(

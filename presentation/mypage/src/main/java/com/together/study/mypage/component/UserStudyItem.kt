@@ -1,6 +1,5 @@
 package com.together.study.mypage.component
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,6 +19,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -30,10 +30,11 @@ import com.together.study.study.model.UserStudyInfo
 
 @Composable
 internal fun UserStudyItem(
-    context: Context,
     studyInfo: UserStudyInfo,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -51,7 +52,9 @@ internal fun UserStudyItem(
                 color = TogedyTheme.colors.gray600.copy(alpha = 0.4f),
                 blendMode = BlendMode.Darken
             ),
-            modifier = Modifier.height(114.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(114.dp),
             error = ColorPainter(Color.White),
             placeholder = ColorPainter(Color.White),
             fallback = ColorPainter(Color.White),
@@ -77,11 +80,11 @@ internal fun UserStudyItem(
                 Icon(
                     imageVector = ImageVector.vectorResource(ic_circle_gray_24),
                     contentDescription = null,
-                    tint = Color.Black,
+                    tint = TogedyTheme.colors.gray600,
                 )
 
                 Text(
-                    text = "${studyInfo.completedMemberCount}/${studyInfo.studyMemberCount}",
+                    text = "${studyInfo.completedMemberCount ?: "-"}/${studyInfo.studyMemberCount}",
                     style = TogedyTheme.typography.body13m,
                     color = TogedyTheme.colors.gray600,
                 )

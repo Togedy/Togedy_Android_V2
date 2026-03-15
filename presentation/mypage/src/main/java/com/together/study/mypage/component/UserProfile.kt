@@ -130,7 +130,7 @@ internal fun UserProfile(
 }
 
 @Composable
-fun UserRecordBlock(
+private fun UserRecordBlock(
     record: String,
     type: String,
     unit: String = "",

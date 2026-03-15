@@ -32,7 +32,7 @@ class ProfileEditViewModel @Inject constructor(
         _uiState.update { it.copy(name = name) }
         if (name.length !in 2..10) setError(true, "2~10글자로 입력해주세요")
         else setError(false)
-        updateDoneEnabled()
+        updateDoneEnabled() // 중복여부 검사 로직 수정
     }
 
     fun updateUserProfileImageUrl(url: String?) {

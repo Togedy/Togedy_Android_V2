@@ -101,7 +101,7 @@ internal fun ProfileEditScreen(
     onDupCheckClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val doneTexColor =
+    val doneTextColor =
         if (isDoneEnabled) TogedyTheme.colors.green
         else TogedyTheme.colors.gray500
 
@@ -117,7 +117,7 @@ internal fun ProfileEditScreen(
             leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
             onLeftClicked = onBackClick,
             rightText = "완료",
-            rightTextStyle = TogedyTheme.typography.title16sb.copy(color = doneTexColor),
+            rightTextStyle = TogedyTheme.typography.title16sb.copy(color = doneTextColor),
             onRightClicked = {
                 if (isDoneEnabled) {
                     // api 호출
