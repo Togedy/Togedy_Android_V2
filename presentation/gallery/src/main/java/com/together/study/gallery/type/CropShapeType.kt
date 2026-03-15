@@ -14,13 +14,6 @@ import androidx.compose.ui.unit.dp
 sealed class CropShapeType {
     abstract val borderShape: Shape
 
-    abstract fun calculateMinScale(
-        imageWidth: Float,
-        imageHeight: Float,
-        cropWidth: Float,
-        cropHeight: Float,
-    ): Float
-
     abstract fun drawMask(
         drawScope: DrawScope,
         cropLeft: Float,
@@ -36,18 +29,6 @@ sealed class CropShapeType {
 
         override val borderShape: Shape
             get() = RoundedCornerShape(cornerRadiusDp.dp)
-
-        override fun calculateMinScale(
-            imageWidth: Float,
-            imageHeight: Float,
-            cropWidth: Float,
-            cropHeight: Float,
-        ): Float {
-            return maxOf(
-                cropWidth / imageWidth,
-                cropHeight / imageHeight
-            )
-        }
 
         override fun drawMask(
             drawScope: DrawScope,
@@ -73,18 +54,6 @@ sealed class CropShapeType {
 
         override val borderShape: Shape
             get() = CircleShape
-
-        override fun calculateMinScale(
-            imageWidth: Float,
-            imageHeight: Float,
-            cropWidth: Float,
-            cropHeight: Float,
-        ): Float {
-            return maxOf(
-                cropWidth / imageWidth,
-                cropHeight / imageHeight
-            )
-        }
 
         override fun drawMask(
             drawScope: DrawScope,

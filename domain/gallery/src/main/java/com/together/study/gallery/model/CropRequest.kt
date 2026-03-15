@@ -9,4 +9,6 @@ data class CropRequest(
     val cropHeight: Float,
     val originalWidth: Float,
     val originalHeight: Float,
+    val viewWidth: Float,
+    val viewHeight: Float,
 )
