@@ -19,10 +19,18 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class GalleryRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : GalleryRepository {
+    private data class CropBitmapRect(
+        val left: Int,
+        val top: Int,
+        val width: Int,
+        val height: Int,
+    )
+
     override suspend fun getAlbums(): List<GalleryAlbum> {
         val albumMap = linkedMapOf<Long, GalleryAlbum>()
         val countMap = mutableMapOf<Long, Int>()
@@ -115,28 +123,28 @@ class GalleryRepositoryImpl @Inject constructor(
             val source =
                 ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
 
-            val left = (
-                    (-request.offsetX + request.cropWidth / 2f) / request.scale
-                    ).coerceIn(0f, request.originalWidth)
+            val bitmapWidth = source.width.toFloat()
+            val bitmapHeight = source.height.toFloat()
 
-            val top = (
-                    (-request.offsetY + request.cropHeight / 2f) / request.scale
-                    ).coerceIn(0f, request.originalHeight)
+            val fitScale = minOf(
+                request.viewWidth / bitmapWidth,
+                request.viewHeight / bitmapHeight
+            )
+            val totalScale = fitScale * request.scale
+            require(totalScale > 0f) { "유효하지 않는 scale 값입니다: $totalScale" }
 
-            val width = (
-                    request.cropWidth / request.scale
-                    ).coerceAtMost(request.originalWidth - left)
-
-            val height = (
-                    request.cropHeight / request.scale
-                    ).coerceAtMost(request.originalHeight - top)
-
+            val cropRect = calculateCropBitmapRect(
+                request = request,
+                bitmapWidth = bitmapWidth,
+                bitmapHeight = bitmapHeight,
+                totalScale = totalScale,
+            )
             val cropped = Bitmap.createBitmap(
                 source,
-                left.toInt(),
-                top.toInt(),
-                width.toInt(),
-                height.toInt()
+                cropRect.left,
+                cropRect.top,
+                cropRect.width,
+                cropRect.height,
             )
             val fileName = "togedy_${System.currentTimeMillis()}.jpg"
 
@@ -188,5 +196,39 @@ class GalleryRepositoryImpl @Inject constructor(
 
 //            api.uploadImage(body) TODO 실제 api 연결
         }
+    }
+
+    private fun calculateCropBitmapRect(
+        request: CropRequest,
+        bitmapWidth: Float,
+        bitmapHeight: Float,
+        totalScale: Float,
+    ): CropBitmapRect {
+        val sourceWidth = bitmapWidth.roundToInt()
+        val sourceHeight = bitmapHeight.roundToInt()
+
+        val requestedWidth = (request.cropWidth / totalScale).roundToInt().coerceAtLeast(1)
+        val requestedHeight = (request.cropHeight / totalScale).roundToInt().coerceAtLeast(1)
+
+        val rawLeft = (
+            bitmapWidth / 2f -
+                (request.offsetX + request.cropWidth / 2f) / totalScale
+            ).roundToInt()
+        val rawTop = (
+            bitmapHeight / 2f -
+                (request.offsetY + request.cropHeight / 2f) / totalScale
+            ).roundToInt()
+
+        val left = rawLeft.coerceIn(0, (sourceWidth - 1).coerceAtLeast(0))
+        val top = rawTop.coerceIn(0, (sourceHeight - 1).coerceAtLeast(0))
+        val width = requestedWidth.coerceAtMost(sourceWidth - left).coerceAtLeast(1)
+        val height = requestedHeight.coerceAtMost(sourceHeight - top).coerceAtLeast(1)
+
+        return CropBitmapRect(
+            left = left,
+            top = top,
+            width = width,
+            height = height,
+        )
     }
 }
