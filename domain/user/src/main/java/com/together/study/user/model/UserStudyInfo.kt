@@ -5,5 +5,5 @@ data class UserStudyInfo(
     val studyImageUrl: String?,
     val isCompleted: Boolean?,
     val completedMemberCount: Int?,
-    val studyMemberCount: Int,
+    val studyMemberCount: Int?,
 )

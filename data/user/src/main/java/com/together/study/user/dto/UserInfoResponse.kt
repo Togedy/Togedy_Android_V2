@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class UserInfoResponse(
     val userName: String,
     val userEmail: String,
-    val userProfileImageUrl: String,
+    val userProfileImageUrl: String?,
     val totalStudyTime: String,
     val attendanceStreak: Int,
     val studies: List<UserStudyInfoResponse>,

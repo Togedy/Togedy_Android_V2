@@ -83,11 +83,19 @@ internal fun UserStudyItem(
                     tint = TogedyTheme.colors.gray600,
                 )
 
-                Text(
-                    text = "${studyInfo.completedMemberCount ?: "-"}/${studyInfo.studyMemberCount}",
-                    style = TogedyTheme.typography.body13m,
-                    color = TogedyTheme.colors.gray600,
-                )
+                if (studyInfo.completedMemberCount == null) {
+                    Text(
+                        text = "${studyInfo.studyMemberCount}명",
+                        style = TogedyTheme.typography.body13m,
+                        color = TogedyTheme.colors.gray600,
+                    )
+                } else {
+                    Text(
+                        text = "${studyInfo.completedMemberCount ?: "0"}/${studyInfo.studyMemberCount}명",
+                        style = TogedyTheme.typography.body13m,
+                        color = TogedyTheme.colors.gray600,
+                    )
+                }
             }
         }
     }

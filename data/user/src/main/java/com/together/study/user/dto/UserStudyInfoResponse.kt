@@ -8,5 +8,5 @@ data class UserStudyInfoResponse(
     val studyImageUrl: String?,
     val isCompleted: Boolean?,
     val completedMemberCount: Int?,
-    val studyMemberCount: Int,
+    val studyMemberCount: Int?,
 )
