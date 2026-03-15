@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_settings_24
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.MenuList
 import com.together.study.mypage.component.UserProfile
@@ -32,10 +34,8 @@ import com.together.study.mypage.type.SupportMenu
 import com.together.study.user.model.UserInfo
 import com.together.study.util.noRippleClickable
 
-
 @Composable
 internal fun MyPageRoute(
-    onBackButtonClick: () -> Unit,
     onSettingNavigate: () -> Unit,
     onProfileEditNavigate: () -> Unit,
     onNoticeNavigate: () -> Unit,
@@ -48,8 +48,12 @@ internal fun MyPageRoute(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadUserInfo()
+    }
+
     when (uiState.value.userInfoState) {
-        is UiState.Loading -> {}
+        is UiState.Loading -> TogedyLoadingScreen()
         is UiState.Success ->
             MyPageScreen(
                 userInfo = (uiState.value.userInfoState as UiState.Success<UserInfo>).data,
@@ -116,7 +120,7 @@ private fun MyPageScreen(
             UserProfile(
                 userName = userInfo.userName,
                 userEmail = userInfo.userEmail,
-                userProfileImageUrl = userInfo.userProfileImageUrl,
+                userProfileImageUrl = userInfo.userProfileImageUrl ?: "",
                 totalStudyTime = userInfo.totalStudyTime,
                 attendanceStreak = userInfo.attendanceStreak,
                 onEditProfileClick = onEditProfileClick,

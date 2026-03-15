@@ -52,7 +52,6 @@ fun NavGraphBuilder.myPageGraph(
 ) {
     composable<MyPage> {
         MyPageRoute(
-            onBackButtonClick = navigateToUp,
             onSettingNavigate = navController::navigateToAccountSettings,
             onProfileEditNavigate = navController::navigateToProfileEdit,
             onNoticeNavigate = navController::navigateToNoticeMain,
