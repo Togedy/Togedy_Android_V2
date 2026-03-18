@@ -7,6 +7,6 @@ data class ShareInfo(
     val remainingDays: Int?,
     val totalStudyTime: String,
     val image: String?,
-    val plannerItemList: List<PlannerSubject>,
-    val timeTableList: List<TimeTable>,
+    val plannerItems: List<PlannerSubject>,
+    val timeTables: List<TimeTable>,
 )
