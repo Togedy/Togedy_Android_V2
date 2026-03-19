@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +29,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.component.calendar.DayOfWeek
@@ -42,7 +44,7 @@ import java.time.LocalDate
 fun PlannerCalendarTopSheet(
     isCalendarOpen: Boolean,
     selectedDate: LocalDate,
-    studyTimeList: List<Int>,
+    monthlyHeatmapState: UiState<List<Int>>,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onDateChange: (LocalDate) -> Unit,
@@ -121,52 +123,65 @@ fun PlannerCalendarTopSheet(
 
                 HorizontalDivider(modifier = Modifier.padding(top = 8.dp, bottom = 4.dp))
 
-                days.chunked(7).forEachIndexed { weekIndex, week ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        week.forEachIndexed { dayIndex, day ->
-                            val colorIndex = weekIndex * 7 + dayIndex
-                            val stack =
-                                if (colorIndex >= studyTimeList.size) 0
-                                else studyTimeList[colorIndex]
+                when (monthlyHeatmapState) {
+                    is UiState.Loading -> {
+                        Spacer(modifier = Modifier.height(200.dp))
+                    }
 
-                            CalendarDayBlock(
-                                day = day,
-                                stack = stack,
-                                isSelected = day == selectedDate.dayOfMonth.toString(),
+                    is UiState.Failure -> {}
+
+                    is UiState.Success -> {
+                        val data = monthlyHeatmapState.data
+                        days.chunked(7).forEachIndexed { weekIndex, week ->
+                            Row(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f),
-                                onDateClick = {
-                                    onDateChange(
-                                        LocalDate.of(
-                                            selectedDate.year,
-                                            selectedDate.monthValue,
-                                            day.toInt()
-                                        )
-                                    )
-                                }
-                            )
+                                    .fillMaxWidth()
+                                    .padding(bottom = 4.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                week.forEachIndexed { dayIndex, day ->
+                                    val colorIndex = weekIndex * 7 + dayIndex
+                                    val stack =
+                                        if (colorIndex >= data.size) 0
+                                        else data[colorIndex]
 
-                            if (dayIndex < 6) {
-                                Spacer(Modifier.width(4.dp))
+                                    CalendarDayBlock(
+                                        day = day,
+                                        stack = stack,
+                                        isSelected = day == selectedDate.dayOfMonth.toString(),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .aspectRatio(1f),
+                                        onDateClick = {
+                                            onDateChange(
+                                                LocalDate.of(
+                                                    selectedDate.year,
+                                                    selectedDate.monthValue,
+                                                    day.toInt()
+                                                )
+                                            )
+                                        }
+                                    )
+
+                                    if (dayIndex < 6) {
+                                        Spacer(Modifier.width(4.dp))
+                                    }
+                                }
+
+                                repeat(7 - week.size) {
+                                    Spacer(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .aspectRatio(1f),
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                }
                             }
                         }
-
-                        repeat(7 - week.size) {
-                            Spacer(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f),
-                            )
-                            Spacer(Modifier.width(4.dp))
-                        }
                     }
+
+                    else -> {}
                 }
             }
         },
@@ -229,7 +244,12 @@ private fun PlannerCalendarTopSheetPreview() {
         PlannerCalendarTopSheet(
             isCalendarOpen = true,
             selectedDate = LocalDate.now(),
-            studyTimeList = emptyList(),
+            monthlyHeatmapState = UiState.Success(
+                listOf(
+                    0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5,
+                    0, 1, 2, 3, 4, 5
+                )
+            ),
             onDismissRequest = {},
             onDateChange = {},
         )

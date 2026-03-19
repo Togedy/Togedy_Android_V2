@@ -65,7 +65,7 @@ internal fun StatisticsScreen(
                 item {
                     MonthlyStatistics(
                         currentDate = currentDate,
-                        monthlyHeatMap = statistics.monthlyReview,
+                        monthlyReview = statistics.monthlyReview,
                     )
 
                     Spacer(Modifier.height(16.dp))
@@ -80,7 +80,7 @@ internal fun StatisticsScreen(
 @Composable
 fun MonthlyStatistics(
     currentDate: LocalDate,
-    monthlyHeatMap: List<Int>,
+    monthlyReview: List<Int>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -98,7 +98,7 @@ fun MonthlyStatistics(
 
         StudyBlock(
             currentDate = currentDate,
-            studyTimeList = monthlyHeatMap,
+            studyTimeList = monthlyReview,
             blockSize = 20.dp,
         )
     }

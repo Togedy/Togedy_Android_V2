@@ -10,6 +10,7 @@ import com.together.study.planner.type.PlannerSheetType
 import com.together.study.planner.usecase.GetDailyPlannerInfoUseCase
 import com.together.study.planner.usecase.GetDailyStatisticsUseCase
 import com.together.study.planner.usecase.GetDailyTimetableUseCase
+import com.together.study.planner.usecase.GetMonthlyHeatmapUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,7 @@ internal class PlannerViewModel @Inject constructor(
     private val getDailyPlannerInfoUseCase: GetDailyPlannerInfoUseCase,
     private val getDailyTimetableUseCase: GetDailyTimetableUseCase,
     private val getDailyStatisticsUseCase: GetDailyStatisticsUseCase,
+    private val getMonthlyHeatmapUseCase: GetMonthlyHeatmapUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlannerUiState())
     val uiState = _uiState.asStateFlow()
@@ -32,6 +34,7 @@ internal class PlannerViewModel @Inject constructor(
 
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
+    private var previousDate: LocalDate = selectedDate.value
     private val _selectedTab = MutableStateFlow(PlannerMainTab.PLANNER)
     val selectedTab = _selectedTab.asStateFlow()
 
@@ -40,6 +43,9 @@ internal class PlannerViewModel @Inject constructor(
         // 과목 조회 api 추가
         getTimeTable()
         getStatistics()
+        if (previousDate.monthValue != selectedDate.value.monthValue) {
+            getMonthlyHeatmap()
+        }
     }
 
     suspend fun getPlannerInfo() {
@@ -81,8 +87,22 @@ internal class PlannerViewModel @Inject constructor(
             }
     }
 
+    suspend fun getMonthlyHeatmap() {
+        _uiState.update { it.copy(monthlyHeatmapState = UiState.Loading) }
+        getMonthlyHeatmapUseCase(selectedDate.value.year, selectedDate.value.monthValue)
+            .onSuccess { result ->
+                _uiState.update { it.copy(monthlyHeatmapState = UiState.Success(result)) }
+            }
+            .onFailure { e ->
+                _uiState.update {
+                    it.copy(monthlyHeatmapState = UiState.Failure(e.message.toString()))
+                }
+            }
+    }
+
 
     fun updateSelectedDate(new: LocalDate) {
+        previousDate = selectedDate.value
         _selectedDate.update { new }
     }
 

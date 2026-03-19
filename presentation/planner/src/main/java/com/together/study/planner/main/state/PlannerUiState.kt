@@ -13,4 +13,5 @@ data class PlannerUiState(
     val plannerSubjectState: UiState<List<PlannerSubject>> = UiState.Loading,
     val timeTableState: UiState<List<TimeTable>> = UiState.Loading,
     val statisticsState: UiState<DailyStatistics> = UiState.Loading,
+    val monthlyHeatmapState: UiState<List<Int>> = UiState.Loading,
 )

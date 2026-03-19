@@ -77,6 +77,7 @@ internal fun PlannerScreen(
         plannerSubjectState = uiState.plannerSubjectState,
         timeTableState = uiState.timeTableState,
         statisticsState = uiState.statisticsState,
+        monthlyHeatmapState = uiState.monthlyHeatmapState,
         modifier = modifier,
         onTabClick = viewModel::updateSelectedTab,
         onSelectedDateChange = viewModel::updateSelectedDate,
@@ -96,6 +97,7 @@ private fun PlannerScreen(
     plannerSubjectState: UiState<List<PlannerSubject>>,
     timeTableState: UiState<List<TimeTable>>,
     statisticsState: UiState<DailyStatistics>,
+    monthlyHeatmapState: UiState<List<Int>>,
     modifier: Modifier = Modifier,
     onTabClick: (PlannerMainTab) -> Unit,
     onSelectedDateChange: (LocalDate) -> Unit,
@@ -206,6 +208,7 @@ private fun PlannerScreen(
     PlannerSheetScreen(
         bottomSheetState = bottomSheetState,
         selectedDate = selectedDate,
+        monthlyHeatmapState = monthlyHeatmapState,
         onDismissRequest = onSheetVisibilityChange,
         onEditSubjectClick = onEditSubjectClick,
         onDateChange = onSelectedDateChange,
