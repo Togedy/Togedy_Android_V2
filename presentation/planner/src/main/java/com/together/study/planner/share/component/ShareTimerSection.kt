@@ -27,9 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.together.study.calendar.model.DDay
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.component.TodoSection
+import com.together.study.planner.component.DDaySection
 import com.together.study.util.formatToYearMonthDate
 import java.time.LocalDate
 
@@ -39,7 +38,9 @@ internal fun ShareTimerSection(
     timerImageUrl: String,
     currentDate: LocalDate,
     timer: String,
-    dDay: DDay,
+    hasDDay: Boolean,
+    remainingDays: Int?,
+    dDayName: String?,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -97,10 +98,10 @@ internal fun ShareTimerSection(
                 color = TogedyTheme.colors.white,
             )
 
-            if (dDay.hasDday) {
-                TodoSection(
-                    dDay = dDay,
-                    textColor = TogedyTheme.colors.white,
+            if (hasDDay) {
+                DDaySection(
+                    userScheduleName = dDayName,
+                    remainingDays = remainingDays,
                 )
             } else {
                 Spacer(Modifier.height(14.dp))
@@ -123,7 +124,9 @@ private fun ShareTimerSectionPreview() {
             timerImageUrl = "",
             currentDate = LocalDate.now(),
             timer = "00:00:00",
-            dDay = DDay(true, "수능", 50),
+            hasDDay = true,
+            remainingDays = 3,
+            dDayName = "시험",
         )
     }
 }

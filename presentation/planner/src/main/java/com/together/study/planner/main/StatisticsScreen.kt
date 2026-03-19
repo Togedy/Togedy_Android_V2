@@ -25,25 +25,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.component.studyblock.StudyBlock
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.planner.model.DailyStatistics
 import java.time.LocalDate
 
 private val daysOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
 
 @Composable
 internal fun StatisticsScreen(
-    weekStatistics: List<String?> = listOf(
-        "23:88:88",
-        "00:00:00",
-        "00:00:00",
-        "14:00:00",
-        "00:00:00",
-        "01:30:00",
-        null
-    ),
-    monthlyStudyTimeList: List<Int> = emptyList(),
+    statisticsState: UiState<DailyStatistics>,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
@@ -56,104 +49,137 @@ internal fun StatisticsScreen(
             .background(TogedyTheme.colors.gray100)
             .padding(14.dp),
     ) {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(TogedyTheme.colors.white, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Text(
-                    text = "\uD83D\uDCC5 주간 리뷰",
-                    style = TogedyTheme.typography.body13b,
-                )
+        when (statisticsState) {
+            is UiState.Loading -> {}
 
-                Spacer(Modifier.height(12.dp))
+            is UiState.Failure -> {}
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    weekStatistics.forEachIndexed { index, dayRecord ->
-                        val backgroundColor = when (dayRecord) {
-                            "00:00:00" -> TogedyTheme.colors.gray100
-                            null -> TogedyTheme.colors.white
-                            else -> TogedyTheme.colors.green
-                        }
-                        val borderColor =
-                            if (dayRecord == null) TogedyTheme.colors.gray200
-                            else backgroundColor
-                        val contentColor = when (dayRecord) {
-                            "00:00:00" -> TogedyTheme.colors.gray400
-                            null -> TogedyTheme.colors.gray600
-                            else -> TogedyTheme.colors.white
-                        }
-                        val time = when (dayRecord) {
-                            "00:00:00" -> "-"
-                            null -> ""
-                            else -> dayRecord
-                        }
+            is UiState.Success -> {
+                val statistics = statisticsState.data
+                item {
+                    WeeklyStatistics(statistics.weeklyReview)
 
-                        Column(
-                            modifier = Modifier.width(44.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(32.dp)
-                                    .background(backgroundColor, RoundedCornerShape(10.dp))
-                                    .border(1.dp, borderColor, RoundedCornerShape(10.dp)),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                if (dayRecord != null && dayRecord != "00:00:00") {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(ic_check_green),
-                                        contentDescription = null,
-                                        tint = TogedyTheme.colors.white,
-                                    )
-                                } else {
-                                    Text(
-                                        text = daysOfWeek[index],
-                                        style = TogedyTheme.typography.body16m,
-                                        color = contentColor,
-                                    )
-                                }
-                            }
+                    Spacer(Modifier.height(16.dp))
+                }
 
-                            Spacer(Modifier.height(4.dp))
+                item {
+                    MonthlyStatistics(
+                        currentDate = currentDate,
+                        monthlyHeatMap = statistics.monthlyReview,
+                    )
 
-                            Text(
-                                text = time,
-                                style = TogedyTheme.typography.chip10sb,
-                                color = TogedyTheme.colors.gray600,
-                            )
-                        }
-                    }
+                    Spacer(Modifier.height(16.dp))
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            else -> {}
         }
+    }
+}
 
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(TogedyTheme.colors.white, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Text(
-                    text = "\uD83D\uDCC5 월간 리뷰",
-                    style = TogedyTheme.typography.body13b,
-                )
+@Composable
+fun MonthlyStatistics(
+    currentDate: LocalDate,
+    monthlyHeatMap: List<Int>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(TogedyTheme.colors.white, RoundedCornerShape(12.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+    ) {
+        Text(
+            text = "\uD83D\uDCC5 월간 리뷰",
+            style = TogedyTheme.typography.body13b,
+        )
 
-                Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(12.dp))
 
-                StudyBlock(
-                    currentDate = currentDate,
-                    studyTimeList = monthlyStudyTimeList,
-                    blockSize = 20.dp,
-                )
+        StudyBlock(
+            currentDate = currentDate,
+            studyTimeList = monthlyHeatMap,
+            blockSize = 20.dp,
+        )
+    }
+}
+
+@Composable
+fun WeeklyStatistics(
+    weeklyReview: List<String?>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(TogedyTheme.colors.white, RoundedCornerShape(12.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+    ) {
+        Text(
+            text = "\uD83D\uDCC5 주간 리뷰",
+            style = TogedyTheme.typography.body13b,
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            weeklyReview.forEachIndexed { index, dayRecord ->
+                val backgroundColor = when (dayRecord) {
+                    "00:00:00" -> TogedyTheme.colors.gray100
+                    null -> TogedyTheme.colors.white
+                    else -> TogedyTheme.colors.green
+                }
+                val borderColor =
+                    if (dayRecord == null) TogedyTheme.colors.gray200
+                    else backgroundColor
+                val contentColor = when (dayRecord) {
+                    "00:00:00" -> TogedyTheme.colors.gray400
+                    null -> TogedyTheme.colors.gray600
+                    else -> TogedyTheme.colors.white
+                }
+                val time = when (dayRecord) {
+                    "00:00:00" -> "-"
+                    null -> ""
+                    else -> dayRecord
+                }
+
+                Column(
+                    modifier = Modifier.width(44.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(backgroundColor, RoundedCornerShape(10.dp))
+                            .border(1.dp, borderColor, RoundedCornerShape(10.dp)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        if (dayRecord != null && dayRecord != "00:00:00") {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(ic_check_green),
+                                contentDescription = null,
+                                tint = TogedyTheme.colors.white,
+                            )
+                        } else {
+                            Text(
+                                text = daysOfWeek[index],
+                                style = TogedyTheme.typography.body16m,
+                                color = contentColor,
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(4.dp))
+
+                    Text(
+                        text = time,
+                        style = TogedyTheme.typography.chip10sb,
+                        color = TogedyTheme.colors.gray600,
+                    )
+                }
             }
         }
     }
@@ -163,6 +189,23 @@ internal fun StatisticsScreen(
 @Composable
 private fun StatisticsScreenPreview() {
     TogedyTheme {
-        StatisticsScreen()
+        StatisticsScreen(
+            statisticsState = UiState.Success(
+                DailyStatistics(
+                    daysSinceLastStudy = 0,
+                    currentStreakDays = 5,
+                    weeklyReview = listOf(
+                        "01:30:00",
+                        "00:00:00",
+                        null,
+                        "02:15:00",
+                        "00:45:00",
+                        null,
+                        "03:00:00",
+                    ),
+                    monthlyReview = listOf(),
+                ),
+            ),
+        )
     }
 }
