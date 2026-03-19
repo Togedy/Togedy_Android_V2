@@ -7,5 +7,5 @@ data class PlannerSubject(
     val totalTaskCount: Int? = null,
     val checkedTaskCount: Int? = null,
     val subjectStudyTime: String = "",
-    val tasks: List<Todo> = emptyList(),
+    val tasks: List<TaskItem> = emptyList(),
 )

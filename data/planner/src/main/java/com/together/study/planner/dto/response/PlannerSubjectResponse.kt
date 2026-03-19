@@ -10,5 +10,5 @@ data class PlannerSubjectResponse(
     val totalTaskCount: Int? = null,
     val checkedTaskCount: Int? = null,
     val subjectStudyTime: String,
-    val taskList: List<TodoResponse>,
+    val taskList: List<TaskResponse>,
 )
