@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.data.calendar)
     implementation(projects.data.study)
     implementation(projects.data.search)
+    implementation(projects.data.planner)
     implementation(projects.presentation.main)
 
     implementation(libs.androidx.appcompat)
