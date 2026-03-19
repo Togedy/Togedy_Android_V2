@@ -184,7 +184,9 @@ fun PlannerShareScreen(
                         timerImageUrl = plannerShareInfo.image,
                         currentDate = plannerShareInfo.date.toLocalDate() ?: LocalDate.now(),
                         timer = plannerShareInfo.totalStudyTime,
-                        dDay = plannerShareInfo.dDay,
+                        hasDDay = plannerShareInfo.dDay.hasDday,
+                        remainingDays = plannerShareInfo.dDay.remainingDays,
+                        dDayName = plannerShareInfo.dDay.userScheduleName,
                     )
 
                     Row(
