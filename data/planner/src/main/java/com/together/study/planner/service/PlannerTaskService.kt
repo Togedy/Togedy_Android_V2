@@ -2,7 +2,7 @@ package com.together.study.planner.service
 
 import com.together.study.planner.dto.request.PlannerTaskRequest
 import com.together.study.planner.dto.request.PlannerTaskStateRequest
-import com.together.study.planner.dto.response.DailyPlannerTaskResponse
+import com.together.study.planner.dto.response.DailyPlannerTaskListResponse
 import com.together.study.remote.model.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -16,7 +16,7 @@ interface PlannerTaskService {
     @GET("planners/daily/tasks")
     suspend fun getPlannerTaskList(
         @Query("date") date: String,
-    ): BaseResponse<DailyPlannerTaskResponse>
+    ): BaseResponse<DailyPlannerTaskListResponse>
 
     @PUT("planners/daily/tasks")
     suspend fun updateTaskContent(
