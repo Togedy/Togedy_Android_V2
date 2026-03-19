@@ -2,6 +2,7 @@ package com.together.study.planner.di
 
 import com.together.study.planner.service.PlannerService
 import com.together.study.planner.service.PlannerShareService
+import com.together.study.planner.service.PlannerTaskService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +22,10 @@ object ServiceModule {
     @Provides
     @Singleton
     fun providePlannerShareService(retrofit: Retrofit): PlannerShareService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun providePlannerTaskService(retrofit: Retrofit): PlannerTaskService =
         retrofit.create()
 }
