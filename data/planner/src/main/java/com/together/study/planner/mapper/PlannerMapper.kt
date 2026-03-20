@@ -47,7 +47,7 @@ fun TimeTableResponse.toDomain(): TimeTable {
 
 fun TodoResponse.toDomain(): Todo {
     return Todo(
-        id = this.taskId ?: 0L,
+        id = this.taskId,
         content = this.taskName,
         isChecked = this.isChecked,
     )

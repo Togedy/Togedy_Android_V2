@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ internal class PlannerViewModel @Inject constructor(
 
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate = _selectedDate.asStateFlow()
-    private var previousDate: LocalDate = selectedDate.value
+    private var previousDate: LocalDate? = null
     private val _selectedTab = MutableStateFlow(PlannerMainTab.PLANNER)
     val selectedTab = _selectedTab.asStateFlow()
 
@@ -43,9 +44,10 @@ internal class PlannerViewModel @Inject constructor(
         // 과목 조회 api 추가
         getTimeTable()
         getStatistics()
-        if (previousDate.monthValue != selectedDate.value.monthValue) {
+        if (previousDate == null || previousDate?.monthValue != selectedDate.value.monthValue) {
             getMonthlyHeatmap()
         }
+        previousDate = selectedDate.value
     }
 
     suspend fun getPlannerInfo() {
@@ -56,6 +58,7 @@ internal class PlannerViewModel @Inject constructor(
             }
             .onFailure { e ->
                 _uiState.update {
+                    Timber.tag("okhttp-chrin").d("getPlannerInfo: ${e.message}")
                     it.copy(plannerInfoState = UiState.Failure(e.message.toString()))
                 }
             }

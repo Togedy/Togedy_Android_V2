@@ -20,7 +20,9 @@ internal class PlannerShareViewModel @Inject constructor(
     private val getShareInfoUseCase: GetShareInfoUseCase,
 ) : ViewModel() {
     private val route: PlannerShare = savedStateHandle.toRoute<PlannerShare>()
-    val date = "${route.year}${route.month}${route.day}"
+    val date = "${route.year}${route.month.toString().padStart(2, '0')}${
+        route.day.toString().padStart(2, '0')
+    }"
 
     private val _uiState = MutableStateFlow(PlannerShareUiState())
     val uiState = _uiState.asStateFlow()
