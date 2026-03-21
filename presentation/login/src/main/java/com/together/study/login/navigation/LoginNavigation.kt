@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
-import com.together.study.login.LoginScreen
+import com.together.study.login.LoginRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToLogin(
@@ -18,9 +18,9 @@ fun NavGraphBuilder.loginGraph(
     navigateToCalendar: () -> Unit,
 ) {
     composable<Login> {
-        LoginScreen(
+        LoginRoute(
+            onNavigateToCalendar = navigateToCalendar,
             modifier = modifier,
-            onDone = navigateToCalendar,
         )
     }
 }
