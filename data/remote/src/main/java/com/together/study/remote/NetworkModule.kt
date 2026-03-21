@@ -76,6 +76,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @JWT
     fun provideOkHttpClient(
         loggingInterceptor: Interceptor,
         @JWT headerInterceptor: Interceptor,
@@ -86,8 +87,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @NoAuth
+    fun provideNoAuthOkHttpClient(
+        loggingInterceptor: Interceptor,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .build()
+
+    @Provides
+    @Singleton
     fun provideRetrofit(
-        client: OkHttpClient,
+        @JWT client: OkHttpClient,
         factory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -100,7 +110,7 @@ object NetworkModule {
     @Singleton
     fun provideNoAuthRetrofit(
         factory: Converter.Factory,
-        client: OkHttpClient,
+        @NoAuth client: OkHttpClient,
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(client)
