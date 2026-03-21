@@ -29,6 +29,7 @@ dependencies {
     implementation(projects.presentation.studyupdate)
     implementation(projects.presentation.timer)
     implementation(projects.domain.study)
+    implementation(projects.domain.auth)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
