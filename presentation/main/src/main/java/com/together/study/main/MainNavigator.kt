@@ -10,18 +10,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.navigateToCalendar
 import com.together.study.chatbot.navigation.navigateToChatBot
-import com.together.study.login.navigation.Login
+import com.together.study.login.splash.Splash
 import com.together.study.planner.navigation.navigateToPlanner
 import com.together.study.study.navigation.navigateToStudy
 
 class MainNavigator(
     val navController: NavHostController,
 ) {
+    val startDestination = Splash
     private val currentDestination: NavDestination?
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
-
-    val startDestination = Login
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
