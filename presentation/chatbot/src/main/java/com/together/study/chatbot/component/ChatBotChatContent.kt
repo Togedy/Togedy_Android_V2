@@ -79,7 +79,7 @@ internal fun ChatBotChatContent(
                     shouldAnimate = isNewMessage,
                     modifier = if (index == 0) Modifier.padding(top = 15.dp) else Modifier,
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
