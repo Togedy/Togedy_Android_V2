@@ -48,7 +48,7 @@ fun TogedyButton(
             text = text,
             style = TogedyTheme.typography.title16sb,
             color = contentColor,
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(vertical = 6.dp),
         )
     }
 }

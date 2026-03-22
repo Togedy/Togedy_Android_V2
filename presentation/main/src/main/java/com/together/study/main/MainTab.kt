@@ -16,6 +16,7 @@ import com.together.study.designsystem.R.drawable.ic_planner
 import com.together.study.designsystem.R.drawable.ic_planner_selected
 import com.together.study.designsystem.R.drawable.ic_study
 import com.together.study.designsystem.R.drawable.ic_study_selected
+import com.together.study.mypage.navigation.MyPage
 import com.together.study.planner.navigation.Planner
 import com.together.study.study.navigation.Study
 import kotlinx.serialization.Serializable
@@ -50,11 +51,11 @@ enum class MainTab(
         contentDescription = "스터디",
         route = Study,
     ),
-    DUMMY5(
+    MYPAGE(
         defaultIcon = ic_my,
         selectedIcon = ic_my_selected,
         contentDescription = "MY",
-        route = Dummy,
+        route = MyPage,
     );
 
 

@@ -56,5 +56,7 @@ include(
     ":presentation:studyupdate",
     ":presentation:planner",
     ":presentation:chatbot",
+    ":presentation:timer",
+    ":presentation:mypage",
 )
 include(":domain:chatbot")
