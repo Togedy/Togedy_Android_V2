@@ -20,7 +20,9 @@ internal class PlannerShareViewModel @Inject constructor(
     private val getShareInfoUseCase: GetShareInfoUseCase,
 ) : ViewModel() {
     private val route: PlannerShare = savedStateHandle.toRoute<PlannerShare>()
-    val date = "${route.year}${route.month}${route.day}"
+    val date = "${route.year}-${route.month.toString().padStart(2, '0')}-${
+        route.day.toString().padStart(2, '0')
+    }"
 
     private val _uiState = MutableStateFlow(PlannerShareUiState())
     val uiState = _uiState.asStateFlow()
@@ -38,22 +40,21 @@ internal class PlannerShareViewModel @Inject constructor(
         getShareInfoUseCase(date)
             .onSuccess { result ->
                 _uiState.update { it.copy(plannerShareInfo = UiState.Success(result)) }
+                _subjects.value =
+                    (_uiState.value.plannerShareInfo as UiState.Success).data.plannerItems.map {
+                        PlannerSubject(
+                            it.subjectId,
+                            it.subjectName,
+                            it.subjectColor,
+                        )
+                    }
+                _selectedSubjects.value = _subjects.value.mapNotNull { it.subjectId }
             }
             .onFailure { e ->
                 _uiState.update {
                     it.copy(plannerShareInfo = UiState.Failure(e.message.toString()))
                 }
             }
-
-        _subjects.value =
-            (_uiState.value.plannerShareInfo as UiState.Success).data.plannerItems.map {
-                PlannerSubject(
-                    it.subjectId,
-                    it.subjectName,
-                    it.subjectColor,
-                )
-            }
-        _selectedSubjects.value = _subjects.value.mapNotNull { it.subjectId }
     }
 
     fun updateIsAllSelected() {
