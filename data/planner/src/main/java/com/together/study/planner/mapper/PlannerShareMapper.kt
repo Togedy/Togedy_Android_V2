@@ -10,7 +10,7 @@ fun ShareInfoResponse.toDomain(): ShareInfo {
         userScheduleName = this.userScheduleName,
         remainingDays = this.remainingDays,
         totalStudyTime = this.totalStudyTime,
-        image = this.image,
+        image = this.plannerImage,
         plannerItems = this.plannerItemList.map { it.toDomain() },
         timeTables = this.timeTableList.map { it.toDomain() },
     )
