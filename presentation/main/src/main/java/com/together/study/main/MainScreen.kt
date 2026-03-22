@@ -1,5 +1,7 @@
 package com.together.study.main
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
@@ -9,12 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,9 +30,11 @@ import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.event.TogedyUiEvent
 import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.common.type.study.StudyUpdateType
+import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
+import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.main.component.MainBottomBar
 import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.planner.navigation.plannerGraph
@@ -60,6 +67,11 @@ fun MainScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val togedyToast = remember { TogedyToast(context, lifecycleOwner) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val isChatModeState = remember { mutableStateOf(false) }
+    val showChatBotExitDialogState = remember { mutableStateOf(false) }
+    val pendingTabState = remember { mutableStateOf<MainTab?>(null) }
+    val currentTab = navigator.currentTab
+
 
     LaunchedEffect(Unit) {
         TogedyUiEventBus.event.collect { event ->
@@ -76,6 +88,33 @@ fun MainScreen(
         }
     }
 
+    if (showChatBotExitDialogState.value) {
+        TogedyBasicDialog(
+            title = "대화 종료",
+            subTitle = {
+                Text(
+                    text = "지금 나가면 대화 내용이 삭제됩니다.\n나가시겠습니까?",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray700,
+                    textAlign = TextAlign.Center
+                )
+            },
+            buttonText = "예",
+            onDismissRequest = {
+                showChatBotExitDialogState.value = false
+            },
+            onButtonClick = {
+                showChatBotExitDialogState.value = false
+                isChatModeState.value = false
+                val targetTab = pendingTabState.value
+                if (targetTab != null) {
+                    navigator.navigate(targetTab)
+                } else {
+                    navigator.navigateUp()
+                }
+            },
+        )
+    }
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
@@ -84,8 +123,15 @@ fun MainScreen(
             MainBottomBar(
                 isVisible = navigator.showBottomBar(),
                 tabs = MainTab.entries.toImmutableList(),
-                currentTab = navigator.currentTab,
-                onTabSelected = navigator::navigate
+                currentTab = currentTab,
+                onTabSelected = { tab ->
+                    if (currentTab == MainTab.CHATBOT && isChatModeState.value && tab != MainTab.CHATBOT) {
+                        pendingTabState.value = tab
+                        showChatBotExitDialogState.value = true
+                    } else {
+                        navigator.navigate(tab)
+                    }
+                }
             )
         },
         modifier = Modifier.fillMaxSize()
@@ -98,6 +144,11 @@ fun MainScreen(
             ) {
                 MainNavHost(
                     navigator = navigator,
+                    onChatBotChatModeChanged = { isChatModeState.value = it },
+                    onChatBotRequestExit = {
+                        pendingTabState.value = null
+                        showChatBotExitDialogState.value = true
+                    },
                     modifier = Modifier
                         .padding(innerPadding)
                         .consumeWindowInsets(innerPadding)
@@ -110,6 +161,8 @@ fun MainScreen(
 @Composable
 private fun MainNavHost(
     navigator: MainNavigator,
+    onChatBotChatModeChanged: (Boolean) -> Unit,
+    onChatBotRequestExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -220,6 +273,8 @@ private fun MainNavHost(
 
         chatBotGraph(
             navigateToUp = navigator.navController::popBackStack,
+            onChatModeChanged = onChatBotChatModeChanged,
+            onRequestExit = onChatBotRequestExit,
             modifier = modifier,
         )
 

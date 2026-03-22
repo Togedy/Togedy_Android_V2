@@ -15,10 +15,15 @@ fun NavController.navigateToChatBot(
 
 fun NavGraphBuilder.chatBotGraph(
     navigateToUp: () -> Unit,
+    onChatModeChanged: (Boolean) -> Unit,
+    onRequestExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<ChatBot> {
         ChatBotRoute(
+            onNavigateBack = navigateToUp,
+            onChatModeChanged = onChatModeChanged,
+            onRequestExit = onRequestExit,
             modifier = modifier,
         )
     }
