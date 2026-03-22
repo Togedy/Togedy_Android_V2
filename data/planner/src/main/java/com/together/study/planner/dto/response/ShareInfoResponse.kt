@@ -9,7 +9,7 @@ data class ShareInfoResponse(
     val userScheduleName: String?,
     val remainingDays: Int?,
     val totalStudyTime: String,
-    val image: String?,
+    val plannerImage: String?,
     val plannerItemList: List<PlannerSubjectResponse>,
     val timeTableList: List<TimeTableResponse>,
 )
