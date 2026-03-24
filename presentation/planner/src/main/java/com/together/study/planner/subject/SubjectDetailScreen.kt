@@ -33,8 +33,9 @@ import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.component.SubjectItem
+import com.together.study.planner.component.SubjectBox
 import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.SubjectItem
 
 @Composable
 internal fun SubjectDetailRoute(
@@ -61,10 +62,10 @@ internal fun SubjectDetailRoute(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SubjectDetailScreen(
-    subjectState: UiState<List<PlannerSubject>>,
+    subjectState: UiState<List<SubjectItem>>,
     onBackButtonClick: () -> Unit,
-    onAddDoneBtnClick: (PlannerSubject) -> Unit,
-    onEditDoneBtnClick: (PlannerSubject) -> Unit,
+    onAddDoneBtnClick: (SubjectItem) -> Unit,
+    onEditDoneBtnClick: (SubjectItem) -> Unit,
     onDeleteButtonClick: (Long) -> Unit,
     modifier: Modifier,
 ) {
@@ -102,7 +103,7 @@ fun SubjectDetailScreen(
         when (subjectState) {
             is UiState.Loading -> {}
             is UiState.Success -> {
-                SubjectItems(
+                SubjectBoxes(
                     subjects = subjectState.data,
                     onEditClick = { selectedItem ->
                         selectedSubject = selectedItem
@@ -162,9 +163,9 @@ fun SubjectDetailScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun SubjectItems(
-    subjects: List<PlannerSubject>,
-    onEditClick: (PlannerSubject) -> Unit,
+internal fun SubjectBoxes(
+    subjects: List<SubjectItem>,
+    onEditClick: (SubjectItem) -> Unit,
     onItemDeleteClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -177,8 +178,8 @@ internal fun SubjectItems(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(subjects) { subjectItem ->
-            SubjectItem(
-                plannerSubject = subjectItem,
+            SubjectBox(
+                subject = subjectItem,
                 isSubjectEditMode = true,
                 onEditClick = { onEditClick(subjectItem) },
                 onDeleteClick = { onItemDeleteClick(subjectItem.subjectId!!) }

@@ -24,7 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.component.SubjectItem
+import com.together.study.planner.component.SubjectBox
 import com.together.study.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,8 +78,8 @@ internal fun SubjectBottomSheet(
                 }
             }
 
-            items(subjects) { subjectItem ->
-                SubjectItem(plannerSubject = subjectItem)
+            items(subjects) { subject ->
+                SubjectBox(subject = subject)
             }
 
             item {
