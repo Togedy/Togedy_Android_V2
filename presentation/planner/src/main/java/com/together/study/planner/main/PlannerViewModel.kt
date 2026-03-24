@@ -1,16 +1,22 @@
 package com.together.study.planner.main
 
+import android.R.attr.name
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.util.CoilUtils.result
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.main.state.PlannerUiState
+import com.together.study.planner.model.SubjectItem
 import com.together.study.planner.type.PlannerSheetType
 import com.together.study.planner.usecase.GetDailyPlannerInfoUseCase
 import com.together.study.planner.usecase.GetDailyStatisticsUseCase
 import com.together.study.planner.usecase.GetDailyTimetableUseCase
 import com.together.study.planner.usecase.GetMonthlyHeatmapUseCase
+import com.together.study.planner.usecase.GetSubjectsUseCase
+import com.together.study.planner.usecase.PostSubjectUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +32,8 @@ internal class PlannerViewModel @Inject constructor(
     private val getDailyTimetableUseCase: GetDailyTimetableUseCase,
     private val getDailyStatisticsUseCase: GetDailyStatisticsUseCase,
     private val getMonthlyHeatmapUseCase: GetMonthlyHeatmapUseCase,
+    private val getSubjectsUseCase: GetSubjectsUseCase,
+    private val postSubjectUseCase: PostSubjectUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlannerUiState())
     val uiState = _uiState.asStateFlow()
@@ -103,6 +111,22 @@ internal class PlannerViewModel @Inject constructor(
             }
     }
 
+    fun getSubjects() = viewModelScope.launch {
+        getSubjectsUseCase()
+            .onSuccess { result -> _uiState.update { it.copy(subjects = result) } }
+            .onFailure { _uiState.update { it.copy(subjects = emptyList()) } }
+    }
+
+    fun saveNewSubject(new: SubjectItem) = viewModelScope.launch {
+        postSubjectUseCase(new.subjectName, new.subjectColor)
+            .onSuccess {
+                // 과목조회 api
+            }
+            .onFailure {
+                // toast
+            }
+    }
+
 
     fun updateSelectedDate(new: LocalDate) {
         previousDate = selectedDate.value
@@ -116,6 +140,7 @@ internal class PlannerViewModel @Inject constructor(
     fun updateBottomSheetVisibility(type: PlannerSheetType) {
         when (type) {
             PlannerSheetType.SUBJECT -> {
+                getSubjects()
                 _sheetState.update {
                     it.copy(isSubjectOpen = !_sheetState.value.isSubjectOpen)
                 }

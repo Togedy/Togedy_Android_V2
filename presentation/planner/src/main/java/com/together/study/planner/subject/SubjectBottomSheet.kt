@@ -21,28 +21,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.SubjectBox
+import com.together.study.planner.model.SubjectItem
 import com.together.study.util.noRippleClickable
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SubjectBottomSheet(
+    subjects: List<SubjectItem>,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     onDismissRequest: () -> Unit,
     onAddSubjectClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
-    viewModel: SubjectBottomSheetViewModel = hiltViewModel(),
 ) {
-    val subjects by viewModel.subjects.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) { sheetState.expand() }
-
-    LaunchedEffect(true) {
-        viewModel.getPlannerSubject()
+    LaunchedEffect(Unit) {
+        sheetState.expand()
     }
 
     TogedyBottomSheet(
@@ -95,6 +94,7 @@ internal fun SubjectBottomSheet(
 private fun SubjectBottomSheetPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         SubjectBottomSheet(
+            subjects = emptyList(),
             onDismissRequest = {},
             onAddSubjectClick = {},
             onEditSubjectClick = {},

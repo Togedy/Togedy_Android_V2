@@ -46,6 +46,7 @@ import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.model.DailyPlannerInfo
 import com.together.study.planner.model.DailyStatistics
 import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.SubjectItem
 import com.together.study.planner.model.TimeTable
 import com.together.study.planner.type.PlannerSheetType
 import com.together.study.util.noRippleClickable
@@ -65,13 +66,14 @@ internal fun PlannerScreen(
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.sheetState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(selectedDate) {
+    LaunchedEffect(Unit, selectedDate) {
         viewModel.load()
     }
 
     PlannerScreen(
         selectedTab = selectedTab,
         selectedDate = selectedDate,
+        subjects = uiState.subjects,
         bottomSheetState = bottomSheetState,
         plannerInfoState = uiState.plannerInfoState,
         plannerSubjectState = uiState.plannerSubjectState,
@@ -85,6 +87,7 @@ internal fun PlannerScreen(
         onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
+        onAddDoneBtnClick = viewModel::saveNewSubject,
     )
 }
 
@@ -92,6 +95,7 @@ internal fun PlannerScreen(
 private fun PlannerScreen(
     selectedTab: PlannerMainTab,
     selectedDate: LocalDate,
+    subjects: List<SubjectItem>,
     bottomSheetState: PlannerSheetState,
     plannerInfoState: UiState<DailyPlannerInfo>,
     plannerSubjectState: UiState<List<PlannerSubject>>,
@@ -105,6 +109,7 @@ private fun PlannerScreen(
     onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
+    onAddDoneBtnClick: (SubjectItem) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -207,10 +212,12 @@ private fun PlannerScreen(
 
     PlannerSheetScreen(
         bottomSheetState = bottomSheetState,
+        subjects = subjects,
         selectedDate = selectedDate,
         monthlyHeatmapState = monthlyHeatmapState,
         onDismissRequest = onSheetVisibilityChange,
         onEditSubjectClick = onEditSubjectClick,
+        onAddDoneBtnClick = onAddDoneBtnClick,
         onDateChange = onSelectedDateChange,
     )
 }
