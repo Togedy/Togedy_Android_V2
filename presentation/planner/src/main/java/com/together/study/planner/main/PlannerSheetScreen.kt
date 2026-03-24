@@ -31,7 +31,7 @@ internal fun PlannerSheetScreen(
 
         if (isSubjectAddOpen) {
             SubjectDetailBottomSheet(
-                plannerSubject = null,
+                subject = null,
                 onDismissRequest = { onDismissRequest(PlannerSheetType.SUBJECT_ADD) },
                 onDoneClick = { onDismissRequest(PlannerSheetType.SUBJECT_ADD) },
             )

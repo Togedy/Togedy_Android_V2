@@ -34,7 +34,6 @@ import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.SubjectBox
-import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.SubjectItem
 
 @Composable
@@ -71,7 +70,7 @@ fun SubjectDetailScreen(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetOpen by remember { mutableStateOf(false) }
-    var selectedSubject by remember { mutableStateOf<PlannerSubject?>(null) }
+    var selectedSubject by remember { mutableStateOf<SubjectItem?>(null) }
     var selectedIdForDelete: Long? by remember { mutableStateOf(null) }
     var isDeleteDialogOpen by remember { mutableStateOf(false) }
 
@@ -124,7 +123,7 @@ fun SubjectDetailScreen(
     if (isBottomSheetOpen) {
         SubjectDetailBottomSheet(
             sheetState = sheetState,
-            plannerSubject = selectedSubject,
+            subject = selectedSubject,
             onDismissRequest = {
                 isBottomSheetOpen = false
                 selectedSubject = null
