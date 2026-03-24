@@ -1,10 +1,7 @@
 package com.together.study.planner.main
 
-import android.R.attr.name
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.util.CoilUtils.result
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.planner.main.state.PlannerSheetState
@@ -15,6 +12,7 @@ import com.together.study.planner.usecase.GetDailyPlannerInfoUseCase
 import com.together.study.planner.usecase.GetDailyStatisticsUseCase
 import com.together.study.planner.usecase.GetDailyTimetableUseCase
 import com.together.study.planner.usecase.GetMonthlyHeatmapUseCase
+import com.together.study.planner.usecase.GetPlannerTaskListUseCase
 import com.together.study.planner.usecase.GetSubjectsUseCase
 import com.together.study.planner.usecase.PostSubjectUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class PlannerViewModel @Inject constructor(
     private val getDailyPlannerInfoUseCase: GetDailyPlannerInfoUseCase,
+    private val getPlannerTaskListUseCase: GetPlannerTaskListUseCase,
     private val getDailyTimetableUseCase: GetDailyTimetableUseCase,
     private val getDailyStatisticsUseCase: GetDailyStatisticsUseCase,
     private val getMonthlyHeatmapUseCase: GetMonthlyHeatmapUseCase,
@@ -49,7 +48,7 @@ internal class PlannerViewModel @Inject constructor(
 
     fun load() = viewModelScope.launch {
         getPlannerInfo()
-        // 과목 조회 api 추가
+        getPlannerTasks()
         getTimeTable()
         getStatistics()
         if (previousDate == null || previousDate?.monthValue != selectedDate.value.monthValue) {
@@ -67,6 +66,19 @@ internal class PlannerViewModel @Inject constructor(
             .onFailure { e ->
                 _uiState.update {
                     Timber.tag("okhttp-chrin").d("getPlannerInfo: ${e.message}")
+                    it.copy(plannerInfoState = UiState.Failure(e.message.toString()))
+                }
+            }
+    }
+
+    suspend fun getPlannerTasks() {
+        _uiState.update { it.copy(plannerSubjectState = UiState.Loading) }
+        getPlannerTaskListUseCase(selectedDate.value.toString())
+            .onSuccess { result ->
+                _uiState.update { it.copy(plannerSubjectState = UiState.Success(result)) }
+            }
+            .onFailure { e ->
+                _uiState.update {
                     it.copy(plannerInfoState = UiState.Failure(e.message.toString()))
                 }
             }
@@ -119,9 +131,7 @@ internal class PlannerViewModel @Inject constructor(
 
     fun saveNewSubject(new: SubjectItem) = viewModelScope.launch {
         postSubjectUseCase(new.subjectName, new.subjectColor)
-            .onSuccess {
-                // 과목조회 api
-            }
+            .onSuccess { getPlannerTasks() }
             .onFailure {
                 // toast
             }
