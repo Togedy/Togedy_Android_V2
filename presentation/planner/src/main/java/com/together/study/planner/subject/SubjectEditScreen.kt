@@ -37,7 +37,7 @@ import com.together.study.planner.component.SubjectBox
 import com.together.study.planner.model.SubjectItem
 
 @Composable
-internal fun SubjectDetailRoute(
+internal fun SubjectEditRoute(
     onBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SubjectDetailViewModel = hiltViewModel(),
@@ -48,7 +48,7 @@ internal fun SubjectDetailRoute(
         viewModel.fetchSubjectItems()
     }
 
-    SubjectDetailScreen(
+    SubjectEditScreen(
         subjectState = subjectState,
         onBackButtonClick = onBackButtonClick,
         onAddDoneBtnClick = { viewModel.saveNewSubject(it.subjectName, it.subjectColor) },
@@ -60,7 +60,7 @@ internal fun SubjectDetailRoute(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun SubjectDetailScreen(
+fun SubjectEditScreen(
     subjectState: UiState<List<SubjectItem>>,
     onBackButtonClick: () -> Unit,
     onAddDoneBtnClick: (SubjectItem) -> Unit,
@@ -189,9 +189,9 @@ internal fun SubjectBoxes(
 
 @Preview
 @Composable
-private fun SubjectDetailPreview(modifier: Modifier = Modifier) {
+private fun SubjectEditPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
-        SubjectDetailScreen(
+        SubjectEditScreen(
             subjectState = UiState.Success(emptyList()),
             onBackButtonClick = {},
             onAddDoneBtnClick = {},
