@@ -87,6 +87,7 @@ class SubjectDetailViewModel @Inject constructor(
         deleteSubjectUseCase(id)
             .onSuccess {
                 val updatedList = lastedSubjectItems.filter { it.subjectId != id }
+                lastedSubjectItems = updatedList
                 updateState(UiState.Success(updatedList))
             }
             .onFailure {
