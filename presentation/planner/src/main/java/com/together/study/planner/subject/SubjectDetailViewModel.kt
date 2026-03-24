@@ -6,6 +6,7 @@ import com.together.study.common.state.UiState
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.SubjectItem
 import com.together.study.planner.usecase.GetSubjectsUseCase
+import com.together.study.planner.usecase.PostSubjectUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SubjectDetailViewModel @Inject constructor(
     private val getSubjectsUseCase: GetSubjectsUseCase,
+    private val postSubjectUseCase: PostSubjectUseCase,
 ) : ViewModel() {
     private val _subjectState = MutableStateFlow<UiState<List<SubjectItem>>>(UiState.Loading)
     val subjectState = _subjectState.asStateFlow()
@@ -32,16 +34,22 @@ class SubjectDetailViewModel @Inject constructor(
     }
 
     fun saveNewSubject(name: String, color: String) = viewModelScope.launch {
-        val updatedList = lastedSubjectItems +
-                SubjectItem(
-                    subjectId = null,
-                    subjectName = name,
-                    subjectColor = color,
-                )
-        updateState(UiState.Success(updatedList))
+        postSubjectUseCase(name, color)
+            .onSuccess {
+                val updatedList = lastedSubjectItems +
+                        SubjectItem(
+                            subjectId = null,
+                            subjectName = name,
+                            subjectColor = color,
+                        )
+                updateState(UiState.Success(updatedList))
+            }
+            .onFailure {
+                // toast
+            }
     }
 
-    fun updateSubject(new: PlannerSubject) = viewModelScope.launch {
+    fun updateSubject(new: SubjectItem) = viewModelScope.launch {
         val updatedList = lastedSubjectItems.map { subject ->
             if (subject.subjectId == new.subjectId) subject.copy(
                 subjectName = new.subjectName,
