@@ -2,9 +2,11 @@ package com.together.study.planner.di
 
 import com.together.study.planner.repository.PlannerRepository
 import com.together.study.planner.repository.PlannerShareRepository
+import com.together.study.planner.repository.PlannerTaskRepository
 import com.together.study.planner.repository.PlannerSubjectRepository
 import com.together.study.planner.repositoryimpl.PlannerRepositoryImpl
 import com.together.study.planner.repositoryimpl.PlannerShareRepositoryImpl
+import com.together.study.planner.repositoryimpl.PlannerTaskRepositoryImpl
 import com.together.study.planner.repositoryimpl.PlannerSubjectRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -26,6 +28,12 @@ abstract class RepositoryModule {
     abstract fun bindPlannerShareRepository(
         plannerShareRepositoryImpl: PlannerShareRepositoryImpl,
     ): PlannerShareRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPlannerTaskRepository(
+        plannerTaskRepositoryImpl: PlannerTaskRepositoryImpl,
+    ): PlannerTaskRepository
 
     @Binds
     @Singleton

@@ -39,7 +39,7 @@ import com.together.study.designsystem.R.drawable.ic_add_24
 import com.together.study.designsystem.R.drawable.ic_kebap_menu
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.model.Todo
+import com.together.study.planner.model.TaskItem
 import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
@@ -47,7 +47,7 @@ import com.together.study.util.noRippleClickable
 internal fun PlannerItemsScreen(
     plannerSubjectState: UiState<List<PlannerSubject>>,
     modifier: Modifier = Modifier,
-    onTodoContentChange: (Long?, String) -> Unit,
+    onTaskNameChange: (Long?, String) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
@@ -89,17 +89,17 @@ internal fun PlannerItemsScreen(
                 }
 
                 itemsIndexed(subjects) { index, subject ->
-                    var todoItems by remember(subject.tasks) { mutableStateOf(subject.tasks) }
+                    var taskItems by remember(subject.tasks) { mutableStateOf(subject.tasks) }
 
                     SubjectSection(
                         subjectName = subject.subjectName,
                         subjectColor = subject.subjectColor,
-                        todoItems = todoItems,
+                        taskItems = taskItems,
                         onPlusButtonClick = {
-                            todoItems = todoItems.plus(Todo())
+                            taskItems = taskItems.plus(TaskItem())
                         },
-                        onTodoContentChange = onTodoContentChange,
-                        onTodoEditButtonClick = {},
+                        onTaskNameChange = onTaskNameChange,
+                        onTaskEditButtonClick = {},
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -117,12 +117,12 @@ internal fun PlannerItemsScreen(
 fun SubjectSection(
     subjectName: String,
     subjectColor: String,
-    todoItems: List<Todo>,
+    taskItems: List<TaskItem>,
     modifier: Modifier = Modifier,
     timer: String? = null,
     onPlusButtonClick: () -> Unit,
-    onTodoContentChange: (Long?, String) -> Unit,
-    onTodoEditButtonClick: () -> Unit,
+    onTaskNameChange: (Long?, String) -> Unit,
+    onTaskEditButtonClick: () -> Unit,
 ) {
     val subjectColor = subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
@@ -174,11 +174,11 @@ fun SubjectSection(
             )
         }
 
-        if (todoItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
+        if (taskItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
 
-        todoItems.forEachIndexed { index, todoItem ->
-            var currentTodoContent by remember(todoItem.content) { mutableStateOf(todoItem.content) }
-            val bottomPadding = if (index == todoItems.lastIndex) 0.dp else 12.dp
+        taskItems.forEachIndexed { index, task ->
+            var currentName by remember(task.taskName) { mutableStateOf(task.taskName) }
+            val bottomPadding = if (index == taskItems.lastIndex) 0.dp else 12.dp
 
             Row(
                 modifier = Modifier
@@ -187,10 +187,8 @@ fun SubjectSection(
                 verticalAlignment = Alignment.Top,
             ) {
                 val stateColor =
-                    when (todoItem.state) {
-                        0 -> TogedyTheme.colors.gray300
-                        else -> subjectColor
-                    }
+                    if (task.isChecked) subjectColor
+                    else TogedyTheme.colors.gray300
 
                 Box(
                     modifier = Modifier
@@ -201,14 +199,14 @@ fun SubjectSection(
                 Spacer(Modifier.width(8.dp))
 
                 BasicTextField(
-                    value = currentTodoContent ?: "",
-                    onValueChange = { it ->
-                        currentTodoContent = it
-                        onTodoContentChange(todoItem.id, it)
+                    value = currentName ?: "",
+                    onValueChange = { new ->
+                        currentName = new
+                        onTaskNameChange(task.taskId, new)
                     },
                     textStyle = TogedyTheme.typography.body13m,
                     decorationBox = { innerTextField ->
-                        if (currentTodoContent.isNullOrEmpty()) {
+                        if (currentName.isNullOrEmpty()) {
                             Text(
                                 text = "To do...",
                                 style = TogedyTheme.typography.body13m,
@@ -228,7 +226,7 @@ fun SubjectSection(
                     tint = TogedyTheme.colors.gray800,
                     modifier = Modifier
                         .size(16.dp)
-                        .noRippleClickable(onTodoEditButtonClick),
+                        .noRippleClickable(onTaskEditButtonClick),
                 )
             }
         }
@@ -247,14 +245,21 @@ private fun PlannerItemsScreenPreview() {
                         subjectName = "과목명",
                         subjectColor = "#FF0000",
                         tasks = listOf(
-                            Todo(id = 1L, content = "투두 아이템 1", state = 0),
-                            Todo(id = 2L, content = "투두 아이템 2", state = 1),
-                            Todo(id = 3L, content = "투두 아이템 3", state = 0),
+                            TaskItem(
+                                taskId = 1L,
+                                taskName = "투두명",
+                                isChecked = false,
+                            ),
+                            TaskItem(
+                                taskId = 2L,
+                                taskName = "투두명",
+                                isChecked = true,
+                            ),
                         )
                     )
                 )
             ),
-            onTodoContentChange = { _, _ -> },
+            onTaskNameChange = { _, _ -> },
         )
     }
 }

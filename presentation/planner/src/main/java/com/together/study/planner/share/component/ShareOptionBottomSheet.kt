@@ -42,10 +42,10 @@ internal fun ShareOptionBottomSheet(
     subjects: List<PlannerSubject>,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    showTodo: Boolean = true,
+    showTask: Boolean = true,
     selectAllSubject: Boolean = true,
     selectedSubjects: List<Long> = listOf(),
-    onShowTodoChanged: () -> Unit,
+    onShowTaskChanged: () -> Unit,
     onSelectAllSubjectChanged: () -> Unit,
     onSubjectClick: (Long) -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -100,9 +100,9 @@ internal fun ShareOptionBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TogedyCheckBoxButton(
-                    isChecked = showTodo,
+                    isChecked = showTask,
                     text = "할 일 표시하기",
-                    onCheckBoxClick = onShowTodoChanged,
+                    onCheckBoxClick = onShowTaskChanged,
                 )
 
                 Text(
@@ -168,10 +168,10 @@ private fun ShareOptionBottomSheetPreview() {
         ShareOptionBottomSheet(
             subjects = emptyList(),
             onDismissRequest = {},
-            showTodo = true,
+            showTask = true,
             selectAllSubject = true,
             selectedSubjects = listOf(),
-            onShowTodoChanged = {},
+            onShowTaskChanged = {},
             onSelectAllSubjectChanged = {},
             onSubjectClick = {},
         )

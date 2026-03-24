@@ -24,12 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.model.Todo
+import com.together.study.planner.model.TaskItem
 import com.together.study.util.asColor
 
 @Composable
 internal fun PlannerContent(
-    showTodo: Boolean,
+    showTask: Boolean,
     plans: List<PlannerSubject>,
     selectedSubjects: List<Long>,
     modifier: Modifier = Modifier,
@@ -83,13 +83,13 @@ internal fun PlannerContent(
 
             HorizontalDivider(color = TogedyTheme.colors.gray200)
 
-            if (showTodo && plan.tasks.isNotEmpty() && plan.subjectId in selectedSubjects) {
-                plan.tasks.take(5).forEach { todo ->
+            if (showTask && plan.tasks.isNotEmpty() && plan.subjectId in selectedSubjects) {
+                plan.tasks.take(5).forEach { task ->
                     val textColor =
-                        if (todo.isChecked) TogedyTheme.colors.gray500
+                        if (task.isChecked) TogedyTheme.colors.gray500
                         else TogedyTheme.colors.black
                     val textDeco =
-                        if (todo.isChecked) TextDecoration.LineThrough
+                        if (task.isChecked) TextDecoration.LineThrough
                         else null
 
                     Row(
@@ -105,7 +105,7 @@ internal fun PlannerContent(
                         )
 
                         Text(
-                            text = todo.content ?: "",
+                            text = task.taskName ?: "",
                             style = TogedyTheme.typography.body10m,
                             color = textColor,
                             textDecoration = textDeco,
@@ -126,15 +126,15 @@ internal fun PlannerContent(
 private fun PlannerContentPreview() {
     TogedyTheme {
         PlannerContent(
-            showTodo = true,
+            showTask = true,
             plans = listOf(
                 PlannerSubject(
                     subjectId = 1L,
                     subjectName = "수학",
                     subjectColor = "#FF0000",
                     tasks = listOf(
-                        Todo(1L, "문제집 풀기", 0,true),
-                        Todo(2L, "문제집 풀기2", 0,true),
+                        TaskItem(1L, "문제집 풀기", true),
+                        TaskItem(2L, "문제집 풀기2", true),
                     )
                 ),
                 PlannerSubject(
@@ -142,8 +142,7 @@ private fun PlannerContentPreview() {
                     subjectName = "영어",
                     subjectColor = "#00FF00",
                     tasks = listOf(
-                        Todo(3L, "문제집 풀기", 0,true),
-                        Todo(4L, "문제집 풀기2", 0,true),
+                        TaskItem(3L, "문제집 풀기", true),
                     )
                 ),
             ),

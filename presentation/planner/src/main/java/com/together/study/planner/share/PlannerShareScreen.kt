@@ -59,7 +59,7 @@ internal fun PlannerShareRoute(
     val subjects by viewModel.subjects.collectAsStateWithLifecycle()
     val selectedSubjects by viewModel.selectedSubjects.collectAsStateWithLifecycle()
     val isAllSelected by viewModel.isAllSelected.collectAsStateWithLifecycle()
-    val showTodo by viewModel.showTodo.collectAsStateWithLifecycle()
+    val showTask by viewModel.showTask.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val view = LocalView.current
@@ -102,7 +102,7 @@ internal fun PlannerShareRoute(
                 subjects = subjects,
                 selectedSubjects = selectedSubjects,
                 isAllSelected = isAllSelected,
-                showTodo = showTodo,
+                showTask = showTask,
                 modifier = modifier,
                 onBackButtonClick = onBackButtonClick,
                 getTargetBound = { targetBounds = it },
@@ -110,7 +110,7 @@ internal fun PlannerShareRoute(
                     showEditButton = false
                     captureRequested = true
                 },
-                onShowTodoChanged = viewModel::updateShowTodo,
+                onShowTaskChanged = viewModel::updateShowTask,
                 onSelectAllSubjectChanged = viewModel::updateIsAllSelected,
                 onSubjectClick = viewModel::updateSelectedSubjects,
             )
@@ -129,12 +129,12 @@ fun PlannerShareScreen(
     subjects: List<PlannerSubject>,
     selectedSubjects: List<Long>,
     isAllSelected: Boolean,
-    showTodo: Boolean,
+    showTask: Boolean,
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
     getTargetBound: (Rect) -> Unit,
     onConfirmButtonClick: () -> Unit,
-    onShowTodoChanged: () -> Unit,
+    onShowTaskChanged: () -> Unit,
     onSelectAllSubjectChanged: () -> Unit,
     onSubjectClick: (Long) -> Unit,
 ) {
@@ -195,7 +195,7 @@ fun PlannerShareScreen(
                             .padding(top = 8.dp),
                     ) {
                         PlannerContent(
-                            showTodo = showTodo,
+                            showTask = showTask,
                             plans = plannerShareInfo.plannerItems,
                             selectedSubjects = selectedSubjects,
                             modifier = Modifier.weight(1f),
@@ -237,10 +237,10 @@ fun PlannerShareScreen(
         ShareOptionBottomSheet(
             subjects = subjects,
             onDismissRequest = { isShareOptionVisible = false },
-            showTodo = showTodo,
+            showTask = showTask,
             selectAllSubject = isAllSelected,
             selectedSubjects = selectedSubjects,
-            onShowTodoChanged = onShowTodoChanged,
+            onShowTaskChanged = onShowTaskChanged,
             onSelectAllSubjectChanged = onSelectAllSubjectChanged,
             onSubjectClick = onSubjectClick,
         )
@@ -267,11 +267,11 @@ private fun PlannerShareScreenPreview() {
             subjects = listOf(),
             selectedSubjects = listOf(),
             isAllSelected = false,
-            showTodo = true,
+            showTask = true,
             onBackButtonClick = {},
             getTargetBound = {},
             onConfirmButtonClick = {},
-            onShowTodoChanged = {},
+            onShowTaskChanged = {},
             onSelectAllSubjectChanged = {},
             onSubjectClick = {},
         )

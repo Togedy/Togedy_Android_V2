@@ -200,7 +200,7 @@ private fun PlannerScreen(
             when (page) {
                 0 -> PlannerItemsScreen(
                     plannerSubjectState = plannerSubjectState,
-                    onTodoContentChange = { todoId, content -> }
+                    onTaskNameChange = { todoId, content -> }
                 )
 
                 1 -> { /* TODO: 타임테이블 연결 */ }
