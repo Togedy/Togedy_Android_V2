@@ -63,7 +63,8 @@ internal fun PlannerItemsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .padding(14.dp)
+            .padding(top = 14.dp)
+            .padding(horizontal = 14.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { focusManager.clearFocus() }
