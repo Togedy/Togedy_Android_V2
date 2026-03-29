@@ -20,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
+import com.together.study.calendar.maincalendar.navigation.navigateToCalendar
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.event.TogedyUiEvent
@@ -28,6 +29,11 @@ import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
+import com.together.study.login.navigation.Login
+import com.together.study.login.navigation.loginGraph
+import com.together.study.login.navigation.navigateToLogin
+import com.together.study.login.splash.Splash
+import com.together.study.login.splash.splashGraph
 import com.together.study.main.component.MainBottomBar
 import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.planner.navigation.plannerGraph
@@ -128,6 +134,34 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination
     ) {
+        splashGraph(
+            onNavigateToLogin = {
+                navigator.navController.navigateToLogin(
+                    navOptions {
+                        popUpTo(Splash) { inclusive = true }
+                    }
+                )
+            },
+            onNavigateToCalendar = {
+                navigator.navController.navigateToCalendar(
+                    navOptions {
+                        popUpTo(Splash) { inclusive = true }
+                    }
+                )
+            },
+        )
+
+        loginGraph(
+            modifier = modifier,
+            navigateToCalendar = {
+                navigator.navController.navigateToCalendar(
+                    navOptions {
+                        popUpTo(Login) { inclusive = true }
+                    }
+                )
+            },
+        )
+
         calendarGraph(
             navigateToUp = navigator.navController::popBackStack,
             navigateToUnivSearch = navigator.navController::navigateToUnivSearch,

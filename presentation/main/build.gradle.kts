@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
+    implementation(projects.presentation.login)
     implementation(projects.presentation.calendar)
     implementation(projects.presentation.chatbot)
     implementation(projects.presentation.planner)
@@ -29,6 +30,7 @@ dependencies {
     implementation(projects.presentation.timer)
     implementation(projects.presentation.mypage)
     implementation(projects.domain.study)
+    implementation(projects.domain.auth)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

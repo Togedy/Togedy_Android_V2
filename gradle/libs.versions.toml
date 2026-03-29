@@ -49,6 +49,13 @@ materialVersion = "1.12.0"
 runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
 
+roomCompiler = "2.7.1"
+multidex = "2.0.1"
+browser = "1.8.0"
+
+kakaoUser = "2.23.2"
+kakaoCommon = "2.20.1"
+
 [libraries]
 ## android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,6 +64,10 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 
 ## compose
 compose-foundation = { module = 'androidx.compose.foundation:foundation' }
@@ -118,6 +129,9 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 
+## Kakao
+kakao-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakaoUser" }
+kakao-v2-common = { group = "com.kakao.sdk", name = "v2-common", version.ref = "kakaoCommon" }
 
 [bundles]
 coroutine = [
