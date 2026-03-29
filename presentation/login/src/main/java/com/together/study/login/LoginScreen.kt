@@ -78,7 +78,7 @@ internal fun LoginRoute(
             loginWithKakao(
                 context = context,
                 onSuccess = { token ->
-                    viewModel.loginWithKakao(token)
+                    viewModel.postLoginKakao(token)
                 },
                 onFailure = { error ->
                     togedyToast.makeText(

@@ -7,7 +7,6 @@ import javax.inject.Inject
 class AuthDataSource @Inject constructor(
     private val authService: AuthService,
 ) {
-    suspend fun loginWithKakao(accessToken: String): KakaoLoginResponse {
-        return authService.loginWithKakaoAccessToken(accessToken)
-    }
+    suspend fun postLoginKakao(accessToken: String) =
+        authService.postLoginKakao(accessToken).response
 }

@@ -11,16 +11,23 @@ class AuthRepositoryImpl @Inject constructor(
     private val authDataSource: AuthDataSource,
     private val tokenDataStore: TokenDataStore,
 ) : AuthRepository {
-    override suspend fun loginWithKakao(accessToken: String): Result<KakaoLogin> =
+    override suspend fun postLoginKakao(accessToken: String): Result<KakaoLogin> =
         runCatching {
-            val response = authDataSource.loginWithKakao(accessToken)
+            val response = authDataSource.postLoginKakao(accessToken)
+            val normalizedAccessToken = response.jwtTokenInfo.accessToken.removeBearerPrefix()
+            val normalizedRefreshToken = response.jwtTokenInfo.refreshToken.removeBearerPrefix()
 
             tokenDataStore.setTokens(
-                accessToken = response.jwtTokenInfo.accessToken,
-                refreshToken = response.jwtTokenInfo.refreshToken,
+                accessToken = normalizedAccessToken,
+                refreshToken = normalizedRefreshToken,
             )
 
             response.toDomain()
         }
 
+    private fun String.removeBearerPrefix(): String = removePrefix(BEARER_PREFIX).trim()
+
+    companion object {
+        private const val BEARER_PREFIX = "Bearer "
+    }
 }
