@@ -7,5 +7,5 @@ data class PlannerTaskRequest(
     val taskId: Long?,
     val studySubjectId: Long,
     val name: String?,
-    val date: String,
+    val date: String?,
 )
