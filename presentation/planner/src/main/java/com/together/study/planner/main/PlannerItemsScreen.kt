@@ -47,7 +47,9 @@ import com.together.study.util.noRippleClickable
 internal fun PlannerItemsScreen(
     plannerSubjectState: UiState<List<PlannerSubject>>,
     modifier: Modifier = Modifier,
-    onTaskNameChange: (Long?, String) -> Unit,
+    onTaskNameChange: (Long?, String, String, Long) -> Unit,
+    onCheckClick: (Long, Boolean) -> Unit,
+    onDeleteDoneClick: (Long, Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
@@ -93,6 +95,7 @@ internal fun PlannerItemsScreen(
                     var taskItems by remember(subject.tasks) { mutableStateOf(subject.tasks) }
 
                     SubjectSection(
+                        subjectId = subject.subjectId!!,
                         subjectName = subject.subjectName,
                         subjectColor = subject.subjectColor,
                         taskItems = taskItems,
@@ -100,7 +103,13 @@ internal fun PlannerItemsScreen(
                             taskItems = taskItems.plus(TaskItem())
                         },
                         onTaskNameChange = onTaskNameChange,
-                        onTaskEditButtonClick = {},
+                        onTaskEditButtonClick = {
+                            /* TODO: 추후 수정 */
+                        },
+                        onCheckClick = onCheckClick,
+                        onDeleteDoneClick = { taskId ->
+                            onDeleteDoneClick(taskId, subject.subjectId!!)
+                        }
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -116,14 +125,17 @@ internal fun PlannerItemsScreen(
 
 @Composable
 fun SubjectSection(
+    subjectId: Long,
     subjectName: String,
     subjectColor: String,
     taskItems: List<TaskItem>,
     modifier: Modifier = Modifier,
     timer: String? = null,
     onPlusButtonClick: () -> Unit,
-    onTaskNameChange: (Long?, String) -> Unit,
+    onTaskNameChange: (Long?, String, String, Long) -> Unit,
     onTaskEditButtonClick: () -> Unit,
+    onCheckClick: (Long, Boolean) -> Unit,
+    onDeleteDoneClick: (Long) -> Unit,
 ) {
     val subjectColor = subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
@@ -178,7 +190,9 @@ fun SubjectSection(
         if (taskItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
 
         taskItems.forEachIndexed { index, task ->
-            var currentName by remember(task.taskName) { mutableStateOf(task.taskName) }
+            var currentName by remember(task.taskId, task.tempId) {
+                mutableStateOf(task.taskName ?: "")
+            }
             val bottomPadding = if (index == taskItems.lastIndex) 0.dp else 12.dp
 
             Row(
@@ -193,6 +207,9 @@ fun SubjectSection(
 
                 Box(
                     modifier = Modifier
+                        .noRippleClickable {
+                            if (task.taskId != null) onCheckClick(task.taskId!!, !task.isChecked)
+                        }
                         .size(16.dp)
                         .background(stateColor, RoundedCornerShape(4.dp))
                 )
@@ -200,14 +217,14 @@ fun SubjectSection(
                 Spacer(Modifier.width(8.dp))
 
                 BasicTextField(
-                    value = currentName ?: "",
+                    value = currentName,
                     onValueChange = { new ->
                         currentName = new
-                        onTaskNameChange(task.taskId, new)
+                        onTaskNameChange(task.taskId, task.tempId, new, subjectId)
                     },
                     textStyle = TogedyTheme.typography.body13m,
                     decorationBox = { innerTextField ->
-                        if (currentName.isNullOrEmpty()) {
+                        if (currentName.isEmpty()) {
                             Text(
                                 text = "To do...",
                                 style = TogedyTheme.typography.body13m,
@@ -227,7 +244,10 @@ fun SubjectSection(
                     tint = TogedyTheme.colors.gray800,
                     modifier = Modifier
                         .size(16.dp)
-                        .noRippleClickable(onTaskEditButtonClick),
+                        .noRippleClickable {
+                            onTaskEditButtonClick()
+                            if (task.taskId != null) onDeleteDoneClick(task.taskId!!)
+                        },
                 )
             }
         }
@@ -260,7 +280,9 @@ private fun PlannerItemsScreenPreview() {
                     )
                 )
             ),
-            onTaskNameChange = { _, _ -> },
+            onTaskNameChange = { _, _, _, _ -> },
+            onCheckClick = { _, _ -> },
+            onDeleteDoneClick = { _, _ -> },
         )
     }
 }

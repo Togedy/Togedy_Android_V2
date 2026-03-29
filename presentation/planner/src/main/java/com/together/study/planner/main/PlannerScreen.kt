@@ -47,6 +47,7 @@ import com.together.study.planner.model.DailyPlannerInfo
 import com.together.study.planner.model.DailyStatistics
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.SubjectItem
+import com.together.study.planner.model.TaskItem
 import com.together.study.planner.model.TimeTable
 import com.together.study.planner.type.PlannerSheetType
 import com.together.study.util.noRippleClickable
@@ -88,6 +89,12 @@ internal fun PlannerScreen(
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
         onAddDoneBtnClick = viewModel::saveNewSubject,
+        onTaskNameChange = { taskId, tempId, name, subjectId ->
+            val task = TaskItem(taskId = taskId, tempId = tempId, taskName = name)
+            viewModel.updateTask(task, subjectId)
+        },
+        onCheckClick = viewModel::updateCheckState,
+        onDeleteDoneClick = viewModel::deleteTask,
     )
 }
 
@@ -110,6 +117,9 @@ private fun PlannerScreen(
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
     onAddDoneBtnClick: (SubjectItem) -> Unit,
+    onTaskNameChange: (Long?, String, String, Long) -> Unit,
+    onCheckClick: (Long, Boolean) -> Unit,
+    onDeleteDoneClick: (Long, Long) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -200,7 +210,9 @@ private fun PlannerScreen(
             when (page) {
                 0 -> PlannerItemsScreen(
                     plannerSubjectState = plannerSubjectState,
-                    onTaskNameChange = { todoId, content -> }
+                    onTaskNameChange = onTaskNameChange,
+                    onCheckClick = onCheckClick,
+                    onDeleteDoneClick = onDeleteDoneClick,
                 )
 
                 1 -> { /* TODO: 타임테이블 연결 */ }
