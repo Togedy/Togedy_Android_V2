@@ -21,7 +21,7 @@ interface PlannerTaskService {
     @PUT("planners/daily/tasks")
     suspend fun updateTaskContent(
         @Body request: PlannerTaskRequest,
-    ): BaseResponse<Int>
+    ): BaseResponse<Long>
 
     @DELETE("planners/daily/tasks/{taskId}")
     suspend fun deleteTask(

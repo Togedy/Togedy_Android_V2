@@ -11,13 +11,10 @@ class UpdateTaskContentUseCase @Inject constructor(
         taskId: Long?,
         taskName: String?,
         subjectId: Long,
-        date: String
-    ): Result<Int> {
+        date: String?,
+    ): Result<Long> {
         return repository.updateTaskContent(
-            TaskItem(
-                taskId = taskId,
-                taskName = taskName
-            ),
+            TaskItem(taskId = taskId, taskName = taskName),
             subjectId = subjectId,
             date = date,
         )

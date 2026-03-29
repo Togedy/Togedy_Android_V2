@@ -19,8 +19,8 @@ class PlannerTaskRepositoryImpl @Inject constructor(
     override suspend fun updateTaskContent(
         task: TaskItem,
         subjectId: Long,
-        date: String
-    ): Result<Int> =
+        date: String?,
+    ): Result<Long> =
         runCatching {
             plannerTaskDataSource.updateTaskContent(
                 taskId = task.taskId,
