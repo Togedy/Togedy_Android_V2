@@ -61,4 +61,5 @@ include(
     ":presentation:timer",
     ":presentation:mypage",
     ":presentation:login",
+    ":presentation:onboarding"
 )
