@@ -16,6 +16,7 @@ dependencies {
 
     implementation(projects.domain.study)
     implementation(projects.domain.user)
+    implementation(projects.domain.mypage)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)

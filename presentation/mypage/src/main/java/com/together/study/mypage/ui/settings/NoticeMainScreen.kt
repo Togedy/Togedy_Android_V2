@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -15,10 +16,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.NoticeTitleItem
+import com.together.study.mypage.model.Notice
 
 @Composable
 internal fun NoticeMainRoute(
@@ -27,20 +32,32 @@ internal fun NoticeMainRoute(
     onNoticeDetailNavigate: (Long) -> Unit,
     viewModel: NoticeMainViewModel = hiltViewModel(),
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
-//        viewModel.getNoticeList()
+        viewModel.getNoticeList()
     }
 
-    NoticeMainScreen(
-        modifier = modifier,
-        onBackButtonClick = onBackButtonClick,
-        onNoticeClick = onNoticeDetailNavigate,
-    )
+    when (uiState.value) {
+        is UiState.Loading -> TogedyLoadingScreen()
+        is UiState.Failure -> {}
+
+        is UiState.Success ->
+            NoticeMainScreen(
+                notices = (uiState.value as UiState.Success<List<Notice>>).data,
+                modifier = modifier,
+                onBackButtonClick = onBackButtonClick,
+                onNoticeClick = onNoticeDetailNavigate,
+            )
+
+        is UiState.Empty -> {}
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun NoticeMainScreen(
+    notices: List<Notice>,
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
     onNoticeClick: (Long) -> Unit,
@@ -63,19 +80,12 @@ private fun NoticeMainScreen(
             Spacer(Modifier.height(4.dp))
         }
 
-        item {
+        itemsIndexed(notices) { index, notice ->
             NoticeTitleItem(
-                title = "[이벤트] 후기왕을 찾아요 당첨자 발표",
-                date = "2026.01.01",
-                isNew = true,
-                onItemClick = { onNoticeClick(0) },
-            )
-
-            NoticeTitleItem(
-                title = "[업데이트] 오류 발생으로 인한 그룹 실시간 측정으로 발생한 오류",
-                date = "2026.01.01",
+                title = notice.noticeTitle,
+                date = notice.publishedAt,
                 isNew = false,
-                onItemClick = { onNoticeClick(0) },
+                onItemClick = { onNoticeClick(notice.noticeId!!) },
             )
         }
 
@@ -90,6 +100,11 @@ private fun NoticeMainScreen(
 private fun NoticeMainScreenPreview() {
     TogedyTheme {
         NoticeMainScreen(
+            notices = listOf(
+                Notice(noticeId = 1, noticeTitle = "공지사항 제목 1", publishedAt = "2024-06-01"),
+                Notice(noticeId = 2, noticeTitle = "공지사항 제목 2", publishedAt = "2024-06-02"),
+                Notice(noticeId = 3, noticeTitle = "공지사항 제목 3", publishedAt = "2024-06-03"),
+            ),
             onBackButtonClick = {},
             onNoticeClick = {},
         )
