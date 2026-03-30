@@ -3,6 +3,7 @@ package com.together.study.main
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import com.together.study.calendar.maincalendar.navigation.Calendar
+import com.together.study.chatbot.navigation.ChatBot
 import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
 import com.together.study.designsystem.R.drawable.ic_ai
@@ -15,6 +16,8 @@ import com.together.study.designsystem.R.drawable.ic_planner
 import com.together.study.designsystem.R.drawable.ic_planner_selected
 import com.together.study.designsystem.R.drawable.ic_study
 import com.together.study.designsystem.R.drawable.ic_study_selected
+import com.together.study.mypage.navigation.MyPage
+import com.together.study.planner.navigation.Planner
 import com.together.study.study.navigation.Study
 import kotlinx.serialization.Serializable
 
@@ -30,17 +33,17 @@ enum class MainTab(
         contentDescription = "캘린더",
         route = Calendar,
     ),
-    DUMMY2(
+    CHATBOT(
         defaultIcon = ic_ai,
         selectedIcon = ic_ai_selected,
         contentDescription = "입시GPT",
-        route = Dummy,
+        route = ChatBot,
     ),
-    DUMMY3(
+    PLANNER(
         defaultIcon = ic_planner,
         selectedIcon = ic_planner_selected,
         contentDescription = "플래너",
-        route = Dummy,
+        route = Planner,
     ),
     STUDY(
         defaultIcon = ic_study,
@@ -48,11 +51,11 @@ enum class MainTab(
         contentDescription = "스터디",
         route = Study,
     ),
-    DUMMY5(
+    MYPAGE(
         defaultIcon = ic_my,
         selectedIcon = ic_my_selected,
         contentDescription = "MY",
-        route = Dummy,
+        route = MyPage,
     );
 
 

@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class StudyDetailInfoResponse(
     @SerialName("isJoined") val isJoined: Boolean,
     @SerialName("isStudyLeader") val isStudyLeader: Boolean,
+    @SerialName("hasPassword") val hasPassword: Boolean,
     @SerialName("studyName") val studyName: String,
     @SerialName("studyDescription") val studyDescription: String?,
     @SerialName("studyImageUrl") val studyImageUrl: String?,

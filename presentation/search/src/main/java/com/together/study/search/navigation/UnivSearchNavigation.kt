@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
-import com.together.study.search.SearchScreen
+import com.together.study.search.SearchRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToUnivSearch(
@@ -18,7 +18,7 @@ fun NavGraphBuilder.univSearchGraph(
     modifier: Modifier = Modifier,
 ) {
     composable<UnivSearch> {
-        SearchScreen(
+        SearchRoute(
             modifier = modifier,
             onBackButtonClicked = navigateUp,
             )

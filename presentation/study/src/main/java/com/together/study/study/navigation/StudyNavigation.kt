@@ -21,12 +21,14 @@ fun NavController.navigateToStudySearch(
 
 fun NavGraphBuilder.studyGraph(
     navigateToUp: () -> Unit,
+    navigateToStudyUpdate: (Boolean) -> Unit,
     navigateToStudySearch: () -> Unit,
     navigateToStudyDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Study> {
         StudyMainRoute(
+            onStudyUpdateNavigate = navigateToStudyUpdate,
             onStudySearchNavigate = navigateToStudySearch,
             onStudyDetailNavigate = navigateToStudyDetail,
             modifier = modifier,

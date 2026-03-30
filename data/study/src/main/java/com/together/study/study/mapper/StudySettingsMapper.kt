@@ -10,5 +10,6 @@ fun StudyMemberBriefInfoResponse.toStudyMemberBriefInfo(): StudyMemberBriefInfo 
     StudyMemberBriefInfo(
         userId = this.userId,
         userName = this.userName,
+        userProfileImageUrl = this.userProfileImageUrl,
         studyRole = this.studyRole,
     )

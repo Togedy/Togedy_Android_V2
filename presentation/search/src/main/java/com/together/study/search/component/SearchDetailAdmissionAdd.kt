@@ -22,7 +22,8 @@ import com.together.study.util.noRippleClickable
 fun SearchDetailAdmissionAdd(
     modifier: Modifier = Modifier,
     admissionMethodId: Int,
-    onAddClick: (Int) -> Unit = {}
+    admissionMethodName: String,
+    onAddClick: (Int, String) -> Unit = { _, _ -> }
 ) {
     Row(
         modifier = modifier
@@ -32,7 +33,7 @@ fun SearchDetailAdmissionAdd(
                 color = TogedyTheme.colors.green,
                 shape = RoundedCornerShape(8.dp)
             )
-            .noRippleClickable { onAddClick(admissionMethodId) }
+            .noRippleClickable { onAddClick(admissionMethodId, admissionMethodName) }
             .padding(vertical = 13.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically

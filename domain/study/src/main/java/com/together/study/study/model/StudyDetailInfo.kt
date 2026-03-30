@@ -3,6 +3,7 @@ package com.together.study.study.model
 data class StudyDetailInfo(
     val isJoined: Boolean,
     val isStudyLeader: Boolean,
+    val hasPassword: Boolean,
     val studyName: String,
     val studyDescription: String?,
     val studyImageUrl: String?,

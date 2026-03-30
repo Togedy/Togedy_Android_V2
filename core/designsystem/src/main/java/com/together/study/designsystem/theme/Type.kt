@@ -23,8 +23,10 @@ val PretendardLight = FontFamily(Font(R.font.pretendard_light, FontWeight.Light)
 
 @Immutable
 class TogedyTypography(
+    val title24b: TextStyle,
     val title18b: TextStyle,
     val title16sb: TextStyle,
+    val body16m: TextStyle,
     val body14b: TextStyle,
     val body14m: TextStyle,
     val body13b: TextStyle,
@@ -33,10 +35,13 @@ class TogedyTypography(
     val body10m: TextStyle,
     val toast13sb: TextStyle,
     val toast12sb: TextStyle,
+    val toast13r: TextStyle,
     val toast12r: TextStyle,
     val chip14b: TextStyle,
     val chip10sb: TextStyle,
     val time40l: TextStyle,
+    val time40b: TextStyle,
+    val time46r: TextStyle,
 )
 
 private fun TogedyTextStyle(
@@ -56,6 +61,11 @@ private fun TogedyTextStyle(
 )
 
 fun TogedyTypography() = TogedyTypography(
+    title24b = TogedyTextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 24.sp,
+        lineHeight = 34.sp,
+    ),
     title18b = TogedyTextStyle(
         fontFamily = PretendardBold,
         fontSize = 18.sp,
@@ -65,6 +75,11 @@ fun TogedyTypography() = TogedyTypography(
         fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
         lineHeight = 26.sp,
+    ),
+    body16m = TogedyTextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
     ),
     body14b = TogedyTextStyle(
         fontFamily = PretendardBold,
@@ -106,6 +121,11 @@ fun TogedyTypography() = TogedyTypography(
         fontSize = 12.sp,
         lineHeight = 14.sp,
     ),
+    toast13r = TogedyTextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 13.sp,
+        lineHeight = 16.sp,
+    ),
     toast12r = TogedyTextStyle(
         fontFamily = PretendardRegular,
         fontSize = 12.sp,
@@ -125,6 +145,16 @@ fun TogedyTypography() = TogedyTypography(
         fontFamily = PretendardLight,
         fontSize = 40.sp,
         lineHeight = 48.sp,
+    ),
+    time40b = TogedyTextStyle(
+        fontFamily = PretendardBold,
+        fontSize = 40.sp,
+        lineHeight = 48.sp,
+    ),
+    time46r = TogedyTextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 46.sp,
+        lineHeight = 50.sp,
     )
 )
 
@@ -135,6 +165,7 @@ fun TogedyTypographyPreview() {
         Column {
             Text("title18b - TogedyTheme", style = TogedyTheme.typography.title18b)
             Text("title16sb - TogedyTheme", style = TogedyTheme.typography.title16sb)
+            Text("body16m - TogedyTheme", style = TogedyTheme.typography.body16m)
             Text("body14b - TogedyTheme", style = TogedyTheme.typography.body14b)
             Text("body14m - TogedyTheme", style = TogedyTheme.typography.body14m)
             Text("body13b - TogedyTheme", style = TogedyTheme.typography.body13b)

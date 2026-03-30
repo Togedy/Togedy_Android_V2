@@ -32,13 +32,17 @@ include(
     ":data:local",
     ":data:remote",
     ":data:calendar",
+    ":data:search",
     ":data:dummy",
     ":data:study",
+    ":data:planner",
 )
 include(
     ":domain:dummy",
     ":domain:calendar",
     ":domain:study",
+    ":domain:planner",
+    ":domain:search",
 )
 include(
     ":presentation:main",
@@ -48,4 +52,10 @@ include(
     ":presentation:study",
     ":presentation:studydetail",
     ":presentation:studysettings",
+    ":presentation:studymember",
+    ":presentation:studyupdate",
+    ":presentation:planner",
+    ":presentation:chatbot",
+    ":presentation:timer",
+    ":presentation:mypage",
 )

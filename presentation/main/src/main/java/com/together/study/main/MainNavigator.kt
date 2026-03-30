@@ -10,6 +10,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.Calendar
 import com.together.study.calendar.maincalendar.navigation.navigateToCalendar
+import com.together.study.chatbot.navigation.navigateToChatBot
+import com.together.study.mypage.navigation.navigateToMyPage
+import com.together.study.planner.navigation.navigateToPlanner
 import com.together.study.study.navigation.navigateToStudy
 
 class MainNavigator(
@@ -40,10 +43,10 @@ class MainNavigator(
 
         when (tab) {
             MainTab.CALENDAR -> navController.navigateToCalendar(navOptions)
-            MainTab.DUMMY2 -> { } //TODO: 더미 추가 예정
-            MainTab.DUMMY3 -> { } //TODO: 더미 추가 예정
+            MainTab.CHATBOT -> navController.navigateToChatBot(navOptions)
+            MainTab.PLANNER -> navController.navigateToPlanner(navOptions)
             MainTab.STUDY -> navController.navigateToStudy(navOptions)
-            MainTab.DUMMY5 -> { } //TODO: 더미 추가 예정
+            MainTab.MYPAGE -> navController.navigateToMyPage(navOptions)
         }
     }
 

@@ -1,0 +1,47 @@
+package com.together.study.search.repositoryimpl
+
+import com.together.study.search.datasource.UnivScheduleDataSource
+import com.together.study.search.mapper.toData
+import com.together.study.search.mapper.toDomain
+import com.together.study.search.model.AdmissionMethod
+import com.together.study.search.model.UnivDetailSchedule
+import com.together.study.search.model.UnivScheduleList
+import com.together.study.search.repository.UnivScheduleRepository
+import javax.inject.Inject
+
+class UnivScheduleRepositoryImpl @Inject constructor(
+    private val univScheduleDataSource: UnivScheduleDataSource,
+) : UnivScheduleRepository {
+    override suspend fun getUnivScheduleList(
+        name: String,
+        admissionType: String,
+        page: Int,
+        size: Int
+    ): Result<UnivScheduleList> =
+        runCatching {
+            val response = univScheduleDataSource.getUnivSchedule(name, admissionType, page, size).response
+            response.toDomain()
+        }
+
+    override suspend fun getUnivDetailSchedule(universityId: Int): Result<UnivDetailSchedule> =
+        runCatching {
+            val response = univScheduleDataSource.getUnivDetailSchedule(
+                universityId = universityId
+            ).response
+            response.toDomain()
+        }
+
+    override suspend fun deleteUnivDetailSchedule(universityAdmissionMethodId: Int): Result<Unit> =
+        runCatching {
+            val response = univScheduleDataSource.deleteUnivDetailSchedule(
+                universityAdmissionMethodId = universityAdmissionMethodId
+            )
+        }
+
+    override suspend fun addUnivDetailSchedule(request: AdmissionMethod): Result<Unit> =
+        runCatching {
+            val response = univScheduleDataSource.addUnivDetailSchedule(
+                univDetailScheduleAddRequest = request.toData()
+            )
+        }
+}
