@@ -1,4 +1,4 @@
-package com.together.study.user.dto
+package com.together.study.mypage.dto
 
 import kotlinx.serialization.Serializable
 
