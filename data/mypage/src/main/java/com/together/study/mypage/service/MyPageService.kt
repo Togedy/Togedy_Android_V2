@@ -5,6 +5,7 @@ import com.together.study.mypage.dto.NoticeResponse
 import com.together.study.mypage.dto.PrivacyPolicyResponse
 import com.together.study.mypage.dto.TermsOfServicesResponse
 import com.together.study.remote.model.BaseResponse
+import com.together.study.remote.model.EmptyDataResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -28,5 +29,5 @@ interface MyPageService {
     @POST("support/inquiries")
     suspend fun postContactUs(
         @Body request: ContactUsRequest,
-    ): BaseResponse<Unit>
+    ): EmptyDataResponse
 }
