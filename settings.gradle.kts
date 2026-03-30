@@ -37,6 +37,7 @@ include(
     ":data:dummy",
     ":data:study",
     ":data:user",
+    ":data:mypage",
 )
 include(
     ":domain:dummy",
