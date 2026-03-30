@@ -274,9 +274,9 @@ private fun StudyMainScreen(
                     }
                 }
 
-                StudyMainTab.BADGE -> {
-                    /* TODO() : 추후 스프린트 */
-                }
+//                /* 추후 스프린트 */
+//                StudyMainTab.BADGE -> {
+//                }
             }
         }
     }
