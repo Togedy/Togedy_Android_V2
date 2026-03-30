@@ -12,6 +12,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -44,6 +45,7 @@ include(
     ":domain:planner",
     ":domain:search",
     ":domain:user",
+    ":domain:mypage",
 )
 include(
     ":presentation:main",

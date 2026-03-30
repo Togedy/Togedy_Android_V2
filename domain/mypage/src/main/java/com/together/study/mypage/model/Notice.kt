@@ -1,4 +1,4 @@
-package com.together.study.user.model
+package com.together.study.mypage.model
 
 data class Notice(
     val noticeId: Long? = null,
