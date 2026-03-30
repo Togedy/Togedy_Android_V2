@@ -1,11 +1,13 @@
 package com.together.study.user.repository
 
+import com.together.study.user.model.NicknameValidation
 import com.together.study.user.model.UserInfo
 import com.together.study.user.model.UserSettingInfo
 
 interface UserRepository {
     suspend fun getUserInfo(): Result<UserInfo>
     suspend fun getUserSettingInfo(): Result<UserSettingInfo>
+    suspend fun validateNickname(nickname: String): Result<NicknameValidation>
     suspend fun updateUserInfo(
         nickname: String?,
         userProfileImage: String?,

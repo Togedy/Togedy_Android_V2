@@ -3,6 +3,7 @@ package com.together.study.user.repositoryimpl
 import androidx.core.net.toUri
 import com.together.study.user.datasource.UserDataSource
 import com.together.study.user.mapper.toDomain
+import com.together.study.user.model.NicknameValidation
 import com.together.study.user.model.UserInfo
 import com.together.study.user.model.UserSettingInfo
 import com.together.study.user.repository.UserRepository
@@ -20,6 +21,12 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserSettingInfo(): Result<UserSettingInfo> =
         runCatching {
             val response = userDataSource.getUserSettingInfo().response
+            response.toDomain()
+        }
+
+    override suspend fun validateNickname(nickname: String): Result<NicknameValidation> =
+        runCatching {
+            val response = userDataSource.checkNicknameDuplication(nickname).response
             response.toDomain()
         }
 

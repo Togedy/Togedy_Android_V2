@@ -7,6 +7,7 @@ import com.together.study.mypage.state.Profile
 import com.together.study.mypage.state.ProfileEditUiState
 import com.together.study.user.usecase.GetUserInfoUseCase
 import com.together.study.user.usecase.UpdateUserInfoUseCase
+import com.together.study.user.usecase.ValidateNicknameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileEditViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val validateNicknameUseCase: ValidateNicknameUseCase,
     private val updateUserInfoUseCase: UpdateUserInfoUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileEditUiState())
@@ -51,9 +53,20 @@ class ProfileEditViewModel @Inject constructor(
     }
 
     fun checkDuplication() = viewModelScope.launch {
-        // TODO 중복확인 api 호출
-        setDupCheck(true)
-        tempName = uiState.value.name
+        validateNicknameUseCase(uiState.value.name)
+            .onSuccess { result ->
+                if (result.available) {
+                    setDupCheck(true)
+                    tempName = uiState.value.name
+                    updateDoneEnabled()
+                } else {
+                    setDupCheck(false)
+                    setError(true, result.message)
+                }
+            }
+            .onFailure {
+                setError(true, "서버 오류로 중복확인에 실패했습니다.")
+            }
     }
 
     fun updateProfile() = viewModelScope.launch {
@@ -80,8 +93,6 @@ class ProfileEditViewModel @Inject constructor(
 
         if (name.length !in 2..10) setError(true, "2~10글자로 입력해주세요")
         else setError(false)
-
-        updateDoneEnabled() // 중복여부 검사 로직 수정
     }
 
     fun updateUserProfileImageUrl(url: String?) {

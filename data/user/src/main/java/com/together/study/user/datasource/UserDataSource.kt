@@ -21,6 +21,9 @@ class UserDataSource @Inject constructor(
 
     suspend fun getUserSettingInfo() = userService.getUserSettingInfo()
 
+    suspend fun checkNicknameDuplication(nickname: String) =
+        userService.checkNicknameDuplication(nickname)
+
     suspend fun patchUserProfileSettings(
         nickname: String?,
         userProfileImage: Uri?,

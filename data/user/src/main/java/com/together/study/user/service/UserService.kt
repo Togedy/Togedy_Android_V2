@@ -3,6 +3,7 @@ package com.together.study.user.service
 import com.together.study.remote.model.BaseResponse
 import com.together.study.remote.model.EmptyDataResponse
 import com.together.study.user.dto.MarketingConsentedRequest
+import com.together.study.user.dto.NicknameValidationResponse
 import com.together.study.user.dto.NotificationSettingsRequest
 import com.together.study.user.dto.UserInfoResponse
 import com.together.study.user.dto.UserSettingInfoResponse
@@ -13,6 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface UserService {
     @GET("users/me")
@@ -20,6 +22,11 @@ interface UserService {
 
     @GET("users/me/settings")
     suspend fun getUserSettingInfo(): BaseResponse<UserSettingInfoResponse>
+
+    @GET("users/nickname/validate")
+    suspend fun checkNicknameDuplication(
+        @Query("nickname") nickname: String,
+    ): BaseResponse<NicknameValidationResponse>
 
     @Multipart
     @PATCH("users/me")
