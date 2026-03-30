@@ -62,7 +62,7 @@ fun NavGraphBuilder.myPageGraph(
             onStudyMainNavigate = navigateToStudy,
             onNoticeNavigate = navController::navigateToNoticeMain,
             onContactUsNavigate = navController::navigateToFeedback,
-            onLeaveReviewNavigate = navController::navigateToFeedback,
+            onLeaveReviewNavigate = {},
             onTermsOfServiceNavigate = {},
             onPrivacyPolicyNavigate = {},
             modifier = modifier,
