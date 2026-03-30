@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.textfield.TogedyTextField
@@ -33,23 +34,35 @@ internal fun FeedbackRoute(
     onBackButtonClick: () -> Unit,
     viewModel: FeedbackViewModel = hiltViewModel(),
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     FeedbackScreen(
+        type = uiState.value.type,
+        content = uiState.value.content,
+        email = uiState.value.replyEmail,
+        isDoneEnabled = uiState.value.isDoneEnabled,
         modifier = modifier,
         onBackButtonClick = onBackButtonClick,
-        onSubmitClick = { type, content, email ->
-
-        },
+        onTypeChanged = viewModel::updateType,
+        onContentChanged = viewModel::updateContent,
+        onEmailChanged = viewModel::updateEmail,
+        onSubmitClick = viewModel::postFeedback,
     )
 }
 
 @Composable
 private fun FeedbackScreen(
+    type: FeedbackType?,
+    content: String,
+    email: String,
+    isDoneEnabled: Boolean,
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
-    onSubmitClick: (String, String, String?) -> Unit,
+    onTypeChanged: (FeedbackType) -> Unit,
+    onContentChanged: (String) -> Unit,
+    onEmailChanged: (String) -> Unit,
+    onSubmitClick: () -> Unit,
 ) {
-    var content by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
     var selectedTypeIdx by remember { mutableIntStateOf(-1) }
 
     Column(
@@ -69,13 +82,16 @@ private fun FeedbackScreen(
         FeedbackTypeSelector(
             typeList = FeedbackType.entries,
             selectedIndex = selectedTypeIdx,
-            onSelectionChanged = { selectedTypeIdx = it },
+            onSelectionChanged = { index, type ->
+                selectedTypeIdx = index
+                onTypeChanged(type)
+            },
             modifier = Modifier.padding(horizontal = 16.dp),
         )
 
         FeedbackContent(
             value = content,
-            onValueChange = { content = it },
+            onValueChange = onContentChanged,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
 
@@ -87,7 +103,7 @@ private fun FeedbackScreen(
             content = {
                 TogedyTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = onEmailChanged,
                     backgroundColor = TogedyTheme.colors.white,
                     placeholderText = "이메일을 입력해주세요",
                     showBorder = false,
@@ -100,14 +116,8 @@ private fun FeedbackScreen(
 
         TogedyButton(
             text = "제출하기",
-            enabled = content.trim().isNotEmpty() && selectedTypeIdx != -1,
-            onClick = {
-                onSubmitClick(
-                    FeedbackType.entries[selectedTypeIdx].serverValue,
-                    content.trim(),
-                    email,
-                )
-            },
+            enabled = isDoneEnabled,
+            onClick = onSubmitClick,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
 
