@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -18,14 +18,18 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.textfield.TogedyTextField
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.FeedbackContent
 import com.together.study.mypage.component.FeedbackTypeSelector
 import com.together.study.mypage.component.MyTextField
+import com.together.study.mypage.event.FeedbackEvent
 import com.together.study.mypage.type.FeedbackType
 
 @Composable
@@ -34,7 +38,35 @@ internal fun FeedbackRoute(
     onBackButtonClick: () -> Unit,
     viewModel: FeedbackViewModel = hiltViewModel(),
 ) {
+    val toast = LocalTogedyToast.current
+
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val eventFlow = viewModel.eventFlow
+
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is FeedbackEvent.PostFeedbackSuccess -> {
+                    toast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = "소중한 의견 감사드립니다 :)",
+                        icon = ic_check_green,
+                        yOffset = toast.toastBasicOffset(),
+                    )
+                    onBackButtonClick()
+                }
+
+                is FeedbackEvent.PostFeedbackFailure -> {
+                    toast.makeText(
+                        toastType = ToastType.WARNING,
+                        message = event.message,
+                        icon = ic_check_green,
+                        yOffset = toast.toastOffsetWithBottomBar(),
+                    )
+                }
+            }
+        }
+    }
 
     FeedbackScreen(
         type = uiState.value.type,
