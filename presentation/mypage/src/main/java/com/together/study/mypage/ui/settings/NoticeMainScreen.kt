@@ -2,6 +2,7 @@ package com.together.study.mypage.ui.settings
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -38,19 +39,31 @@ internal fun NoticeMainRoute(
         viewModel.getNoticeList()
     }
 
-    when (uiState.value) {
-        is UiState.Loading -> TogedyLoadingScreen()
-        is UiState.Failure -> {}
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(TogedyTheme.colors.gray50)
+            .padding(top = 14.dp),
+    ) {
+        TogedyTopBar(
+            title = "공지사항",
+            leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
+            onLeftClicked = onBackButtonClick,
+        )
 
-        is UiState.Success ->
-            NoticeMainScreen(
-                notices = (uiState.value as UiState.Success<List<Notice>>).data,
-                modifier = modifier,
-                onBackButtonClick = onBackButtonClick,
-                onNoticeClick = onNoticeDetailNavigate,
-            )
+        when (uiState.value) {
+            is UiState.Loading -> TogedyLoadingScreen()
+            is UiState.Failure -> {}
 
-        is UiState.Empty -> {}
+            is UiState.Success ->
+                NoticeMainScreen(
+                    notices = (uiState.value as UiState.Success<List<Notice>>).data,
+                    modifier = modifier,
+                    onNoticeClick = onNoticeDetailNavigate,
+                )
+
+            is UiState.Empty -> {}
+        }
     }
 }
 
@@ -59,23 +72,11 @@ internal fun NoticeMainRoute(
 private fun NoticeMainScreen(
     notices: List<Notice>,
     modifier: Modifier = Modifier,
-    onBackButtonClick: () -> Unit,
     onNoticeClick: (Long) -> Unit,
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(TogedyTheme.colors.gray50)
-            .padding(top = 14.dp),
+        modifier = modifier.fillMaxSize(),
     ) {
-        stickyHeader {
-            TogedyTopBar(
-                title = "공지사항",
-                leftIcon = ImageVector.vectorResource(id = ic_left_chevron),
-                onLeftClicked = onBackButtonClick,
-            )
-        }
-
         item {
             Spacer(Modifier.height(4.dp))
         }
@@ -105,7 +106,6 @@ private fun NoticeMainScreenPreview() {
                 Notice(noticeId = 2, noticeTitle = "공지사항 제목 2", publishedAt = "2024-06-02"),
                 Notice(noticeId = 3, noticeTitle = "공지사항 제목 3", publishedAt = "2024-06-03"),
             ),
-            onBackButtonClick = {},
             onNoticeClick = {},
         )
     }
