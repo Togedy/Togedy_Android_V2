@@ -68,8 +68,8 @@ import com.together.study.util.noRippleClickable
  * @param minHeight 텍스트 필드의 최소 높이 (null일 경우 기본 높이)
  * @param isError 에러 상태 여부 (기본값 false)
  * @param errorMessage 텍스트 필드 하단에 표시될 에러 메시지 (null일 경우 표시 안 함)
- * @param errorMessageStyle 에러 메시지 텍스트의 스타일 (색상은 errorColor로 자동 적용됨)
- * @param errorMessagePadding 에러 메시지 패딩 값
+ * @param statusMessageStyle 에러 메시지 텍스트의 스타일 (색상은 errorColor로 자동 적용됨)
+ * @param statusMessagePadding 에러 메시지 패딩 값
  * @param errorColor 에러 상태일 때 테두리, 아이콘, 텍스트에 사용될 색상 (기본값: TogedyTheme.colors.red)
  * @param keyboardOptions 키보드 옵션 (기본값 KeyboardOptions.Default)
  */
@@ -96,11 +96,13 @@ fun TogedyTextField(
     dupCheckText: String = "중복확인",
     onDupCheckClick: () -> Unit = {},
     minHeight: Dp? = null,
+    isPassed: Boolean = false,
+    passedColor: Color = TogedyTheme.colors.green,
     isError: Boolean = false,
-    errorMessage: String? = null,
-    errorMessageStyle: TextStyle = TogedyTheme.typography.body12m,
-    errorMessagePadding: PaddingValues = PaddingValues(top = 4.dp),
     errorColor: Color = TogedyTheme.colors.red,
+    errorMessage: String? = null,
+    statusMessageStyle: TextStyle = TogedyTheme.typography.body12m,
+    statusMessagePadding: PaddingValues = PaddingValues(top = 4.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -118,8 +120,9 @@ fun TogedyTextField(
 
     // Border color 계산 로직 통합
     val currentBorderColor =
-        remember(isError, isFocused, errorColor, focusedBorderColor, borderColor) {
+        remember(isPassed, isError, isFocused, errorColor, focusedBorderColor, borderColor) {
             when {
+                isPassed -> passedColor
                 isError -> errorColor
                 isFocused -> focusedBorderColor
                 else -> borderColor
@@ -180,11 +183,21 @@ fun TogedyTextField(
 
                 // 에러 메시지 표시
                 if (isError && errorMessage != null) {
-                    ErrorMessageRow(
-                        errorMessage = errorMessage,
-                        errorMessageStyle = errorMessageStyle,
-                        errorMessagePadding = errorMessagePadding,
-                        errorColor = errorColor
+                    StatusMessageRow(
+                        message = errorMessage,
+                        textStyle = statusMessageStyle,
+                        padding = statusMessagePadding,
+                        color = errorColor
+                    )
+                }
+
+                // 통과 메시지 표시
+                if (isPassed && !isError) {
+                    StatusMessageRow(
+                        message = "확인되었습니다.",
+                        textStyle = statusMessageStyle,
+                        padding = statusMessagePadding,
+                        color = passedColor
                     )
                 }
             }
@@ -306,28 +319,28 @@ private fun DupCheckButton(
 }
 
 @Composable
-private fun ErrorMessageRow(
-    errorMessage: String,
-    errorMessageStyle: TextStyle,
-    errorMessagePadding: PaddingValues,
-    errorColor: Color
+private fun StatusMessageRow(
+    message: String,
+    textStyle: TextStyle,
+    padding: PaddingValues,
+    color: Color
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(errorMessagePadding),
+            .padding(padding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_red),
-            contentDescription = "에러",
-            tint = errorColor,
+            contentDescription = null,
+            tint = color,
             modifier = Modifier.padding(end = 4.dp)
         )
 
         Text(
-            text = errorMessage,
-            style = errorMessageStyle.copy(color = errorColor)
+            text = message,
+            style = textStyle.copy(color = color)
         )
     }
 }

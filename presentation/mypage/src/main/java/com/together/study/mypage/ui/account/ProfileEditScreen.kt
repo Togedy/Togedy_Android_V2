@@ -59,6 +59,7 @@ internal fun ProfileEditRoute(
                 userProfileImageUrl = data.image ?: "",
                 isError = data.isError,
                 errorMessage = data.errorMessage,
+                isDupCheck = data.isDupCheck,
                 isEditBottomSheetVisible = data.isEditBottomSheetVisible,
                 isDoneEnabled = data.isDoneEnabled,
                 modifier = modifier,
@@ -85,6 +86,7 @@ internal fun ProfileEditScreen(
     userProfileImageUrl: String,
     isError: Boolean,
     errorMessage: String,
+    isDupCheck: Boolean,
     isEditBottomSheetVisible: Boolean,
     isDoneEnabled: Boolean,
     modifier: Modifier = Modifier,
@@ -102,7 +104,7 @@ internal fun ProfileEditScreen(
         else TogedyTheme.colors.gray500
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
             .padding(vertical = 24.dp),
@@ -173,6 +175,7 @@ internal fun ProfileEditScreen(
                     showDupCheck = true,
                     onDupCheckClick = onDupCheckClick,
                     isError = isError,
+                    isPassed = isDupCheck,
                     errorMessage = errorMessage,
                 )
             }
@@ -180,6 +183,6 @@ internal fun ProfileEditScreen(
     }
 
     if (isEditBottomSheetVisible) {
-        // 이미지 바텀시트 연결
+        // TODO: 이미지 바텀시트 연결
     }
 }

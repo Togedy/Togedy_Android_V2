@@ -58,6 +58,7 @@ class ProfileEditViewModel @Inject constructor(
                 if (result.available) {
                     setDupCheck(true)
                     tempName = uiState.value.name
+                    setError(false, "")
                     updateDoneEnabled()
                 } else {
                     setDupCheck(false)
@@ -90,9 +91,6 @@ class ProfileEditViewModel @Inject constructor(
 
         if (name != tempName) setDupCheck(false)
         else setDupCheck(true)
-
-        if (name.length !in 2..10) setError(true, "2~10글자로 입력해주세요")
-        else setError(false)
     }
 
     fun updateUserProfileImageUrl(url: String?) {
