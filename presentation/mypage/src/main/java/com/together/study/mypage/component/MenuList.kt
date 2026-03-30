@@ -33,7 +33,7 @@ internal fun <T> MenuList(
         modifier = Modifier
             .padding(top = 20.dp)
             .background(TogedyTheme.colors.white, RoundedCornerShape(12.dp))
-            .padding(vertical = 13.dp, horizontal = 18.dp),
+            .padding(top = 12.dp, start = 18.dp, end = 18.dp),
     ) {
         Text(
             text = title,
@@ -64,8 +64,6 @@ internal fun <T> MenuList(
                     color = TogedyTheme.colors.gray800,
                 )
             }
-
-            Spacer(Modifier.height(12.dp))
 
             if (index != items.lastIndex)
                 HorizontalDivider(color = TogedyTheme.colors.gray200)
