@@ -3,14 +3,17 @@ package com.together.study.mypage.ui.account
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
+import com.together.study.mypage.event.ProfileEditEvent
 import com.together.study.mypage.state.Profile
 import com.together.study.mypage.state.ProfileEditUiState
 import com.together.study.user.usecase.GetUserInfoUseCase
 import com.together.study.user.usecase.UpdateUserInfoUseCase
 import com.together.study.user.usecase.ValidateNicknameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,6 +27,9 @@ class ProfileEditViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileEditUiState())
     val uiState: StateFlow<ProfileEditUiState> = _uiState.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<ProfileEditEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var tempName = ""
 
@@ -47,17 +53,21 @@ class ProfileEditViewModel @Inject constructor(
                     )
                 }
             }
-            .onFailure {
-                _uiState.update { it.copy(profileState = UiState.Failure(it.toString())) }
+            .onFailure { error ->
+                _uiState.update { it.copy(profileState = UiState.Failure(error.message.toString())) }
             }
     }
 
     fun checkDuplication() = viewModelScope.launch {
-        validateNicknameUseCase(uiState.value.name)
+        val nickname = uiState.value.name
+
+        validateNicknameUseCase(nickname)
             .onSuccess { result ->
+                if (uiState.value.name != nickname) return@onSuccess
+
                 if (result.available) {
+                    tempName = nickname
                     setDupCheck(true)
-                    tempName = uiState.value.name
                     setError(false, "")
                     updateDoneEnabled()
                 } else {
@@ -66,6 +76,7 @@ class ProfileEditViewModel @Inject constructor(
                 }
             }
             .onFailure {
+                if (uiState.value.name != nickname) return@onFailure
                 setError(true, "서버 오류로 중복확인에 실패했습니다.")
             }
     }
@@ -78,16 +89,14 @@ class ProfileEditViewModel @Inject constructor(
             userProfileImage = uiState.value.image,
             removeUserProfileImage = removeImg,
         )
-            .onSuccess {
-                // toast & 뒤로가기
-            }
+            .onSuccess { _eventFlow.emit(ProfileEditEvent.UpdateProfileSuccess) }
             .onFailure {
-
+                _eventFlow.emit(ProfileEditEvent.UpdateProfileFailure("프로필 수정 요청이 실패하였습니다."))
             }
     }
 
     fun updateUserName(name: String) {
-        _uiState.update { it.copy(name = name) }
+        _uiState.update { it.copy(name = name, isError = false, errorMessage = "") }
 
         if (name != tempName) setDupCheck(false)
         else setDupCheck(true)

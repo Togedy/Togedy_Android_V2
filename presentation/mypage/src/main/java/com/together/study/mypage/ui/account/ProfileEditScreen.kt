@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,13 +29,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_camera
+import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.img_character_heart
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.textfield.TogedyTextField
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.MyTextField
+import com.together.study.mypage.event.ProfileEditEvent
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -44,12 +49,29 @@ internal fun ProfileEditRoute(
     modifier: Modifier = Modifier,
     viewModel: ProfileEditViewModel = hiltViewModel(),
 ) {
+    val toast = LocalTogedyToast.current
+
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val eventFlow = viewModel.eventFlow
+
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is ProfileEditEvent.UpdateProfileSuccess -> onBackClick()
+                is ProfileEditEvent.UpdateProfileFailure -> {
+                    toast.makeText(
+                        toastType = ToastType.WARNING,
+                        message = event.message,
+                        icon = ic_check_green,
+                        yOffset = toast.toastOffsetWithBottomBar(),
+                    )
+                }
+            }
+        }
+    }
 
     when (uiState.value.profileState) {
         is UiState.Loading -> TogedyLoadingScreen()
-
-        is UiState.Empty -> {}
 
         is UiState.Success<*> -> {
             val data = uiState.value
@@ -64,10 +86,7 @@ internal fun ProfileEditRoute(
                 isDoneEnabled = data.isDoneEnabled,
                 modifier = modifier,
                 onBackClick = onBackClick,
-                onDoneClick = {
-                    viewModel.updateProfile()
-                    onBackClick()
-                },
+                onDoneClick = viewModel::updateProfile,
                 onEditBottomSheetStateChange = viewModel::setEditBottomSheetVisible,
                 onImageDeleteButtonClick = viewModel::updateUserProfileImageUrl,
                 onImageEditButtonClick = onGalleryNavigate,
@@ -76,7 +95,7 @@ internal fun ProfileEditRoute(
             )
         }
 
-        is UiState.Failure -> {}
+        else -> {}
     }
 }
 
