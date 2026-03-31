@@ -24,13 +24,8 @@ class NoticeDetailViewModel @Inject constructor(
     val uiState: StateFlow<UiState<Notice>> = _uiState.asStateFlow()
 
     fun getNoticeDetailInfo() = viewModelScope.launch {
-        if (noticeId == -1L) {
-            _uiState.value = UiState.Failure("Invalid notice ID")
-            return@launch
-        } else {
-            getNoticeDetailUseCase(noticeId)
-                .onSuccess {  _uiState.value = UiState.Success(it) }
-                .onFailure { _uiState.value = UiState.Failure(it.toString()) }
-        }
+        getNoticeDetailUseCase(noticeId)
+            .onSuccess {  _uiState.value = UiState.Success(it) }
+            .onFailure { _uiState.value = UiState.Failure(it.toString()) }
     }
 }

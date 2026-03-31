@@ -8,6 +8,10 @@ class GetNoticeDetailUseCase @Inject constructor(
     private val myPageRepository: MyPageRepository,
 ) {
     suspend operator fun invoke(noticeId: Long): Result<Notice> {
+        if (noticeId == -1L) {
+            return Result.failure(IllegalArgumentException("Invalid noticeId: $noticeId"))
+        }
+
         return myPageRepository.getNoticeDetail(noticeId)
     }
 }
