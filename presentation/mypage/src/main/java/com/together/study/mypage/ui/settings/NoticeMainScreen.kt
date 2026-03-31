@@ -86,7 +86,7 @@ private fun NoticeMainScreen(
                 title = notice.noticeTitle,
                 date = notice.publishedAt,
                 isNew = false,
-                onItemClick = { onNoticeClick(notice.noticeId!!) },
+                onItemClick = { notice.noticeId?.let { onNoticeClick(it) } },
             )
         }
 

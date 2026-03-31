@@ -45,7 +45,7 @@ internal fun NoticeDetailRoute(
             NoticeDetailScreen(
                 title = notice.noticeTitle,
                 date = notice.publishedAt,
-                content = notice.publishedAt,
+                content = notice.noticeContent,
                 isNew = false,
                 modifier = modifier,
                 onBackButtonClick = onBackButtonClick,
