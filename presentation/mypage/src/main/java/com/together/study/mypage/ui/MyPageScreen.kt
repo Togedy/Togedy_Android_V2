@@ -13,54 +13,81 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_settings_24
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.MenuList
 import com.together.study.mypage.component.UserProfile
 import com.together.study.mypage.component.UserStudyInfoSection
 import com.together.study.mypage.type.LegalMenu
 import com.together.study.mypage.type.SupportMenu
-import com.together.study.study.model.UserStudyInfo
+import com.together.study.user.model.UserInfo
 import com.together.study.util.noRippleClickable
-
 
 @Composable
 internal fun MyPageRoute(
-    onBackButtonClick: () -> Unit,
     onSettingNavigate: () -> Unit,
     onProfileEditNavigate: () -> Unit,
+    onCreateStudyNavigate: () -> Unit,
+    onStudyDetailNavigate: (Long) -> Unit,
+    onStudyMainNavigate: () -> Unit,
     onNoticeNavigate: () -> Unit,
     onContactUsNavigate: () -> Unit,
     onLeaveReviewNavigate: () -> Unit,
     onTermsOfServiceNavigate: () -> Unit,
     onPrivacyPolicyNavigate: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: MyPageViewModel = hiltViewModel(),
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-    MyPageScreen(
-        modifier = modifier,
-        onSettingClick = onSettingNavigate,
-        onEditProfileClick = onProfileEditNavigate,
-        onNoticeClick = onNoticeNavigate,
-        onContactUsClick = onContactUsNavigate,
-        onLeaveReviewClick = onLeaveReviewNavigate,
-        onTermsOfServiceClick = onTermsOfServiceNavigate,
-        onPrivacyPolicyClick = onPrivacyPolicyNavigate,
-    )
+    LaunchedEffect(Unit) {
+        viewModel.loadUserInfo()
+    }
+
+    when (uiState.value.userInfoState) {
+        is UiState.Loading -> TogedyLoadingScreen()
+        is UiState.Success ->
+            MyPageScreen(
+                userInfo = (uiState.value.userInfoState as UiState.Success<UserInfo>).data,
+                modifier = modifier,
+                onSettingClick = onSettingNavigate,
+                onEditProfileClick = onProfileEditNavigate,
+                onStartStudyClick = onCreateStudyNavigate,
+                onStudyItemClick = onStudyDetailNavigate,
+                onStudyMoreButtonClick = onStudyMainNavigate,
+                onNoticeClick = onNoticeNavigate,
+                onContactUsClick = onContactUsNavigate,
+                onLeaveReviewClick = onLeaveReviewNavigate,
+                onTermsOfServiceClick = onTermsOfServiceNavigate,
+                onPrivacyPolicyClick = onPrivacyPolicyNavigate,
+            )
+
+        is UiState.Failure -> {}
+        is UiState.Empty -> {}
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MyPageScreen(
+    userInfo: UserInfo,
     modifier: Modifier = Modifier,
     onSettingClick: () -> Unit,
     onEditProfileClick: () -> Unit,
+    onStartStudyClick: () -> Unit,
+    onStudyItemClick: (Long) -> Unit,
+    onStudyMoreButtonClick: () -> Unit,
     onNoticeClick: () -> Unit,
     onContactUsClick: () -> Unit,
     onLeaveReviewClick: () -> Unit,
@@ -100,31 +127,21 @@ private fun MyPageScreen(
             Spacer(Modifier.height(10.dp))
 
             UserProfile(
-                userName = "유저입니당",
-                userEmail = "user@gmail.com",
-                userProfileImageUrl = "http://~~",
-                totalStudyTime = "100:00:00",
-                attendanceStreak = 4,
+                userName = userInfo.userName,
+                userEmail = userInfo.userEmail,
+                userProfileImageUrl = userInfo.userProfileImageUrl ?: "",
+                totalStudyTime = userInfo.totalStudyTime,
+                attendanceStreak = userInfo.attendanceStreak,
                 onEditProfileClick = onEditProfileClick,
             )
 
             Spacer(Modifier.height(12.dp))
 
             UserStudyInfoSection(
-                studies = listOf(
-                    UserStudyInfo(
-                        studyName = "토글디",
-                        studyImageUrl = "http://~~",
-                        studyMemberCount = 10,
-                        completedMemberCount = 5,
-                    ),
-                    UserStudyInfo(
-                        studyName = "토글디",
-                        studyImageUrl = "http://~~",
-                        studyMemberCount = 10,
-                        completedMemberCount = 5,
-                    ),
-                )
+                studies = userInfo.studies,
+                onStartStudyClick = onStartStudyClick,
+                onStudyItemClick = onStudyItemClick,
+                onStudyMoreButtonClick = onStudyMoreButtonClick,
             )
         }
 
@@ -164,8 +181,19 @@ private fun MyPageScreen(
 private fun MyPageRoutePreview() {
     TogedyTheme {
         MyPageScreen(
+            userInfo = UserInfo(
+                userName = "유저입니당",
+                userEmail = "user@gmail.com",
+                userProfileImageUrl = "http://~~",
+                totalStudyTime = "100:00:00",
+                attendanceStreak = 4,
+                studies = listOf(),
+            ),
             onSettingClick = {},
             onEditProfileClick = {},
+            onStartStudyClick = {},
+            onStudyItemClick = {},
+            onStudyMoreButtonClick = {},
             onNoticeClick = {},
             onContactUsClick = {},
             onLeaveReviewClick = {},

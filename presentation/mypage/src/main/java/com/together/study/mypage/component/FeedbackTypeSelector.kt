@@ -32,7 +32,7 @@ import com.together.study.util.noRippleClickable
 internal fun FeedbackTypeSelector(
     typeList: List<FeedbackType>,
     selectedIndex: Int,
-    onSelectionChanged: (Int) -> Unit,
+    onSelectionChanged: (Int, FeedbackType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -105,7 +105,7 @@ internal fun FeedbackTypeSelector(
                                     else TogedyTheme.colors.white
                             )
                             .noRippleClickable {
-                                onSelectionChanged(index)
+                                onSelectionChanged(index, type)
                                 isExpanded = false
                             }
                     ) {
