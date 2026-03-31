@@ -147,7 +147,34 @@ private fun PlannerScreen(
             .padding(top = 20.dp),
     ) {
         when (plannerInfoState) {
-            is UiState.Loading -> {}
+            is UiState.Loading -> {
+                val data = DailyPlannerInfo(
+                    date = selectedDate.toString(),
+                    hasDday = false,
+                    userScheduleName = null,
+                    remainingDays = null,
+                    totalStudyTime = "00:00:00",
+                    plannerImage = "",
+                )
+
+                PlannerTopSection(
+                    selectedDate = selectedDate,
+                    hasDDay = data.hasDday,
+                    remainingDays = data.remainingDays,
+                    dDayName = data.userScheduleName,
+                    showDropdown = showDropdown,
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                TimerSection(
+                    context = context,
+                    timerImageUrl = data.plannerImage ?: "",
+                    timer = data.totalStudyTime,
+                    onPlayButtonClick = { /*기능없음*/ },
+                    onImageEditButtonClick = { /*기능없음*/ },
+                )
+            }
             is UiState.Success -> {
                 val data = plannerInfoState.data
                 PlannerTopSection(
@@ -241,14 +268,14 @@ private fun PlannerTopSection(
     remainingDays: Int?,
     dDayName: String?,
     showDropdown: Boolean,
-    onDayBeforeClick: () -> Unit,
-    onDayAfterClick: () -> Unit,
-    onCalendarClick: () -> Unit,
-    onKebabMenuClick: () -> Unit,
-    onDismissRequestDropdown: () -> Unit,
-    onPlusPlannerSubjectClick: () -> Unit,
-    onEditPlannerSubjectClick: () -> Unit,
-    onShareButtonClick: () -> Unit,
+    onDayBeforeClick: () -> Unit = {},
+    onDayAfterClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {},
+    onKebabMenuClick: () -> Unit = {},
+    onDismissRequestDropdown: () -> Unit = {},
+    onPlusPlannerSubjectClick: () -> Unit = {},
+    onEditPlannerSubjectClick: () -> Unit = {},
+    onShareButtonClick: () -> Unit = {},
 ) {
     Column {
         Box(
