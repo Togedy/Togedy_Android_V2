@@ -36,6 +36,7 @@ include(
     ":data:search",
     ":data:dummy",
     ":data:study",
+    ":data:planner",
     ":data:user",
     ":data:mypage",
 )

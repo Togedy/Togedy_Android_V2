@@ -26,7 +26,13 @@ class SubjectDetailViewModel @Inject constructor(
     }
 
     fun saveNewSubject(name: String, color: String) = viewModelScope.launch {
-        val updatedList = lastedSubjectItems + PlannerSubject(null, name, color, emptyList())
+        val updatedList = lastedSubjectItems +
+                PlannerSubject(
+                    subjectId = null,
+                    subjectName = name,
+                    subjectColor = color,
+                    tasks = emptyList()
+                )
         updateState(UiState.Success(updatedList))
     }
 
