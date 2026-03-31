@@ -34,8 +34,8 @@ class FeedbackViewModel @Inject constructor(
         checkDoneEnabled()
     }
 
-    fun updateEmail(title: String) {
-        _uiState.value = _uiState.value.copy(replyEmail = title)
+    fun updateEmail(email: String) {
+        _uiState.value = _uiState.value.copy(replyEmail = email)
         checkDoneEnabled()
     }
 
@@ -50,9 +50,9 @@ class FeedbackViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState.type == null) {
             _eventFlow.emit(FeedbackEvent.PostFeedbackFailure("문의 유형을 선택해주세요"))
-        } else if (currentState.content.trim().isEmpty()) {
+        } else if (currentState.content.isBlank()) {
             _eventFlow.emit(FeedbackEvent.PostFeedbackFailure("문의 내용을 입력해주세요"))
-        } else if (currentState.replyEmail.trim().isEmpty()) {
+        } else if (currentState.replyEmail.isBlank()) {
             _eventFlow.emit(FeedbackEvent.PostFeedbackFailure("답변 받을 이메일을 입력해주세요"))
         } else {
             postContactUsUseCase(
