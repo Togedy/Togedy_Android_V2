@@ -158,6 +158,7 @@ private fun MainNavHost(
                     StudyRole.MEMBER -> navigator.navController.navigateToMemberSettingsScreen(id)
                 }
             },
+            navigateToTimer = navigator.navController::navigateToTimer,
             modifier = modifier,
         )
 
