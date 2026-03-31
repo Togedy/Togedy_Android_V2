@@ -2,6 +2,7 @@ package com.together.study.mypage.ui.settings
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -36,22 +37,37 @@ internal fun NoticeDetailRoute(
         viewModel.getNoticeDetailInfo()
     }
 
-    when (uiState.value) {
-        is UiState.Loading -> TogedyLoadingScreen()
-        is UiState.Failure -> {}
-        is UiState.Success -> {
-            val notice = (uiState.value as UiState.Success).data
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(TogedyTheme.colors.gray50)
+            .padding(top = 14.dp),
+    ) {
+        TogedyTopBar(
+            title = "공지사항",
+            leftIcon = ImageVector.vectorResource(id = ic_delete_x_16),
+            onLeftClicked = onBackButtonClick,
+        )
 
-            NoticeDetailScreen(
-                title = notice.noticeTitle,
-                date = notice.publishedAt,
-                content = notice.noticeContent,
-                isNew = false,
-                modifier = modifier,
-                onBackButtonClick = onBackButtonClick,
-            )
+        Spacer(Modifier.height(4.dp))
+
+        when (uiState.value) {
+            is UiState.Loading -> TogedyLoadingScreen()
+            is UiState.Failure -> {}
+            is UiState.Success -> {
+                val notice = (uiState.value as UiState.Success).data
+
+                NoticeDetailScreen(
+                    title = notice.noticeTitle,
+                    date = notice.publishedAt,
+                    content = notice.noticeContent,
+                    isNew = false,
+                    modifier = modifier,
+                )
+            }
+
+            is UiState.Empty -> {}
         }
-        is UiState.Empty -> {}
     }
 }
 
@@ -63,23 +79,11 @@ private fun NoticeDetailScreen(
     date: String,
     content: String,
     isNew: Boolean,
-    onBackButtonClick: () -> Unit,
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(TogedyTheme.colors.gray50)
-            .padding(top = 14.dp),
+        modifier = modifier.fillMaxSize(),
     ) {
         stickyHeader {
-            TogedyTopBar(
-                title = "공지사항",
-                leftIcon = ImageVector.vectorResource(id = ic_delete_x_16),
-                onLeftClicked = onBackButtonClick,
-            )
-
-            Spacer(Modifier.height(4.dp))
-
             NoticeTitleItem(
                 title = title,
                 date = date,
@@ -126,7 +130,6 @@ private fun NoticeDetailScreenPreview() {
                     "\n" +
                     "감사합니다. 여러분의 성원에 힘입어 더 멋진 서비스로 보답하겠습니다.",
             isNew = true,
-            onBackButtonClick = { },
         )
     }
 }
