@@ -42,13 +42,13 @@ class UserDataSource @Inject constructor(
     )
 
     /* 추후 스프린트 */
-    suspend fun patchNotificationSettings(request: Boolean) = runCatching {
-        val request = NotificationSettingsRequest(request)
+    suspend fun patchNotificationSettings(enable: Boolean) {
+        val request = NotificationSettingsRequest(pushNotificationEnabled = enable)
         userService.patchNotificationSettings(request)
     }
 
-    suspend fun patchMarketingConsented(request: Boolean) = runCatching {
-        val request = MarketingConsentedRequest(request)
+    suspend fun patchMarketingConsented(enable: Boolean) {
+        val request = MarketingConsentedRequest(marketingConsented = enable)
         userService.patchMarketingConsented(request)
     }
 }
