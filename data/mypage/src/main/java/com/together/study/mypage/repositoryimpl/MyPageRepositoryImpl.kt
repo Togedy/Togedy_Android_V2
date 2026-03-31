@@ -3,7 +3,6 @@ package com.together.study.mypage.repositoryimpl
 import com.together.study.mypage.datasource.MyPageDataSource
 import com.together.study.mypage.dto.ContactUsRequest
 import com.together.study.mypage.mapper.toDomain
-import com.together.study.mypage.mapper.toDomainList
 import com.together.study.mypage.model.Notice
 import com.together.study.mypage.repository.MyPageRepository
 import javax.inject.Inject
@@ -26,7 +25,7 @@ class MyPageRepositoryImpl @Inject constructor(
     override suspend fun getNotices(): Result<List<Notice>> =
         runCatching {
             val response = myPageDataSource.getNotices().response
-            response.map { it.toDomainList() }
+            response.map { it.toDomain() }
         }
 
     override suspend fun getNoticeDetail(noticeId: Long): Result<Notice> =
@@ -39,13 +38,14 @@ class MyPageRepositoryImpl @Inject constructor(
         inquiryType: String,
         inquiryContent: String,
         replyEmail: String
-    ): Result<Unit> = runCatching {
-        val request = ContactUsRequest(
-            inquiryType = inquiryType,
-            inquiryContent = inquiryContent,
-            replyEmail = replyEmail,
-        )
+    ): Result<Unit> =
+        runCatching {
+            val request = ContactUsRequest(
+                inquiryType = inquiryType,
+                inquiryContent = inquiryContent,
+                replyEmail = replyEmail,
+            )
 
-        myPageDataSource.postContactUs(request)
-    }
+            myPageDataSource.postContactUs(request)
+        }
 }
