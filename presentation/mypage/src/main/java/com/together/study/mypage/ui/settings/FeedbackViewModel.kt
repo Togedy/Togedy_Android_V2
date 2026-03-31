@@ -64,7 +64,7 @@ class FeedbackViewModel @Inject constructor(
                     _eventFlow.emit(FeedbackEvent.PostFeedbackSuccess)
                 }
                 .onFailure {
-                    _eventFlow.emit(FeedbackEvent.PostFeedbackFailure("문의 제출에 실패했습니다"))
+                    _eventFlow.emit(FeedbackEvent.PostFeedbackFailure("서버 오류로 제출에 실패했습니다"))
                 }
         }
     }

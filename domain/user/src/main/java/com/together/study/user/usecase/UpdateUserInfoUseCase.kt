@@ -15,7 +15,7 @@ class UpdateUserInfoUseCase @Inject constructor(
             return Result.failure(IllegalArgumentException("At least one of userName or userProfileImage must be provided"))
         }
 
-        if (userProfileImage==null && removeUserProfileImage) {
+        if (userProfileImage==null && !removeUserProfileImage) {
             return Result.failure(IllegalArgumentException("Profile image is empty"))
         }
 
