@@ -26,17 +26,20 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.designsystem.R.drawable.ic_circle_gray_24
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.study.model.UserStudyInfo
+import com.together.study.user.model.UserStudyInfo
+import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun UserStudyItem(
     studyInfo: UserStudyInfo,
     modifier: Modifier = Modifier,
+    onItemClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
     Box(
         modifier = modifier
+            .noRippleClickable(onItemClick)
             .fillMaxWidth()
             .height(80.dp)
             .clip(RoundedCornerShape(12.dp)),
@@ -83,11 +86,19 @@ internal fun UserStudyItem(
                     tint = TogedyTheme.colors.gray600,
                 )
 
-                Text(
-                    text = "${studyInfo.completedMemberCount ?: "-"}/${studyInfo.studyMemberCount}",
-                    style = TogedyTheme.typography.body13m,
-                    color = TogedyTheme.colors.gray600,
-                )
+                if (studyInfo.completedMemberCount == null) {
+                    Text(
+                        text = "${studyInfo.studyMemberCount}명",
+                        style = TogedyTheme.typography.body13m,
+                        color = TogedyTheme.colors.gray600,
+                    )
+                } else {
+                    Text(
+                        text = "${studyInfo.completedMemberCount ?: "0"}/${studyInfo.studyMemberCount}명",
+                        style = TogedyTheme.typography.body13m,
+                        color = TogedyTheme.colors.gray600,
+                    )
+                }
             }
         }
     }

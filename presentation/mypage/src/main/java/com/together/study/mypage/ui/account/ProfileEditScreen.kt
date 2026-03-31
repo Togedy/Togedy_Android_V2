@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,13 +29,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_camera
+import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.img_character_heart
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.textfield.TogedyTextField
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.MyTextField
+import com.together.study.mypage.event.ProfileEditEvent
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -44,14 +49,29 @@ internal fun ProfileEditRoute(
     modifier: Modifier = Modifier,
     viewModel: ProfileEditViewModel = hiltViewModel(),
 ) {
+    val toast = LocalTogedyToast.current
+
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val eventFlow = viewModel.eventFlow
+
+    LaunchedEffect(Unit) {
+        eventFlow.collect { event ->
+            when (event) {
+                is ProfileEditEvent.UpdateProfileSuccess -> onBackClick()
+                is ProfileEditEvent.UpdateProfileFailure -> {
+                    toast.makeText(
+                        toastType = ToastType.WARNING,
+                        message = event.message,
+                        icon = ic_check_green,
+                        yOffset = toast.toastOffsetWithBottomBar(),
+                    )
+                }
+            }
+        }
+    }
 
     when (uiState.value.profileState) {
-        is UiState.Loading -> {
-            TogedyLoadingScreen()
-        }
-
-        is UiState.Empty -> {}
+        is UiState.Loading -> TogedyLoadingScreen()
 
         is UiState.Success<*> -> {
             val data = uiState.value
@@ -61,25 +81,21 @@ internal fun ProfileEditRoute(
                 userProfileImageUrl = data.image ?: "",
                 isError = data.isError,
                 errorMessage = data.errorMessage,
+                isDupCheck = data.isDupCheck,
                 isEditBottomSheetVisible = data.isEditBottomSheetVisible,
                 isDoneEnabled = data.isDoneEnabled,
                 modifier = modifier,
                 onBackClick = onBackClick,
-                onDoneClick = {
-                    // api 호출
-                    onBackClick()
-                },
+                onDoneClick = viewModel::updateProfile,
                 onEditBottomSheetStateChange = viewModel::setEditBottomSheetVisible,
                 onImageDeleteButtonClick = viewModel::updateUserProfileImageUrl,
                 onImageEditButtonClick = onGalleryNavigate,
                 onNameChange = viewModel::updateUserName,
-                onDupCheckClick = {
-                    // 중복확인 api 호출
-                },
+                onDupCheckClick = viewModel::checkDuplication,
             )
         }
 
-        is UiState.Failure -> {}
+        else -> {}
     }
 }
 
@@ -89,6 +105,7 @@ internal fun ProfileEditScreen(
     userProfileImageUrl: String,
     isError: Boolean,
     errorMessage: String,
+    isDupCheck: Boolean,
     isEditBottomSheetVisible: Boolean,
     isDoneEnabled: Boolean,
     modifier: Modifier = Modifier,
@@ -118,12 +135,7 @@ internal fun ProfileEditScreen(
             onLeftClicked = onBackClick,
             rightText = "완료",
             rightTextStyle = TogedyTheme.typography.title16sb.copy(color = doneTextColor),
-            onRightClicked = {
-                if (isDoneEnabled) {
-                    // api 호출
-                    onDoneClick()
-                }
-            },
+            onRightClicked = { if (isDoneEnabled) onDoneClick() },
             modifier = Modifier.padding(vertical = 10.dp),
         )
 
@@ -182,6 +194,7 @@ internal fun ProfileEditScreen(
                     showDupCheck = true,
                     onDupCheckClick = onDupCheckClick,
                     isError = isError,
+                    isPassed = isDupCheck,
                     errorMessage = errorMessage,
                 )
             }
@@ -189,6 +202,6 @@ internal fun ProfileEditScreen(
     }
 
     if (isEditBottomSheetVisible) {
-        // 이미지 바텀시트 연결
+        // TODO: 이미지 바텀시트 연결
     }
 }

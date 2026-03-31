@@ -1,47 +1,110 @@
 package com.together.study.mypage.ui.account
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
+import com.together.study.mypage.event.ProfileEditEvent
 import com.together.study.mypage.state.Profile
 import com.together.study.mypage.state.ProfileEditUiState
+import com.together.study.user.usecase.GetUserInfoUseCase
+import com.together.study.user.usecase.UpdateUserInfoUseCase
+import com.together.study.user.usecase.ValidateNicknameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileEditViewModel @Inject constructor(
-
+    private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val validateNicknameUseCase: ValidateNicknameUseCase,
+    private val updateUserInfoUseCase: UpdateUserInfoUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileEditUiState())
     val uiState: StateFlow<ProfileEditUiState> = _uiState.asStateFlow()
 
-    fun setProfile(profile: Profile) { //서버 연결예정
-        _uiState.update {
-            it.copy(
-                profileState = UiState.Success(profile),
-                name = profile.originName,
-                image = profile.originImage
-            )
-        }
+    private val _eventFlow = MutableSharedFlow<ProfileEditEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
+    private var tempName = ""
+
+    init {
+        setProfile()
+    }
+
+    fun setProfile() = viewModelScope.launch {
+        getUserInfoUseCase()
+            .onSuccess { result ->
+                _uiState.update {
+                    it.copy(
+                        profileState = UiState.Success(
+                            Profile(
+                                originName = result.userName,
+                                originImage = result.userProfileImageUrl,
+                            )
+                        ),
+                        name = result.userName,
+                        image = result.userProfileImageUrl,
+                    )
+                }
+            }
+            .onFailure { error ->
+                _uiState.update { it.copy(profileState = UiState.Failure(error.message.toString())) }
+            }
+    }
+
+    fun checkDuplication() = viewModelScope.launch {
+        val nickname = uiState.value.name
+
+        validateNicknameUseCase(nickname)
+            .onSuccess { result ->
+                if (uiState.value.name != nickname) return@onSuccess
+
+                if (result.available) {
+                    tempName = nickname
+                    setDupCheck(true)
+                    setError(false, "")
+                    updateDoneEnabled()
+                } else {
+                    setDupCheck(false)
+                    setError(true, result.message)
+                }
+            }
+            .onFailure {
+                if (uiState.value.name != nickname) return@onFailure
+                setError(true, "서버 오류로 중복확인에 실패했습니다.")
+            }
+    }
+
+    fun updateProfile() = viewModelScope.launch {
+        val removeImg = uiState.value.image == null
+
+        updateUserInfoUseCase(
+            userName = uiState.value.name,
+            userProfileImage = uiState.value.image,
+            removeUserProfileImage = removeImg,
+        )
+            .onSuccess { _eventFlow.emit(ProfileEditEvent.UpdateProfileSuccess) }
+            .onFailure {
+                _eventFlow.emit(ProfileEditEvent.UpdateProfileFailure("프로필 수정 요청이 실패하였습니다."))
+            }
     }
 
     fun updateUserName(name: String) {
-        _uiState.update { it.copy(name = name) }
-        if (name.length !in 2..10) setError(true, "2~10글자로 입력해주세요")
-        else setError(false)
-        updateDoneEnabled() // 중복여부 검사 로직 수정
+        _uiState.update { it.copy(name = name, isError = false, errorMessage = "") }
+
+        if (name != tempName) setDupCheck(false)
+        else setDupCheck(true)
     }
 
     fun updateUserProfileImageUrl(url: String?) {
         _uiState.update { it.copy(image = url) }
         updateDoneEnabled()
-    }
-
-    fun setError(isError: Boolean, message: String = "") {
-        _uiState.update { it.copy(isError = isError, errorMessage = message) }
     }
 
     fun setDupCheck(isDupCheck: Boolean) {
@@ -53,12 +116,8 @@ class ProfileEditViewModel @Inject constructor(
         _uiState.update { it.copy(isEditBottomSheetVisible = !uiState.value.isEditBottomSheetVisible) }
     }
 
-    private fun checkDoneAvailable() {
-        if (_uiState.value.isNameChanged) {
-            _uiState.update { it.copy(isDoneEnabled = true) }
-        } else {
-            _uiState.update { it.copy(isDoneEnabled = false) }
-        }
+    fun setError(isError: Boolean, message: String = "") {
+        _uiState.update { it.copy(isError = isError, errorMessage = message) }
     }
 
     private fun updateDoneEnabled() {

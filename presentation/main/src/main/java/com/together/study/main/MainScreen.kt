@@ -230,6 +230,9 @@ private fun MainNavHost(
 
         myPageGraph(
             navigateToUp = navigator.navController::popBackStack,
+            navigateToCreateStudy = navigator.navController::navigateToStudyUpdate,
+            navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
+            navigateToStudy = navigator.navController::navigateToStudy,
             navController = navigator.navController,
             modifier = modifier,
         )
