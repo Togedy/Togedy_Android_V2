@@ -28,6 +28,8 @@ fun PlannerSubjectResponse.toDomain(): PlannerSubject {
         subjectId = this.subjectId,
         subjectName = this.subjectName,
         subjectColor = this.subjectColor,
+        totalTaskCount = this.totalTaskCount,
+        checkedTaskCount = this.checkedTaskCount,
         subjectStudyTime = this.subjectStudyTime,
         tasks = this.taskList.map { it.toDomain() },
     )

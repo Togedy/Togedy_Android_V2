@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TaskResponse(
-    val taskId: Long?,
+    val taskId: Long? = null,
     val taskName: String,
     val isChecked: Boolean,
 )
