@@ -9,7 +9,8 @@ class UploadImageUseCase @Inject constructor(
 
     suspend operator fun invoke(
         filePath: String,
+        date: String,
     ): Result<Unit> {
-        return repository.uploadImage(filePath)
+        return repository.uploadImage(filePath, date)
     }
 }

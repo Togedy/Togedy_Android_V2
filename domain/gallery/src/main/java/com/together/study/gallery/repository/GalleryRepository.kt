@@ -13,5 +13,6 @@ interface GalleryRepository {
 
     suspend fun uploadImage(
         filePath: String,
+        date: String,
     ): Result<Unit>
 }
