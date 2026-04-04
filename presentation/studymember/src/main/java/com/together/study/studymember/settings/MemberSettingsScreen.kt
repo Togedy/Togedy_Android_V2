@@ -128,7 +128,6 @@ fun MemberSettingsScreen(
         Spacer(Modifier.height(10.dp))
 
         TogedySearchBar(
-            // TODO icon 추후 추가
             placeholder = "닉네임을 검색해보세요",
             value = searchTerm,
             onValueChange = { searchTerm = it },

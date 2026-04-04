@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.type.study.StudyType
-import com.together.study.designsystem.R.drawable.ic_delete_x_16
+import com.together.study.designsystem.R.drawable.ic_check_circle_16
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.textchip.TogedyBorderTextChip
@@ -112,9 +112,10 @@ private fun ChallengedCount(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(ic_delete_x_16),
+            imageVector = ImageVector.vectorResource(ic_check_circle_16),
             contentDescription = null,
-            modifier = Modifier.size(12.dp),
+            tint = TogedyTheme.colors.gray300,
+            modifier = Modifier.size(14.dp),
         )
 
         Spacer(Modifier.width(4.dp))

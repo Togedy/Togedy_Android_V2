@@ -37,6 +37,7 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.R.drawable.ic_search_24
+import com.together.study.designsystem.R.drawable.ic_pen_with_box
 import com.together.study.designsystem.R.drawable.img_character_challenge
 import com.together.study.designsystem.R.drawable.img_character_speaker_no_gradient
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
@@ -320,7 +321,7 @@ private fun TitleSection(
 
         Box {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_search_24),
+                imageVector = ImageVector.vectorResource(ic_pen_with_box),
                 contentDescription = "스터디 생성 버튼",
                 tint = mainColor,
                 modifier = Modifier.noRippleClickable {
