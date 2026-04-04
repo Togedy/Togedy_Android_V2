@@ -33,8 +33,8 @@ internal class PlannerShareViewModel @Inject constructor(
     val selectedSubjects = _selectedSubjects.asStateFlow()
     private val _isAllSelected: MutableStateFlow<Boolean> = MutableStateFlow(true)
     val isAllSelected = _isAllSelected.asStateFlow()
-    private val _showTodo: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val showTodo = _showTodo.asStateFlow()
+    private val _showTask: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val showTask = _showTask.asStateFlow()
 
     suspend fun getPlannerShareInfo() {
         getShareInfoUseCase(date)
@@ -65,8 +65,8 @@ internal class PlannerShareViewModel @Inject constructor(
         else _selectedSubjects.value = emptyList()
     }
 
-    fun updateShowTodo() {
-        _showTodo.value = !_showTodo.value
+    fun updateShowTask() {
+        _showTask.value = !_showTask.value
     }
 
     fun updateSelectedSubjects(new: Long) {

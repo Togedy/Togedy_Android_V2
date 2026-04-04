@@ -46,6 +46,8 @@ import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.model.DailyPlannerInfo
 import com.together.study.planner.model.DailyStatistics
 import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.SubjectItem
+import com.together.study.planner.model.TaskItem
 import com.together.study.planner.model.TimeTable
 import com.together.study.planner.type.PlannerSheetType
 import com.together.study.util.noRippleClickable
@@ -65,7 +67,7 @@ internal fun PlannerScreen(
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.sheetState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(selectedDate) {
+    LaunchedEffect(Unit, selectedDate) {
         viewModel.load()
     }
 
@@ -85,6 +87,14 @@ internal fun PlannerScreen(
         onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
+        onAddDoneBtnClick = viewModel::saveNewSubject,
+        onTaskPlusButtonClick = viewModel::addTempTask,
+        onTaskNameChange = { taskId, tempId, name, subjectId ->
+            val task = TaskItem(taskId = taskId, tempId = tempId, taskName = name)
+            viewModel.updateTask(task, subjectId)
+        },
+        onCheckClick = viewModel::updateCheckState,
+        onDeleteDoneClick = viewModel::deleteTask,
     )
 }
 
@@ -105,6 +115,11 @@ private fun PlannerScreen(
     onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
+    onAddDoneBtnClick: (SubjectItem) -> Unit,
+    onTaskPlusButtonClick: (Long) -> Unit,
+    onTaskNameChange: (Long?, String, String, Long) -> Unit,
+    onCheckClick: (Long, Boolean) -> Unit,
+    onDeleteDoneClick: (Long, Long) -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -124,7 +139,6 @@ private fun PlannerScreen(
         }
     }
 
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -132,7 +146,34 @@ private fun PlannerScreen(
             .padding(top = 20.dp),
     ) {
         when (plannerInfoState) {
-            is UiState.Loading -> {}
+            is UiState.Loading -> {
+                val data = DailyPlannerInfo(
+                    date = selectedDate.toString(),
+                    hasDday = false,
+                    userScheduleName = null,
+                    remainingDays = null,
+                    totalStudyTime = "00:00:00",
+                    plannerImage = "",
+                )
+
+                PlannerTopSection(
+                    selectedDate = selectedDate,
+                    hasDDay = data.hasDday,
+                    remainingDays = data.remainingDays,
+                    dDayName = data.userScheduleName,
+                    showDropdown = showDropdown,
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                TimerSection(
+                    context = context,
+                    timerImageUrl = data.plannerImage ?: "",
+                    timer = data.totalStudyTime,
+                    onPlayButtonClick = { /*기능없음*/ },
+                    onImageEditButtonClick = { /*기능없음*/ },
+                )
+            }
             is UiState.Success -> {
                 val data = plannerInfoState.data
                 PlannerTopSection(
@@ -154,7 +195,7 @@ private fun PlannerScreen(
                     },
                     onEditPlannerSubjectClick = {
                         showDropdown = false
-                        onSheetVisibilityChange(PlannerSheetType.SUBJECT)
+                        onEditSubjectClick()
                     },
                     onShareButtonClick = {
                         showDropdown = false
@@ -195,7 +236,10 @@ private fun PlannerScreen(
             when (page) {
                 0 -> PlannerItemsScreen(
                     plannerSubjectState = plannerSubjectState,
-                    onTodoContentChange = { todoId, content -> }
+                    onTaskPlusButtonClick = onTaskPlusButtonClick,
+                    onTaskNameChange = onTaskNameChange,
+                    onCheckClick = onCheckClick,
+                    onDeleteDoneClick = onDeleteDoneClick,
                 )
 
                 1 -> { /* TODO: 타임테이블 연결 */ }
@@ -210,7 +254,7 @@ private fun PlannerScreen(
         selectedDate = selectedDate,
         monthlyHeatmapState = monthlyHeatmapState,
         onDismissRequest = onSheetVisibilityChange,
-        onEditSubjectClick = onEditSubjectClick,
+        onAddDoneBtnClick = onAddDoneBtnClick,
         onDateChange = onSelectedDateChange,
     )
 }
@@ -222,14 +266,14 @@ private fun PlannerTopSection(
     remainingDays: Int?,
     dDayName: String?,
     showDropdown: Boolean,
-    onDayBeforeClick: () -> Unit,
-    onDayAfterClick: () -> Unit,
-    onCalendarClick: () -> Unit,
-    onKebabMenuClick: () -> Unit,
-    onDismissRequestDropdown: () -> Unit,
-    onPlusPlannerSubjectClick: () -> Unit,
-    onEditPlannerSubjectClick: () -> Unit,
-    onShareButtonClick: () -> Unit,
+    onDayBeforeClick: () -> Unit = {},
+    onDayAfterClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {},
+    onKebabMenuClick: () -> Unit = {},
+    onDismissRequestDropdown: () -> Unit = {},
+    onPlusPlannerSubjectClick: () -> Unit = {},
+    onEditPlannerSubjectClick: () -> Unit = {},
+    onShareButtonClick: () -> Unit = {},
 ) {
     Column {
         Box(
@@ -291,12 +335,10 @@ private fun PlannerTopSection(
             }
         }
 
-        if (hasDDay) {
-            DDaySection(
-                userScheduleName = dDayName,
-                remainingDays = remainingDays,
-            )
-        }
+        DDaySection(
+            userScheduleName = dDayName,
+            remainingDays = remainingDays,
+        )
     }
 }
 
