@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.type.study.StudyType
-import com.together.study.designsystem.R.drawable.ic_search_24
+import com.together.study.designsystem.R.drawable.ic_lock
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.theme.TogedyTheme
@@ -211,7 +211,7 @@ private fun MemberAndPassword(
             Spacer(Modifier.width(4.dp))
 
             Icon(
-                imageVector = ImageVector.vectorResource(ic_search_24),
+                imageVector = ImageVector.vectorResource(ic_lock),
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
             )

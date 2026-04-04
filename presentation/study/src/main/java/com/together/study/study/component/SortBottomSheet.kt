@@ -1,6 +1,7 @@
 package com.together.study.study.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,7 @@ internal fun SortBottomSheet(
         modifier = modifier,
         containerColor = TogedyTheme.colors.white,
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        dragHandle = { Box(modifier = Modifier.padding(10.dp)) },
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),

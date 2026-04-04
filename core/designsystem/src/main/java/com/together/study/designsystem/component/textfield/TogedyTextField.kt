@@ -270,7 +270,7 @@ private fun PasswordVisibilityIcon(
     onVisibilityChange: (Boolean) -> Unit
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye),
+        imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye_24),
         contentDescription = "비밀번호 표시",
         tint = TogedyTheme.colors.gray400,
         modifier = Modifier.pointerInput(Unit) {

@@ -124,7 +124,7 @@ fun TogedySearchBar(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search_cancel_16),
                     contentDescription = null,
-                    tint = Color.Companion.Gray,
+                    tint = Color.Unspecified,
                     modifier = Modifier
                         .padding(start = 13.dp, end = 6.dp)
                         .size(20.dp)

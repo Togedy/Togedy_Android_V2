@@ -3,6 +3,7 @@ package com.together.study.study.component
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.R.drawable.ic_circle_gray_24
+import com.together.study.designsystem.R.drawable.ic_check_circle_16
 import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
@@ -87,19 +89,24 @@ private fun TextFilter(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    val icon =
-        if (isSelected) ic_circle_gray_24
-        else ic_circle_gray_24
-
     Row(
         modifier = modifier.noRippleClickable(onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(icon),
-            contentDescription = null,
-            tint = Color.Unspecified,
-        )
+        if (isSelected) {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_check_circle_16),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.size(22.dp),
+            )
+        } else {
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_circle_gray_24),
+                contentDescription = null,
+                tint = Color.Unspecified,
+            )
+        }
 
         Text(
             text = text,

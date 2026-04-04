@@ -11,21 +11,14 @@
       android:strokeColor="#000000"
       android:strokeLineCap="round"/>
   <path
-      android:pathData="M16.5,12H16.51"
+      android:pathData="M9.09,9.001C9.325,8.332 9.789,7.769 10.4,7.41C11.011,7.051 11.729,6.92 12.427,7.039C13.125,7.159 13.759,7.522 14.215,8.064C14.671,8.606 14.921,9.292 14.92,10.001C14.92,12.001 11.92,13.001 11.92,13.001"
       android:strokeLineJoin="round"
       android:strokeWidth="1.7"
       android:fillColor="#00000000"
       android:strokeColor="#000000"
       android:strokeLineCap="round"/>
   <path
-      android:pathData="M12,12H12.01"
-      android:strokeLineJoin="round"
-      android:strokeWidth="1.7"
-      android:fillColor="#00000000"
-      android:strokeColor="#000000"
-      android:strokeLineCap="round"/>
-  <path
-      android:pathData="M7.5,12H7.51"
+      android:pathData="M12,17H12.01"
       android:strokeLineJoin="round"
       android:strokeWidth="1.7"
       android:fillColor="#00000000"

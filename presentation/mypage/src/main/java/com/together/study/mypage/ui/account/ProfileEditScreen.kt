@@ -28,7 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.state.UiState
-import com.together.study.designsystem.R.drawable.ic_camera
+import com.together.study.designsystem.R.drawable.ic_camera_24
 import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.img_character_heart
@@ -169,7 +169,7 @@ internal fun ProfileEditScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(ic_camera),
+                    imageVector = ImageVector.vectorResource(ic_camera_24),
                     contentDescription = "이미지 수정 버튼",
                     tint = Color.Unspecified,
                     modifier = Modifier.noRippleClickable(onEditBottomSheetStateChange),
