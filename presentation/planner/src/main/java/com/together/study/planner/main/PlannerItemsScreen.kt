@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,11 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -135,6 +138,7 @@ fun SubjectSection(
     onDeleteDoneClick: (Long) -> Unit,
 ) {
     val subjectColor = subjectColor.toPlannerSubjectColorOrDefault().asColor()
+    var selectedKey by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = modifier
@@ -187,68 +191,106 @@ fun SubjectSection(
         if (taskItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
 
         taskItems.forEachIndexed { index, task ->
-            var currentName by remember { mutableStateOf(task.taskName) }
+            key(task.taskId ?: task.tempId) {
 
-            LaunchedEffect(task.taskName) {
-                currentName = task.taskName
-            }
+                var currentName by remember(task.taskId, task.tempId) {
+                    mutableStateOf(task.taskName)
+                }
 
-            val bottomPadding = if (index == taskItems.lastIndex) 0.dp else 12.dp
+                LaunchedEffect(task.taskName) {
+                    currentName = task.taskName
+                }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = bottomPadding),
-                verticalAlignment = Alignment.Top,
-            ) {
-                val stateColor =
-                    if (task.isChecked) subjectColor
-                    else TogedyTheme.colors.gray300
+                val bottomPadding = if (index == taskItems.lastIndex) 0.dp else 12.dp
 
                 Box(
-                    modifier = Modifier
-                        .noRippleClickable {
-                            if (task.taskId != null) onCheckClick(task.taskId!!, !task.isChecked)
-                        }
-                        .size(16.dp)
-                        .background(stateColor, RoundedCornerShape(4.dp))
-                )
+                    modifier = Modifier.wrapContentSize(),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = bottomPadding),
+                        verticalAlignment = Alignment.Top,
+                    ) {
+                        val stateColor =
+                            if (task.isChecked) subjectColor
+                            else TogedyTheme.colors.gray300
 
-                Spacer(Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .noRippleClickable {
+                                    task.taskId?.let {
+                                        onCheckClick(it, !task.isChecked)
+                                    }
+                                }
+                                .size(16.dp)
+                                .background(stateColor, RoundedCornerShape(4.dp))
+                        )
 
-                BasicTextField(
-                    value = currentName ?: "",
-                    onValueChange = { new ->
-                        currentName = new
-                        onTaskNameChange(task.taskId, task.tempId, new, subjectId)
-                    },
-                    textStyle = TogedyTheme.typography.body13m,
-                    decorationBox = { innerTextField ->
-                        if (currentName.isNullOrBlank()) {
+                        Spacer(Modifier.width(8.dp))
+
+                        BasicTextField(
+                            value = currentName ?: "",
+                            onValueChange = { new ->
+                                currentName = new
+                                onTaskNameChange(task.taskId, task.tempId, new, subjectId)
+                            },
+                            textStyle = TogedyTheme.typography.body13m,
+                            decorationBox = { innerTextField ->
+                                if (currentName.isNullOrBlank()) {
+                                    Text(
+                                        text = "To do...",
+                                        style = TogedyTheme.typography.body13m,
+                                        color = TogedyTheme.colors.gray400,
+                                    )
+                                }
+                                innerTextField()
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
+
+                        Spacer(Modifier.width(8.dp))
+
+                        val taskKey = task.taskId?.toString() ?: task.tempId
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ic_kebap_menu),
+                            contentDescription = "투두 편집 버튼",
+                            tint = TogedyTheme.colors.gray800,
+                            modifier = Modifier
+                                .size(16.dp)
+                                .noRippleClickable {
+                                    selectedKey = if (selectedKey == taskKey) null else taskKey
+                                },
+                        )
+                    }
+
+                    val taskKey = task.taskId?.toString() ?: task.tempId
+
+                    if (selectedKey == taskKey) {
+                        Row {
                             Text(
-                                text = "To do...",
+                                text = "삭제하기",
                                 style = TogedyTheme.typography.body13m,
-                                color = TogedyTheme.colors.gray400,
+                                color = TogedyTheme.colors.red,
+                                modifier = Modifier
+                                    .noRippleClickable {
+                                        task.taskId?.let { onDeleteDoneClick(it) }
+                                        selectedKey = null
+                                    }
+                                    .shadow(2.dp, RoundedCornerShape(8.dp))
+                                    .background(
+                                        TogedyTheme.colors.gray50,
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(horizontal = 14.dp, vertical = 4.dp)
                             )
+
+                            Spacer(Modifier.width(20.dp))
                         }
-                        innerTextField()
-                    },
-                    modifier = Modifier.weight(1f),
-                )
-
-                Spacer(Modifier.width(8.dp))
-
-                Icon(
-                    imageVector = ImageVector.vectorResource(ic_kebap_menu),
-                    contentDescription = "투두 편집 버튼",
-                    tint = TogedyTheme.colors.gray800,
-                    modifier = Modifier
-                        .size(16.dp)
-                        .noRippleClickable {
-                            onTaskEditButtonClick()
-                            if (task.taskId != null) onDeleteDoneClick(task.taskId!!)
-                        },
-                )
+                    }
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import com.together.study.planner.dto.request.PlannerTaskRequest
 import com.together.study.planner.dto.request.PlannerTaskStateRequest
 import com.together.study.planner.dto.response.DailyPlannerTaskListResponse
 import com.together.study.remote.model.BaseResponse
+import com.together.study.remote.model.EmptyDataResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -26,7 +27,7 @@ interface PlannerTaskService {
     @DELETE("planners/daily/tasks/{taskId}")
     suspend fun deleteTask(
         @Path("taskId") taskId: Long,
-    ): BaseResponse<Unit>
+    ): EmptyDataResponse
 
     @PATCH("planners/daily/tasks/{taskId}/check")
     suspend fun updateTaskChecked(

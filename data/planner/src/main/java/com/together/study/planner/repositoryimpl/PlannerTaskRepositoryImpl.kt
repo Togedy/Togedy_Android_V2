@@ -31,9 +31,7 @@ class PlannerTaskRepositoryImpl @Inject constructor(
         }
 
     override suspend fun deleteTask(taskId: Long): Result<Unit> =
-        runCatching {
-            plannerTaskDataSource.deleteTask(taskId).response
-        }
+        runCatching { plannerTaskDataSource.deleteTask(taskId) }
 
     override suspend fun updateTaskChecked(taskId: Long, isChecked: Boolean): Result<Unit> =
         runCatching {
