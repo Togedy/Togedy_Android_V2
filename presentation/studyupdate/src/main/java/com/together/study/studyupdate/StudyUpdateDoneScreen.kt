@@ -99,6 +99,7 @@ internal fun StudyUpdateDoneRoute(
         onBackClick = onBackClick,
         onEditClick = onEditClick,
         onStartClick = {
+            if (isSubmitLoading) return@StudyUpdateDoneScreen
             if (updateType == StudyUpdateType.UPDATE) {
                 viewModel.updateStudy(
                     challengeGoalTime = challengeGoalTime,
