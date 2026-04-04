@@ -152,22 +152,45 @@ internal class PlannerViewModel @Inject constructor(
 
     fun updateTask(task: TaskItem, subjectId: Long) {
         val key = task.taskId?.toString() ?: task.tempId
+
+        if (task.taskId == null && isSavingTask.contains(task.tempId)) {
+            return
+        }
+
         updateTaskInUiState(task, subjectId)
         updateJobs[key]?.cancel()
         updateJobs[key] = viewModelScope.launch {
             delay(500)
-            if (task.taskId == null && isSavingTask.contains(task.tempId)) {
-                Timber.tag("Planner").d("Already creating this task: ${task.tempId}")
-                return@launch
+            saveTask(task, subjectId, key)
+        }
+    }
+
+    fun addTempTask(subjectId: Long) {
+        val newTask = TaskItem(
+            tempId = java.util.UUID.randomUUID().toString(),
+            taskName = ""
+        )
+
+        _uiState.update { state ->
+            val current = state.plannerSubjectState
+            if (current !is UiState.Success) return@update state
+
+            val updated = current.data.map { subject ->
+                if (subject.subjectId == subjectId) {
+                    subject.copy(
+                        tasks = subject.tasks + newTask
+                    )
+                } else subject
             }
 
-            saveTask(task, subjectId, key)
+            state.copy(plannerSubjectState = UiState.Success(updated))
         }
     }
 
     private suspend fun saveTask(task: TaskItem, subjectId: Long, key: String) {
         val isNewTask = task.taskId == null
-        if (isNewTask) isSavingTask.add(task.tempId)
+
+        if (isNewTask && !isSavingTask.add(task.tempId)) return
 
         updateTaskContentUseCase(
             taskId = task.taskId,

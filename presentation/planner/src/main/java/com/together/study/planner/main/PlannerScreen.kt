@@ -89,6 +89,7 @@ internal fun PlannerScreen(
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
         onAddDoneBtnClick = viewModel::saveNewSubject,
+        onTaskPlusButtonClick = viewModel::addTempTask,
         onTaskNameChange = { taskId, tempId, name, subjectId ->
             val task = TaskItem(taskId = taskId, tempId = tempId, taskName = name)
             viewModel.updateTask(task, subjectId)
@@ -117,6 +118,7 @@ private fun PlannerScreen(
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
     onAddDoneBtnClick: (SubjectItem) -> Unit,
+    onTaskPlusButtonClick: (Long) -> Unit,
     onTaskNameChange: (Long?, String, String, Long) -> Unit,
     onCheckClick: (Long, Boolean) -> Unit,
     onDeleteDoneClick: (Long, Long) -> Unit,
@@ -237,6 +239,7 @@ private fun PlannerScreen(
             when (page) {
                 0 -> PlannerItemsScreen(
                     plannerSubjectState = plannerSubjectState,
+                    onTaskPlusButtonClick = onTaskPlusButtonClick,
                     onTaskNameChange = onTaskNameChange,
                     onCheckClick = onCheckClick,
                     onDeleteDoneClick = onDeleteDoneClick,
