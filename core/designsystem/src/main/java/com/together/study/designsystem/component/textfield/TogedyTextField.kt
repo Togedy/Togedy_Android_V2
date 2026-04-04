@@ -192,9 +192,9 @@ fun TogedyTextField(
                 }
 
                 // 통과 메시지 표시
-                if (isPassed && !isError) {
+                if (isPassed && !isError && !errorMessage.isNullOrEmpty()) {
                     StatusMessageRow(
-                        message = "확인되었습니다.",
+                        message = errorMessage,
                         textStyle = statusMessageStyle,
                         padding = statusMessagePadding,
                         color = passedColor

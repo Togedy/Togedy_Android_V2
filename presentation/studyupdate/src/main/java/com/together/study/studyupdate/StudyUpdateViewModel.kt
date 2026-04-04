@@ -69,6 +69,10 @@ internal class StudyUpdateViewModel @Inject constructor(
     private val _isDuplicateCheckLoading = MutableStateFlow(false)
     val isDuplicateCheckLoading: StateFlow<Boolean> = _isDuplicateCheckLoading.asStateFlow()
 
+    // 스터디 생성/수정 로딩 상태
+    private val _isSubmitLoading = MutableStateFlow(false)
+    val isSubmitLoading: StateFlow<Boolean> = _isSubmitLoading.asStateFlow()
+
     private val _isStudyNameDuplicate = MutableStateFlow<Boolean?>(null)
     val isStudyNameDuplicate: StateFlow<Boolean?> = _isStudyNameDuplicate.asStateFlow()
 
@@ -160,7 +164,7 @@ internal class StudyUpdateViewModel @Inject constructor(
                 if (isDuplicate) {
                     _studyNameErrorMessage.update { "이미 사용 중인 스터디 이름입니다" }
                 } else {
-                    _studyNameErrorMessage.update { null }
+                    _studyNameErrorMessage.update { "사용가능한 스터디 이름입니다" }
                 }
             },
             onFailure = { throwable ->
@@ -213,6 +217,7 @@ internal class StudyUpdateViewModel @Inject constructor(
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit,
     ) = viewModelScope.launch {
+        _isSubmitLoading.update { true }
         studyUpdateRepository.createStudy(
             challengeGoalTime = challengeGoalTime,
             studyName = studyName,
@@ -223,9 +228,11 @@ internal class StudyUpdateViewModel @Inject constructor(
             studyImageUri = studyImageUri?.toString(),
         ).fold(
             onSuccess = {
+                _isSubmitLoading.update { false }
                 onSuccess()
             },
             onFailure = { throwable ->
+                _isSubmitLoading.update { false }
                 onFailure(throwable.message ?: "스터디 생성에 실패했습니다.")
             }
         )
@@ -243,6 +250,7 @@ internal class StudyUpdateViewModel @Inject constructor(
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit,
     ) = viewModelScope.launch {
+        _isSubmitLoading.update { true }
         studyUpdateRepository.updateStudy(
             studyId = studyId,
             challengeGoalTime = challengeGoalTime,
@@ -254,9 +262,11 @@ internal class StudyUpdateViewModel @Inject constructor(
             studyImageUri = studyImageUri?.toString(),
         ).fold(
             onSuccess = {
+                _isSubmitLoading.update { false }
                 onSuccess()
             },
             onFailure = { throwable ->
+                _isSubmitLoading.update { false }
                 onFailure(throwable.message ?: "스터디 수정에 실패했습니다.")
             }
         )

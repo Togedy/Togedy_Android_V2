@@ -29,6 +29,7 @@ fun NavController.navigateToSharePlanner(
 
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
+    navigateToGallery: (String) -> Unit,
     navigateToTimer: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -39,6 +40,7 @@ fun NavGraphBuilder.plannerGraph(
             onShareNavigate = navController::navigateToSharePlanner,
             onTimerNavigate = navigateToTimer,
             onEditSubjectNavigate = navController::navigateToSubjectDetail,
+            onImageEditNavigate = navigateToGallery,
         )
     }
 

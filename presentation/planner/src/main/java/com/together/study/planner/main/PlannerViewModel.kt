@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.component.tabbar.PlannerMainTab
+import com.together.study.gallery.usecase.DeleteImageUseCase
 import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.main.state.PlannerUiState
 import com.together.study.planner.model.SubjectItem
@@ -37,6 +38,7 @@ internal class PlannerViewModel @Inject constructor(
     private val getDailyTimetableUseCase: GetDailyTimetableUseCase,
     private val getDailyStatisticsUseCase: GetDailyStatisticsUseCase,
     private val getMonthlyHeatmapUseCase: GetMonthlyHeatmapUseCase,
+    private val deleteImageUseCase: DeleteImageUseCase,
     private val updateTaskContentUseCase: UpdateTaskContentUseCase,
     private val updateTaskCheckedUseCase: UpdateTaskCheckedUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
@@ -68,6 +70,14 @@ internal class PlannerViewModel @Inject constructor(
             getMonthlyHeatmap()
         }
         previousDate = selectedDate.value
+    }
+
+    fun deleteImage() = viewModelScope.launch {
+        deleteImageUseCase(selectedDate.value.toString())
+            .onSuccess { getPlannerInfo() }
+            .onFailure { e ->
+                Timber.tag("okhttp-taejung").d("deleteImage: ${e.message}")
+            }
     }
 
     suspend fun getPlannerInfo() {
@@ -308,6 +318,7 @@ internal class PlannerViewModel @Inject constructor(
     fun updateSelectedDate(new: LocalDate) {
         previousDate = selectedDate.value
         _selectedDate.update { new }
+        load()
     }
 
     fun updateSelectedTab(new: PlannerMainTab) {
@@ -332,6 +343,12 @@ internal class PlannerViewModel @Inject constructor(
             PlannerSheetType.CALENDAR -> {
                 _sheetState.update {
                     it.copy(isCalendarOpen = !_sheetState.value.isCalendarOpen)
+                }
+            }
+
+            PlannerSheetType.IMAGE_EDIT -> {
+                _sheetState.update {
+                    it.copy(isImageEditOpen = !_sheetState.value.isImageEditOpen)
                 }
             }
         }
