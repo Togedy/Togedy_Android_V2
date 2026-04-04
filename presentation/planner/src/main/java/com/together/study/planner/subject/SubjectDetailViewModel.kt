@@ -39,15 +39,7 @@ class SubjectDetailViewModel @Inject constructor(
 
     fun saveNewSubject(name: String, color: String) = viewModelScope.launch {
         postSubjectUseCase(name, color)
-            .onSuccess {
-                val updatedList = lastedSubjectItems +
-                        SubjectItem(
-                            subjectId = null,
-                            subjectName = name,
-                            subjectColor = color,
-                        )
-                updateState(UiState.Success(updatedList))
-            }
+            .onSuccess { fetchSubjectItems() }
             .onFailure {
                 // toast
             }
@@ -74,7 +66,7 @@ class SubjectDetailViewModel @Inject constructor(
                         )
                     } else subject
                 }
-
+                lastedSubjectItems = updatedList
                 updateState(UiState.Success(updatedList))
             }
             .onFailure {

@@ -92,7 +92,7 @@ internal class PlannerViewModel @Inject constructor(
             }
             .onFailure { e ->
                 _uiState.update {
-                    it.copy(plannerInfoState = UiState.Failure(e.message.toString()))
+                    it.copy(plannerSubjectState = UiState.Failure(e.message.toString()))
                 }
             }
     }
@@ -265,32 +265,27 @@ internal class PlannerViewModel @Inject constructor(
         checkJobs[taskId]?.cancel()
 
         checkJobs[taskId] = viewModelScope.launch {
-            try {
-                updateTaskCheckedUseCase(taskId, newValue)
-            } catch (e: Exception) {
-                _uiState.update { state ->
-                    val current = state.plannerSubjectState
-                    if (current !is UiState.Success) return@update state
+            updateTaskCheckedUseCase(taskId, newValue)
+                .onFailure {
+                    _uiState.update { state ->
+                        val current = state.plannerSubjectState
+                        if (current !is UiState.Success) return@update state
 
-                    val rollback = current.data.map { subject ->
-                        subject.copy(
-                            tasks = subject.tasks.map {
-                                if (it.taskId == taskId) {
-                                    it.copy(isChecked = oldValue)
-                                } else it
-                            }
-                        )
+                        val rollback = current.data.map { subject ->
+                            subject.copy(
+                                tasks = subject.tasks.map {
+                                    if (it.taskId == taskId) it.copy(isChecked = oldValue) else it
+                                }
+                            )
+                        }
+
+                        state.copy(plannerSubjectState = UiState.Success(rollback))
                     }
-
-                    state.copy(plannerSubjectState = UiState.Success(rollback))
                 }
-            }
         }
     }
 
     fun deleteTask(taskId: Long, subjectId: Long) = viewModelScope.launch {
-        val prevState = _uiState.value
-
         deleteTaskUseCase(taskId)
             .onSuccess {
                 _uiState.update { state ->
@@ -308,7 +303,6 @@ internal class PlannerViewModel @Inject constructor(
                     state.copy(plannerSubjectState = UiState.Success(updatedSubjects))
                 }
             }
-            .onFailure { _uiState.value = prevState }
     }
 
     fun updateSelectedDate(new: LocalDate) {

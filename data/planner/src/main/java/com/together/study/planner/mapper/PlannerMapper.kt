@@ -49,7 +49,7 @@ fun TimeTableResponse.toDomain(): TimeTable {
 
 fun TaskResponse.toDomain(): TaskItem {
     return TaskItem(
-        taskId = this.taskId ?: 0L,
+        taskId = this.taskId,
         taskName = this.taskName,
         isChecked = this.isChecked,
     )
