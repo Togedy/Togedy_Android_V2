@@ -74,7 +74,6 @@ internal fun PlannerScreen(
     PlannerScreen(
         selectedTab = selectedTab,
         selectedDate = selectedDate,
-        subjects = uiState.subjects,
         bottomSheetState = bottomSheetState,
         plannerInfoState = uiState.plannerInfoState,
         plannerSubjectState = uiState.plannerSubjectState,
@@ -103,7 +102,6 @@ internal fun PlannerScreen(
 private fun PlannerScreen(
     selectedTab: PlannerMainTab,
     selectedDate: LocalDate,
-    subjects: List<SubjectItem>,
     bottomSheetState: PlannerSheetState,
     plannerInfoState: UiState<DailyPlannerInfo>,
     plannerSubjectState: UiState<List<PlannerSubject>>,
@@ -140,7 +138,6 @@ private fun PlannerScreen(
             }
         }
     }
-
 
     Column(
         modifier = modifier
