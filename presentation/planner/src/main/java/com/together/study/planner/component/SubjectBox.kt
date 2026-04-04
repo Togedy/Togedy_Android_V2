@@ -23,20 +23,20 @@ import androidx.compose.ui.unit.dp
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_search_cancel_16
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.SubjectItem
 import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
 @Composable
-internal fun SubjectItem(
-    plannerSubject: PlannerSubject,
+internal fun SubjectBox(
+    subject: SubjectItem,
     isSubjectEditMode: Boolean = false,
     onSubjectClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val subjectColor = plannerSubject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
+    val subjectColor = subject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
     Row(
         modifier = modifier
@@ -62,7 +62,7 @@ internal fun SubjectItem(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = plannerSubject.subjectName,
+                text = subject.subjectName,
                 style = TogedyTheme.typography.chip14b.copy(subjectColor),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -88,10 +88,10 @@ internal fun SubjectItem(
 
 @Preview
 @Composable
-private fun SubjectItemPreview(modifier: Modifier = Modifier) {
+private fun SubjectBoxPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
-        SubjectItem(
-            plannerSubject = PlannerSubject(0, "hi", "SUBJECT_COLOR1"),
+        SubjectBox(
+            subject = SubjectItem(0, "hi", "SUBJECT_COLOR1"),
             onSubjectClick = {},
             modifier = modifier,
         )

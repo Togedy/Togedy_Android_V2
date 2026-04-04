@@ -33,11 +33,11 @@ import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.component.SubjectItem
-import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.component.SubjectBox
+import com.together.study.planner.model.SubjectItem
 
 @Composable
-internal fun SubjectDetailRoute(
+internal fun SubjectEditRoute(
     onBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SubjectDetailViewModel = hiltViewModel(),
@@ -48,7 +48,7 @@ internal fun SubjectDetailRoute(
         viewModel.fetchSubjectItems()
     }
 
-    SubjectDetailScreen(
+    SubjectEditScreen(
         subjectState = subjectState,
         onBackButtonClick = onBackButtonClick,
         onAddDoneBtnClick = { viewModel.saveNewSubject(it.subjectName, it.subjectColor) },
@@ -60,17 +60,17 @@ internal fun SubjectDetailRoute(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun SubjectDetailScreen(
-    subjectState: UiState<List<PlannerSubject>>,
+fun SubjectEditScreen(
+    subjectState: UiState<List<SubjectItem>>,
     onBackButtonClick: () -> Unit,
-    onAddDoneBtnClick: (PlannerSubject) -> Unit,
-    onEditDoneBtnClick: (PlannerSubject) -> Unit,
+    onAddDoneBtnClick: (SubjectItem) -> Unit,
+    onEditDoneBtnClick: (SubjectItem) -> Unit,
     onDeleteButtonClick: (Long) -> Unit,
     modifier: Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetOpen by remember { mutableStateOf(false) }
-    var selectedSubject by remember { mutableStateOf<PlannerSubject?>(null) }
+    var selectedSubject by remember { mutableStateOf<SubjectItem?>(null) }
     var selectedIdForDelete: Long? by remember { mutableStateOf(null) }
     var isDeleteDialogOpen by remember { mutableStateOf(false) }
 
@@ -102,7 +102,7 @@ fun SubjectDetailScreen(
         when (subjectState) {
             is UiState.Loading -> {}
             is UiState.Success -> {
-                SubjectItems(
+                SubjectBoxes(
                     subjects = subjectState.data,
                     onEditClick = { selectedItem ->
                         selectedSubject = selectedItem
@@ -123,7 +123,7 @@ fun SubjectDetailScreen(
     if (isBottomSheetOpen) {
         SubjectDetailBottomSheet(
             sheetState = sheetState,
-            plannerSubject = selectedSubject,
+            subject = selectedSubject,
             onDismissRequest = {
                 isBottomSheetOpen = false
                 selectedSubject = null
@@ -162,9 +162,9 @@ fun SubjectDetailScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun SubjectItems(
-    subjects: List<PlannerSubject>,
-    onEditClick: (PlannerSubject) -> Unit,
+internal fun SubjectBoxes(
+    subjects: List<SubjectItem>,
+    onEditClick: (SubjectItem) -> Unit,
     onItemDeleteClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -177,8 +177,8 @@ internal fun SubjectItems(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(subjects) { subjectItem ->
-            SubjectItem(
-                plannerSubject = subjectItem,
+            SubjectBox(
+                subject = subjectItem,
                 isSubjectEditMode = true,
                 onEditClick = { onEditClick(subjectItem) },
                 onDeleteClick = { onItemDeleteClick(subjectItem.subjectId!!) }
@@ -189,9 +189,9 @@ internal fun SubjectItems(
 
 @Preview
 @Composable
-private fun SubjectDetailPreview(modifier: Modifier = Modifier) {
+private fun SubjectEditPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
-        SubjectDetailScreen(
+        SubjectEditScreen(
             subjectState = UiState.Success(emptyList()),
             onBackButtonClick = {},
             onAddDoneBtnClick = {},

@@ -5,12 +5,12 @@ import com.together.study.planner.dto.response.DailyStatisticsResponse
 import com.together.study.planner.dto.response.DailyTimeTableResponse
 import com.together.study.planner.dto.response.PlannerSubjectResponse
 import com.together.study.planner.dto.response.TimeTableResponse
-import com.together.study.planner.dto.response.TodoResponse
+import com.together.study.planner.dto.response.TaskResponse
 import com.together.study.planner.model.DailyPlannerInfo
 import com.together.study.planner.model.DailyStatistics
 import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.TaskItem
 import com.together.study.planner.model.TimeTable
-import com.together.study.planner.model.Todo
 
 fun DailyPlannerInfoResponse.toDomain(): DailyPlannerInfo {
     return DailyPlannerInfo(
@@ -28,6 +28,8 @@ fun PlannerSubjectResponse.toDomain(): PlannerSubject {
         subjectId = this.subjectId,
         subjectName = this.subjectName,
         subjectColor = this.subjectColor,
+        totalTaskCount = this.totalTaskCount,
+        checkedTaskCount = this.checkedTaskCount,
         subjectStudyTime = this.subjectStudyTime,
         tasks = this.taskList.map { it.toDomain() },
     )
@@ -45,10 +47,10 @@ fun TimeTableResponse.toDomain(): TimeTable {
     )
 }
 
-fun TodoResponse.toDomain(): Todo {
-    return Todo(
-        id = this.taskId,
-        content = this.taskName,
+fun TaskResponse.toDomain(): TaskItem {
+    return TaskItem(
+        taskId = this.taskId,
+        taskName = this.taskName,
         isChecked = this.isChecked,
     )
 }
