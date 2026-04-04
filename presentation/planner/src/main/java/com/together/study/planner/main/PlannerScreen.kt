@@ -198,7 +198,7 @@ private fun PlannerScreen(
                     },
                     onEditPlannerSubjectClick = {
                         showDropdown = false
-                        onSheetVisibilityChange(PlannerSheetType.SUBJECT)
+                        onEditSubjectClick()
                     },
                     onShareButtonClick = {
                         showDropdown = false
@@ -254,11 +254,9 @@ private fun PlannerScreen(
 
     PlannerSheetScreen(
         bottomSheetState = bottomSheetState,
-        subjects = subjects,
         selectedDate = selectedDate,
         monthlyHeatmapState = monthlyHeatmapState,
         onDismissRequest = onSheetVisibilityChange,
-        onEditSubjectClick = onEditSubjectClick,
         onAddDoneBtnClick = onAddDoneBtnClick,
         onDateChange = onSelectedDateChange,
     )
