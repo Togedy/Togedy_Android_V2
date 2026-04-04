@@ -17,11 +17,11 @@ fun NavController.navigateToGallery(
     navOptions: NavOptions? = null,
 ) = navigate(TogedyGallery(date), navOptions)
 
-fun NavController.navigateToCorpImage(
+fun NavController.navigateToCropImage(
     imageId: Long,
     date: String,
     navOptions: NavOptions? = null,
-) = navigate(TogedyCorpImage(imageId, date), navOptions)
+) = navigate(TogedyCropImage(imageId, date), navOptions)
 
 fun NavGraphBuilder.galleryGraph(
     modifier: Modifier = Modifier,
@@ -34,14 +34,14 @@ fun NavGraphBuilder.galleryGraph(
         GalleryScreen(
             onBackClick = navigateToUp,
             onImageClick = { imageId ->
-                navController.navigateToCorpImage(imageId, route.date)
+                navController.navigateToCropImage(imageId, route.date)
             },
             modifier = modifier,
         )
     }
 
-    composable<TogedyCorpImage> { backStackEntry ->
-        val route = backStackEntry.toRoute<TogedyCorpImage>()
+    composable<TogedyCropImage> { backStackEntry ->
+        val route = backStackEntry.toRoute<TogedyCropImage>()
         ImageCropScreen(
             imageId = route.imageId,
             cropShape = CropShapeType.Rect(aspectRatio = 1f),
@@ -58,7 +58,7 @@ data class TogedyGallery(
 ) : Route
 
 @Serializable
-data class TogedyCorpImage(
+data class TogedyCropImage(
     val imageId: Long,
     val date: String,
 ) : Route

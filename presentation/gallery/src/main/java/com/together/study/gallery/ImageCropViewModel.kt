@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.together.study.gallery.model.CropRequest
-import com.together.study.gallery.navigation.TogedyCorpImage
+import com.together.study.gallery.navigation.TogedyCropImage
 import com.together.study.gallery.usecase.CropImageUseCase
 import com.together.study.gallery.usecase.UploadImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ class ImageCropViewModel @Inject constructor(
     private val cropImageUseCase: CropImageUseCase,
     private val uploadImageUseCase: UploadImageUseCase,
 ) : ViewModel() {
-    private val route = savedStateHandle.toRoute<TogedyCorpImage>()
+    private val route = savedStateHandle.toRoute<TogedyCropImage>()
 
     private val _uiState = MutableStateFlow<ImageCropUiState>(ImageCropUiState.Idle)
     val uiState: StateFlow<ImageCropUiState> = _uiState.asStateFlow()

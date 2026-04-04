@@ -24,7 +24,6 @@ import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDet
 import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.event.TogedyUiEvent
 import com.together.study.common.event.TogedyUiEventBus
-import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
