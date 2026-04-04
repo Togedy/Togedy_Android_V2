@@ -8,7 +8,7 @@ sealed interface TabType {
 enum class StudyMainTab(override val typeName: String) : TabType {
     MAIN("진행중"),
     EXPLORE("탐색"),
-    BADGE("뱃지"),
+//    BADGE("뱃지"),
 }
 
 enum class StudyDetailTab(override val typeName: String) : TabType {

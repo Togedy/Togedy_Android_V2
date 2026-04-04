@@ -19,9 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.user.model.UserSettingInfo
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -29,22 +34,37 @@ internal fun AccountSettingsRoute(
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
     onDeleteAccountNavigate: () -> Unit,
+    viewModel: AccountSettingsViewModel = hiltViewModel(),
 ) {
-    AccountSettingsScreen(
-        modifier = modifier,
-        onBackButtonClick = onBackButtonClick,
-        onDeleteAccountClick = onDeleteAccountNavigate,
-    )
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (uiState.value.uiState) {
+        is UiState.Loading -> TogedyLoadingScreen()
+
+        is UiState.Success<*> -> AccountSettingsScreen(
+            userEmail = (uiState.value.uiState as UiState.Success<UserSettingInfo>).data.userEmail,
+            modifier = modifier,
+            onBackButtonClick = onBackButtonClick,
+            onLogoutClick = viewModel::logout,
+            onDeleteAccountClick = onDeleteAccountNavigate,
+        )
+
+        is UiState.Failure -> {}
+        is UiState.Empty -> {}
+    }
+
 }
 
 @Composable
 private fun AccountSettingsScreen(
+    userEmail: String,
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     onDeleteAccountClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
             .padding(top = 24.dp),
@@ -57,8 +77,8 @@ private fun AccountSettingsScreen(
         )
 
         AccountSection(
-            userEmail = "togedy@gmail.com",
-            onLogoutClick = {},
+            userEmail = userEmail,
+            onLogoutClick = onLogoutClick,
             onDeleteAccountClick = onDeleteAccountClick,
         )
     }
@@ -84,10 +104,12 @@ private fun AccountSection(
             modifier = Modifier.padding(top = 14.dp),
         )
 
+        Spacer(Modifier.height(4.dp))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 14.dp),
+                .padding(vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -117,11 +139,9 @@ private fun AccountSection(
             )
         }
 
-        Spacer(Modifier.height(12.dp))
-
         HorizontalDivider(color = TogedyTheme.colors.gray50)
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(10.dp))
 
         Text(
             text = "탈퇴하기",

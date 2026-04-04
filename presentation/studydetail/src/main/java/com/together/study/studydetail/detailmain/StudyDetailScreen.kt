@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -48,6 +50,7 @@ import coil.request.ImageRequest
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.R.drawable.ic_play_button
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.R.drawable.ic_settings_24
 import com.together.study.designsystem.R.drawable.ic_share_20
@@ -76,6 +79,7 @@ import java.time.temporal.WeekFields
 internal fun StudyDetailRoute(
     onBackClick: () -> Unit,
     onSettingsNavigate: (Long, StudyRole) -> Unit,
+    onTimerNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyDetailViewModel = hiltViewModel(),
 ) {
@@ -106,6 +110,7 @@ internal fun StudyDetailRoute(
         onNextWeekClick = { viewModel.updateSelectedDate("다음") },
         onDialogStateChange = viewModel::updateDialogState,
         onJoinStudyClick = viewModel::joinStudy,
+        onTimerClick = onTimerNavigate,
     )
 }
 
@@ -127,6 +132,7 @@ private fun StudyDetailScreen(
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
     onJoinStudyClick: (String?) -> Unit,
+    onTimerClick: () -> Unit,
 ) {
     when (uiState.isLoaded) {
         is UiState.Empty -> {}
@@ -150,6 +156,7 @@ private fun StudyDetailScreen(
                 onNextWeekClick = onNextWeekClick,
                 onDialogStateChange = onDialogStateChange,
                 onJoinStudyClick = onJoinStudyClick,
+                onTimerClick = onTimerClick,
             )
         }
     }
@@ -174,6 +181,7 @@ private fun StudyDetailSuccessScreen(
     onNextWeekClick: () -> Unit,
     onDialogStateChange: (StudyDetailDialogType) -> Unit,
     onJoinStudyClick: (String?) -> Unit,
+    onTimerClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val studyInfo = (uiState.studyInfoState as UiState.Success).data
@@ -408,7 +416,48 @@ private fun StudyDetailSuccessScreen(
         }
 
         if (studyInfo.isJoined) {
-            //TODO: 스탑워치 화면이동 버튼으로 변경
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .noRippleClickable(onTimerClick)
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(Color(0xFF1B3129), Color(0xFF121212)),
+                                start = Offset(0f, 0f),
+                                end = Offset.Infinite,
+                            )
+                        )
+                        .padding(start = 32.dp, end = 20.dp)
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column {
+                        Text(
+                            text = "타이머",
+                            style = TogedyTheme.typography.body13m,
+                            color = TogedyTheme.colors.gray200,
+                        )
+
+                        Text(
+                            text = "오늘 공부를 시작해볼까요?",
+                            style = TogedyTheme.typography.body14m,
+                            color = TogedyTheme.colors.white,
+                        )
+                    }
+
+                    Spacer(Modifier.weight(1f))
+
+                    Icon(
+                        imageVector = ImageVector.vectorResource(ic_play_button),
+                        contentDescription = "타이머버튼",
+                        tint = Color.Unspecified,
+                    )
+                }
+            }
         } else {
             Box(
                 modifier = Modifier

@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -102,6 +103,7 @@ private fun StudyMainScreen(
     onJoinableClick: () -> Unit,
     onChallengeClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var isSortBottomSheetVisible by remember { mutableStateOf(false) }
     val mainColor =
@@ -213,6 +215,7 @@ private fun StudyMainScreen(
                                             ) {
                                                 MyStudyItem(
                                                     study = study,
+                                                    context = context,
                                                     onItemClick = { onStudyItemClick(study.studyId) },
                                                 )
                                             }
@@ -271,9 +274,9 @@ private fun StudyMainScreen(
                     }
                 }
 
-                StudyMainTab.BADGE -> {
-                    /* TODO() : 추후 스프린트 */
-                }
+//                /* 추후 스프린트 */
+//                StudyMainTab.BADGE -> {
+//                }
             }
         }
     }

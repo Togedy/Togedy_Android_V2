@@ -158,6 +158,7 @@ private fun MainNavHost(
                     StudyRole.MEMBER -> navigator.navController.navigateToMemberSettingsScreen(id)
                 }
             },
+            navigateToTimer = navigator.navController::navigateToTimer,
             modifier = modifier,
         )
 
@@ -230,6 +231,9 @@ private fun MainNavHost(
 
         myPageGraph(
             navigateToUp = navigator.navController::popBackStack,
+            navigateToCreateStudy = navigator.navController::navigateToStudyUpdate,
+            navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
+            navigateToStudy = navigator.navController::navigateToStudy,
             navController = navigator.navController,
             modifier = modifier,
         )
