@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -134,10 +139,24 @@ fun StudyUpdateScreen(
 ) {
     val title = if (type == StudyUpdateType.CREATE) "스터디 생성" else "스터디 수정"
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     // 스크롤 상태
     val listState = rememberLazyListState()
     LaunchedEffect(Unit) {
         listState.scrollToItem(0)
+    }
+
+    // 스크롤 시 키보드 내리기
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.isScrollInProgress }
+            .collect { isScrolling ->
+                if (isScrolling) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            }
     }
 
     // 갤러리 이미지 선택 런처
@@ -151,6 +170,12 @@ fun StudyUpdateScreen(
         modifier = modifier
             .fillMaxSize()
             .background(color = TogedyTheme.colors.gray50)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
+            }
             .padding(horizontal = 16.dp)
     ) {
         TogedyTopBar(
