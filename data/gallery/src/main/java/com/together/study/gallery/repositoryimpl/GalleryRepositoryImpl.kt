@@ -1,28 +1,33 @@
 package com.together.study.gallery.repositoryimpl
 
 import android.content.ContentUris
-import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.os.Environment
 import android.provider.MediaStore.Images.Media
 import com.together.study.gallery.model.CropRequest
 import com.together.study.gallery.model.GalleryAlbum
 import com.together.study.gallery.model.GalleryImage
 import com.together.study.gallery.repository.GalleryRepository
+import com.together.study.gallery.service.GalleryService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import androidx.core.graphics.scale
+
+private const val MAX_IMAGE_SIZE = 1280
 
 class GalleryRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val galleryService: GalleryService,
 ) : GalleryRepository {
     private data class CropBitmapRect(
         val left: Int,
@@ -146,55 +151,62 @@ class GalleryRepositoryImpl @Inject constructor(
                 cropRect.width,
                 cropRect.height,
             )
-            val fileName = "togedy_${System.currentTimeMillis()}.jpg"
 
-            val contentValues = ContentValues().apply {
-                put(Media.DISPLAY_NAME, fileName)
-                put(Media.MIME_TYPE, "image/jpeg")
-                put(Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Togedy")
-                put(Media.IS_PENDING, 1)
+            val maxSide = MAX_IMAGE_SIZE
+            val resized = if (cropped.width > maxSide || cropped.height > maxSide) {
+                val ratio = maxSide.toFloat() / maxOf(cropped.width, cropped.height)
+                val newWidth = (cropped.width * ratio).roundToInt()
+                val newHeight = (cropped.height * ratio).roundToInt()
+                cropped.scale(newWidth, newHeight).also {
+                    cropped.recycle()
+                }
+            } else {
+                cropped
             }
 
-            val resolver = context.contentResolver
+            val tempFile = File(context.cacheDir, "togedy_crop_${System.currentTimeMillis()}.jpg")
 
-            val imageUri = resolver.insert(
-                Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            ) ?: throw IllegalStateException("MediaStore insert failed")
-
-            resolver.openOutputStream(imageUri).use { output ->
-                cropped.compress(Bitmap.CompressFormat.JPEG, 90, output!!)
+            FileOutputStream(tempFile).use { output ->
+                resized.compress(Bitmap.CompressFormat.JPEG, 90, output)
             }
-
-            contentValues.clear()
-            contentValues.put(Media.IS_PENDING, 0)
-            resolver.update(imageUri, contentValues, null, null)
 
             source.recycle()
-            cropped.recycle()
+            resized.recycle()
 
-            imageUri.toString()
+            tempFile.absolutePath
         }
     }
 
     override suspend fun uploadImage(
         filePath: String,
+        date: String,
     ): Result<Unit> = withContext(Dispatchers.IO) {
 
         runCatching {
-
             val file = File(filePath)
 
-            val requestFile =
-                file.asRequestBody("image/jpeg".toMediaType())
+            try {
+                val requestFile = file.asRequestBody("image/jpeg".toMediaType())
 
-            val body = MultipartBody.Part.createFormData(
-                "image",
-                file.name,
-                requestFile
-            )
+                val imagePart = MultipartBody.Part.createFormData(
+                    "plannerImage",
+                    file.name,
+                    requestFile,
+                )
 
-//            api.uploadImage(body) TODO 실제 api 연결
+                val removePlannerImage = "false"
+                    .toRequestBody("text/plain".toMediaType())
+
+                galleryService.uploadPlannerImage(
+                    date = date,
+                    plannerImage = imagePart,
+                    removePlannerImage = removePlannerImage,
+                )
+            } finally {
+                file.delete()
+            }
+
+            Unit
         }
     }
 
