@@ -41,6 +41,7 @@ import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.ShareInfo
+import com.together.study.planner.main.ShareTimeTableContent
 import com.together.study.planner.share.component.PlannerContent
 import com.together.study.planner.share.component.ShareOptionBottomSheet
 import com.together.study.planner.share.component.ShareTimerSection
@@ -203,12 +204,9 @@ fun PlannerShareScreen(
 
                         Spacer(Modifier.width(10.dp))
 
-                        // TODO : TimeTable() 영역으로 변경
-                        Box(
-                            modifier = Modifier
-                                .background(TogedyTheme.colors.gray200)
-                                .height(100.dp)
-                                .weight(1f),
+                        ShareTimeTableContent(
+                            timeTables = plannerShareInfo.timeTables,
+                            modifier = Modifier.weight(1f),
                         )
                     }
                 }

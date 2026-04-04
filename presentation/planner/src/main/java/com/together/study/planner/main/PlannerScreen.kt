@@ -255,7 +255,7 @@ private fun PlannerScreen(
                     onDeleteDoneClick = onDeleteDoneClick,
                 )
 
-                1 -> { /* TODO: 타임테이블 연결 */ }
+                1 -> TimeTableScreen(timeTableState = timeTableState)
 
                 2 -> StatisticsScreen(statisticsState)
             }
