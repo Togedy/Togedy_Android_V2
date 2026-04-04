@@ -1,6 +1,7 @@
 package com.together.study.planner.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,96 @@ internal fun TimeTableScreen(
         }
 
         else -> {}
+    }
+}
+
+@Composable
+fun ShareTimeTableContent(
+    timeTables: List<TimeTable>,
+    modifier: Modifier = Modifier,
+) {
+    val hours = (6..23).toList() + (0..5).toList()
+    val filledSlots = remember(timeTables) {
+        if (timeTables.isEmpty()) {
+            List(hours.size) { emptyMap<Int, Color>() }
+        } else {
+            buildMinuteSlotsFromEvents(hours, timeTables)
+        }
+    }
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 8.dp)
+        ) {
+            itemsIndexed(hours) { hourIndex, hour ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        modifier = Modifier.width(28.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = hour.toString().padStart(2, '0'),
+                            textAlign = TextAlign.Center,
+                            style = TogedyTheme.typography.body10m.copy(
+                                color = TogedyTheme.colors.gray500
+                            ),
+                            modifier = Modifier.align(Alignment.Center),
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(2.dp))
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .border(width = 1.dp, color = GRAY200),
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .height(20.dp)
+                                .fillMaxWidth()
+                                .background(WHITE),
+                        ) {
+                            repeat(6) { segment ->
+                                Row(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxSize(),
+                                ) {
+                                    val segmentStartMinute = segment * 10
+                                    repeat(10) { minuteOffset ->
+                                        val minute = segmentStartMinute + minuteOffset
+                                        val filledColor = filledSlots[hourIndex][minute]
+                                        val background = filledColor ?: Color.Transparent
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .fillMaxSize()
+                                                .background(background)
+                                        )
+                                    }
+                                }
+                                if (segment < 5) {
+                                    Box(
+                                        modifier = Modifier
+                                            .width(1.dp)
+                                            .fillMaxSize()
+                                            .background(GRAY200),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
