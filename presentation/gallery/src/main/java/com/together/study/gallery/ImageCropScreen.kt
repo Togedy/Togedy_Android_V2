@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.together.study.common.event.TogedyUiEvent
+import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.model.CropRequest
@@ -284,8 +286,14 @@ internal fun ImageCropScreen(
     }
 
     LaunchedEffect(uiState) {
-        if (uiState is ImageCropUiState.Success) {
-            onUploadSuccess()
+        when (uiState) {
+            is ImageCropUiState.Success -> onUploadSuccess()
+            is ImageCropUiState.Error -> {
+                TogedyUiEventBus.send(
+                    TogedyUiEvent.ShowToast(message = uiState.message)
+                )
+            }
+            else -> {}
         }
     }
 }
