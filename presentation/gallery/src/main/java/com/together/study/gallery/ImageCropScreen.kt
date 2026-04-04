@@ -39,6 +39,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyTheme
@@ -73,8 +74,10 @@ internal fun ImageCropScreen(
     cropShape: CropShapeType,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    onUploadSuccess: () -> Unit,
     viewModel: ImageCropViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isInitTransformed by remember(imageId) { mutableStateOf(false) }
     var scale by remember(imageId) { mutableFloatStateOf(1f) }
     var offset by remember(imageId) { mutableStateOf(Offset.Zero) }
@@ -268,6 +271,23 @@ internal fun ImageCropScreen(
             },
         )
     }
+
+    if (uiState is ImageCropUiState.Loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator(color = TogedyTheme.colors.green)
+        }
+    }
+
+    LaunchedEffect(uiState) {
+        if (uiState is ImageCropUiState.Success) {
+            onUploadSuccess()
+        }
+    }
 }
 
 @Composable
@@ -370,6 +390,7 @@ private fun RectImageCropScreenPreview() {
             imageId = 1,
             cropShape = CropShapeType.Rect(aspectRatio = 1f),
             onBackClick = { },
+            onUploadSuccess = { },
         )
     }
 }
@@ -382,6 +403,7 @@ private fun CircleImageCropScreenPreview() {
             imageId = 1,
             cropShape = CropShapeType.Circle,
             onBackClick = { },
+            onUploadSuccess = { },
         )
     }
 }
