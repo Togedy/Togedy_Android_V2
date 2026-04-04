@@ -3,6 +3,7 @@ package com.together.study.chatbot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.chatbot.model.ChatMessage
+import com.together.study.chatbot.repository.ChatBotRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class ChatBotViewModel @Inject constructor(
+    private val chatBotRepository: ChatBotRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatBotUiState())
@@ -24,7 +26,8 @@ internal class ChatBotViewModel @Inject constructor(
     }
 
     fun sendMessage(message: String) {
-        if (message.isBlank()) return
+        val currentState = _uiState.value
+        if (message.isBlank() || currentState.isWaitingResponse) return
 
         val userMessage = ChatMessage(
             message = message,
@@ -36,6 +39,7 @@ internal class ChatBotViewModel @Inject constructor(
                 messages = it.messages + userMessage,
                 inputText = "",
                 isChatMode = true,
+                isWaitingResponse = true,
             )
         }
 
@@ -54,32 +58,59 @@ internal class ChatBotViewModel @Inject constructor(
                 it.copy(messages = it.messages + loadingMessage)
             }
 
-            // TODO: 실제 API 호출로 대체
-            // 1.5초 딜레이
-            delay(1500)
-
-            val fullResponse = "안녕하세요! 질문을 확인했습니다. 답변을 준비 중이에요. $message 대해 궁금해하시는군요." +
-                    "\n\n 밥은 드시고 질문하시나요? 저는 고기를 제일 좋아해요." +
-                    "\n\n 회사 다니기 싫어요. 더미데이터는 여기까지 할게요"
-
-            // 로딩 메시지를 타이핑 애니메이션 메시지로 교체
-            val typingMessage = ChatMessage(
-                id = loadingMessage.id,
-                message = fullResponse,
-                isMine = false,
-                isLoading = false,
-                displayedText = "",
-                isAnimating = true,
-            )
-            _uiState.update { state ->
-                state.copy(
-                    messages = state.messages.map {
-                        if (it.id == loadingMessage.id) typingMessage else it
-                    }
-                )
+            val latestState = _uiState.value
+            val followUpAnswer = if (latestState.isFollowUpRequired) {
+                latestState.lastBotAnswer
+            } else {
+                null
             }
 
-            messageResponseAnimation(typingMessage.id, fullResponse)
+            chatBotRepository.postQuestion(
+                question = message,
+                followUpAnswer = followUpAnswer,
+            ).onSuccess { answer ->
+                val fullResponse = answer.answer
+
+                // 로딩 메시지를 타이핑 애니메이션 메시지로 교체
+                val typingMessage = ChatMessage(
+                    id = loadingMessage.id,
+                    message = fullResponse,
+                    isMine = false,
+                    isLoading = false,
+                    displayedText = "",
+                    isAnimating = true,
+                )
+                _uiState.update { state ->
+                    state.copy(
+                        messages = state.messages.map {
+                            if (it.id == loadingMessage.id) typingMessage else it
+                        },
+                        isFollowUpRequired = answer.isFollowUpRequired,
+                        lastBotAnswer = if (answer.isFollowUpRequired) fullResponse else null,
+                        isWaitingResponse = false,
+                    )
+                }
+
+                messageResponseAnimation(typingMessage.id, fullResponse)
+            }.onFailure {
+                // 에러 발생 시 에러 메시지로 교체
+                val errorMessage = ChatMessage(
+                    id = loadingMessage.id,
+                    message = "죄송합니다. 응답을 가져오는데 실패했습니다. 다시 시도해주세요.",
+                    isMine = false,
+                    isLoading = false,
+                    displayedText = "죄송합니다. 응답을 가져오는데 실패했습니다. 다시 시도해주세요.",
+                    isAnimating = false,
+                )
+                _uiState.update { state ->
+                    state.copy(
+                        messages = state.messages.map {
+                            if (it.id == loadingMessage.id) errorMessage else it
+                        },
+                        isWaitingResponse = false,
+                    )
+                }
+            }
         }
     }
 

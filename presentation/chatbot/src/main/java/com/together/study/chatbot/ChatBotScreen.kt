@@ -1,5 +1,6 @@
 package com.together.study.chatbot
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -38,15 +39,23 @@ import com.together.study.designsystem.theme.TogedyTheme
 
 @Composable
 internal fun ChatBotRoute(
+    onNavigateBack: () -> Unit,
+    onChatModeChanged: (Boolean) -> Unit,
+    onRequestExit: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatBotViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(uiState.isChatMode) {
+        onChatModeChanged(uiState.isChatMode)
+    }
+
     ChatBotScreen(
         uiState = uiState,
         onInputTextChange = viewModel::updateInputText,
         onSendMessage = viewModel::sendMessage,
+        onRequestExit = onRequestExit,
         modifier = modifier,
     )
 }
@@ -56,6 +65,7 @@ internal fun ChatBotScreen(
     uiState: ChatBotUiState,
     onInputTextChange: (String) -> Unit,
     onSendMessage: (String) -> Unit,
+    onRequestExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
@@ -63,6 +73,10 @@ internal fun ChatBotScreen(
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
     var visible by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
+
+    BackHandler(enabled = uiState.isChatMode) {
+        onRequestExit()
+    }
 
     LaunchedEffect(Unit) {
         visible = true
@@ -139,6 +153,7 @@ internal fun ChatBotScreen(
                 placeholderText = "입시에 대해 궁금한 것을 물어보세요",
                 onValueChange = onInputTextChange,
                 onSendClick = { onSendMessage(uiState.inputText) },
+                isSendAvailable = !uiState.isWaitingResponse,
                 modifier = Modifier.fillMaxWidth()
             )
         }

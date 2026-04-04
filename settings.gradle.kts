@@ -36,6 +36,7 @@ include(
     ":data:search",
     ":data:dummy",
     ":data:study",
+    ":data:chatbot"
     ":data:planner",
     ":data:user",
     ":data:mypage",
@@ -50,6 +51,7 @@ include(
     ":domain:user",
     ":domain:mypage",
     ":domain:gallery",
+    ":domain:chatbot"
 )
 include(
     ":presentation:main",

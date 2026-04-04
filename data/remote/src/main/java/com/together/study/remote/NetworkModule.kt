@@ -19,6 +19,7 @@ import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -76,6 +77,8 @@ object NetworkModule {
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(headerInterceptor)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
     @Provides
