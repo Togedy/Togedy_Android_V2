@@ -39,6 +39,7 @@ include(
     ":data:planner",
     ":data:user",
     ":data:mypage",
+    ":data:gallery",
 )
 include(
     ":domain:dummy",
@@ -48,6 +49,7 @@ include(
     ":domain:search",
     ":domain:user",
     ":domain:mypage",
+    ":domain:gallery",
 )
 include(
     ":presentation:main",
@@ -63,4 +65,5 @@ include(
     ":presentation:chatbot",
     ":presentation:timer",
     ":presentation:mypage",
+    ":presentation:gallery",
 )

@@ -4,4 +4,5 @@ enum class PlannerSheetType {
     SUBJECT,
     SUBJECT_ADD,
     CALENDAR,
+    IMAGE_EDIT,
 }

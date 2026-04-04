@@ -31,7 +31,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_kebap_menu_circle
 import com.together.study.designsystem.R.drawable.ic_left_chevron
@@ -60,6 +63,7 @@ internal fun PlannerScreen(
     onShareNavigate: (Int, Int, Int) -> Unit,
     onTimerNavigate: () -> Unit,
     onEditSubjectNavigate: () -> Unit,
+    onImageEditNavigate: (String) -> Unit,
     viewModel: PlannerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,8 +71,11 @@ internal fun PlannerScreen(
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.sheetState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit, selectedDate) {
-        viewModel.load()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.load()
+        }
     }
 
     PlannerScreen(
@@ -87,6 +94,10 @@ internal fun PlannerScreen(
         onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
+        onImageDeleteClick = {
+            viewModel.deleteImage()
+        },
+        onImageEditClick = { onImageEditNavigate(selectedDate.toString()) },
         onAddDoneBtnClick = viewModel::saveNewSubject,
         onTaskPlusButtonClick = viewModel::addTempTask,
         onTaskNameChange = { taskId, tempId, name, subjectId ->
@@ -115,6 +126,8 @@ private fun PlannerScreen(
     onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
+    onImageDeleteClick: () -> Unit,
+    onImageEditClick: () -> Unit,
     onAddDoneBtnClick: (SubjectItem) -> Unit,
     onTaskPlusButtonClick: (Long) -> Unit,
     onTaskNameChange: (Long?, String, String, Long) -> Unit,
@@ -214,7 +227,7 @@ private fun PlannerScreen(
                     timerImageUrl = data.plannerImage ?: "",
                     timer = data.totalStudyTime,
                     onPlayButtonClick = onPlayButtonClick,
-                    onImageEditButtonClick = { /* TODO: 갤러리 연결 */ },
+                    onImageEditButtonClick = { onSheetVisibilityChange(PlannerSheetType.IMAGE_EDIT) },
                 )
             }
 
@@ -256,6 +269,14 @@ private fun PlannerScreen(
         onDismissRequest = onSheetVisibilityChange,
         onAddDoneBtnClick = onAddDoneBtnClick,
         onDateChange = onSelectedDateChange,
+        onImageDeleteClick = {
+            onImageDeleteClick()
+            onSheetVisibilityChange(PlannerSheetType.IMAGE_EDIT)
+        },
+        onImageEditClick = {
+            onImageEditClick()
+            onSheetVisibilityChange(PlannerSheetType.IMAGE_EDIT)
+        },
     )
 }
 
@@ -350,6 +371,7 @@ private fun PlannerScreenPreview() {
             onShareNavigate = { _, _, _ -> },
             onTimerNavigate = {},
             onEditSubjectNavigate = {},
+            onImageEditNavigate = { _ -> },
         )
     }
 }

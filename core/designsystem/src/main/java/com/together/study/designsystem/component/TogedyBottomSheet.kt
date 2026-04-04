@@ -28,6 +28,7 @@ fun TogedyBottomSheet(
     ),
     showDone: Boolean = false,
     isDoneActivate: Boolean = true,
+    dragHandle: @Composable (() -> Unit)? = null,
     onDismissRequest: () -> Unit,
     onDoneClick: () -> Unit = {},
     content: @Composable () -> Unit,
@@ -39,7 +40,7 @@ fun TogedyBottomSheet(
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         containerColor = TogedyTheme.colors.white,
-        dragHandle = null
+        dragHandle = dragHandle,
     ) {
         Column(
             modifier = modifier
