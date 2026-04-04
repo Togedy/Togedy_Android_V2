@@ -35,9 +35,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.type.study.StudyUpdateType
+import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.R.drawable.img_character_done
 import com.together.study.designsystem.R.drawable.img_study_background
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studyupdate.component.StudyTimeOption
@@ -61,6 +64,7 @@ internal fun StudyUpdateDoneRoute(
     updateType: StudyUpdateType = StudyUpdateType.CREATE,
     viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
+    val toast = LocalTogedyToast.current
     val studyImage = studyImageUri?.toUri()
     val studyTimeOption = runCatching { StudyTimeOption.valueOf(selectedStudyTime) }.getOrNull()
         ?: StudyTimeOption.FIVE_HOURS
@@ -89,7 +93,11 @@ internal fun StudyUpdateDoneRoute(
                         onStartClick()
                     },
                     onFailure = { errorMessage ->
-                        Timber.tag("taejung").d(errorMessage)
+                        toast.makeText(
+                            toastType = ToastType.WARNING,
+                            message = errorMessage,
+                            icon = ic_check_green,
+                        )
                     }
                 )
             } else {
@@ -105,7 +113,11 @@ internal fun StudyUpdateDoneRoute(
                         onStartClick()
                     },
                     onFailure = { errorMessage ->
-                        Timber.tag("taejung").d(errorMessage)
+                        toast.makeText(
+                            toastType = ToastType.WARNING,
+                            message = errorMessage,
+                            icon = ic_check_green,
+                        )
                     }
                 )
             }
