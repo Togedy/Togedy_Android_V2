@@ -71,10 +71,6 @@ internal fun PlannerScreen(
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val bottomSheetState by viewModel.sheetState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit, selectedDate) {
-        viewModel.load()
-    }
-
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {

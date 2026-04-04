@@ -318,6 +318,7 @@ internal class PlannerViewModel @Inject constructor(
     fun updateSelectedDate(new: LocalDate) {
         previousDate = selectedDate.value
         _selectedDate.update { new }
+        load()
     }
 
     fun updateSelectedTab(new: PlannerMainTab) {
