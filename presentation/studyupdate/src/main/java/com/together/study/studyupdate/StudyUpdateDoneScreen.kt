@@ -15,9 +15,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,14 +42,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.together.study.common.type.study.StudyUpdateType
+import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.R.drawable.img_character_done
 import com.together.study.designsystem.R.drawable.img_study_background
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studyupdate.component.StudyTimeOption
 import com.together.study.util.noRippleClickable
-import timber.log.Timber
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun StudyUpdateDoneRoute(
@@ -61,6 +71,19 @@ internal fun StudyUpdateDoneRoute(
     updateType: StudyUpdateType = StudyUpdateType.CREATE,
     viewModel: StudyUpdateViewModel = hiltViewModel(),
 ) {
+    val toast = LocalTogedyToast.current
+    val isSubmitLoading by viewModel.isSubmitLoading.collectAsState()
+    var showLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isSubmitLoading) {
+        if (isSubmitLoading) {
+            delay(200L)
+            showLoading = true
+        } else {
+            showLoading = false
+        }
+    }
+
     val studyImage = studyImageUri?.toUri()
     val studyTimeOption = runCatching { StudyTimeOption.valueOf(selectedStudyTime) }.getOrNull()
         ?: StudyTimeOption.FIVE_HOURS
@@ -76,6 +99,7 @@ internal fun StudyUpdateDoneRoute(
         onBackClick = onBackClick,
         onEditClick = onEditClick,
         onStartClick = {
+            if (isSubmitLoading) return@StudyUpdateDoneScreen
             if (updateType == StudyUpdateType.UPDATE) {
                 viewModel.updateStudy(
                     challengeGoalTime = challengeGoalTime,
@@ -89,7 +113,11 @@ internal fun StudyUpdateDoneRoute(
                         onStartClick()
                     },
                     onFailure = { errorMessage ->
-                        Timber.tag("taejung").d(errorMessage)
+                        toast.makeText(
+                            toastType = ToastType.WARNING,
+                            message = errorMessage,
+                            icon = ic_check_green,
+                        )
                     }
                 )
             } else {
@@ -105,7 +133,11 @@ internal fun StudyUpdateDoneRoute(
                         onStartClick()
                     },
                     onFailure = { errorMessage ->
-                        Timber.tag("taejung").d(errorMessage)
+                        toast.makeText(
+                            toastType = ToastType.WARNING,
+                            message = errorMessage,
+                            icon = ic_check_green,
+                        )
                     }
                 )
             }
@@ -118,7 +150,8 @@ internal fun StudyUpdateDoneRoute(
         memberCount = memberCount,
         isChallenge = isChallenge,
         selectedStudyTime = studyTimeOption,
-        updateType = updateType
+        updateType = updateType,
+        isLoading = showLoading
     )
 }
 
@@ -136,14 +169,15 @@ fun StudyUpdateDoneScreen(
     memberCount: Int? = null,
     isChallenge: Boolean = false,
     selectedStudyTime: StudyTimeOption = StudyTimeOption.FIVE_HOURS,
-    updateType: StudyUpdateType = StudyUpdateType.CREATE
+    updateType: StudyUpdateType = StudyUpdateType.CREATE,
+    isLoading: Boolean = false
 ) {
     val context = LocalContext.current
+    Box(modifier = modifier.fillMaxSize()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = TogedyTheme.colors.gray50)
-            .then(modifier),
+            .background(color = TogedyTheme.colors.gray50),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TogedyTopBar(
@@ -445,6 +479,18 @@ fun StudyUpdateDoneScreen(
 
         }
 
+    }
+
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = TogedyTheme.colors.black.copy(alpha = 0.3f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = TogedyTheme.colors.green)
+        }
+    }
     }
 }
 
