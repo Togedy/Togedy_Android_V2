@@ -68,7 +68,7 @@ class ProfileEditViewModel @Inject constructor(
                 if (result.available) {
                     tempName = nickname
                     setDupCheck(true)
-                    setError(false, "")
+                    setError(false, "사용가능한 닉네임입니다")
                     updateDoneEnabled()
                 } else {
                     setDupCheck(false)
