@@ -160,7 +160,7 @@ internal class StudyUpdateViewModel @Inject constructor(
                 if (isDuplicate) {
                     _studyNameErrorMessage.update { "이미 사용 중인 스터디 이름입니다" }
                 } else {
-                    _studyNameErrorMessage.update { null }
+                    _studyNameErrorMessage.update { "사용가능한 스터디 이름입니다" }
                 }
             },
             onFailure = { throwable ->

@@ -51,6 +51,7 @@ internal fun StudyUpdateRoute(
     val isChallenge by viewModel.isChallenge.collectAsState()
     val isNextButtonEnabled by viewModel.isNextButtonEnabled.collectAsState()
     val isStudyNameDuplicate by viewModel.isStudyNameDuplicate.collectAsState()
+    val isStudyNamePassed = isStudyNameDuplicate == false
     val studyNameErrorMessage by viewModel.studyNameErrorMessage.collectAsState()
     val updateType = viewModel.updateType
 
@@ -98,6 +99,7 @@ internal fun StudyUpdateRoute(
         onSelectedStudyTimeChange = viewModel::updateSelectedStudyTime,
         onDupCheckClick = viewModel::checkStudyNameDuplicate,
         isStudyNameDuplicate = isStudyNameDuplicate == true,
+        isStudyNamePassed = isStudyNamePassed,
         studyNameErrorMessage = studyNameErrorMessage,
     )
 }
@@ -127,6 +129,7 @@ fun StudyUpdateScreen(
     onSelectedStudyTimeChange: (StudyTimeOption) -> Unit = {},
     onDupCheckClick: () -> Unit = {},
     isStudyNameDuplicate: Boolean = false,
+    isStudyNamePassed: Boolean = false,
     studyNameErrorMessage: String? = null,
 ) {
     val title = if (type == StudyUpdateType.CREATE) "스터디 생성" else "스터디 수정"
@@ -178,6 +181,7 @@ fun StudyUpdateScreen(
                     onValueChange = onStudyNameChange,
                     onDupCheckClick = onDupCheckClick,
                     isError = isStudyNameDuplicate,
+                    isPassed = isStudyNamePassed,
                     errorMessage = studyNameErrorMessage
                 )
             }
