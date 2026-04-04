@@ -210,6 +210,21 @@ class GalleryRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteImage(date: String): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            val removePlannerImage = "true"
+                .toRequestBody("text/plain".toMediaType())
+
+            galleryService.uploadPlannerImage(
+                date = date,
+                plannerImage = null,
+                removePlannerImage = removePlannerImage,
+            )
+
+            Unit
+        }
+    }
+
     private fun calculateCropBitmapRect(
         request: CropRequest,
         bitmapWidth: Float,

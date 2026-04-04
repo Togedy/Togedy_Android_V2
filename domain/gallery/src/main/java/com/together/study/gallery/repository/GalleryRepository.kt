@@ -15,4 +15,6 @@ interface GalleryRepository {
         filePath: String,
         date: String,
     ): Result<Unit>
+
+    suspend fun deleteImage(date: String): Result<Unit>
 }
