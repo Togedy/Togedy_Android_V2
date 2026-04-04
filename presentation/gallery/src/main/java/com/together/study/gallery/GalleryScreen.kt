@@ -93,7 +93,7 @@ internal fun GalleryScreen(
         }
     }
 
-    if (uiState.isAlbumSheetOpen) {
+    if (uiState.isAlbumSheetOpen && uiState.images.isNotEmpty()) {
         AlbumBottomSheet(
             albums = uiState.albums,
             entireAlbumCover = uiState.images.first().id.toUri(),
