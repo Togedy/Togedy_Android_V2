@@ -32,6 +32,7 @@ import com.together.study.designsystem.theme.GRAY200
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.designsystem.theme.WHITE
 import com.together.study.planner.model.TimeTable
+import com.together.study.util.toLocalTimeWithSecond
 import java.time.LocalTime
 
 @Composable
@@ -260,10 +261,11 @@ private fun buildMinuteSlotsFromEvents(
     val slots = List(hours.size) { mutableMapOf<Int, Color>() }
     val hourIndexByValue = hours.withIndex().associate { it.value to it.index }
     events.forEach { event ->
-        val start = LocalTime.parse(event.startTime)
-        val end = LocalTime.parse(event.endTime)
+        val start = runCatching { event.startTime.toLocalTimeWithSecond() }.getOrNull() ?: return@forEach
+        val end = runCatching { event.endTime.toLocalTimeWithSecond() }.getOrNull() ?: return@forEach
         val color = Color(PlannerSubjectColor.fromString(event.subjectColor).color)
-        val crossesMidnight = end.isBefore(start) || end == start
+        if (start == end) return@forEach
+        val crossesMidnight = end.isBefore(start)
         var cursor = start
         while (true) {
             val hourIndex = hourIndexByValue[cursor.hour]
