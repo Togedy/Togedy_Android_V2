@@ -13,23 +13,29 @@ import com.together.study.gallery.type.CropShapeType
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToGallery(
+    date: String,
     navOptions: NavOptions? = null,
-) = navigate(TogedyGallery, navOptions)
+) = navigate(TogedyGallery(date), navOptions)
 
 fun NavController.navigateToCorpImage(
     imageId: Long,
+    date: String,
     navOptions: NavOptions? = null,
-) = navigate(TogedyCorpImage(imageId), navOptions)
+) = navigate(TogedyCorpImage(imageId, date), navOptions)
 
 fun NavGraphBuilder.galleryGraph(
     modifier: Modifier = Modifier,
     navigateToUp: () -> Unit,
+    onUploadSuccess: () -> Unit,
     navController: NavController,
 ) {
-    composable<TogedyGallery> {
+    composable<TogedyGallery> { backStackEntry ->
+        val route = backStackEntry.toRoute<TogedyGallery>()
         GalleryScreen(
             onBackClick = navigateToUp,
-            onImageClick = navController::navigateToCorpImage,
+            onImageClick = { imageId ->
+                navController.navigateToCorpImage(imageId, route.date)
+            },
             modifier = modifier,
         )
     }
@@ -40,15 +46,19 @@ fun NavGraphBuilder.galleryGraph(
             imageId = route.imageId,
             cropShape = CropShapeType.Rect(aspectRatio = 1f),
             onBackClick = navigateToUp,
+            onUploadSuccess = onUploadSuccess,
             modifier = modifier,
         )
     }
 }
 
 @Serializable
-data object TogedyGallery : Route
+data class TogedyGallery(
+    val date: String,
+) : Route
 
 @Serializable
 data class TogedyCorpImage(
     val imageId: Long,
+    val date: String,
 ) : Route

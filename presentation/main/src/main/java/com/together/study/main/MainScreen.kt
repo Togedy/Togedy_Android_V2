@@ -29,6 +29,7 @@ import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
+import com.together.study.gallery.navigation.TogedyGallery
 import com.together.study.gallery.navigation.galleryGraph
 import com.together.study.gallery.navigation.navigateToGallery
 import com.together.study.main.component.MainBottomBar
@@ -115,6 +116,7 @@ private fun MainNavHost(
     navigator: MainNavigator,
     modifier: Modifier = Modifier,
 ) {
+    val togedyToast = LocalTogedyToast.current
     NavHost(
         enterTransition = {
             EnterTransition.None
@@ -218,7 +220,7 @@ private fun MainNavHost(
         plannerGraph(
             navigateToUp = navigator.navController::popBackStack,
             navigateToTimer = navigator.navController::navigateToTimer,
-            navigateToGallery = navigator.navController::navigateToGallery,
+            navigateToGallery = { date -> navigator.navController.navigateToGallery(date) },
             navController = navigator.navController,
             modifier = modifier,
         )
@@ -244,6 +246,15 @@ private fun MainNavHost(
 
         galleryGraph(
             navigateToUp = navigator.navController::popBackStack,
+            onUploadSuccess = {
+                navigator.navController.popBackStack<TogedyGallery>(inclusive = true)
+                togedyToast.makeText(
+                    toastType = ToastType.COMMON,
+                    message = "이미지가 업데이트 되었어요",
+                    icon = com.together.study.designsystem.R.drawable.ic_check_green,
+                    yOffset = togedyToast.toastBasicOffset(),
+                )
+            },
             navController = navigator.navController,
             modifier = modifier,
         )
