@@ -7,6 +7,7 @@ import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.main.state.PlannerUiState
 import com.together.study.planner.type.PlannerSheetType
+import com.together.study.gallery.usecase.DeleteImageUseCase
 import com.together.study.planner.usecase.GetDailyPlannerInfoUseCase
 import com.together.study.planner.usecase.GetDailyStatisticsUseCase
 import com.together.study.planner.usecase.GetDailyTimetableUseCase
@@ -26,6 +27,7 @@ internal class PlannerViewModel @Inject constructor(
     private val getDailyTimetableUseCase: GetDailyTimetableUseCase,
     private val getDailyStatisticsUseCase: GetDailyStatisticsUseCase,
     private val getMonthlyHeatmapUseCase: GetMonthlyHeatmapUseCase,
+    private val deleteImageUseCase: DeleteImageUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlannerUiState())
     val uiState = _uiState.asStateFlow()
@@ -48,6 +50,14 @@ internal class PlannerViewModel @Inject constructor(
             getMonthlyHeatmap()
         }
         previousDate = selectedDate.value
+    }
+
+    fun deleteImage() = viewModelScope.launch {
+        deleteImageUseCase(selectedDate.value.toString())
+            .onSuccess { getPlannerInfo() }
+            .onFailure { e ->
+                Timber.tag("okhttp-taejung").d("deleteImage: ${e.message}")
+            }
     }
 
     suspend fun getPlannerInfo() {

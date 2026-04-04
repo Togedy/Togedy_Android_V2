@@ -95,6 +95,9 @@ internal fun PlannerScreen(
         onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
+        onImageDeleteClick = {
+            viewModel.deleteImage()
+        },
         onImageEditClick = { onImageEditNavigate(selectedDate.toString()) },
     )
 }
@@ -116,6 +119,7 @@ private fun PlannerScreen(
     onSheetVisibilityChange: (PlannerSheetType) -> Unit,
     onPlayButtonClick: () -> Unit,
     onEditSubjectClick: () -> Unit,
+    onImageDeleteClick: () -> Unit,
     onImageEditClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -224,7 +228,10 @@ private fun PlannerScreen(
         onDismissRequest = onSheetVisibilityChange,
         onEditSubjectClick = onEditSubjectClick,
         onDateChange = onSelectedDateChange,
-        onImageDeleteClick = { /* TODO: 이미지 삭제 */ },
+        onImageDeleteClick = {
+            onImageDeleteClick()
+            onSheetVisibilityChange(PlannerSheetType.IMAGE_EDIT)
+        },
         onImageEditClick = {
             onImageEditClick()
             onSheetVisibilityChange(PlannerSheetType.IMAGE_EDIT)

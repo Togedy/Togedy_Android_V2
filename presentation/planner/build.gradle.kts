@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.util)
 
     implementation(projects.domain.calendar)
+    implementation(projects.domain.gallery)
     implementation(projects.domain.planner)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
