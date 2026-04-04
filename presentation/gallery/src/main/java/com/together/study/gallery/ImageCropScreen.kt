@@ -286,11 +286,11 @@ internal fun ImageCropScreen(
     }
 
     LaunchedEffect(uiState) {
-        when (uiState) {
+        when (val state = uiState) {
             is ImageCropUiState.Success -> onUploadSuccess()
             is ImageCropUiState.Error -> {
                 TogedyUiEventBus.send(
-                    TogedyUiEvent.ShowToast(message = uiState.message)
+                    TogedyUiEvent.ShowToast(message = state.message)
                 )
             }
             else -> {}
