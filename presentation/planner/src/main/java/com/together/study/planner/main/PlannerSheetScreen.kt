@@ -6,7 +6,7 @@ import com.together.study.planner.component.ImageEditBottomSheet
 import com.together.study.common.state.UiState
 import com.together.study.planner.component.PlannerCalendarTopSheet
 import com.together.study.planner.main.state.PlannerSheetState
-import com.together.study.planner.subject.SubjectBottomSheet
+import com.together.study.planner.model.SubjectItem
 import com.together.study.planner.subject.SubjectDetailBottomSheet
 import com.together.study.planner.type.PlannerSheetType
 import java.time.LocalDate
@@ -18,25 +18,20 @@ internal fun PlannerSheetScreen(
     selectedDate: LocalDate,
     monthlyHeatmapState: UiState<List<Int>>,
     onDismissRequest: (PlannerSheetType) -> Unit,
-    onEditSubjectClick: () -> Unit,
+    onAddDoneBtnClick: (SubjectItem) -> Unit,
     onDateChange: (LocalDate) -> Unit,
     onImageDeleteClick: () -> Unit = {},
     onImageEditClick: () -> Unit = {},
 ) {
     with(bottomSheetState) {
-        if (isSubjectOpen) {
-            SubjectBottomSheet(
-                onDismissRequest = { onDismissRequest(PlannerSheetType.SUBJECT) },
-                onAddSubjectClick = { onDismissRequest(PlannerSheetType.SUBJECT_ADD) },
-                onEditSubjectClick = onEditSubjectClick,
-            )
-        }
-
         if (isSubjectAddOpen) {
             SubjectDetailBottomSheet(
-                plannerSubject = null,
+                subject = null,
                 onDismissRequest = { onDismissRequest(PlannerSheetType.SUBJECT_ADD) },
-                onDoneClick = { onDismissRequest(PlannerSheetType.SUBJECT_ADD) },
+                onDoneClick = { subject ->
+                    onAddDoneBtnClick(subject)
+                    onDismissRequest(PlannerSheetType.SUBJECT_ADD)
+                },
             )
         }
 

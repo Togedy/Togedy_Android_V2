@@ -54,6 +54,7 @@ internal fun ShareTimerSection(
             model = ImageRequest
                 .Builder(context)
                 .data(timerImageUrl)
+                .allowHardware(false)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,11 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -39,7 +42,7 @@ import com.together.study.designsystem.R.drawable.ic_add_24
 import com.together.study.designsystem.R.drawable.ic_kebap_menu
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
-import com.together.study.planner.model.Todo
+import com.together.study.planner.model.TaskItem
 import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
@@ -47,7 +50,10 @@ import com.together.study.util.noRippleClickable
 internal fun PlannerItemsScreen(
     plannerSubjectState: UiState<List<PlannerSubject>>,
     modifier: Modifier = Modifier,
-    onTodoContentChange: (Long?, String) -> Unit,
+    onTaskPlusButtonClick: (Long) -> Unit,
+    onTaskNameChange: (Long?, String, String, Long) -> Unit,
+    onCheckClick: (Long, Boolean) -> Unit,
+    onDeleteDoneClick: (Long, Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
@@ -63,13 +69,24 @@ internal fun PlannerItemsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .padding(14.dp)
+            .padding(top = 14.dp)
+            .padding(horizontal = 14.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { focusManager.clearFocus() }
                 )
             },
     ) {
+        item {
+            Text(
+                text = "할 일",
+                style = TogedyTheme.typography.body12m,
+                color = TogedyTheme.colors.gray800,
+            )
+
+            Spacer(Modifier.height(8.dp))
+        }
+
         when (plannerSubjectState) {
             is UiState.Loading -> {}
 
@@ -78,28 +95,21 @@ internal fun PlannerItemsScreen(
             is UiState.Success -> {
                 val subjects = plannerSubjectState.data
 
-                item {
-                    Text(
-                        text = "할 일",
-                        style = TogedyTheme.typography.body12m,
-                        color = TogedyTheme.colors.gray800,
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-                }
-
                 itemsIndexed(subjects) { index, subject ->
-                    var todoItems by remember(subject.tasks) { mutableStateOf(subject.tasks) }
-
                     SubjectSection(
+                        subjectId = subject.subjectId!!,
                         subjectName = subject.subjectName,
                         subjectColor = subject.subjectColor,
-                        todoItems = todoItems,
-                        onPlusButtonClick = {
-                            todoItems = todoItems.plus(Todo())
+                        taskItems = subject.tasks,
+                        onPlusButtonClick = { onTaskPlusButtonClick(subject.subjectId!!) },
+                        onTaskNameChange = onTaskNameChange,
+                        onTaskEditButtonClick = {
+                            /* TODO: 추후 수정 */
                         },
-                        onTodoContentChange = onTodoContentChange,
-                        onTodoEditButtonClick = {},
+                        onCheckClick = onCheckClick,
+                        onDeleteDoneClick = { taskId ->
+                            onDeleteDoneClick(taskId, subject.subjectId!!)
+                        }
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -115,16 +125,20 @@ internal fun PlannerItemsScreen(
 
 @Composable
 fun SubjectSection(
+    subjectId: Long,
     subjectName: String,
     subjectColor: String,
-    todoItems: List<Todo>,
+    taskItems: List<TaskItem>,
     modifier: Modifier = Modifier,
     timer: String? = null,
     onPlusButtonClick: () -> Unit,
-    onTodoContentChange: (Long?, String) -> Unit,
-    onTodoEditButtonClick: () -> Unit,
+    onTaskNameChange: (Long?, String, String, Long) -> Unit,
+    onTaskEditButtonClick: () -> Unit,
+    onCheckClick: (Long, Boolean) -> Unit,
+    onDeleteDoneClick: (Long) -> Unit,
 ) {
     val subjectColor = subjectColor.toPlannerSubjectColorOrDefault().asColor()
+    var selectedKey by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = modifier
@@ -174,62 +188,109 @@ fun SubjectSection(
             )
         }
 
-        if (todoItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
+        if (taskItems.isNotEmpty()) Spacer(Modifier.height(16.dp))
 
-        todoItems.forEachIndexed { index, todoItem ->
-            var currentTodoContent by remember(todoItem.content) { mutableStateOf(todoItem.content) }
-            val bottomPadding = if (index == todoItems.lastIndex) 0.dp else 12.dp
+        taskItems.forEachIndexed { index, task ->
+            key(task.taskId ?: task.tempId) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = bottomPadding),
-                verticalAlignment = Alignment.Top,
-            ) {
-                val stateColor =
-                    when (todoItem.state) {
-                        0 -> TogedyTheme.colors.gray300
-                        else -> subjectColor
-                    }
+                var currentName by remember(task.taskId, task.tempId) {
+                    mutableStateOf(task.taskName)
+                }
+
+                LaunchedEffect(task.taskName) {
+                    currentName = task.taskName
+                }
+
+                val bottomPadding = if (index == taskItems.lastIndex) 0.dp else 12.dp
 
                 Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .background(stateColor, RoundedCornerShape(4.dp))
-                )
+                    modifier = Modifier.wrapContentSize(),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = bottomPadding),
+                        verticalAlignment = Alignment.Top,
+                    ) {
+                        val stateColor =
+                            if (task.isChecked) subjectColor
+                            else TogedyTheme.colors.gray300
 
-                Spacer(Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .noRippleClickable {
+                                    task.taskId?.let {
+                                        onCheckClick(it, !task.isChecked)
+                                    }
+                                }
+                                .size(16.dp)
+                                .background(stateColor, RoundedCornerShape(4.dp))
+                        )
 
-                BasicTextField(
-                    value = currentTodoContent ?: "",
-                    onValueChange = { it ->
-                        currentTodoContent = it
-                        onTodoContentChange(todoItem.id, it)
-                    },
-                    textStyle = TogedyTheme.typography.body13m,
-                    decorationBox = { innerTextField ->
-                        if (currentTodoContent.isNullOrEmpty()) {
+                        Spacer(Modifier.width(8.dp))
+
+                        BasicTextField(
+                            value = currentName ?: "",
+                            onValueChange = { new ->
+                                currentName = new
+                                onTaskNameChange(task.taskId, task.tempId, new, subjectId)
+                            },
+                            textStyle = TogedyTheme.typography.body13m,
+                            decorationBox = { innerTextField ->
+                                if (currentName.isNullOrBlank()) {
+                                    Text(
+                                        text = "To do...",
+                                        style = TogedyTheme.typography.body13m,
+                                        color = TogedyTheme.colors.gray400,
+                                    )
+                                }
+                                innerTextField()
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
+
+                        Spacer(Modifier.width(8.dp))
+
+                        val taskKey = task.taskId?.toString() ?: task.tempId
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ic_kebap_menu),
+                            contentDescription = "투두 편집 버튼",
+                            tint = TogedyTheme.colors.gray800,
+                            modifier = Modifier
+                                .size(16.dp)
+                                .noRippleClickable {
+                                    selectedKey = if (selectedKey == taskKey) null else taskKey
+                                },
+                        )
+                    }
+
+                    val taskKey = task.taskId?.toString() ?: task.tempId
+
+                    if (selectedKey == taskKey) {
+                        Row {
                             Text(
-                                text = "To do...",
+                                text = "삭제하기",
                                 style = TogedyTheme.typography.body13m,
-                                color = TogedyTheme.colors.gray400,
+                                color = TogedyTheme.colors.red,
+                                modifier = Modifier
+                                    .noRippleClickable {
+                                        task.taskId?.let { onDeleteDoneClick(it) }
+                                        selectedKey = null
+                                    }
+                                    .shadow(2.dp, RoundedCornerShape(8.dp))
+                                    .background(
+                                        TogedyTheme.colors.gray50,
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(horizontal = 14.dp, vertical = 4.dp)
                             )
+
+                            Spacer(Modifier.width(20.dp))
                         }
-                        innerTextField()
-                    },
-                    modifier = Modifier.weight(1f),
-                )
-
-                Spacer(Modifier.width(8.dp))
-
-                Icon(
-                    imageVector = ImageVector.vectorResource(ic_kebap_menu),
-                    contentDescription = "투두 편집 버튼",
-                    tint = TogedyTheme.colors.gray800,
-                    modifier = Modifier
-                        .size(16.dp)
-                        .noRippleClickable(onTodoEditButtonClick),
-                )
+                    }
+                }
             }
         }
     }
@@ -247,14 +308,24 @@ private fun PlannerItemsScreenPreview() {
                         subjectName = "과목명",
                         subjectColor = "#FF0000",
                         tasks = listOf(
-                            Todo(id = 1L, content = "투두 아이템 1", state = 0),
-                            Todo(id = 2L, content = "투두 아이템 2", state = 1),
-                            Todo(id = 3L, content = "투두 아이템 3", state = 0),
+                            TaskItem(
+                                taskId = 1L,
+                                taskName = "투두명",
+                                isChecked = false,
+                            ),
+                            TaskItem(
+                                taskId = 2L,
+                                taskName = "투두명",
+                                isChecked = true,
+                            ),
                         )
                     )
                 )
             ),
-            onTodoContentChange = { _, _ -> },
+            onTaskPlusButtonClick = {},
+            onTaskNameChange = { _, _, _, _ -> },
+            onCheckClick = { _, _ -> },
+            onDeleteDoneClick = { _, _ -> },
         )
     }
 }
