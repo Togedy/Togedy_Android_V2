@@ -77,6 +77,16 @@ internal fun PlannerItemsScreen(
                 )
             },
     ) {
+        item {
+            Text(
+                text = "할 일",
+                style = TogedyTheme.typography.body12m,
+                color = TogedyTheme.colors.gray800,
+            )
+
+            Spacer(Modifier.height(8.dp))
+        }
+
         when (plannerSubjectState) {
             is UiState.Loading -> {}
 
@@ -84,16 +94,6 @@ internal fun PlannerItemsScreen(
 
             is UiState.Success -> {
                 val subjects = plannerSubjectState.data
-
-                item {
-                    Text(
-                        text = "할 일",
-                        style = TogedyTheme.typography.body12m,
-                        color = TogedyTheme.colors.gray800,
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-                }
 
                 itemsIndexed(subjects) { index, subject ->
                     SubjectSection(

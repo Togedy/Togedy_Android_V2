@@ -335,12 +335,10 @@ private fun PlannerTopSection(
             }
         }
 
-        if (hasDDay) {
-            DDaySection(
-                userScheduleName = dDayName,
-                remainingDays = remainingDays,
-            )
-        }
+        DDaySection(
+            userScheduleName = dDayName,
+            remainingDays = remainingDays,
+        )
     }
 }
 
