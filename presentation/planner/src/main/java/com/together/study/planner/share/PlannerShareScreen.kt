@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.calendar.model.DDay
 import com.together.study.common.event.TogedyUiEvent
 import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.common.state.UiState
@@ -41,10 +40,10 @@ import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.ShareInfo
 import com.together.study.planner.share.component.PlannerContent
 import com.together.study.planner.share.component.ShareOptionBottomSheet
 import com.together.study.planner.share.component.ShareTimerSection
-import com.together.study.planner.share.state.PlannerShareInfo
 import com.together.study.util.image.captureComposable
 import com.together.study.util.image.saveBitmapToGallery
 import com.together.study.util.toLocalDate
@@ -126,7 +125,7 @@ internal fun PlannerShareRoute(
 fun PlannerShareScreen(
     context: Context,
     showEditButton: Boolean,
-    plannerShareInfo: PlannerShareInfo,
+    plannerShareInfo: ShareInfo,
     subjects: List<PlannerSubject>,
     selectedSubjects: List<Long>,
     isAllSelected: Boolean,
@@ -181,10 +180,12 @@ fun PlannerShareScreen(
                 ) {
                     ShareTimerSection(
                         context = context,
-                        timerImageUrl = plannerShareInfo.image,
+                        timerImageUrl = plannerShareInfo.image ?: "",
                         currentDate = plannerShareInfo.date.toLocalDate() ?: LocalDate.now(),
                         timer = plannerShareInfo.totalStudyTime,
-                        dDay = plannerShareInfo.dDay,
+                        hasDDay = plannerShareInfo.hasDday,
+                        remainingDays = plannerShareInfo.remainingDays,
+                        dDayName = plannerShareInfo.userScheduleName,
                     )
 
                     Row(
@@ -195,7 +196,7 @@ fun PlannerShareScreen(
                     ) {
                         PlannerContent(
                             showTodo = showTodo,
-                            plans = plannerShareInfo.plannerItemList,
+                            plans = plannerShareInfo.plannerItems,
                             selectedSubjects = selectedSubjects,
                             modifier = Modifier.weight(1f),
                         )
@@ -253,13 +254,15 @@ private fun PlannerShareScreenPreview() {
         PlannerShareScreen(
             context = LocalContext.current,
             showEditButton = true,
-            plannerShareInfo = PlannerShareInfo(
-                date = "2023-08-10",
-                dDay = DDay(true, "수능", -100),
-                totalStudyTime = "12:00:05",
-                image = "",
-                plannerItemList = listOf(),
-                timeTableList = listOf(),
+            plannerShareInfo = ShareInfo(
+                date = "2024-06-01",
+                totalStudyTime = "12:00:01",
+                hasDday = true,
+                remainingDays = 5,
+                userScheduleName = "시험",
+                plannerItems = listOf(),
+                timeTables = listOf(),
+                image = null,
             ),
             subjects = listOf(),
             selectedSubjects = listOf(),

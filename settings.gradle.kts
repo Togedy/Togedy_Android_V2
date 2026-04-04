@@ -12,6 +12,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -35,6 +36,9 @@ include(
     ":data:search",
     ":data:dummy",
     ":data:study",
+    ":data:planner",
+    ":data:user",
+    ":data:mypage",
     ":data:gallery",
 )
 include(
@@ -43,6 +47,8 @@ include(
     ":domain:study",
     ":domain:planner",
     ":domain:search",
+    ":domain:user",
+    ":domain:mypage",
     ":domain:gallery",
 )
 include(
@@ -58,5 +64,6 @@ include(
     ":presentation:planner",
     ":presentation:chatbot",
     ":presentation:timer",
+    ":presentation:mypage",
     ":presentation:gallery",
 )

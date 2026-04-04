@@ -91,7 +91,7 @@ internal fun SubjectItem(
 private fun SubjectItemPreview(modifier: Modifier = Modifier) {
     TogedyTheme {
         SubjectItem(
-            plannerSubject = PlannerSubject(0, "hi", "SUBJECT_COLOR1", emptyList()),
+            plannerSubject = PlannerSubject(0, "hi", "SUBJECT_COLOR1"),
             onSubjectClick = {},
             modifier = modifier,
         )

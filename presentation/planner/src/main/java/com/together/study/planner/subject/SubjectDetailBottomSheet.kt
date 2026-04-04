@@ -214,7 +214,7 @@ private fun EditingSubjectDetailBottomSheetPreview(modifier: Modifier = Modifier
     TogedyTheme {
         SubjectDetailBottomSheet(
             sheetState = sheetState,
-            plannerSubject = PlannerSubject(0, "수학", "SUBJECT_COLOR2", emptyList()),
+            plannerSubject = PlannerSubject(0, "수학", "SUBJECT_COLOR2"),
             onDismissRequest = {},
             onDoneClick = {},
             modifier = modifier,

@@ -1,5 +1,6 @@
 package com.together.study.study.main.component
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,13 +21,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
+import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
 import com.together.study.designsystem.component.textchip.TogedyBorderTextChip
 import com.together.study.designsystem.theme.TogedyTheme
@@ -38,6 +45,7 @@ import com.together.study.util.toLocalTimeWithSecond
 @Composable
 fun MyStudyItem(
     study: MyStudyItem,
+    context: Context,
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit,
 ) {
@@ -75,7 +83,10 @@ fun MyStudyItem(
 
             Spacer(Modifier.height(16.dp))
 
-            StudyingMembers(activeMemberList!!)
+            StudyingMembers(
+                context = context,
+                activeMemberList = activeMemberList,
+            )
 
             if (isChallengeType) {
                 Spacer(Modifier.height(8.dp))
@@ -119,43 +130,64 @@ private fun ChallengedCount(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StudyingMembers(
-    activeMemberList: List<ActiveMember>,
+    context: Context,
+    activeMemberList: List<ActiveMember>?,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        stickyHeader {
-            Box(
-                Modifier
-                    .background(TogedyTheme.colors.white)
-                    .padding(end = 4.dp),
-            ) {
-                TogedyBorderTextChip(text = "공부중")
-            }
-        }
-
-        items(activeMemberList) {
-            Row(
-                modifier = Modifier
-                    .background(TogedyTheme.colors.greenBg, RoundedCornerShape(6.dp))
-                    .padding(horizontal = 6.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+        if (activeMemberList != null && activeMemberList.isNotEmpty()) {
+            stickyHeader {
                 Box(
                     Modifier
-                        .size(18.dp)
-                        .background(TogedyTheme.colors.gray500)
-                )
+                        .background(TogedyTheme.colors.white)
+                        .padding(end = 4.dp),
+                ) {
+                    TogedyBorderTextChip(text = "공부중")
+                }
+            }
 
-                Spacer(Modifier.width(4.dp))
+            items(activeMemberList) { member ->
+                Row(
+                    modifier = Modifier
+                        .background(TogedyTheme.colors.greenBg, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    AsyncImage(
+                        model = ImageRequest
+                            .Builder(context)
+                            .data(member.userProfileImageUrl)
+                            .placeholder(img_study_background)
+                            .error(img_study_background)
+                            .fallback(img_study_background)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(18.dp)
+                            .clip(RoundedCornerShape(50.dp)),
+                    )
 
+                    Spacer(Modifier.width(4.dp))
+
+                    Text(
+                        text = member.userName,
+                        style = TogedyTheme.typography.body12m,
+                        color = TogedyTheme.colors.green,
+                    )
+                }
+            }
+        } else {
+            item {
                 Text(
-                    text = it.userName,
+                    text = "아직 아무도 없네요. 한 발 더 앞서 나가볼까요?",
                     style = TogedyTheme.typography.body12m,
-                    color = TogedyTheme.colors.green,
+                    color = TogedyTheme.colors.red,
                 )
             }
         }
+
 
         item {
             Spacer(Modifier.width(10.dp))
@@ -223,6 +255,7 @@ private fun MyStudyItemPreview() {
                     studyMemberCount = 5,
                     activeMemberList = listOf(),
                 ),
+                context = LocalContext.current,
                 onItemClick = {},
             )
         }

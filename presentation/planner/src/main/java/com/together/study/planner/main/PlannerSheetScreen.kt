@@ -3,6 +3,7 @@ package com.together.study.planner.main
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import com.together.study.planner.component.ImageEditBottomSheet
+import com.together.study.common.state.UiState
 import com.together.study.planner.component.PlannerCalendarTopSheet
 import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.subject.SubjectBottomSheet
@@ -15,6 +16,7 @@ import java.time.LocalDate
 internal fun PlannerSheetScreen(
     bottomSheetState: PlannerSheetState,
     selectedDate: LocalDate,
+    monthlyHeatmapState: UiState<List<Int>>,
     onDismissRequest: (PlannerSheetType) -> Unit,
     onEditSubjectClick: () -> Unit,
     onDateChange: (LocalDate) -> Unit,
@@ -42,7 +44,7 @@ internal fun PlannerSheetScreen(
             PlannerCalendarTopSheet(
                 isCalendarOpen = true,
                 selectedDate = selectedDate,
-                studyTimeList = emptyList(), //TODO: 추후 변경 필요
+                monthlyHeatmapState = monthlyHeatmapState,
                 onDismissRequest = { onDismissRequest(PlannerSheetType.CALENDAR) },
                 onDateChange = onDateChange,
             )

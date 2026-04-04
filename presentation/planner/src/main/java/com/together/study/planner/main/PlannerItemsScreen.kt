@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.common.state.UiState
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_add_24
 import com.together.study.designsystem.R.drawable.ic_kebap_menu
@@ -44,8 +45,9 @@ import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun PlannerItemsScreen(
-    subjects: List<PlannerSubject>,
+    plannerSubjectState: UiState<List<PlannerSubject>>,
     modifier: Modifier = Modifier,
+    onTodoContentChange: (Long?, String) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
@@ -68,33 +70,45 @@ internal fun PlannerItemsScreen(
                 )
             },
     ) {
-        item {
-            Text(
-                text = "할 일",
-                style = TogedyTheme.typography.body12m,
-                color = TogedyTheme.colors.gray800,
-            )
+        when (plannerSubjectState) {
+            is UiState.Loading -> {}
 
-            Spacer(Modifier.height(8.dp))
-        }
+            is UiState.Failure -> {}
 
-        itemsIndexed(subjects) { index, subject ->
-            var todoItems by remember(subject.tasks) { mutableStateOf(subject.tasks) }
+            is UiState.Success -> {
+                val subjects = plannerSubjectState.data
 
-            SubjectSection(
-                subjectName = subject.subjectName,
-                subjectColor = subject.subjectColor,
-                todoItems = todoItems,
-                onPlusButtonClick = {
-                    todoItems = todoItems.plus(Todo())
-                },
-                onTodoContentChange = { id, content -> },
-                onTodoEditButtonClick = {},
-            )
+                item {
+                    Text(
+                        text = "할 일",
+                        style = TogedyTheme.typography.body12m,
+                        color = TogedyTheme.colors.gray800,
+                    )
 
-            Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(8.dp))
+                }
 
-            if (index == subjects.lastIndex) Spacer(Modifier.height(20.dp))
+                itemsIndexed(subjects) { index, subject ->
+                    var todoItems by remember(subject.tasks) { mutableStateOf(subject.tasks) }
+
+                    SubjectSection(
+                        subjectName = subject.subjectName,
+                        subjectColor = subject.subjectColor,
+                        todoItems = todoItems,
+                        onPlusButtonClick = {
+                            todoItems = todoItems.plus(Todo())
+                        },
+                        onTodoContentChange = onTodoContentChange,
+                        onTodoEditButtonClick = {},
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    if (index == subjects.lastIndex) Spacer(Modifier.height(20.dp))
+                }
+            }
+
+            else -> {}
         }
     }
 }
@@ -103,9 +117,9 @@ internal fun PlannerItemsScreen(
 fun SubjectSection(
     subjectName: String,
     subjectColor: String,
-    timer: String? = null,
     todoItems: List<Todo>,
     modifier: Modifier = Modifier,
+    timer: String? = null,
     onPlusButtonClick: () -> Unit,
     onTodoContentChange: (Long?, String) -> Unit,
     onTodoEditButtonClick: () -> Unit,
@@ -226,7 +240,21 @@ fun SubjectSection(
 private fun PlannerItemsScreenPreview() {
     TogedyTheme {
         PlannerItemsScreen(
-            subjects = emptyList(),
+            plannerSubjectState = UiState.Success(
+                listOf(
+                    PlannerSubject(
+                        subjectId = 1L,
+                        subjectName = "과목명",
+                        subjectColor = "#FF0000",
+                        tasks = listOf(
+                            Todo(id = 1L, content = "투두 아이템 1", state = 0),
+                            Todo(id = 2L, content = "투두 아이템 2", state = 1),
+                            Todo(id = 3L, content = "투두 아이템 3", state = 0),
+                        )
+                    )
+                )
+            ),
+            onTodoContentChange = { _, _ -> },
         )
     }
 }

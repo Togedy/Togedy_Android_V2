@@ -3,6 +3,7 @@ package com.together.study.main
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -31,6 +32,7 @@ import com.together.study.designsystem.component.toast.TogedyToast
 import com.together.study.gallery.navigation.galleryGraph
 import com.together.study.gallery.navigation.navigateToGallery
 import com.together.study.main.component.MainBottomBar
+import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
@@ -99,7 +101,9 @@ fun MainScreen(
             ) {
                 MainNavHost(
                     navigator = navigator,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding)
                 )
             }
         }
@@ -157,6 +161,7 @@ private fun MainNavHost(
                     StudyRole.MEMBER -> navigator.navController.navigateToMemberSettingsScreen(id)
                 }
             },
+            navigateToTimer = navigator.navController::navigateToTimer,
             modifier = modifier,
         )
 
@@ -225,6 +230,15 @@ private fun MainNavHost(
 
         timerGraph(
             navigateToUp = navigator.navController::popBackStack,
+            modifier = modifier,
+        )
+
+        myPageGraph(
+            navigateToUp = navigator.navController::popBackStack,
+            navigateToCreateStudy = navigator.navController::navigateToStudyUpdate,
+            navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
+            navigateToStudy = navigator.navController::navigateToStudy,
+            navController = navigator.navController,
             modifier = modifier,
         )
 
