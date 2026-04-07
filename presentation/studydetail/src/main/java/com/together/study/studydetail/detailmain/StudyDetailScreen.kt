@@ -250,7 +250,7 @@ private fun StudyDetailSuccessScreen(
                 studyTag = studyInfo.studyTag,
                 studyName = studyInfo.studyName,
                 studyDescription = studyInfo.studyDescription,
-                studyTier = studyInfo.studyTag,
+                studyTier = studyInfo.studyTier,
                 studyMemberCount = studyInfo.studyMemberCount,
                 studyMemberLimit = studyInfo.studyMemberLimit,
                 modifier = Modifier,
