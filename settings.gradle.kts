@@ -36,7 +36,7 @@ include(
     ":data:search",
     ":data:dummy",
     ":data:study",
-    ":data:chatbot"
+    ":data:chatbot",
     ":data:planner",
     ":data:user",
     ":data:mypage",
