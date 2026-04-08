@@ -19,9 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -32,10 +34,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.together.study.common.type.study.StudyTier
 import com.together.study.common.type.study.StudyType
 import com.together.study.designsystem.R.drawable.ic_lock
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.textchip.TogedyBasicTextChip
+import com.together.study.designsystem.mapper.StudyTierUiMapper.toUiModel
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.model.ExploreStudyItem
 import com.together.study.util.noRippleClickable
@@ -152,6 +156,7 @@ internal fun StudyItem(
 
                 MemberAndPassword(
                     context = context,
+                    studyTier = studyTier,
                     studyLeaderImageUrl = studyLeaderImageUrl,
                     studyMemberCount = studyMemberCount,
                     studyMemberLimit = studyMemberLimit,
@@ -165,6 +170,7 @@ internal fun StudyItem(
 @Composable
 private fun MemberAndPassword(
     context: Context,
+    studyTier: String?,
     studyLeaderImageUrl: String,
     studyMemberCount: Int,
     studyMemberLimit: Int,
@@ -206,6 +212,20 @@ private fun MemberAndPassword(
             },
             style = TogedyTheme.typography.body12m
         )
+
+        if (studyTier != null) {
+            val tier = StudyTier.get(studyTier)
+            val uiModel = tier.toUiModel()
+
+            Spacer(Modifier.width(4.dp))
+
+            Icon(
+                painter = painterResource(uiModel.iconRes),
+                contentDescription = uiModel.label,
+                modifier = Modifier.height(14.dp),
+                tint = Color.Unspecified,
+            )
+        }
 
         if (hasPassword) {
             Spacer(Modifier.width(4.dp))
