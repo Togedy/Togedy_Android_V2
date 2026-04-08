@@ -4,9 +4,9 @@ enum class StudyTier(val title: String) {
     BRONZE_1(title = "Bronze1"),
     BRONZE_2(title = "Bronze2"),
     BRONZE_3(title = "Bronze3"),
-    SLIVER_1(title = "Sliver1"),
-    SLIVER_2(title = "Sliver2"),
-    SLIVER_3(title = "Sliver3"),
+    SILVER_1(title = "Silver1"),
+    SILVER_2(title = "Silver2"),
+    SILVER_3(title = "Silver3"),
     GOLD_1(title = "Gold1"),
     GOLD_2(title = "Gold2"),
     GOLD_3(title = "Gold3"),
@@ -15,11 +15,12 @@ enum class StudyTier(val title: String) {
 
     companion object {
         fun get(studyTier: String): StudyTier {
-            return try {
-                StudyTier.valueOf(studyTier.uppercase())
-            } catch (e: Exception) {
-                BRONZE_1
-            }
+            val normalized = studyTier.replace("_", "").lowercase()
+
+            return StudyTier.entries.find {
+                it.name.replace("_", "").lowercase() == normalized ||
+                        it.title.replace(" ", "").lowercase() == normalized
+            } ?: BRONZE_1
         }
     }
 }

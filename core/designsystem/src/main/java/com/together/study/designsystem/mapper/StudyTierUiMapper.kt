@@ -22,17 +22,17 @@ object StudyTierUiMapper {
                 label = "브론즈 3",
             )
 
-            StudyTier.SLIVER_1 -> StudyTierUiModel(
+            StudyTier.SILVER_1 -> StudyTierUiModel(
                 iconRes = R.drawable.tier_sliver_1,
                 label = "실버 1",
             )
 
-            StudyTier.SLIVER_2 -> StudyTierUiModel(
+            StudyTier.SILVER_2 -> StudyTierUiModel(
                 iconRes = R.drawable.tier_sliver_2,
                 label = "실버 2",
             )
 
-            StudyTier.SLIVER_3 -> StudyTierUiModel(
+            StudyTier.SILVER_3 -> StudyTierUiModel(
                 iconRes = R.drawable.tier_sliver_3,
                 label = "실버 3",
             )
