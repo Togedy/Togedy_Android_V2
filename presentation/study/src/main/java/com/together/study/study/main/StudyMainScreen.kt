@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +37,7 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.R.drawable.ic_search_24
+import com.together.study.designsystem.R.drawable.ic_pen_with_box
 import com.together.study.designsystem.R.drawable.img_character_challenge
 import com.together.study.designsystem.R.drawable.img_character_speaker_no_gradient
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
@@ -102,6 +104,7 @@ private fun StudyMainScreen(
     onJoinableClick: () -> Unit,
     onChallengeClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var isSortBottomSheetVisible by remember { mutableStateOf(false) }
     val mainColor =
@@ -213,6 +216,7 @@ private fun StudyMainScreen(
                                             ) {
                                                 MyStudyItem(
                                                     study = study,
+                                                    context = context,
                                                     onItemClick = { onStudyItemClick(study.studyId) },
                                                 )
                                             }
@@ -271,9 +275,9 @@ private fun StudyMainScreen(
                     }
                 }
 
-                StudyMainTab.BADGE -> {
-                    /* TODO() : 추후 스프린트 */
-                }
+//                /* 추후 스프린트 */
+//                StudyMainTab.BADGE -> {
+//                }
             }
         }
     }
@@ -317,7 +321,7 @@ private fun TitleSection(
 
         Box {
             Icon(
-                imageVector = ImageVector.vectorResource(ic_search_24),
+                imageVector = ImageVector.vectorResource(ic_pen_with_box),
                 contentDescription = "스터디 생성 버튼",
                 tint = mainColor,
                 modifier = Modifier.noRippleClickable {

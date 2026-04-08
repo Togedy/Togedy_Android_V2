@@ -34,7 +34,7 @@ import com.together.study.common.type.planner.toPlannerSubjectColorEnum
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.SubjectItem
 import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
@@ -43,22 +43,18 @@ import com.together.study.util.noRippleClickable
 internal fun SubjectDetailBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    plannerSubject: PlannerSubject? = null,
+    subject: SubjectItem? = null,
     onDismissRequest: () -> Unit,
-    onDoneClick: (PlannerSubject) -> Unit,
+    onDoneClick: (SubjectItem) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val bottomSheetHeight = screenHeight * 0.765f
 
-    val title = if (plannerSubject == null) "과목 추가" else "과목 수정"
+    val title = if (subject == null) "과목 추가" else "과목 수정"
     val textStyle = TogedyTheme.typography.title16sb
 
-    var subjectName by remember { mutableStateOf(plannerSubject?.subjectName ?: "") }
-    var selectedColor by remember {
-        mutableStateOf(
-            plannerSubject?.subjectColor ?: "SUBJECT_COLOR1"
-        )
-    }
+    var subjectName by remember { mutableStateOf(subject?.subjectName ?: "") }
+    var selectedColor by remember { mutableStateOf(subject?.subjectColor ?: "SUBJECT_COLOR1") }
 
     TogedyBottomSheet(
         sheetState = sheetState,
@@ -67,18 +63,17 @@ internal fun SubjectDetailBottomSheet(
         showDone = true,
         isDoneActivate = subjectName.isNotEmpty(),
         onDoneClick = {
-            if (plannerSubject == null) onDoneClick(
-                PlannerSubject(
+            if (subject == null) onDoneClick(
+                SubjectItem(
                     subjectName = subjectName,
                     subjectColor = selectedColor,
                 )
             )
             else onDoneClick(
-                PlannerSubject(
-                    subjectId = plannerSubject.subjectId,
+                SubjectItem(
+                    subjectId = subject.subjectId,
                     subjectName = subjectName,
                     subjectColor = selectedColor,
-                    tasks = plannerSubject.tasks,
                 )
             )
         },
@@ -87,7 +82,7 @@ internal fun SubjectDetailBottomSheet(
             .height(bottomSheetHeight),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             Row(
                 modifier = modifier.fillMaxWidth(),
@@ -114,7 +109,7 @@ internal fun SubjectDetailBottomSheet(
                         if (subjectName.isEmpty()) {
                             Text(
                                 text = "과목명을 입력하세요..",
-                                style = textStyle.copy(color = TogedyTheme.colors.gray300)
+                                style = textStyle.copy(color = TogedyTheme.colors.gray300),
                             )
                         }
                         innerTextField()
@@ -197,7 +192,7 @@ private fun AddingSubjectDetailBottomSheetPreview(modifier: Modifier = Modifier)
     TogedyTheme {
         SubjectDetailBottomSheet(
             sheetState = sheetState,
-            plannerSubject = null,
+            subject = null,
             onDismissRequest = {},
             onDoneClick = {},
             modifier = modifier,
@@ -214,7 +209,7 @@ private fun EditingSubjectDetailBottomSheetPreview(modifier: Modifier = Modifier
     TogedyTheme {
         SubjectDetailBottomSheet(
             sheetState = sheetState,
-            plannerSubject = PlannerSubject(0, "수학", "SUBJECT_COLOR2", emptyList()),
+            subject = SubjectItem(0, "수학", "SUBJECT_COLOR2"),
             onDismissRequest = {},
             onDoneClick = {},
             modifier = modifier,

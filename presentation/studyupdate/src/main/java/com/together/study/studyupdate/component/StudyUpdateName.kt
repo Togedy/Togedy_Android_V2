@@ -14,6 +14,7 @@ internal fun StudyUpdateName(
     onValueChange: (String) -> Unit,
     onDupCheckClick: () -> Unit,
     isError: Boolean = false,
+    isPassed: Boolean = false,
     errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
@@ -31,6 +32,7 @@ internal fun StudyUpdateName(
             showDupCheck = true,
             onDupCheckClick = onDupCheckClick,
             isError = isError,
+            isPassed = isPassed,
             errorMessage = errorMessage
         )
     }

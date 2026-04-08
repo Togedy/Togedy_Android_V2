@@ -79,7 +79,7 @@ internal fun ChatBotChatContent(
                     shouldAnimate = isNewMessage,
                     modifier = if (index == 0) Modifier.padding(top = 15.dp) else Modifier,
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
@@ -111,7 +111,9 @@ private fun AnimatedChatItem(
         ChatItem(
             message = if (chatMessage.isMine) chatMessage.message else chatMessage.displayedText,
             isMine = chatMessage.isMine,
-            hasIcon = !chatMessage.isMine,
+//            hasIcon = !chatMessage.isMine,
+            hasIcon = true, // 임의 사용자 아이콘 설정, 추후 변경 예정
+            isLoading = chatMessage.isLoading,
             textColor = if (chatMessage.isLoading) TogedyTheme.colors.gray500 else null,
         )
     }

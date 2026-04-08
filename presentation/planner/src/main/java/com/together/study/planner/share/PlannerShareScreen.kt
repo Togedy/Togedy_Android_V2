@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.together.study.calendar.model.DDay
 import com.together.study.common.event.TogedyUiEvent
 import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.common.state.UiState
@@ -41,10 +40,11 @@ import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
+import com.together.study.planner.model.ShareInfo
+import com.together.study.planner.main.ShareTimeTableContent
 import com.together.study.planner.share.component.PlannerContent
 import com.together.study.planner.share.component.ShareOptionBottomSheet
 import com.together.study.planner.share.component.ShareTimerSection
-import com.together.study.planner.share.state.PlannerShareInfo
 import com.together.study.util.image.captureComposable
 import com.together.study.util.image.saveBitmapToGallery
 import com.together.study.util.toLocalDate
@@ -60,7 +60,7 @@ internal fun PlannerShareRoute(
     val subjects by viewModel.subjects.collectAsStateWithLifecycle()
     val selectedSubjects by viewModel.selectedSubjects.collectAsStateWithLifecycle()
     val isAllSelected by viewModel.isAllSelected.collectAsStateWithLifecycle()
-    val showTodo by viewModel.showTodo.collectAsStateWithLifecycle()
+    val showTask by viewModel.showTask.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val view = LocalView.current
@@ -103,7 +103,7 @@ internal fun PlannerShareRoute(
                 subjects = subjects,
                 selectedSubjects = selectedSubjects,
                 isAllSelected = isAllSelected,
-                showTodo = showTodo,
+                showTask = showTask,
                 modifier = modifier,
                 onBackButtonClick = onBackButtonClick,
                 getTargetBound = { targetBounds = it },
@@ -111,7 +111,7 @@ internal fun PlannerShareRoute(
                     showEditButton = false
                     captureRequested = true
                 },
-                onShowTodoChanged = viewModel::updateShowTodo,
+                onShowTaskChanged = viewModel::updateShowTask,
                 onSelectAllSubjectChanged = viewModel::updateIsAllSelected,
                 onSubjectClick = viewModel::updateSelectedSubjects,
             )
@@ -126,16 +126,16 @@ internal fun PlannerShareRoute(
 fun PlannerShareScreen(
     context: Context,
     showEditButton: Boolean,
-    plannerShareInfo: PlannerShareInfo,
+    plannerShareInfo: ShareInfo,
     subjects: List<PlannerSubject>,
     selectedSubjects: List<Long>,
     isAllSelected: Boolean,
-    showTodo: Boolean,
+    showTask: Boolean,
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
     getTargetBound: (Rect) -> Unit,
     onConfirmButtonClick: () -> Unit,
-    onShowTodoChanged: () -> Unit,
+    onShowTaskChanged: () -> Unit,
     onSelectAllSubjectChanged: () -> Unit,
     onSubjectClick: (Long) -> Unit,
 ) {
@@ -181,10 +181,12 @@ fun PlannerShareScreen(
                 ) {
                     ShareTimerSection(
                         context = context,
-                        timerImageUrl = plannerShareInfo.image,
+                        timerImageUrl = plannerShareInfo.image ?: "",
                         currentDate = plannerShareInfo.date.toLocalDate() ?: LocalDate.now(),
                         timer = plannerShareInfo.totalStudyTime,
-                        dDay = plannerShareInfo.dDay,
+                        hasDDay = plannerShareInfo.hasDday,
+                        remainingDays = plannerShareInfo.remainingDays,
+                        dDayName = plannerShareInfo.userScheduleName,
                     )
 
                     Row(
@@ -194,20 +196,17 @@ fun PlannerShareScreen(
                             .padding(top = 8.dp),
                     ) {
                         PlannerContent(
-                            showTodo = showTodo,
-                            plans = plannerShareInfo.plannerItemList,
+                            showTask = showTask,
+                            plans = plannerShareInfo.plannerItems,
                             selectedSubjects = selectedSubjects,
                             modifier = Modifier.weight(1f),
                         )
 
                         Spacer(Modifier.width(10.dp))
 
-                        // TODO : TimeTable() 영역으로 변경
-                        Box(
-                            modifier = Modifier
-                                .background(TogedyTheme.colors.gray200)
-                                .height(100.dp)
-                                .weight(1f),
+                        ShareTimeTableContent(
+                            timeTables = plannerShareInfo.timeTables,
+                            modifier = Modifier.weight(1f),
                         )
                     }
                 }
@@ -236,10 +235,10 @@ fun PlannerShareScreen(
         ShareOptionBottomSheet(
             subjects = subjects,
             onDismissRequest = { isShareOptionVisible = false },
-            showTodo = showTodo,
+            showTask = showTask,
             selectAllSubject = isAllSelected,
             selectedSubjects = selectedSubjects,
-            onShowTodoChanged = onShowTodoChanged,
+            onShowTaskChanged = onShowTaskChanged,
             onSelectAllSubjectChanged = onSelectAllSubjectChanged,
             onSubjectClick = onSubjectClick,
         )
@@ -253,22 +252,24 @@ private fun PlannerShareScreenPreview() {
         PlannerShareScreen(
             context = LocalContext.current,
             showEditButton = true,
-            plannerShareInfo = PlannerShareInfo(
-                date = "2023-08-10",
-                dDay = DDay(true, "수능", -100),
-                totalStudyTime = "12:00:05",
-                image = "",
-                plannerItemList = listOf(),
-                timeTableList = listOf(),
+            plannerShareInfo = ShareInfo(
+                date = "2024-06-01",
+                totalStudyTime = "12:00:01",
+                hasDday = true,
+                remainingDays = 5,
+                userScheduleName = "시험",
+                plannerItems = listOf(),
+                timeTables = listOf(),
+                image = null,
             ),
             subjects = listOf(),
             selectedSubjects = listOf(),
             isAllSelected = false,
-            showTodo = true,
+            showTask = true,
             onBackButtonClick = {},
             getTargetBound = {},
             onConfirmButtonClick = {},
-            onShowTodoChanged = {},
+            onShowTaskChanged = {},
             onSelectAllSubjectChanged = {},
             onSubjectClick = {},
         )

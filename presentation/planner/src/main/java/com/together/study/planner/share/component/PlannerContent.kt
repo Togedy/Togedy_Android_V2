@@ -23,14 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.model.PlannerItem
+import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.TaskItem
 import com.together.study.util.asColor
 
 @Composable
 internal fun PlannerContent(
-    showTodo: Boolean,
-    plans: List<PlannerItem>,
+    showTask: Boolean,
+    plans: List<PlannerSubject>,
     selectedSubjects: List<Long>,
     modifier: Modifier = Modifier,
 ) {
@@ -69,13 +69,13 @@ internal fun PlannerContent(
                 Spacer(Modifier.weight(1f))
 
                 Text(
-                    text = "${plan.checkedTaskCount}",
+                    text = "${plan.checkedTaskCount ?: ""}",
                     style = TogedyTheme.typography.body10m,
                     color = TogedyTheme.colors.green,
                 )
 
                 Text(
-                    text = "/${plan.totalTaskCount}",
+                    text = if (plan.totalTaskCount != null) "/${plan.totalTaskCount}" else "",
                     style = TogedyTheme.typography.body10m,
                     color = TogedyTheme.colors.gray700,
                 )
@@ -83,13 +83,13 @@ internal fun PlannerContent(
 
             HorizontalDivider(color = TogedyTheme.colors.gray200)
 
-            if (showTodo && plan.taskList.isNotEmpty() && plan.subjectId in selectedSubjects) {
-                plan.taskList.take(5).forEach { todo ->
+            if (showTask && plan.tasks.isNotEmpty() && plan.subjectId in selectedSubjects) {
+                plan.tasks.take(5).forEach { task ->
                     val textColor =
-                        if (todo.isChecked) TogedyTheme.colors.gray500
+                        if (task.isChecked) TogedyTheme.colors.gray500
                         else TogedyTheme.colors.black
                     val textDeco =
-                        if (todo.isChecked) TextDecoration.LineThrough
+                        if (task.isChecked) TextDecoration.LineThrough
                         else null
 
                     Row(
@@ -105,7 +105,7 @@ internal fun PlannerContent(
                         )
 
                         Text(
-                            text = todo.taskName,
+                            text = task.taskName ?: "",
                             style = TogedyTheme.typography.body10m,
                             color = textColor,
                             textDecoration = textDeco,
@@ -126,17 +126,23 @@ internal fun PlannerContent(
 private fun PlannerContentPreview() {
     TogedyTheme {
         PlannerContent(
-            showTodo = true,
+            showTask = true,
             plans = listOf(
-                PlannerItem(
-                    subjectId = 1,
+                PlannerSubject(
+                    subjectId = 1L,
                     subjectName = "수학",
-                    subjectColor = "SUBJECT_COLOR2",
-                    totalTaskCount = 10,
-                    checkedTaskCount = 5,
-                    taskList = listOf(
-                        TaskItem(1, "할 일1", false),
-                        TaskItem(2, "EBS 수학", true),
+                    subjectColor = "#FF0000",
+                    tasks = listOf(
+                        TaskItem(1L, "문제집 풀기", true),
+                        TaskItem(2L, "문제집 풀기2", true),
+                    )
+                ),
+                PlannerSubject(
+                    subjectId = 2L,
+                    subjectName = "영어",
+                    subjectColor = "#00FF00",
+                    tasks = listOf(
+                        TaskItem(3L, "문제집 풀기", true),
                     )
                 ),
             ),

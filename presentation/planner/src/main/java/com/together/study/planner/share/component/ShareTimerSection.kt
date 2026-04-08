@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.together.study.calendar.model.DDay
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.component.TodoSection
+import com.together.study.planner.component.DDaySection
 import com.together.study.util.formatToYearMonthDate
 import java.time.LocalDate
 
@@ -39,20 +38,23 @@ internal fun ShareTimerSection(
     timerImageUrl: String,
     currentDate: LocalDate,
     timer: String,
-    dDay: DDay,
+    hasDDay: Boolean,
+    remainingDays: Int?,
+    dDayName: String?,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
+            .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 20.dp)
+            .aspectRatio(328f / 114f)
             .clip(RoundedCornerShape(16.dp)),
     ) {
         AsyncImage(
             model = ImageRequest
                 .Builder(context)
                 .data(timerImageUrl)
+                .allowHardware(false)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -60,7 +62,6 @@ internal fun ShareTimerSection(
                 color = TogedyTheme.colors.gray500.copy(alpha = 0.5f),
                 blendMode = BlendMode.Darken,
             ),
-            modifier = Modifier.height(114.dp),
             error = ColorPainter(Color.White),
             placeholder = ColorPainter(Color.White),
             fallback = ColorPainter(Color.White),
@@ -97,10 +98,10 @@ internal fun ShareTimerSection(
                 color = TogedyTheme.colors.white,
             )
 
-            if (dDay.hasDday) {
-                TodoSection(
-                    dDay = dDay,
-                    textColor = TogedyTheme.colors.white,
+            if (hasDDay) {
+                DDaySection(
+                    userScheduleName = dDayName,
+                    remainingDays = remainingDays,
                 )
             } else {
                 Spacer(Modifier.height(14.dp))
@@ -123,7 +124,9 @@ private fun ShareTimerSectionPreview() {
             timerImageUrl = "",
             currentDate = LocalDate.now(),
             timer = "00:00:00",
-            dDay = DDay(true, "수능", 50),
+            hasDDay = true,
+            remainingDays = 3,
+            dDayName = "시험",
         )
     }
 }

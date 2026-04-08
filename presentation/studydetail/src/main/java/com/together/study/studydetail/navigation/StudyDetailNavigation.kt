@@ -18,12 +18,14 @@ fun NavController.navigateToStudyDetail(
 fun NavGraphBuilder.studyDetailGraph(
     navigateToUp: () -> Unit,
     navigateToStudySettings: (Long, StudyRole) -> Unit,
+    navigateToTimer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<StudyDetail> {
         StudyDetailRoute(
             onBackClick = navigateToUp,
             onSettingsNavigate = navigateToStudySettings,
+            onTimerNavigate = navigateToTimer,
             modifier = modifier,
         )
     }

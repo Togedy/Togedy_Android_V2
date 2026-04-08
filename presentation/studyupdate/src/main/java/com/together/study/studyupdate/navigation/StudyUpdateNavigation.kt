@@ -82,12 +82,7 @@ fun NavGraphBuilder.studyUpdateGraph(
         StudyUpdateDoneRoute(
             onBackClick = navigateToUp,
             onEditClick = {
-                navController.navigateToStudy(
-                    navOptions = navOptions {
-                        popUpTo(Study) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                )
+                navController.popBackStack()
             },
             onStartClick = {
                 navController.navigateToStudy(

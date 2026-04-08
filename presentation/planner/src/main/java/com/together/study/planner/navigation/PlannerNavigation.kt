@@ -9,7 +9,7 @@ import com.together.study.common.navigation.MainTabRoute
 import com.together.study.common.navigation.Route
 import com.together.study.planner.main.PlannerScreen
 import com.together.study.planner.share.PlannerShareRoute
-import com.together.study.planner.subject.SubjectDetailRoute
+import com.together.study.planner.subject.SubjectEditRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToPlanner(
@@ -29,6 +29,7 @@ fun NavController.navigateToSharePlanner(
 
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
+    navigateToGallery: (String) -> Unit,
     navigateToTimer: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -39,11 +40,12 @@ fun NavGraphBuilder.plannerGraph(
             onShareNavigate = navController::navigateToSharePlanner,
             onTimerNavigate = navigateToTimer,
             onEditSubjectNavigate = navController::navigateToSubjectDetail,
+            onImageEditNavigate = navigateToGallery,
         )
     }
 
     composable<SubjectDetail> {
-        SubjectDetailRoute(
+        SubjectEditRoute(
             onBackButtonClick = navigateToUp,
             modifier = modifier,
         )

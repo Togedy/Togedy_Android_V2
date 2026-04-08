@@ -64,6 +64,10 @@ dependencies {
     implementation(projects.data.study)
     implementation(projects.data.search)
     implementation(projects.data.auth)
+    implementation(projects.data.gallery)
+    implementation(projects.data.planner)
+    implementation(projects.data.user)
+    implementation(projects.data.mypage)
     implementation(projects.presentation.main)
 
     implementation(libs.androidx.appcompat)
