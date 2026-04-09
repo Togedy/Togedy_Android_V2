@@ -326,6 +326,13 @@ private fun MainNavHost(
             navigateToCreateStudy = navigator.navController::navigateToStudyUpdate,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
             navigateToStudy = navigator.navController::navigateToStudy,
+            navigateToLogin = {
+                navigator.navController.navigateToLogin(
+                    navOptions {
+                        popUpTo(navigator.navController.graph.id) { inclusive = true }
+                    }
+                )
+            },
             navController = navigator.navController,
             modifier = modifier,
         )
