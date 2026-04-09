@@ -27,6 +27,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     private fun String.removeBearerPrefix(): String = removePrefix(BEARER_PREFIX).trim()
 
+    override suspend fun postLogout(): Result<Unit> =
+        runCatching {
+            authDataSource.postLogout()
+            tokenDataStore.clearTokens()
+        }
+
     companion object {
         private const val BEARER_PREFIX = "Bearer "
     }
