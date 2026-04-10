@@ -47,7 +47,7 @@ internal fun StatisticsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .padding(14.dp),
+            .padding(horizontal = 14.dp),
     ) {
         when (statisticsState) {
             is UiState.Loading -> {}
@@ -56,6 +56,10 @@ internal fun StatisticsScreen(
 
             is UiState.Success -> {
                 val statistics = statisticsState.data
+                item {
+                    Spacer(Modifier.height(14.dp))
+                }
+
                 item {
                     WeeklyStatistics(statistics.weeklyReview)
 

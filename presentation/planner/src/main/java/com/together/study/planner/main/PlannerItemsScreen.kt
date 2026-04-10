@@ -69,7 +69,6 @@ internal fun PlannerItemsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .padding(top = 14.dp)
             .padding(horizontal = 14.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
@@ -78,6 +77,8 @@ internal fun PlannerItemsScreen(
             },
     ) {
         item {
+            Spacer(Modifier.height(14.dp))
+
             Text(
                 text = "할 일",
                 style = TogedyTheme.typography.body12m,
