@@ -99,6 +99,7 @@ internal fun ProfileEditRoute(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ProfileEditScreen(
     userName: String,
@@ -202,6 +203,16 @@ internal fun ProfileEditScreen(
     }
 
     if (isEditBottomSheetVisible) {
-        // TODO: 이미지 바텀시트 연결
+        ImageEditBottomSheet(
+            onDismissRequest = onEditBottomSheetStateChange,
+            onDeleteClick = {
+                onImageDeleteButtonClick(null)
+                onEditBottomSheetStateChange()
+            },
+            onEditClick = {
+                onEditBottomSheetStateChange()
+                onImageEditButtonClick()
+            },
+        )
     }
 }
