@@ -27,6 +27,7 @@ fun NavGraphBuilder.galleryGraph(
     modifier: Modifier = Modifier,
     navigateToUp: () -> Unit,
     onUploadSuccess: () -> Unit,
+    onProfileCropSuccess: ((String) -> Unit)? = null,
     navController: NavController,
 ) {
     composable<TogedyGallery> { backStackEntry ->
@@ -42,11 +43,19 @@ fun NavGraphBuilder.galleryGraph(
 
     composable<TogedyCropImage> { backStackEntry ->
         val route = backStackEntry.toRoute<TogedyCropImage>()
+        val isProfile = route.date == "profile"
+        val cropShape = if (isProfile) {
+            CropShapeType.Circle
+        } else {
+            CropShapeType.Rect(aspectRatio = 1f)
+        }
+
         ImageCropScreen(
             imageId = route.imageId,
-            cropShape = CropShapeType.Rect(aspectRatio = 1f),
+            cropShape = cropShape,
             onBackClick = navigateToUp,
             onUploadSuccess = onUploadSuccess,
+            onCropSuccess = if (isProfile) onProfileCropSuccess else null,
             modifier = modifier,
         )
     }

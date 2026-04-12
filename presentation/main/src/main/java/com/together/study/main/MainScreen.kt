@@ -38,6 +38,8 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.navigation.TogedyGallery
 import com.together.study.gallery.navigation.galleryGraph
 import com.together.study.gallery.navigation.navigateToGallery
+import com.together.study.mypage.navigation.CROPPED_IMAGE_PATH_KEY
+import com.together.study.mypage.navigation.ProfileEdit
 import com.together.study.main.component.MainBottomBar
 import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.planner.navigation.plannerGraph
@@ -294,6 +296,7 @@ private fun MainNavHost(
             navigateToCreateStudy = navigator.navController::navigateToStudyUpdate,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
             navigateToStudy = navigator.navController::navigateToStudy,
+            navigateToGallery = { navigator.navController.navigateToGallery("profile") },
             navController = navigator.navController,
             modifier = modifier,
         )
@@ -308,6 +311,11 @@ private fun MainNavHost(
                     icon = com.together.study.designsystem.R.drawable.ic_check_green,
                     yOffset = togedyToast.toastBasicOffset(),
                 )
+            },
+            onProfileCropSuccess = { filePath ->
+                navigator.navController.getBackStackEntry<ProfileEdit>()
+                    .savedStateHandle[CROPPED_IMAGE_PATH_KEY] = filePath
+                navigator.navController.popBackStack<TogedyGallery>(inclusive = true)
             },
             navController = navigator.navController,
             modifier = modifier,
