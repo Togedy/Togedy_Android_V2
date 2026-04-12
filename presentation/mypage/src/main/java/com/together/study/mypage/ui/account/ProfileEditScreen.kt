@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +39,7 @@ import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.mypage.component.ImageEditBottomSheet
 import com.together.study.mypage.component.MyTextField
 import com.together.study.mypage.event.ProfileEditEvent
 import com.together.study.util.noRippleClickable
@@ -46,6 +48,8 @@ import com.together.study.util.noRippleClickable
 internal fun ProfileEditRoute(
     onBackClick: () -> Unit,
     onGalleryNavigate: () -> Unit,
+    croppedImagePath: String? = null,
+    onCroppedImageConsumed: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ProfileEditViewModel = hiltViewModel(),
 ) {
@@ -53,6 +57,13 @@ internal fun ProfileEditRoute(
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val eventFlow = viewModel.eventFlow
+
+    LaunchedEffect(croppedImagePath) {
+        croppedImagePath?.let { path ->
+            viewModel.updateUserProfileImageUrl("file://$path")
+            onCroppedImageConsumed()
+        }
+    }
 
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->

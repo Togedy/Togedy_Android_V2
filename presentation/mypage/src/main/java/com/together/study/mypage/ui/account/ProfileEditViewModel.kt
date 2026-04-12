@@ -82,11 +82,14 @@ class ProfileEditViewModel @Inject constructor(
     }
 
     fun updateProfile() = viewModelScope.launch {
-        val removeImg = uiState.value.image == null
+        val state = _uiState.value
+        val originImage = (state.profileState as? UiState.Success)?.data?.originImage
+        val isImageChanged = state.image != originImage
+        val removeImg = state.image == null && originImage != null
 
         updateUserInfoUseCase(
-            userName = uiState.value.name,
-            userProfileImage = uiState.value.image,
+            userName = state.name,
+            userProfileImage = if (isImageChanged && !removeImg) state.image else null,
             removeUserProfileImage = removeImg,
         )
             .onSuccess { _eventFlow.emit(ProfileEditEvent.UpdateProfileSuccess) }
