@@ -77,6 +77,7 @@ internal fun ImageCropScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onUploadSuccess: () -> Unit,
+    onCropSuccess: ((String) -> Unit)? = null,
     viewModel: ImageCropViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -287,7 +288,14 @@ internal fun ImageCropScreen(
 
     LaunchedEffect(uiState) {
         when (val state = uiState) {
-            is ImageCropUiState.Success -> onUploadSuccess()
+            is ImageCropUiState.Success -> {
+                val filePath = state.filePath
+                if (filePath != null && onCropSuccess != null) {
+                    onCropSuccess(filePath)
+                } else {
+                    onUploadSuccess()
+                }
+            }
             is ImageCropUiState.Error -> {
                 TogedyUiEventBus.send(
                     TogedyUiEvent.ShowToast(message = state.message)

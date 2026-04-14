@@ -26,18 +26,28 @@ class ImageCropViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ImageCropUiState>(ImageCropUiState.Idle)
     val uiState: StateFlow<ImageCropUiState> = _uiState.asStateFlow()
 
+    private val isCropOnly = route.date == PROFILE_DATE
+
     fun cropAndUpload(request: CropRequest) {
         viewModelScope.launch {
             _uiState.value = ImageCropUiState.Loading
             cropImageUseCase(request)
                 .onSuccess { filePath ->
-                    uploadImageUseCase(filePath, route.date)
-                        .onSuccess { _uiState.value = ImageCropUiState.Success }
-                        .onFailure { _uiState.value = ImageCropUiState.Error(it.message ?: "업로드 실패") }
+                    if (isCropOnly) {
+                        _uiState.value = ImageCropUiState.Success(filePath = filePath)
+                    } else {
+                        uploadImageUseCase(filePath, route.date)
+                            .onSuccess { _uiState.value = ImageCropUiState.Success() }
+                            .onFailure { _uiState.value = ImageCropUiState.Error(it.message ?: "업로드 실패") }
+                    }
                 }
                 .onFailure {
                     _uiState.value = ImageCropUiState.Error(it.message ?: "크롭 실패")
                 }
         }
+    }
+
+    companion object {
+        const val PROFILE_DATE = "profile"
     }
 }
