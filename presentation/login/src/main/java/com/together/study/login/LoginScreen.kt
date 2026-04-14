@@ -55,6 +55,7 @@ import timber.log.Timber
 @Composable
 internal fun LoginRoute(
     onNavigateToCalendar: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -67,6 +68,9 @@ internal fun LoginRoute(
             when (event) {
                 is LoginUiEvent.NavigateToCalendar -> {
                     onNavigateToCalendar()
+                }
+                is LoginUiEvent.NavigateToOnboarding -> {
+                    onNavigateToOnboarding()
                 }
                 is LoginUiEvent.ShowError -> {
                     togedyToast.makeText(

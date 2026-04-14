@@ -34,8 +34,7 @@ class LoginViewModel @Inject constructor(
                     if (isProfileCompleted) {
                         _uiEvent.emit(LoginUiEvent.NavigateToCalendar)
                     } else {
-                        // TODO: 온보딩 화면 추가 후 온보딩 화면으로 이동
-                        _uiEvent.emit(LoginUiEvent.NavigateToCalendar)
+                        _uiEvent.emit(LoginUiEvent.NavigateToOnboarding)
                     }
                 }
                 .onFailure { e ->

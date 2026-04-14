@@ -1,4 +1,4 @@
-package com.together.study.login.navigation
+package com.together.study.onboarding.navigation
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -6,26 +6,24 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.together.study.common.navigation.Route
-import com.together.study.login.LoginRoute
+import com.together.study.onboarding.OnboardingRoute
 import kotlinx.serialization.Serializable
 
-fun NavController.navigateToLogin(
+fun NavController.navigateToOnboarding(
     navOptions: NavOptions? = null,
-) = navigate(Login, navOptions)
+) = navigate(Onboarding, navOptions)
 
-fun NavGraphBuilder.loginGraph(
+fun NavGraphBuilder.onboardingGraph(
     modifier: Modifier = Modifier,
     navigateToCalendar: () -> Unit,
-    navigateToOnboarding: () -> Unit,
 ) {
-    composable<Login> {
-        LoginRoute(
+    composable<Onboarding> {
+        OnboardingRoute(
             onNavigateToCalendar = navigateToCalendar,
-            onNavigateToOnboarding = navigateToOnboarding,
             modifier = modifier,
         )
     }
 }
 
 @Serializable
-data object Login: Route
+data object Onboarding : Route

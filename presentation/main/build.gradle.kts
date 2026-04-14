@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.presentation.timer)
     implementation(projects.presentation.gallery)
     implementation(projects.presentation.mypage)
+    implementation(projects.presentation.onboarding)
     implementation(projects.domain.study)
     implementation(projects.domain.auth)
 

@@ -42,6 +42,9 @@ import com.together.study.login.navigation.loginGraph
 import com.together.study.login.navigation.navigateToLogin
 import com.together.study.login.splash.Splash
 import com.together.study.login.splash.splashGraph
+import com.together.study.onboarding.navigation.Onboarding
+import com.together.study.onboarding.navigation.navigateToOnboarding
+import com.together.study.onboarding.navigation.onboardingGraph
 import com.together.study.main.component.MainBottomBar
 import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.planner.navigation.plannerGraph
@@ -220,6 +223,24 @@ private fun MainNavHost(
                 navigator.navController.navigateToCalendar(
                     navOptions {
                         popUpTo(Login) { inclusive = true }
+                    }
+                )
+            },
+            navigateToOnboarding = {
+                navigator.navController.navigateToOnboarding(
+                    navOptions {
+                        popUpTo(Login) { inclusive = true }
+                    }
+                )
+            },
+        )
+
+        onboardingGraph(
+            modifier = modifier,
+            navigateToCalendar = {
+                navigator.navController.navigateToCalendar(
+                    navOptions {
+                        popUpTo(Onboarding) { inclusive = true }
                     }
                 )
             },
