@@ -69,7 +69,9 @@ include(
     ":presentation:planner",
     ":presentation:chatbot",
     ":presentation:timer",
+    ":presentation:mypage",
     ":presentation:login",
     ":presentation:mypage",
     ":presentation:gallery",
+    ":presentation:onboarding"
 )
