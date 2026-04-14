@@ -1,6 +1,7 @@
 package com.together.study.login
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,8 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +43,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.together.study.designsystem.R.drawable.ic_kakao_logo
+import com.together.study.presentation.login.R
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.theme.TogedyTheme
@@ -187,7 +193,28 @@ internal fun LoginScreen(
                 )
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(-(28).dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.togedy_character_1),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(165.dp)
+                        .offset(y = 20.dp),
+                    contentScale = ContentScale.Fit,
+                )
+                Image(
+                    painter = painterResource(R.drawable.togedy_character_2),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(160.dp),
+                    contentScale = ContentScale.Fit,
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
 
             Row(
                 modifier = Modifier
@@ -230,6 +257,8 @@ internal fun LoginScreen(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
