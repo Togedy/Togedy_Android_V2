@@ -52,6 +52,7 @@ internal fun ImageEditBottomSheet(
             SelectedItem(
                 itemName = "취소",
                 textColor = TogedyTheme.colors.gray500,
+                showDivider = false,
                 onClick = onDismissRequest,
             )
         }
@@ -63,6 +64,7 @@ private fun SelectedItem(
     itemName: String,
     textColor: Color,
     modifier: Modifier = Modifier,
+    showDivider: Boolean = true,
     onClick: () -> Unit,
 ) {
     Text(
@@ -76,8 +78,9 @@ private fun SelectedItem(
             .padding(vertical = 20.dp),
     )
 
-    HorizontalDivider(thickness = 1.dp, color = TogedyTheme.colors.gray100)
-}
+    if (showDivider) {
+        HorizontalDivider(thickness = 1.dp, color = TogedyTheme.colors.gray100)
+    }}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
