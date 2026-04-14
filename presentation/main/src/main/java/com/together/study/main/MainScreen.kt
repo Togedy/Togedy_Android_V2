@@ -37,6 +37,7 @@ import com.together.study.designsystem.component.toast.TogedyToast
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.navigation.TogedyGallery
 import com.together.study.gallery.navigation.galleryGraph
+import com.together.study.gallery.ImageCropViewModel
 import com.together.study.gallery.navigation.navigateToGallery
 import com.together.study.mypage.navigation.CROPPED_IMAGE_PATH_KEY
 import com.together.study.mypage.navigation.ProfileEdit
@@ -296,7 +297,7 @@ private fun MainNavHost(
             navigateToCreateStudy = navigator.navController::navigateToStudyUpdate,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
             navigateToStudy = navigator.navController::navigateToStudy,
-            navigateToGallery = { navigator.navController.navigateToGallery("profile") },
+            navigateToGallery = { navigator.navController.navigateToGallery(ImageCropViewModel.PROFILE_DATE) },
             navController = navigator.navController,
             modifier = modifier,
         )
