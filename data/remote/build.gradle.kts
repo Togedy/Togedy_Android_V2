@@ -24,5 +24,6 @@ android {
 dependencies {
 
     implementation(projects.data.local)
+    implementation(projects.core.common)
     implementation(libs.timber)
 }

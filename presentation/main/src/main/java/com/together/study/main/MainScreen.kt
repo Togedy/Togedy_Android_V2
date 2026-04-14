@@ -91,6 +91,14 @@ fun MainScreen(
                         yOffset = togedyToast.toastOffsetWithBottomBar(),
                     )
                 }
+
+                is TogedyUiEvent.ForceLogout -> {
+                    navigator.navController.navigateToLogin(
+                        navOptions {
+                            popUpTo(navigator.navController.graph.id) { inclusive = true }
+                        }
+                    )
+                }
             }
         }
     }
