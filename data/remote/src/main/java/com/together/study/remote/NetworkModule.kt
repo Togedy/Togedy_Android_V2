@@ -12,6 +12,7 @@ import data.remote.BuildConfig
 import data.remote.BuildConfig.BASE_URL
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -35,10 +36,12 @@ object NetworkModule {
         tokenDataStore: TokenDataStore,
     ): Interceptor = HeaderInterceptor(tokenDataStore)
 
+    @Provides
     @Singleton
-    fun providerAuthInterceptor(
+    fun provideTokenAuthenticator(
         tokenDataStore: TokenDataStore,
-    ): AuthInterceptor = AuthInterceptor(tokenDataStore)
+        json: Json,
+    ): Authenticator = TokenAuthenticator(tokenDataStore, json)
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
@@ -81,9 +84,11 @@ object NetworkModule {
     fun provideOkHttpClient(
         loggingInterceptor: Interceptor,
         @JWT headerInterceptor: Interceptor,
+        authenticator: Authenticator,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(headerInterceptor)
+        .authenticator(authenticator)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
