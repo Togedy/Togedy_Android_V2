@@ -112,7 +112,6 @@ private fun loginWithKakao(
             Timber.e(error, "카카오 로그인 실패")
             onFailure("카카오 로그인에 실패했습니다")
         } else if (token != null) {
-            Timber.d("카카오 로그인 성공: ${token.accessToken}")
             onSuccess(token.accessToken)
         }
     }
@@ -128,7 +127,6 @@ private fun loginWithKakao(
 
                 UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
             } else if (token != null) {
-                Timber.d("카카오톡으로 로그인 성공: ${token.accessToken}")
                 onSuccess(token.accessToken)
             }
         }
