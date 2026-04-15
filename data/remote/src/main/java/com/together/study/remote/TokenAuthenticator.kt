@@ -20,6 +20,7 @@ import javax.inject.Inject
 class TokenAuthenticator @Inject constructor(
     private val tokenDataStore: TokenDataStore,
     private val json: Json,
+    private val client: OkHttpClient,
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
@@ -51,7 +52,6 @@ class TokenAuthenticator @Inject constructor(
 
     private suspend fun reissueToken(refreshToken: String): String? {
         return try {
-            val client = OkHttpClient()
             val request = Request.Builder()
                 .url("${data.remote.BuildConfig.BASE_URL}auth/reissue")
                 .post("".toRequestBody("application/json".toMediaType()))

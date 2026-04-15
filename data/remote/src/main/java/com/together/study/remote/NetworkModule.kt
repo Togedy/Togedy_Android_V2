@@ -41,7 +41,8 @@ object NetworkModule {
     fun provideTokenAuthenticator(
         tokenDataStore: TokenDataStore,
         json: Json,
-    ): Authenticator = TokenAuthenticator(tokenDataStore, json)
+        @NoAuth client: OkHttpClient,
+    ): Authenticator = TokenAuthenticator(tokenDataStore, json, client)
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
