@@ -71,7 +71,6 @@ include(
     ":presentation:timer",
     ":presentation:mypage",
     ":presentation:login",
-    ":presentation:mypage",
     ":presentation:gallery",
     ":presentation:onboarding"
 )
