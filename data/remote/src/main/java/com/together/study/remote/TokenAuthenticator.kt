@@ -4,6 +4,8 @@ import com.together.study.common.event.TogedyUiEvent
 import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.local.TokenDataStore
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -23,29 +25,45 @@ class TokenAuthenticator @Inject constructor(
     private val client: OkHttpClient,
 ) : Authenticator {
 
+    private val mutex = Mutex()
+
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.request.header(RETRY_HEADER) != null) {
             return null
         }
 
+        val failedAccessToken = response.request.header("Authorization")
+            ?.removePrefix("Bearer ")
+
         return runBlocking {
-            val refreshToken = tokenDataStore.getRefreshToken()
+            mutex.withLock {
+                val currentAccessToken = tokenDataStore.getAccessToken()
 
-            if (refreshToken.isNullOrBlank()) {
-                handleForceLogout()
-                return@runBlocking null
-            }
+                if (currentAccessToken != null && currentAccessToken != failedAccessToken) {
+                    return@withLock response.request.newBuilder()
+                        .header("Authorization", "Bearer $currentAccessToken")
+                        .header(RETRY_HEADER, "true")
+                        .build()
+                }
 
-            val newAccessToken = reissueToken(refreshToken)
+                val refreshToken = tokenDataStore.getRefreshToken()
 
-            if (newAccessToken != null) {
-                response.request.newBuilder()
-                    .header("Authorization", "Bearer $newAccessToken")
-                    .header(RETRY_HEADER, "true")
-                    .build()
-            } else {
-                handleForceLogout()
-                null
+                if (refreshToken.isNullOrBlank()) {
+                    handleForceLogout()
+                    return@withLock null
+                }
+
+                val newAccessToken = reissueToken(refreshToken)
+
+                if (newAccessToken != null) {
+                    response.request.newBuilder()
+                        .header("Authorization", "Bearer $newAccessToken")
+                        .header(RETRY_HEADER, "true")
+                        .build()
+                } else {
+                    handleForceLogout()
+                    null
+                }
             }
         }
     }
