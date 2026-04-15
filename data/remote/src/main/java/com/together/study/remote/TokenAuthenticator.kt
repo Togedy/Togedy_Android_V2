@@ -58,26 +58,27 @@ class TokenAuthenticator @Inject constructor(
                 .header("Refresh-Token", refreshToken)
                 .build()
 
-            val reissueResponse = client.newCall(request).execute()
+            client.newCall(request).execute().use { reissueResponse ->
+                if (!reissueResponse.isSuccessful) {
+                    Timber.e("토큰 재발급을 실패하였습니다. : ${reissueResponse.code}")
+                    return@use null
+                }
 
-            if (!reissueResponse.isSuccessful) {
-                Timber.e("토큰 재발급을 실패하였습니다. : ${reissueResponse.code}")
-                return null
+                val body = reissueResponse.body?.string() ?: return@use null
+                val jsonElement = json.parseToJsonElement(body)
+                val responseObj =
+                    jsonElement.jsonObject["response"]?.jsonObject ?: return@use null
+
+                val accessToken = responseObj["accessToken"]?.jsonPrimitive?.content
+                    ?.removePrefix("Bearer ") ?: return@use null
+                val newRefreshToken = responseObj["refreshToken"]?.jsonPrimitive?.content
+                    ?.removePrefix("Bearer ") ?: return@use null
+
+                tokenDataStore.setTokens(accessToken, newRefreshToken)
+
+                Timber.d("토큰 재발급 성공")
+                accessToken
             }
-
-            val body = reissueResponse.body?.string() ?: return null
-            val jsonElement = json.parseToJsonElement(body)
-            val responseObj = jsonElement.jsonObject["response"]?.jsonObject ?: return null
-
-            val accessToken = responseObj["accessToken"]?.jsonPrimitive?.content
-                ?.removePrefix("Bearer ") ?: return null
-            val newRefreshToken = responseObj["refreshToken"]?.jsonPrimitive?.content
-                ?.removePrefix("Bearer ") ?: return null
-
-            tokenDataStore.setTokens(accessToken, newRefreshToken)
-
-            Timber.d("토큰 재발급 성공")
-            accessToken
         } catch (e: Exception) {
             Timber.e(e, "토큰 재발급 실패")
             null
