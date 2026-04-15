@@ -14,10 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,16 +27,17 @@ import com.together.study.designsystem.theme.TogedyTheme
 
 @Composable
 internal fun OnboardingNicknameScreen(
+    nickname: String,
+    isNicknameValidated: Boolean,
+    nicknameErrorMessage: String?,
+    isValidatingNickname: Boolean,
+    onNicknameChange: (String) -> Unit,
+    onValidateNickname: () -> Unit,
+    onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onNextClick: (String) -> Unit = {},
-    onCheckNicknameDuplicate: (String) -> Boolean = { true },
 ) {
-    var nickname by rememberSaveable { mutableStateOf("") }
-    var nicknameErrorMessage by rememberSaveable { mutableStateOf<String?>(null) }
-    var isNicknameDuplicateChecked by rememberSaveable { mutableStateOf(false) }
-
     val isNextEnabled =
-        isNicknameDuplicateChecked &&
+        isNicknameValidated &&
                 nicknameErrorMessage == null &&
                 nickname.isNotBlank()
 
@@ -69,51 +66,33 @@ internal fun OnboardingNicknameScreen(
 
         TogedyTextField(
             value = nickname,
-            onValueChange = { changedNickname ->
-                nickname = changedNickname.take(10)
-                isNicknameDuplicateChecked = false
-                nicknameErrorMessage = validateNickname(
-                    nickname = nickname,
-                    showBlankMessage = false,
-                )
-            },
+            onValueChange = onNicknameChange,
             modifier = Modifier.fillMaxWidth(),
             placeholderText = "닉네임을 입력해주세요",
             backgroundColor = TogedyTheme.colors.white,
             showBorder = true,
-            borderColor = if (isNicknameDuplicateChecked) {
+            borderColor = if (isNicknameValidated) {
                 TogedyTheme.colors.green
             } else {
                 TogedyTheme.colors.gray200
             },
-            focusedBorderColor = if (isNicknameDuplicateChecked) {
+            focusedBorderColor = if (isNicknameValidated) {
                 TogedyTheme.colors.green
             } else {
                 TogedyTheme.colors.black
             },
             showDupCheck = true,
-            dupCheckText = if (isNicknameDuplicateChecked) "확인완료" else "중복확인",
-            onDupCheckClick = {
-                val validationMessage = validateNickname(
-                    nickname = nickname,
-                    showBlankMessage = true,
-                )
-                if (validationMessage != null) {
-                    nicknameErrorMessage = validationMessage
-                    isNicknameDuplicateChecked = false
-                } else if (!onCheckNicknameDuplicate(nickname)) {
-                    nicknameErrorMessage = "이미 존재하는 닉네임입니다."
-                    isNicknameDuplicateChecked = false
-                } else {
-                    nicknameErrorMessage = null
-                    isNicknameDuplicateChecked = true
-                }
+            dupCheckText = when {
+                isValidatingNickname -> "확인중..."
+                isNicknameValidated -> "확인완료"
+                else -> "중복확인"
             },
+            onDupCheckClick = onValidateNickname,
             isError = nicknameErrorMessage != null,
             errorMessage = nicknameErrorMessage,
         )
 
-        if (nicknameErrorMessage == null && isNicknameDuplicateChecked) {
+        if (nicknameErrorMessage == null && isNicknameValidated) {
             NicknameDuplicateCheckedMessage()
         }
 
@@ -121,7 +100,7 @@ internal fun OnboardingNicknameScreen(
 
         TogedyButton(
             text = "다음",
-            onClick = { onNextClick(nickname) },
+            onClick = onNextClick,
             enabled = isNextEnabled,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -152,17 +131,6 @@ private fun NicknameDuplicateCheckedMessage() {
     }
 }
 
-private fun validateNickname(
-    nickname: String,
-    showBlankMessage: Boolean,
-): String? {
-    return when {
-        nickname.isBlank() && showBlankMessage -> "닉네임을 입력해주세요"
-        nickname.isNotBlank() && nickname.length !in 2..10 -> "2~10글자로 입력해주세요"
-        else -> null
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun OnboardingNicknameScreenPreview() {
@@ -172,7 +140,15 @@ private fun OnboardingNicknameScreenPreview() {
                 .fillMaxSize()
                 .background(TogedyTheme.colors.white)
         ) {
-            OnboardingNicknameScreen()
+            OnboardingNicknameScreen(
+                nickname = "",
+                isNicknameValidated = false,
+                nicknameErrorMessage = null,
+                isValidatingNickname = false,
+                onNicknameChange = {},
+                onValidateNickname = {},
+                onNextClick = {},
+            )
         }
     }
 }

@@ -29,8 +29,9 @@ import java.time.LocalDate
 
 @Composable
 internal fun OnboardingBirthScreen(
+    isSubmitting: Boolean,
+    onCompleteClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
-    onNextClick: (LocalDate) -> Unit = {},
 ) {
     var birthYear by rememberSaveable { mutableStateOf("") }
     var birthMonth by rememberSaveable { mutableStateOf("") }
@@ -125,9 +126,9 @@ internal fun OnboardingBirthScreen(
         TogedyButton(
             text = "가입 완료",
             onClick = {
-                birthDate?.let(onNextClick)
+                birthDate?.let(onCompleteClick)
             },
-            enabled = birthDate != null,
+            enabled = birthDate != null && !isSubmitting,
             modifier = Modifier.padding(bottom = 24.dp)
         )
     }
@@ -232,7 +233,10 @@ private fun OnboardingBirthScreenPreview() {
                 .fillMaxSize()
                 .background(TogedyTheme.colors.white)
         ) {
-            OnboardingBirthScreen()
+            OnboardingBirthScreen(
+                isSubmitting = false,
+                onCompleteClick = {},
+            )
         }
     }
 }
