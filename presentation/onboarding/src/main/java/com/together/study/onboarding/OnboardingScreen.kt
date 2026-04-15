@@ -12,6 +12,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,20 +21,66 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
+import com.together.study.designsystem.component.toast.LocalTogedyToast
+import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.onboarding.state.OnboardingUiEvent
+import com.together.study.onboarding.state.OnboardingUiState
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun OnboardingScreen() {
+internal fun OnboardingRoute(
+    onNavigateToCalendar: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val togedyToast = LocalTogedyToast.current
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is OnboardingUiEvent.NavigateToCalendar -> {
+                    onNavigateToCalendar()
+                }
+                is OnboardingUiEvent.ShowError -> {
+                    togedyToast.makeText(
+                        toastType = ToastType.COMMON,
+                        message = event.message,
+                    )
+                }
+            }
+        }
+    }
+
+    OnboardingScreen(
+        uiState = uiState,
+        onNicknameChange = viewModel::updateNickname,
+        onValidateNickname = viewModel::validateNickname,
+        onCompleteOnboarding = viewModel::completeOnboarding,
+        modifier = modifier,
+    )
+}
+
+@Composable
+internal fun OnboardingScreen(
+    uiState: OnboardingUiState = OnboardingUiState(),
+    onNicknameChange: (String) -> Unit = {},
+    onValidateNickname: () -> Unit = {},
+    onCompleteOnboarding: (java.time.LocalDate) -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
     val pagerState = rememberPagerState(
         pageCount = { 2 }
     )
     val coroutineScope = rememberCoroutineScope()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
             .padding(top = 23.dp)
@@ -65,9 +113,16 @@ internal fun OnboardingScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
+            userScrollEnabled = false,
         ) { page ->
             when (page) {
                 0 -> OnboardingNicknameScreen(
+                    nickname = uiState.nickname,
+                    isNicknameValidated = uiState.isNicknameValidated,
+                    nicknameErrorMessage = uiState.nicknameErrorMessage,
+                    isValidatingNickname = uiState.isValidatingNickname,
+                    onNicknameChange = onNicknameChange,
+                    onValidateNickname = onValidateNickname,
                     onNextClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(1)
@@ -75,7 +130,10 @@ internal fun OnboardingScreen() {
                     },
                 )
 
-                1 -> OnboardingBirthScreen()
+                1 -> OnboardingBirthScreen(
+                    isSubmitting = uiState.isSubmitting,
+                    onCompleteClick = onCompleteOnboarding,
+                )
             }
         }
     }
