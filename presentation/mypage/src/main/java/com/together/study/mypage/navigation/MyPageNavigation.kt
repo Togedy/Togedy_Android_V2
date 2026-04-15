@@ -1,6 +1,8 @@
 package com.together.study.mypage.navigation
 
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -50,6 +52,7 @@ fun NavGraphBuilder.myPageGraph(
     navigateToCreateStudy: () -> Unit,
     navigateToStudyDetail: (Long) -> Unit,
     navigateToStudy: () -> Unit,
+    navigateToGallery: () -> Unit,
     navigateToLogin: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -87,10 +90,18 @@ fun NavGraphBuilder.myPageGraph(
         )
     }
 
-    composable<ProfileEdit> {
+    composable<ProfileEdit> { backStackEntry ->
+        val croppedImagePath by backStackEntry.savedStateHandle
+            .getStateFlow<String?>(CROPPED_IMAGE_PATH_KEY, null)
+            .collectAsStateWithLifecycle()
+
         ProfileEditRoute(
             onBackClick = navigateToUp,
-            onGalleryNavigate = {},
+            onGalleryNavigate = navigateToGallery,
+            croppedImagePath = croppedImagePath,
+            onCroppedImageConsumed = {
+                backStackEntry.savedStateHandle.remove<String>(CROPPED_IMAGE_PATH_KEY)
+            },
             modifier = modifier,
         )
     }
@@ -140,3 +151,5 @@ data class NoticeDetail(
 
 @Serializable
 data object Feedback : Route
+
+const val CROPPED_IMAGE_PATH_KEY = "croppedImagePath"

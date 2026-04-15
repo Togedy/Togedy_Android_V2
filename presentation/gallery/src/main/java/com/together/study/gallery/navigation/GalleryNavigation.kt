@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import com.together.study.common.navigation.Route
 import com.together.study.gallery.GalleryScreen
 import com.together.study.gallery.ImageCropScreen
+import com.together.study.gallery.ImageCropViewModel
 import com.together.study.gallery.type.CropShapeType
 import kotlinx.serialization.Serializable
 
@@ -27,6 +28,7 @@ fun NavGraphBuilder.galleryGraph(
     modifier: Modifier = Modifier,
     navigateToUp: () -> Unit,
     onUploadSuccess: () -> Unit,
+    onProfileCropSuccess: ((String) -> Unit)? = null,
     navController: NavController,
 ) {
     composable<TogedyGallery> { backStackEntry ->
@@ -42,11 +44,19 @@ fun NavGraphBuilder.galleryGraph(
 
     composable<TogedyCropImage> { backStackEntry ->
         val route = backStackEntry.toRoute<TogedyCropImage>()
+        val isProfile = route.date == ImageCropViewModel.PROFILE_DATE
+        val cropShape = if (isProfile) {
+            CropShapeType.Circle
+        } else {
+            CropShapeType.Rect(aspectRatio = 1f)
+        }
+
         ImageCropScreen(
             imageId = route.imageId,
-            cropShape = CropShapeType.Rect(aspectRatio = 1f),
+            cropShape = cropShape,
             onBackClick = navigateToUp,
             onUploadSuccess = onUploadSuccess,
+            onCropSuccess = if (isProfile) onProfileCropSuccess else null,
             modifier = modifier,
         )
     }
