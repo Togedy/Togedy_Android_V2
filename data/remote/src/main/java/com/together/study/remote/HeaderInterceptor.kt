@@ -15,7 +15,7 @@ class HeaderInterceptor @Inject constructor(
 
         val newRequest = chain.request().newBuilder().apply {
             if (!accessToken.isNullOrEmpty()) {
-                addHeader("Authorization", "Bearer $accessToken")
+                header("Authorization", "Bearer $accessToken")
             }
         }.build()
 
