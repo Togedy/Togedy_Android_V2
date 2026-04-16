@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     id("com.together.study.buildlogic.convention.application")
     id("com.together.study.buildlogic.primitive.hilt")
+    alias(libs.plugins.ksp)
 }
 
 val localProps = Properties().apply {
@@ -75,7 +76,7 @@ dependencies {
 
     implementation(libs.kakao.v2.user)
     implementation(libs.kakao.v2.common)
-    implementation(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.multidex)
     implementation(libs.lottie.compose)
 }
