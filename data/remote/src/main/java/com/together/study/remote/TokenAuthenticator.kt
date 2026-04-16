@@ -6,9 +6,9 @@ import com.together.study.local.TokenDataStore
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import com.together.study.remote.model.BaseResponse
+import com.together.study.remote.model.ReissueResponse
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Authenticator
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -83,14 +83,9 @@ class TokenAuthenticator @Inject constructor(
                 }
 
                 val body = reissueResponse.body?.string() ?: return@use null
-                val jsonElement = json.parseToJsonElement(body)
-                val responseObj =
-                    jsonElement.jsonObject["response"]?.jsonObject ?: return@use null
-
-                val accessToken = responseObj["accessToken"]?.jsonPrimitive?.content
-                    ?.removePrefix("Bearer ") ?: return@use null
-                val newRefreshToken = responseObj["refreshToken"]?.jsonPrimitive?.content
-                    ?.removePrefix("Bearer ") ?: return@use null
+                val result = json.decodeFromString<BaseResponse<ReissueResponse>>(body)
+                val accessToken = result.response.accessToken.removePrefix("Bearer ")
+                val newRefreshToken = result.response.refreshToken.removePrefix("Bearer ")
 
                 tokenDataStore.setTokens(accessToken, newRefreshToken)
 
