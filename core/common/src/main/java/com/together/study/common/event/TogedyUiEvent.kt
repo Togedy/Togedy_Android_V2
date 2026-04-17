@@ -5,4 +5,6 @@ sealed interface TogedyUiEvent {
         val message: String,
         val icon: Int? = null,
     ) : TogedyUiEvent
+
+    data object ForceLogout : TogedyUiEvent
 }

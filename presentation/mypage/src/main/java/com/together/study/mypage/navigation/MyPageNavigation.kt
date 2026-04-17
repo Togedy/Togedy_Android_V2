@@ -53,6 +53,7 @@ fun NavGraphBuilder.myPageGraph(
     navigateToStudyDetail: (Long) -> Unit,
     navigateToStudy: () -> Unit,
     navigateToGallery: () -> Unit,
+    navigateToLogin: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -76,6 +77,7 @@ fun NavGraphBuilder.myPageGraph(
         AccountSettingsRoute(
             onBackButtonClick = navigateToUp,
             onDeleteAccountNavigate = navController::navigateToDeleteAccount,
+            onLogoutNavigate = navigateToLogin,
             modifier = modifier,
         )
     }

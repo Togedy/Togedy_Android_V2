@@ -24,6 +24,12 @@ class UserRepositoryImpl @Inject constructor(
             response.toDomain()
         }
 
+    override suspend fun getNicknameSuggestion(): Result<String> =
+        runCatching {
+            val response = userDataSource.getNicknameSuggestion().response
+            response.nickname
+        }
+
     override suspend fun validateNickname(nickname: String): Result<NicknameValidation> =
         runCatching {
             val response = userDataSource.checkNicknameDuplication(nickname).response
@@ -42,6 +48,11 @@ class UserRepositoryImpl @Inject constructor(
                 userProfileImage = uri,
                 removeUserProfileImage = removeUserProfileImage,
             )
+        }
+
+    override suspend fun completeOnboarding(nickname: String, birthDate: String): Result<Unit> =
+        runCatching {
+            userDataSource.patchOnboarding(nickname, birthDate)
         }
 
     override suspend fun updatePushAlarmSetting(pushNotificationEnabled: Boolean): Result<Unit> =

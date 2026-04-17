@@ -1,7 +1,5 @@
 package com.together.study.main
 
-import android.app.Activity
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
@@ -25,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.together.study.calendar.maincalendar.navigation.calendarGraph
+import com.together.study.calendar.maincalendar.navigation.navigateToCalendar
 import com.together.study.calendar.maincalendar.navigation.navigateToCategoryDetail
 import com.together.study.chatbot.navigation.chatBotGraph
 import com.together.study.common.event.TogedyUiEvent
@@ -35,14 +34,22 @@ import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.gallery.ImageCropViewModel
 import com.together.study.gallery.navigation.TogedyGallery
 import com.together.study.gallery.navigation.galleryGraph
-import com.together.study.gallery.ImageCropViewModel
 import com.together.study.gallery.navigation.navigateToGallery
+import com.together.study.login.navigation.Login
+import com.together.study.login.navigation.loginGraph
+import com.together.study.login.navigation.navigateToLogin
+import com.together.study.login.splash.Splash
+import com.together.study.login.splash.splashGraph
+import com.together.study.main.component.MainBottomBar
 import com.together.study.mypage.navigation.CROPPED_IMAGE_PATH_KEY
 import com.together.study.mypage.navigation.ProfileEdit
-import com.together.study.main.component.MainBottomBar
 import com.together.study.mypage.navigation.myPageGraph
+import com.together.study.onboarding.navigation.Onboarding
+import com.together.study.onboarding.navigation.navigateToOnboarding
+import com.together.study.onboarding.navigation.onboardingGraph
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
@@ -88,6 +95,14 @@ fun MainScreen(
                         message = event.message,
                         icon = event.icon,
                         yOffset = togedyToast.toastOffsetWithBottomBar(),
+                    )
+                }
+
+                is TogedyUiEvent.ForceLogout -> {
+                    navigator.navController.navigateToLogin(
+                        navOptions {
+                            popUpTo(navigator.navController.graph.id) { inclusive = true }
+                        }
                     )
                 }
             }
@@ -188,6 +203,52 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination
     ) {
+        splashGraph(
+            onNavigateToLogin = {
+                navigator.navController.navigateToLogin(
+                    navOptions {
+                        popUpTo(Splash) { inclusive = true }
+                    }
+                )
+            },
+            onNavigateToCalendar = {
+                navigator.navController.navigateToCalendar(
+                    navOptions {
+                        popUpTo(Splash) { inclusive = true }
+                    }
+                )
+            },
+        )
+
+        loginGraph(
+            modifier = modifier,
+            navigateToCalendar = {
+                navigator.navController.navigateToCalendar(
+                    navOptions {
+                        popUpTo(Login) { inclusive = true }
+                    }
+                )
+            },
+            navigateToOnboarding = {
+                navigator.navController.navigateToOnboarding(
+                    navOptions {
+                        popUpTo(Login) { inclusive = true }
+                    }
+                )
+            },
+        )
+
+        onboardingGraph(
+            modifier = modifier,
+            navigateToCalendar = {
+                navigator.navController.navigateToCalendar(
+                    navOptions {
+                        popUpTo(Onboarding) { inclusive = true }
+                    }
+                )
+            },
+        )
+
         calendarGraph(
             navigateToUp = navigator.navController::popBackStack,
             navigateToUnivSearch = navigator.navController::navigateToUnivSearch,
@@ -297,6 +358,13 @@ private fun MainNavHost(
             navigateToCreateStudy = navigator.navController::navigateToStudyUpdate,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
             navigateToStudy = navigator.navController::navigateToStudy,
+            navigateToLogin = {
+                navigator.navController.navigateToLogin(
+                    navOptions {
+                        popUpTo(navigator.navController.graph.id) { inclusive = true }
+                    }
+                )
+            },
             navigateToGallery = { navigator.navController.navigateToGallery(ImageCropViewModel.PROFILE_DATE) },
             navController = navigator.navController,
             modifier = modifier,

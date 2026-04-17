@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,9 +35,16 @@ internal fun AccountSettingsRoute(
     modifier: Modifier = Modifier,
     onBackButtonClick: () -> Unit,
     onDeleteAccountNavigate: () -> Unit,
+    onLogoutNavigate: () -> Unit,
     viewModel: AccountSettingsViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.logoutEvent.collect {
+            onLogoutNavigate()
+        }
+    }
 
     when (uiState.value.uiState) {
         is UiState.Loading -> TogedyLoadingScreen()

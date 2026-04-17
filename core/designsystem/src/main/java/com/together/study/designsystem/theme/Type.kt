@@ -28,6 +28,7 @@ class TogedyTypography(
     val title16sb: TextStyle,
     val body16m: TextStyle,
     val body14b: TextStyle,
+    val body14r: TextStyle,
     val body14m: TextStyle,
     val body13b: TextStyle,
     val body13m: TextStyle,
@@ -83,6 +84,11 @@ fun TogedyTypography() = TogedyTypography(
     ),
     body14b = TogedyTextStyle(
         fontFamily = PretendardBold,
+        fontSize = 14.sp,
+        lineHeight = 22.sp,
+    ),
+    body14r = TogedyTextStyle(
+        fontFamily = PretendardRegular,
         fontSize = 14.sp,
         lineHeight = 22.sp,
     ),
@@ -167,6 +173,7 @@ fun TogedyTypographyPreview() {
             Text("title16sb - TogedyTheme", style = TogedyTheme.typography.title16sb)
             Text("body16m - TogedyTheme", style = TogedyTheme.typography.body16m)
             Text("body14b - TogedyTheme", style = TogedyTheme.typography.body14b)
+            Text("body14r - TogedyTheme", style = TogedyTheme.typography.body14r)
             Text("body14m - TogedyTheme", style = TogedyTheme.typography.body14m)
             Text("body13b - TogedyTheme", style = TogedyTheme.typography.body13b)
             Text("body13m - TogedyTheme", style = TogedyTheme.typography.body13m)

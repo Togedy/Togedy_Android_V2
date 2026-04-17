@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.together.study.user.dto.MarketingConsentedRequest
 import com.together.study.user.dto.NotificationSettingsRequest
+import com.together.study.user.dto.OnboardingRequest
 import com.together.study.user.service.UserService
 import com.together.study.util.ImageConverter
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,6 +21,9 @@ class UserDataSource @Inject constructor(
     suspend fun getUserInfo() = userService.getUserInfo()
 
     suspend fun getUserSettingInfo() = userService.getUserSettingInfo()
+
+    suspend fun getNicknameSuggestion() =
+        userService.getNicknameSuggestion()
 
     suspend fun checkNicknameDuplication(nickname: String) =
         userService.checkNicknameDuplication(nickname)
@@ -40,6 +44,14 @@ class UserDataSource @Inject constructor(
             .toString()
             .toRequestBody("text/plain".toMediaType()),
     )
+
+    suspend fun patchOnboarding(nickname: String, birthDate: String) =
+        userService.patchOnboarding(
+            OnboardingRequest(
+                nickname = nickname,
+                birthDate = birthDate,
+            )
+        )
 
     /* 추후 스프린트 */
     suspend fun patchNotificationSettings(enable: Boolean) {
