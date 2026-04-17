@@ -6,6 +6,7 @@ data class ProfileEditUiState(
     val profileState: UiState<Profile> = UiState.Loading,
     val name: String = "",
     val image: String? = "",
+    val newImagePath: String? = null,
     val isError: Boolean = false,
     val errorMessage: String = "",
     val isDupCheck: Boolean = false,

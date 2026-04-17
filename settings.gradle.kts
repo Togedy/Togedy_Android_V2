@@ -19,6 +19,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://devrepo.kakao.com/nexus/content/groups/public/") }
     }
 }
 
@@ -41,6 +42,7 @@ include(
     ":data:user",
     ":data:mypage",
     ":data:gallery",
+    ":data:auth",
 )
 include(
     ":domain:dummy",
@@ -48,10 +50,11 @@ include(
     ":domain:study",
     ":domain:planner",
     ":domain:search",
+    ":domain:auth",
     ":domain:user",
     ":domain:mypage",
     ":domain:gallery",
-    ":domain:chatbot"
+    ":domain:chatbot",
 )
 include(
     ":presentation:main",
@@ -67,5 +70,7 @@ include(
     ":presentation:chatbot",
     ":presentation:timer",
     ":presentation:mypage",
+    ":presentation:login",
     ":presentation:gallery",
+    ":presentation:onboarding"
 )

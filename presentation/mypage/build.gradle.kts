@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
 
+    implementation(projects.domain.auth)
     implementation(projects.domain.study)
     implementation(projects.domain.user)
     implementation(projects.domain.mypage)

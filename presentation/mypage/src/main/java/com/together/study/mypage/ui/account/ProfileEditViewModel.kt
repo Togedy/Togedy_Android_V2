@@ -82,12 +82,14 @@ class ProfileEditViewModel @Inject constructor(
     }
 
     fun updateProfile() = viewModelScope.launch {
-        val removeImg = uiState.value.image == null
+        val state = _uiState.value
+        val originImage = (state.profileState as? UiState.Success)?.data?.originImage
+        val isImageRemoved = state.image == null && originImage != null
 
         updateUserInfoUseCase(
-            userName = uiState.value.name,
-            userProfileImage = uiState.value.image,
-            removeUserProfileImage = removeImg,
+            userName = state.name,
+            userProfileImage = state.newImagePath,
+            removeUserProfileImage = isImageRemoved,
         )
             .onSuccess { _eventFlow.emit(ProfileEditEvent.UpdateProfileSuccess) }
             .onFailure {
@@ -103,7 +105,11 @@ class ProfileEditViewModel @Inject constructor(
     }
 
     fun updateUserProfileImageUrl(url: String?) {
-        _uiState.update { it.copy(image = url) }
+        if (url != null) {
+            _uiState.update { it.copy(image = url, newImagePath = url) }
+        } else {
+            _uiState.update { it.copy(image = null, newImagePath = null) }
+        }
         updateDoneEnabled()
     }
 
@@ -130,7 +136,7 @@ class ProfileEditViewModel @Inject constructor(
                     state.isDupCheck &&
                     state.name != originName
 
-        val isImageChanged = state.image != originImage
+        val isImageChanged = state.newImagePath != null || (state.image == null && originImage != null)
         val doneEnabled = isNameValid || isImageChanged
 
         _uiState.update { it.copy(isDoneEnabled = doneEnabled) }

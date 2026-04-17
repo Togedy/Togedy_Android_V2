@@ -11,12 +11,8 @@ class UpdateUserInfoUseCase @Inject constructor(
         userProfileImage: String?,
         removeUserProfileImage: Boolean,
     ): Result<Unit> {
-        if (userName==null && userProfileImage == null) {
-            return Result.failure(IllegalArgumentException("At least one of userName or userProfileImage must be provided"))
-        }
-
-        if (userProfileImage==null && !removeUserProfileImage) {
-            return Result.failure(IllegalArgumentException("Profile image is empty"))
+        if (userName == null && userProfileImage == null && !removeUserProfileImage) {
+            return Result.failure(IllegalArgumentException("No changes to update"))
         }
 
         return userRepository.updateUserInfo(
