@@ -55,6 +55,7 @@ include(
     ":domain:mypage",
     ":domain:gallery",
     ":domain:chatbot",
+    ":domain:timer",
 )
 include(
     ":presentation:main",
