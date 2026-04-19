@@ -60,13 +60,17 @@ internal fun StatisticsScreen(
                 item {
                     Spacer(Modifier.height(14.dp))
 
-                    StreakSection(
-                        currentMonth = currentDate.monthValue,
-                        daysSinceLastStudy = statistics.daysSinceLastStudy,
-                        currentStreakDays = statistics.currentStreakDays,
-                    )
+                    with(statistics) {
+                        if (daysSinceLastStudy!=0 || currentStreakDays!=0) {
+                            StreakSection(
+                                currentMonth = currentDate.monthValue,
+                                daysSinceLastStudy = daysSinceLastStudy,
+                                currentStreakDays = currentStreakDays,
+                            )
 
-                    Spacer(Modifier.height(16.dp))
+                            Spacer(Modifier.height(16.dp))
+                        }
+                    }
 
                     WeeklyStatistics(statistics.weeklyReview)
 

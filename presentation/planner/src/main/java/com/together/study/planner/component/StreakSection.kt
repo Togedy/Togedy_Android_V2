@@ -16,9 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.type.AbsentRange
 import com.together.study.planner.type.StreakRange
@@ -32,14 +32,12 @@ internal fun StreakSection(
     currentStreakDays: Int,
     modifier: Modifier = Modifier,
 ) {
-    val days = if (daysSinceLastStudy==0) currentStreakDays else daysSinceLastStudy
-    val status = if (daysSinceLastStudy == 0) {
-        StudyStatus.Streak(StreakRange.from(currentStreakDays))
-    } else {
-        StudyStatus.Absent(AbsentRange.from(daysSinceLastStudy))
-    }
+    val days = if (daysSinceLastStudy == 0) currentStreakDays else daysSinceLastStudy
+    val status =
+        if (daysSinceLastStudy == 0) StudyStatus.Streak(StreakRange.from(currentStreakDays))
+        else StudyStatus.Absent(AbsentRange.from(daysSinceLastStudy))
     val uiModel = status.toUiModel()
-    val phrase = if (daysSinceLastStudy==0) "공부했어요" else "기다렸어요"
+    val phrase = if (daysSinceLastStudy == 0) "공부했어요" else "기다렸어요"
 
     Row(
         modifier = modifier
@@ -48,7 +46,8 @@ internal fun StreakSection(
             .background(TogedyTheme.colors.white, RoundedCornerShape(8.dp)),
     ) {
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .fillMaxHeight()
                 .padding(start = 16.dp),
             verticalArrangement = Arrangement.Center,
@@ -89,6 +88,7 @@ internal fun StreakSection(
             Image(
                 painter = painterResource(uiModel.imageRes),
                 contentDescription = null,
+                modifier = Modifier.clip(RoundedCornerShape(8.dp)),
             )
         }
     }
