@@ -19,8 +19,8 @@ interface TimerService {
     suspend fun getSummaryTimer(): BaseResponse<List<SubjectTimerResponse>>
 
     @POST("timers/stop")
-    suspend fun stopTimer(timerId: Long): Result<TimerResponse>
+    suspend fun stopTimer(timerId: Long): BaseResponse<TimerResponse>
 
     @POST("timers/start")
-    suspend fun startTimer(subjectId: Long): Result<TimerResponse>
+    suspend fun startTimer(subjectId: Long): BaseResponse<TimerResponse>
 }
