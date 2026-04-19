@@ -43,6 +43,7 @@ include(
     ":data:mypage",
     ":data:gallery",
     ":data:auth",
+    ":data:timer",
 )
 include(
     ":domain:dummy",
