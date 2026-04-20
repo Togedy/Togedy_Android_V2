@@ -16,12 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.model.PlannerSubject
+import com.together.study.timer.model.SubjectTimer
 import com.together.study.util.asColor
 
 @Composable
 internal fun SubjectTitle(
-    subject: PlannerSubject,
+    subject: SubjectTimer,
     modifier: Modifier = Modifier,
     textColor: Color = TogedyTheme.colors.white,
 ) {
@@ -52,10 +52,11 @@ internal fun SubjectTitle(
 private fun SubjectTitlePreview() {
     TogedyTheme {
         SubjectTitle(
-            subject = PlannerSubject(
+            subject = SubjectTimer(
                 subjectId = 1,
                 subjectName = "수학",
                 subjectColor = "SUBJECT_COLOR1",
+                studyTime = 0L,
             )
         )
     }

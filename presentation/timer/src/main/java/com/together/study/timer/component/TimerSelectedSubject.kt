@@ -16,17 +16,20 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.model.PlannerSubject
+import com.together.study.timer.model.SubjectTimer
+import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun TimerSelectedSubject(
-    subject: PlannerSubject,
+    subject: SubjectTimer,
     textColor: Color,
     modifier: Modifier = Modifier,
+    onSubjectClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
-            .border(1.dp, textColor, RoundedCornerShape(40.dp)),
+            .border(1.dp, textColor, RoundedCornerShape(40.dp))
+            .noRippleClickable(onSubjectClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SubjectTitle(

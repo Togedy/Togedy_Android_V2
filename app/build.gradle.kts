@@ -69,6 +69,7 @@ dependencies {
     implementation(projects.data.planner)
     implementation(projects.data.user)
     implementation(projects.data.mypage)
+    implementation(projects.data.timer)
     implementation(projects.presentation.main)
 
     implementation(libs.androidx.appcompat)
