@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class SubjectTimerResponse(
     val subjectId: Long,
     val subjectName: String,
+    val studyColor: String,
     val studyTime: Long,
 )

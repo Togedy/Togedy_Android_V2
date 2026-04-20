@@ -24,6 +24,7 @@ fun SubjectTimerResponse.toDomain(): SubjectTimer {
     return SubjectTimer(
         subjectId = subjectId,
         subjectName = subjectName,
+        subjectColor = studyColor,
         studyTime = studyTime,
     )
 }
