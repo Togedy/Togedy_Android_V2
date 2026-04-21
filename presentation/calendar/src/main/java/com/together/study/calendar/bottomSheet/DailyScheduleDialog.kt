@@ -61,7 +61,6 @@ import kotlin.math.roundToInt
 @Composable
 internal fun DailyScheduleDialog(
     date: LocalDate,
-    dDay: DDay,
     onDismissRequest: () -> Unit,
     onScheduleItemClick: (ScheduleType, Long) -> Unit,
     onAddScheduleClick: () -> Unit,
@@ -71,6 +70,7 @@ internal fun DailyScheduleDialog(
 ) {
     val dailySchedules by dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
     val isUpdateNeeded by dailyDialogViewModel.isUpdateNeeded.collectAsStateWithLifecycle()
+    val dDay by dailyDialogViewModel.dDay.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
@@ -82,6 +82,7 @@ internal fun DailyScheduleDialog(
 
     LaunchedEffect(isUpdateNeeded) {
         dailyDialogViewModel.fetchDailySchedules(date)
+        dailyDialogViewModel.getDDay()
         onUpdateNeeded()
     }
 
@@ -291,7 +292,6 @@ private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
         ) {
             DailyScheduleDialog(
                 date = LocalDate.now(),
-                dDay = DDay(hasDday = false, userScheduleName = null, remainingDays = 0),
                 onScheduleItemClick = { type, id -> },
                 onAddScheduleClick = {},
                 onDismissRequest = {},

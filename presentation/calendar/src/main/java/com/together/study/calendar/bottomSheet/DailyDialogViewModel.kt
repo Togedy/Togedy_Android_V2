@@ -2,6 +2,7 @@ package com.together.study.calendar.bottomSheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 import com.together.study.calendar.repository.CalendarRepository
 import com.together.study.calendar.repository.UserScheduleRepository
@@ -22,8 +23,16 @@ internal class DailyDialogViewModel @Inject constructor(
     var isUpdateNeeded = MutableStateFlow(true)
     private val _dailySchedules = MutableStateFlow<List<Schedule>>(emptyList())
     val dailySchedules = _dailySchedules.asStateFlow()
+    private val _dDayState = MutableStateFlow<DDay>(DDay(hasDday = false, userScheduleName = null, remainingDays = 0))
+    val dDay = _dDayState.asStateFlow()
 
     private var lastDailySchedules = emptyList<Schedule>()
+
+    suspend fun getDDay() {
+        calendarRepository.getDDay()
+            .onSuccess { _dDayState.value = it }
+            .onFailure { _dDayState.value = DDay(hasDday = false, userScheduleName = null, remainingDays = 0) }
+    }
 
     fun fetchDailySchedules(date: LocalDate) = viewModelScope.launch {
         calendarRepository.getDailySchedule(date.toString())
