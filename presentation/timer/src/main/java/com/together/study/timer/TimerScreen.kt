@@ -28,12 +28,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,55 +42,67 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.together.study.common.state.UiState
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.model.PlannerSubject
 import com.together.study.timer.component.SubjectTitle
 import com.together.study.timer.component.TimerButton
 import com.together.study.timer.component.TimerSelectedSubject
+import com.together.study.timer.model.SubjectTimer
 import com.together.study.util.asColor
-import kotlinx.coroutines.delay
+import com.together.study.util.noRippleClickable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun TimerRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: TimerViewModel = hiltViewModel(),
 ) {
-    var isPlaying by remember { mutableStateOf(false) }
-    var timer by remember { mutableIntStateOf(0) }
-    var totalTimer by remember { mutableIntStateOf(0) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val elapsedTime by viewModel.elapsedTime.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
 
-    LaunchedEffect(isPlaying) {
-        while (isPlaying) {
-            delay(1000L)
-            timer += 1
-            totalTimer += 1
+    LaunchedEffect(Unit) {
+        viewModel.setTimerInfo()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopLocalTimer()
+            viewModel.stopTimer()
         }
     }
 
+    val totalTime = (uiState.totalStudyTime as? UiState.Success)?.data ?: 0L
+    val subjects = (uiState.subjectTimers as? UiState.Success)?.data ?: emptyList()
+
     TimerScreen(
-        timer = formatTime(timer),
-        totalTimer = formatTime(totalTimer),
-        subject = PlannerSubject(
-            subjectId = 1,
-            subjectName = "수학",
-            subjectColor = "SUBJECT_COLOR1",
-        ),
-        isPlaying = isPlaying,
+        scope = scope,
+        timer = formatTime(elapsedTime),
+        totalTimer = formatTime(totalTime.toInt() + elapsedTime),
+        selectedSubject = uiState.selectedSubject,
+        subjects = subjects,
+        isPlaying = uiState.isPlaying,
         modifier = modifier,
         onBackClick = onBackClick,
-        onPlayButtonClick = { isPlaying = !isPlaying },
+        onPlayButtonClick = viewModel::togglePlay,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TimerScreen(
+    scope: CoroutineScope,
     timer: String,
     totalTimer: String,
-    subject: PlannerSubject,
+    selectedSubject: SubjectTimer?,
+    subjects: List<SubjectTimer>,
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
@@ -102,7 +112,7 @@ private fun TimerScreen(
     val screenWidthDp = configuration.screenWidthDp.dp
     val scaffoldState = rememberBottomSheetScaffoldState()
 
-    val subjectColor = subject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
+    val subjectColor = selectedSubject?.subjectColor.toPlannerSubjectColorOrDefault().asColor()
     val transition = updateTransition(
         targetState = isPlaying,
         label = "playingTransition"
@@ -192,10 +202,28 @@ private fun TimerScreen(
                 ) {
                     Spacer(Modifier.weight(1f))
 
-                    TimerSelectedSubject(
-                        subject = subject,
-                        textColor = textColor,
-                    )
+                    if (selectedSubject != null) {
+                        TimerSelectedSubject(
+                            subject = selectedSubject,
+                            textColor = textColor,
+                            onSubjectClick = {
+                                scope.launch { scaffoldState.bottomSheetState.expand() }
+                            },
+                        )
+                    } else {
+                        TimerSelectedSubject(
+                            subject = SubjectTimer(
+                                subjectId = -1L,
+                                subjectName = "선택",
+                                subjectColor = "SUBJECT_COLOR1",
+                                studyTime = 0L,
+                            ),
+                            textColor = textColor,
+                            onSubjectClick = {
+                                scope.launch { scaffoldState.bottomSheetState.expand() }
+                            },
+                        )
+                    }
 
                     Spacer(Modifier.height(20.dp))
 
@@ -223,19 +251,12 @@ private fun TimerScreen(
     TimerBottomSheet(
         scaffoldState = scaffoldState,
         totalTimer = totalTimer,
-        selectedSubject = subject,
-        subjects = listOf(
-            subject,
-            PlannerSubject(2, "과학", "SUBJECT_COLOR2"),
-            PlannerSubject(3, "영어", "SUBJECT_COLOR3"),
-            PlannerSubject(4, "국어", "SUBJECT_COLOR4"),
-            PlannerSubject(5, "수학", "SUBJECT_COLOR5"),
-            PlannerSubject(6, "사회", "SUBJECT_COLOR6"),
-            PlannerSubject(7, "과학", "SUBJECT_COLOR7"),
-            PlannerSubject(8, "영어", "SUBJECT_COLOR8"),
-            PlannerSubject(9, "국어", "SUBJECT_COLOR9"),
-        ),
+        selectedSubject = selectedSubject,
+        subjects = subjects,
         modifier = modifier,
+        onSubjectClick = {
+            // 과목변경 다이얼로그
+        },
     )
 }
 
@@ -244,11 +265,12 @@ private fun TimerScreen(
 fun TimerBottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     totalTimer: String,
-    selectedSubject: PlannerSubject,
-    subjects: List<PlannerSubject>,
+    selectedSubject: SubjectTimer?,
+    subjects: List<SubjectTimer>,
     modifier: Modifier,
+    onSubjectClick: (SubjectTimer) -> Unit,
 ) {
-    val subjectColor = selectedSubject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
+    val subjectColor = selectedSubject?.subjectColor.toPlannerSubjectColorOrDefault().asColor()
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -314,7 +336,7 @@ fun TimerBottomSheet(
 
                     items(subjects) { subject ->
                         val backgroundModifier =
-                            if (subject.subjectId == selectedSubject.subjectId)
+                            if (subject.subjectId == selectedSubject?.subjectId)
                                 Modifier.background(
                                     TogedyTheme.colors.white.copy(alpha = 0.1f),
                                     RoundedCornerShape(10.dp)
@@ -325,6 +347,7 @@ fun TimerBottomSheet(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .then(backgroundModifier)
+                                .noRippleClickable { onSubjectClick(subject) }
                                 .padding(horizontal = 10.dp, vertical = 12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -360,13 +383,16 @@ private fun formatTime(totalSeconds: Int): String {
 private fun TimerScreenPreview() {
     TogedyTheme {
         TimerScreen(
+            scope = rememberCoroutineScope(),
             timer = "00:00:00",
             totalTimer = "00:00:00",
-            subject = PlannerSubject(
+            selectedSubject = SubjectTimer(
                 subjectId = 1,
                 subjectName = "수학",
                 subjectColor = "SUBJECT_COLOR1",
+                studyTime = 0L,
             ),
+            subjects = emptyList(),
             isPlaying = false,
             onBackClick = {},
             onPlayButtonClick = {},
