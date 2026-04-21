@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -70,7 +69,7 @@ internal fun CalendarRoute(
     val currentDialogDate by calendarViewModel.currentDialogDate.collectAsStateWithLifecycle()
     val isUpdateNeeded by calendarViewModel.isUpdateNeeded.collectAsStateWithLifecycle()
 
-    LaunchedEffect(isUpdateNeeded == true) {
+    LaunchedEffect(isUpdateNeeded) {
         calendarViewModel.getCalendarInfo()
     }
 
@@ -115,11 +114,11 @@ private fun CalendarScreen(
         is UiState.Success -> {
             with(uiState) {
                 CalendarSuccessScreen(
-                    notice = (uiState.noticeState as UiState.Success<String>).data,
+                    notice = (noticeState as UiState.Success<String>).data,
                     currentDate = currentDialogDate,
-                    date = currentDate,
-                    dDay = (uiState.dDayState as UiState.Success<DDay>).data,
-                    schedules = (uiState.scheduleState as UiState.Success<List<Schedule>>).data,
+                    currentYearMonth = currentDate,
+                    dDay = (dDayState as UiState.Success<DDay>).data,
+                    schedules = (scheduleState as UiState.Success<List<Schedule>>).data,
                     onSearchBoxClick = onSearchBoxClick,
                     onDateClick = onDateClick,
                     onCategoryDetailNavigate = onCategoryDetailNavigate,
@@ -139,7 +138,7 @@ private fun CalendarScreen(
 private fun CalendarSuccessScreen(
     notice: String,
     currentDate: LocalDate,
-    date: LocalDate,
+    currentYearMonth: LocalDate,
     dDay: DDay,
     schedules: List<Schedule>,
     onSearchBoxClick: () -> Unit,
@@ -151,7 +150,7 @@ private fun CalendarSuccessScreen(
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
-    var weeks = generateCalendarWeeks(date)
+    val weeks = generateCalendarWeeks(currentYearMonth)
     var isYearMonthBottomSheetVisible by remember { mutableStateOf(false) }
     var isDailyDialogVisible by remember { mutableStateOf(false) }
     var selectedScheduleId by remember { mutableStateOf<Long?>(null) }
@@ -166,20 +165,20 @@ private fun CalendarSuccessScreen(
         stickyHeader {
             CalendarHeader(
                 notice = notice,
-                date = date,
+                date = currentYearMonth,
                 dDay = dDay,
                 onSearchBoxClick = onSearchBoxClick,
                 onYearMonthSectionClick = { isYearMonthBottomSheetVisible = true },
             )
         }
 
-        itemsIndexed(weeks) { index, week ->
+        itemsIndexed(weeks) { _, week ->
             WeekSchedule(
                 weekDates = week,
                 schedules = schedules,
-                currentMonth = date.month,
-                onDateClick = { date ->
-                    onDateClick(date)
+                currentMonth = currentYearMonth.month,
+                onDateClick = { selectedDate ->
+                    onDateClick(selectedDate)
                     isDailyDialogVisible = true
                 },
             )
@@ -188,12 +187,10 @@ private fun CalendarSuccessScreen(
 
     if (isYearMonthBottomSheetVisible) {
         YearMonthBottomSheet(
-            initDate = currentDate,
-            onDismissRequest = {
-                isYearMonthBottomSheetVisible = false
-            },
-            onDoneClick = { selectedDate ->
-                onYearMonthChange(selectedDate)
+            initDate = currentYearMonth,
+            onDismissRequest = { isYearMonthBottomSheetVisible = false },
+            onDoneClick = { selectedYearMonth ->
+                onYearMonthChange(selectedYearMonth)
                 isYearMonthBottomSheetVisible = false
             },
         )
@@ -267,7 +264,7 @@ private fun CalendarHeader(
         ) {
             YearMonthSection(
                 date = date,
-                onClick = onYearMonthSectionClick
+                onClick = onYearMonthSectionClick,
             )
 
             if (dDay.hasDday) DDaySection(dDay = dDay)
@@ -375,32 +372,6 @@ private fun DDaySection(
         Text(
             text = dDayText,
             style = dDayTextStyle,
-        )
-    }
-}
-
-
-@Preview
-@Composable
-private fun CalendarSuccessScreenPreview(modifier: Modifier = Modifier) {
-    TogedyTheme {
-        CalendarSuccessScreen(
-            notice = "알림을 알립니다!",
-            currentDate = LocalDate.now(),
-            date = LocalDate.now(),
-            dDay = DDay.mock,
-            schedules = emptyList(),
-            onSearchBoxClick = {},
-            onDateClick = {},
-            onYearMonthChange = {},
-            onCategoryDetailNavigate = {},
-            updateMonthlyCalendar = {},
-            updateDailySchedule = {},
-            dailyDialogViewModel = DailyDialogViewModel(
-                calendarRepository = TODO(),
-                userScheduleRepository = TODO()
-            ),
-            modifier = modifier,
         )
     }
 }
