@@ -41,6 +41,7 @@ fun TogedyBasicDialog(
     buttonText: String,
     onDismissRequest: () -> Unit,
     onButtonClick: () -> Unit,
+    titleColor: Color = TogedyTheme.colors.gray900,
     buttonColor: Color = TogedyTheme.colors.green,
     modifier: Modifier = Modifier,
 ) {
@@ -56,7 +57,7 @@ fun TogedyBasicDialog(
             Text(
                 text = title,
                 style = TogedyTheme.typography.title18b,
-                color = TogedyTheme.colors.gray900,
+                color = titleColor,
             )
 
             Spacer(Modifier.height(16.dp))
