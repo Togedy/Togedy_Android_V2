@@ -7,13 +7,17 @@ import com.together.study.calendar.dto.ScheduleListResponse
 import com.together.study.calendar.dto.ScheduleResponse
 import com.together.study.calendar.model.Announcement
 import com.together.study.calendar.model.DDay
+import com.together.study.calendar.model.DailyScheduleInfo
 import com.together.study.calendar.model.Schedule
 
 fun ScheduleListResponse.toDomain(): List<Schedule> =
     monthlyScheduleList.map { it.toSchedule() }
 
-fun DailyScheduleListResponse.toDomain(): List<Schedule> =
-    dailyScheduleList.map { it.toSchedule() }
+fun DailyScheduleListResponse.toDomain(): DailyScheduleInfo =
+    DailyScheduleInfo(
+        remainingDays = remainingDays,
+        dailyScheduleList = dailyScheduleList.map { it.toSchedule() },
+    )
 
 fun ScheduleResponse.toSchedule(): Schedule =
     Schedule(

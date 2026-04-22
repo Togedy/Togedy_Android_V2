@@ -26,6 +26,8 @@ internal fun YearMonthBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
         showDone = true,
+        isDoneActivate = true,
+        title = "",
         onDoneClick = { onDoneClick(currentDate) },
         modifier = modifier.padding(bottom = 20.dp),
     ) {

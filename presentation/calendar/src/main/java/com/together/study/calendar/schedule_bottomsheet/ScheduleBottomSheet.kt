@@ -38,6 +38,7 @@ import com.together.study.calendar.model.Category
 import com.together.study.calendar.model.UserSchedule
 import com.together.study.calendar.schedule_bottomsheet.state.ScheduleSubSheetType
 import com.together.study.calendar.type.toCategoryColorOrDefault
+import com.together.study.designsystem.R.drawable.ic_memo_24
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.button.TogedyToggleButton
 import com.together.study.designsystem.theme.TogedyTheme
@@ -255,10 +256,11 @@ private fun ScheduleMemoSection(
                 .noRippleClickable(onMemoClick),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(TogedyTheme.colors.gray500),
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_memo_24),
+                contentDescription = null,
+                tint = TogedyTheme.colors.gray600,
+                modifier = Modifier.size(24.dp),
             )
 
             Spacer(Modifier.width(8.dp))

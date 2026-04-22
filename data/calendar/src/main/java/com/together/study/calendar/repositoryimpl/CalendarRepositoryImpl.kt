@@ -4,6 +4,7 @@ import com.together.study.calendar.datasouce.CalendarDataSource
 import com.together.study.calendar.mapper.toDomain
 import com.together.study.calendar.model.Announcement
 import com.together.study.calendar.model.DDay
+import com.together.study.calendar.model.DailyScheduleInfo
 import com.together.study.calendar.model.Schedule
 import com.together.study.calendar.repository.CalendarRepository
 import javax.inject.Inject
@@ -17,7 +18,7 @@ class CalendarRepositoryImpl @Inject constructor(
             response.toDomain()
         }
 
-    override suspend fun getDailySchedule(date: String): Result<List<Schedule>> =
+    override suspend fun getDailySchedule(date: String): Result<DailyScheduleInfo> =
         runCatching {
             val response = calendarDataSource.getDailySchedule(date = date).response
             response.toDomain()

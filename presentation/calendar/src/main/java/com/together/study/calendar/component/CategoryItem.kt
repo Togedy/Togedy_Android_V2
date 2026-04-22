@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.calendar.model.Category
 import com.together.study.calendar.type.toCategoryColorOrDefault
+import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_search_cancel_16
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
@@ -70,15 +71,13 @@ internal fun CategoryItem(
         }
 
         if (isCategorySelected) {
-//            Icon(
-//                imageVector = ImageVector.vectorResource()
-//            )
             Spacer(Modifier.width(4.dp))
-            Box(
-                // TODO: 추후 체크 icon 으로 변경
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(TogedyTheme.colors.gray500),
+
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_check_green),
+                contentDescription = "체크 버튼",
+                tint = Color.Unspecified,
+                modifier = Modifier.size(24.dp),
             )
         } else if (isCategoryEditMode) {
             Spacer(Modifier.width(4.dp))
