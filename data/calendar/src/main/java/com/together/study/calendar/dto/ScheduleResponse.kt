@@ -10,6 +10,7 @@ data class ScheduleListResponse(
 
 @Serializable
 data class DailyScheduleListResponse(
+    @SerialName("remainingDays") val remainingDays: Int,
     @SerialName("dailyScheduleList") val dailyScheduleList: List<ScheduleResponse>,
 )
 
