@@ -19,7 +19,7 @@ class PlannerTaskDataSource @Inject constructor(
     ) = plannerTaskService.updateTaskContent(
         request = PlannerTaskRequest(
             taskId = taskId,
-            studySubjectId = subjectId,
+            subjectId = subjectId,
             name = name,
             date = date,
         )

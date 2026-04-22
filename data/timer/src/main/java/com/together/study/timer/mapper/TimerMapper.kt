@@ -6,7 +6,6 @@ import com.together.study.timer.dto.TimerResponse
 import com.together.study.timer.model.RunningTimer
 import com.together.study.timer.model.SubjectTimer
 import com.together.study.timer.model.Timer
-import kotlin.collections.map
 
 fun RunningTimerResponse.toDomain(): RunningTimer {
     return RunningTimer(
@@ -24,7 +23,7 @@ fun SubjectTimerResponse.toDomain(): SubjectTimer {
     return SubjectTimer(
         subjectId = subjectId,
         subjectName = subjectName,
-        subjectColor = studyColor,
+        subjectColor = subjectColor,
         studyTime = studyTime,
     )
 }
