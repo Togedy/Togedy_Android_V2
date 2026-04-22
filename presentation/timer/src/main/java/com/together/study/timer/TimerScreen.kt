@@ -49,6 +49,7 @@ import com.together.study.timer.component.TimerBottomSheet
 import com.together.study.timer.component.TimerButton
 import com.together.study.timer.component.TimerSelectedSubject
 import com.together.study.timer.model.SubjectTimer
+import com.together.study.timer.util.formatTime
 import com.together.study.util.asColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -81,6 +82,7 @@ internal fun TimerRoute(
         scope = scope,
         timer = formatTime(elapsedTime),
         totalTimer = formatTime(totalTime.toInt() + elapsedTime),
+        elapsedTime = elapsedTime,
         selectedSubject = uiState.selectedSubject,
         subjects = subjects,
         isPlaying = uiState.isPlaying,
@@ -97,6 +99,7 @@ private fun TimerScreen(
     scope: CoroutineScope,
     timer: String,
     totalTimer: String,
+    elapsedTime: Int,
     selectedSubject: SubjectTimer?,
     subjects: List<SubjectTimer>,
     isPlaying: Boolean,
@@ -119,14 +122,16 @@ private fun TimerScreen(
         transitionSpec = { tween(600) },
         label = "radius"
     ) { playing ->
-        if (playing) 600f else 0f
+        if (playing) 600f
+        else 0f
     }
 
     val alpha by transition.animateFloat(
         transitionSpec = { tween(400) },
         label = "alpha"
     ) { playing ->
-        if (playing) 1f else 0f
+        if (playing) 1f
+        else 0f
     }
 
     val subjectCircleModifier =
@@ -247,6 +252,7 @@ private fun TimerScreen(
     TimerBottomSheet(
         scaffoldState = scaffoldState,
         totalTimer = totalTimer,
+        elapsedTime = elapsedTime,
         selectedSubject = selectedSubject,
         subjects = subjects,
         modifier = modifier,
@@ -273,13 +279,6 @@ private fun TimerScreen(
     }
 }
 
-private fun formatTime(totalSeconds: Int): String {
-    val hours = totalSeconds / 3600
-    val minutes = (totalSeconds % 3600) / 60
-    val seconds = totalSeconds % 60
-    return "%02d:%02d:%02d".format(hours, minutes, seconds)
-}
-
 @Preview
 @Composable
 private fun TimerScreenPreview() {
@@ -288,6 +287,7 @@ private fun TimerScreenPreview() {
             scope = rememberCoroutineScope(),
             timer = "00:00:00",
             totalTimer = "00:00:00",
+            elapsedTime = 0,
             selectedSubject = SubjectTimer(
                 subjectId = 1,
                 subjectName = "수학",

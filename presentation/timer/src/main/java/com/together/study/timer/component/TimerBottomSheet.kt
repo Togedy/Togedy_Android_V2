@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.timer.model.SubjectTimer
+import com.together.study.timer.util.formatTime
 import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
@@ -37,6 +38,7 @@ import com.together.study.util.noRippleClickable
 internal fun TimerBottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     totalTimer: String,
+    elapsedTime: Int,
     selectedSubject: SubjectTimer?,
     subjects: List<SubjectTimer>,
     modifier: Modifier,
@@ -106,8 +108,10 @@ internal fun TimerBottomSheet(
                     }
 
                     items(subjects) { subject ->
+                        val isSelected = subject.subjectId == selectedSubject?.subjectId
+                        val elapsedTime = if (isSelected) elapsedTime else 0
                         val backgroundModifier =
-                            if (subject.subjectId == selectedSubject?.subjectId)
+                            if (isSelected)
                                 Modifier.background(
                                     TogedyTheme.colors.white.copy(alpha = 0.3f),
                                     RoundedCornerShape(10.dp)
@@ -126,7 +130,7 @@ internal fun TimerBottomSheet(
                             SubjectTitle(subject = subject)
 
                             Text(
-                                text = totalTimer,
+                                text = formatTime(subject.studyTime.toInt() + elapsedTime),
                                 style = TogedyTheme.typography.time40l,
                                 color = TogedyTheme.colors.white,
                             )

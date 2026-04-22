@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +35,8 @@ internal class TimerViewModel @Inject constructor(
 
     fun updateSelectedSubject(subject: SubjectTimer) {
         _uiState.update { it.copy(selectedSubject = subject) }
+
+        if (uiState.value.isPlaying) togglePlay()
     }
 
     private fun updateRunningTimerId(timerId: Long?) {
@@ -101,16 +102,12 @@ internal class TimerViewModel @Inject constructor(
             }
             .onFailure { e ->
                 updateIsPlaying(false)
-                Timber.tag("okhttp").e("%s", e.toString())
             }
     }
 
     fun stopTimer() = viewModelScope.launch {
         _uiState.value.runningTimerId?.let { timerId ->
             stopTimerUseCase(timerId)
-                .onFailure {
-                    Timber.tag("okhttp").e("%s", it.toString())
-                }
             updateRunningTimerId(null)
             updateIsPlaying(false)
             stopLocalTimer()
