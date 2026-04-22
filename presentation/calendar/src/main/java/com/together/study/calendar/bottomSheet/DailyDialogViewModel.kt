@@ -40,7 +40,9 @@ internal class DailyDialogViewModel @Inject constructor(
     fun deleteSchedule(scheduleId: Long) = viewModelScope.launch {
         userScheduleRepository.deleteUserSchedule(scheduleId)
             .onSuccess {
-                _schedulesInfo.value.dailyScheduleList = lastDailySchedules.filterNot { it.scheduleId == scheduleId }
+                _schedulesInfo.value = _schedulesInfo.value.copy(
+                    dailyScheduleList = lastDailySchedules.filterNot { it.scheduleId == scheduleId }
+                )
             }
             .onFailure { UiState.Failure(it.message.toString()) }
         changeIsUpdateNeeded(true)
