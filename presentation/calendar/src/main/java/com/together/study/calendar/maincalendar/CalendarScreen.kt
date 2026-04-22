@@ -345,10 +345,11 @@ private fun DDaySection(
     val dDayTextStyle = TogedyTheme.typography.body14m.copy(TogedyTheme.colors.gray500)
     val dDayText =
         if (dDay.hasDday) {
+            val dday = dDay.remainingDays
             when {
-                dDay.remainingDays == 0 -> "D-DAY"
-                dDay.remainingDays!! < 0 -> "D${dDay.remainingDays}"
-                else -> "D+${dDay.remainingDays}"
+                dday == 0 -> "D-DAY"
+                dday!! > 0 -> "D-$dday"
+                else -> "D+${-dday}"
             }
         } else ""
 
