@@ -35,13 +35,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.calendar.component.UserScheduleItem
-import com.together.study.calendar.model.DDay
 import com.together.study.calendar.model.Schedule
 import com.together.study.common.type.ScheduleType
 import com.together.study.designsystem.R.drawable.ic_delete_24
@@ -51,7 +49,6 @@ import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -61,7 +58,6 @@ import kotlin.math.roundToInt
 @Composable
 internal fun DailyScheduleDialog(
     date: LocalDate,
-    dDay: DDay,
     onDismissRequest: () -> Unit,
     onScheduleItemClick: (ScheduleType, Long) -> Unit,
     onAddScheduleClick: () -> Unit,
@@ -69,7 +65,7 @@ internal fun DailyScheduleDialog(
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val dailySchedules by dailyDialogViewModel.dailySchedules.collectAsStateWithLifecycle()
+    val schedulesInfo by dailyDialogViewModel.schedulesInfo.collectAsStateWithLifecycle()
     val isUpdateNeeded by dailyDialogViewModel.isUpdateNeeded.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
@@ -100,7 +96,7 @@ internal fun DailyScheduleDialog(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                TopDateInfoSection(date, dDay)
+                TopDateInfoSection(date, schedulesInfo.remainingDays)
 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -112,7 +108,7 @@ internal fun DailyScheduleDialog(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        dailySchedules.forEach { schedule ->
+                        schedulesInfo.dailyScheduleList.forEach { schedule ->
                             DailyScheduleItem(
                                 coroutineScope = coroutineScope,
                                 schedule = schedule,
@@ -137,16 +133,16 @@ internal fun DailyScheduleDialog(
 @Composable
 private fun TopDateInfoSection(
     date: LocalDate,
-    dDay: DDay,
+    dDay: Int?,
     modifier: Modifier = Modifier,
 ) {
-    val dDayColor = if (dDay.hasDday) TogedyTheme.colors.red else TogedyTheme.colors.gray500
+    val dDayColor = if (dDay!=null) TogedyTheme.colors.red else TogedyTheme.colors.gray500
     val dDayText =
-        if (dDay.hasDday) {
+        if (dDay!=null) {
             when {
-                dDay.remainingDays == 0 -> "D-DAY"
-                dDay.remainingDays!! < 0 -> "D${dDay.remainingDays}"
-                else -> "D+${dDay.remainingDays}"
+                dDay == 0 -> "D-DAY"
+                dDay > 0 -> "D-$dDay"
+                else -> "D+${-dDay}"
             }
         } else ""
 
@@ -174,7 +170,7 @@ private fun TopDateInfoSection(
             )
         }
 
-        if (dDay.hasDday) {
+        if (dDay!=null) {
             Spacer(Modifier.weight(1f))
 
             Text(
@@ -245,8 +241,7 @@ fun DailyScheduleItem(
                 .background(TogedyTheme.colors.white, RoundedCornerShape(6.dp)),
         ) {
             with(schedule) {
-                val scheduleType = ScheduleType.get(scheduleType)
-                when (scheduleType) {
+                when (ScheduleType.get(scheduleType)) {
                     ScheduleType.UNIVERSITY -> {
                         TogedyScheduleChip(
                             typeStatus = when (universityAdmissionStage) {
@@ -270,35 +265,8 @@ fun DailyScheduleItem(
                             },
                         )
                     }
-
-                    else -> {
-                        Timber.d("잘못된 ScheduleType입니다.")
-                    }
                 }
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun DailyScheduleDialogPreview(modifier: Modifier = Modifier) {
-    TogedyTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TogedyTheme.colors.white),
-        ) {
-            DailyScheduleDialog(
-                date = LocalDate.now(),
-                dDay = DDay(hasDday = false, userScheduleName = null, remainingDays = 0),
-                onScheduleItemClick = { type, id -> },
-                onAddScheduleClick = {},
-                onDismissRequest = {},
-                onUpdateNeeded = {},
-                dailyDialogViewModel = TODO(),
-                modifier = modifier,
-            )
         }
     }
 }
