@@ -21,7 +21,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,18 +60,10 @@ internal fun TimerRoute(
     viewModel: TimerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val elapsedTime by viewModel.elapsedTime.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        viewModel.setTimerInfo()
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.stopLocalTimer()
-            viewModel.stopTimer()
-        }
+        viewModel.bindService()
     }
 
     val totalTime = (uiState.totalStudyTime as? UiState.Success)?.data ?: 0L
@@ -80,14 +71,17 @@ internal fun TimerRoute(
 
     TimerScreen(
         scope = scope,
-        timer = formatTime(elapsedTime),
-        totalTimer = formatTime(totalTime.toInt() + elapsedTime),
-        elapsedTime = elapsedTime,
+        timer = formatTime(uiState.elapsedTime),
+        totalTimer = formatTime(totalTime.toInt() + uiState.elapsedTime),
+        elapsedTime = uiState.elapsedTime,
         selectedSubject = uiState.selectedSubject,
         subjects = subjects,
         isPlaying = uiState.isPlaying,
         modifier = modifier,
-        onBackClick = onBackClick,
+        onBackClick = {
+            viewModel.onExitTimer()
+            onBackClick()
+        },
         onPlayButtonClick = viewModel::togglePlay,
         onSubjectChanged = viewModel::updateSelectedSubject,
     )
@@ -269,6 +263,9 @@ private fun TimerScreen(
             onConfirmClick = {
                 tempSelectedSubject?.let {
                     if (selectedSubject != it) {
+                        if (isPlaying) {
+                            onPlayButtonClick()
+                        }
                         onSubjectChanged(it)
                         isSubjectChangeDialogVisible = false
                         tempSelectedSubject = null

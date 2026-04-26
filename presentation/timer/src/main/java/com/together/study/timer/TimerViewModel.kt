@@ -3,114 +3,95 @@ package com.together.study.timer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.together.study.common.state.UiState
+import com.together.study.timer.manager.TimerManager
 import com.together.study.timer.model.SubjectTimer
 import com.together.study.timer.state.TimerUiState
 import com.together.study.timer.usecase.GetSummaryTimerUseCase
 import com.together.study.timer.usecase.GetTotalStudyTimerUseCase
-import com.together.study.timer.usecase.StartTimerUseCase
-import com.together.study.timer.usecase.StopTimerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class TimerViewModel @Inject constructor(
+    private val timerManager: TimerManager,
     private val getTotalStudyTimerUseCase: GetTotalStudyTimerUseCase,
     private val getSummaryTimerUseCase: GetSummaryTimerUseCase,
-    private val startTimerUseCase: StartTimerUseCase,
-    private val stopTimerUseCase: StopTimerUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(TimerUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _elapsedTime = MutableStateFlow(0)
-    val elapsedTime = _elapsedTime.asStateFlow()
-
-    private var timerJob: Job? = null
-
-    fun updateSelectedSubject(subject: SubjectTimer) {
-        _uiState.update { it.copy(selectedSubject = subject) }
-
-        if (uiState.value.isPlaying) togglePlay()
+    init {
+        observeServiceState()
+        loadInitialData()
     }
 
-    private fun updateRunningTimerId(timerId: Long?) {
-        _uiState.update { it.copy(runningTimerId = timerId) }
-    }
-
-    private fun updateIsPlaying(isPlaying: Boolean = !uiState.value.isPlaying) {
-        _uiState.update { it.copy(isPlaying = isPlaying) }
-    }
-
-    fun setTimerInfo() {
-        getTotalTimer()
-        getSubjectTimers()
-    }
-
-    fun togglePlay() {
-        val selected = _uiState.value.selectedSubject ?: return
-        val isPlaying = !_uiState.value.isPlaying
-
-        if (isPlaying) startTimer(selected.subjectId)
-        else stopTimer()
-    }
-
-    private fun startLocalTimer() {
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            while (true) {
-                delay(1000)
-                _elapsedTime.update { it + 1 }
+    private fun observeServiceState() {
+        viewModelScope.launch {
+            combine(timerManager.elapsedTime, timerManager.isPlaying) { time, playing ->
+                time to playing
+            }.collect { (time, playing) ->
+                _uiState.update {
+                    it.copy(
+                        elapsedTime = time,
+                        isPlaying = playing,
+                    )
+                }
             }
         }
     }
 
-    fun stopLocalTimer() {
-        timerJob?.cancel()
+    private fun loadInitialData() {
+        getTotalTimer()
+        getSubjectTimers()
     }
 
     private fun getTotalTimer() = viewModelScope.launch {
         getTotalStudyTimerUseCase()
-            .onSuccess { response ->
-                _uiState.update { it.copy(totalStudyTime = UiState.Success(response)) }
+            .onSuccess { total ->
+                _uiState.update {
+                    it.copy(totalStudyTime = UiState.Success(total))
+                }
             }
     }
 
     private fun getSubjectTimers() = viewModelScope.launch {
         getSummaryTimerUseCase()
-            .onSuccess { response ->
+            .onSuccess { subjects ->
                 _uiState.update {
                     it.copy(
-                        subjectTimers = UiState.Success(response),
-                        selectedSubject = response.firstOrNull(),
+                        subjectTimers = UiState.Success(subjects),
+                        selectedSubject = subjects.firstOrNull(),
                     )
                 }
             }
     }
 
-    private fun startTimer(subjectId: Long) = viewModelScope.launch {
-        startTimerUseCase(subjectId)
-            .onSuccess {
-                updateIsPlaying(true)
-                updateRunningTimerId(it.timerId)
-                startLocalTimer()
-            }
-            .onFailure { e ->
-                updateIsPlaying(false)
-            }
+    fun updateSelectedSubject(subject: SubjectTimer) {
+        _uiState.update { it.copy(selectedSubject = subject) }
     }
 
-    fun stopTimer() = viewModelScope.launch {
-        _uiState.value.runningTimerId?.let { timerId ->
-            stopTimerUseCase(timerId)
-            updateRunningTimerId(null)
-            updateIsPlaying(false)
-            stopLocalTimer()
-        }
+    fun togglePlay() {
+        val subject = _uiState.value.selectedSubject ?: return
+
+        if (_uiState.value.isPlaying) timerManager.stop()
+        else timerManager.start(subject.subjectId)
+    }
+
+    fun bindService() {
+        timerManager.bind()
+    }
+
+    fun onExitTimer() {
+        timerManager.stop()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        timerManager.unbind()
     }
 }
