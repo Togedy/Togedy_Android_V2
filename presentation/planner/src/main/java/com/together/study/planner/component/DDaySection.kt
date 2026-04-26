@@ -21,7 +21,7 @@ internal fun DDaySection(
     val dDayText = when (remainingDays) {
         null -> ""
         0 -> "D-DAY"
-        else -> if (remainingDays < 0) "D$remainingDays" else "D+$remainingDays"
+        else -> if (remainingDays < 0) "D+${-remainingDays}" else "D${-remainingDays}"
     }
 
     Row(

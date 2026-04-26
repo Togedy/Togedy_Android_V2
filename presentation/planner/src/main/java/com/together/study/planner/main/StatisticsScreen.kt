@@ -29,13 +29,16 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.component.studyblock.StudyBlock
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.planner.component.StreakSection
 import com.together.study.planner.model.DailyStatistics
+import com.together.study.planner.type.StudyStatus
 import java.time.LocalDate
 
 private val daysOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
 
 @Composable
 internal fun StatisticsScreen(
+    studyStatus: StudyStatus?,
     statisticsState: UiState<DailyStatistics>,
     modifier: Modifier = Modifier,
 ) {
@@ -47,7 +50,7 @@ internal fun StatisticsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .padding(14.dp),
+            .padding(horizontal = 14.dp),
     ) {
         when (statisticsState) {
             is UiState.Loading -> {}
@@ -57,12 +60,23 @@ internal fun StatisticsScreen(
             is UiState.Success -> {
                 val statistics = statisticsState.data
                 item {
+                    Spacer(Modifier.height(14.dp))
+
+                    if (studyStatus != null) {
+                        StreakSection(
+                            currentMonth = currentDate.monthValue,
+                            studyStatus = studyStatus,
+                            daysSinceLastStudy = statistics.daysSinceLastStudy,
+                            currentStreakDays = statistics.currentStreakDays,
+                        )
+
+                        Spacer(Modifier.height(16.dp))
+                    }
+
                     WeeklyStatistics(statistics.weeklyReview)
 
                     Spacer(Modifier.height(16.dp))
-                }
 
-                item {
                     MonthlyStatistics(
                         currentDate = currentDate,
                         monthlyReview = statistics.monthlyReview,
@@ -190,6 +204,7 @@ fun WeeklyStatistics(
 private fun StatisticsScreenPreview() {
     TogedyTheme {
         StatisticsScreen(
+            studyStatus = null,
             statisticsState = UiState.Success(
                 DailyStatistics(
                     daysSinceLastStudy = 0,
