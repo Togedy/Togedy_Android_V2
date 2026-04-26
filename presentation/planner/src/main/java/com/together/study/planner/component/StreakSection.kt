@@ -20,24 +20,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.theme.TogedyTheme
-import com.together.study.planner.type.AbsentRange
-import com.together.study.planner.type.StreakRange
 import com.together.study.planner.type.StudyStatus
 import com.together.study.planner.util.toUiModel
 
 @Composable
 internal fun StreakSection(
     currentMonth: Int,
+    studyStatus: StudyStatus,
     daysSinceLastStudy: Int,
     currentStreakDays: Int,
     modifier: Modifier = Modifier,
 ) {
     val days = if (daysSinceLastStudy == 0) currentStreakDays else daysSinceLastStudy
-    val status =
-        if (daysSinceLastStudy == 0) StudyStatus.Streak(StreakRange.from(currentStreakDays))
-        else StudyStatus.Absent(AbsentRange.from(daysSinceLastStudy))
-    val uiModel = status.toUiModel()
     val phrase = if (daysSinceLastStudy == 0) "공부했어요" else "기다렸어요"
+    val uiModel = studyStatus.toUiModel()
 
     Row(
         modifier = modifier

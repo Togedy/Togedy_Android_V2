@@ -31,12 +31,14 @@ import com.together.study.designsystem.component.studyblock.StudyBlock
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.StreakSection
 import com.together.study.planner.model.DailyStatistics
+import com.together.study.planner.type.StudyStatus
 import java.time.LocalDate
 
 private val daysOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
 
 @Composable
 internal fun StatisticsScreen(
+    studyStatus: StudyStatus?,
     statisticsState: UiState<DailyStatistics>,
     modifier: Modifier = Modifier,
 ) {
@@ -60,16 +62,15 @@ internal fun StatisticsScreen(
                 item {
                     Spacer(Modifier.height(14.dp))
 
-                    with(statistics) {
-                        if (daysSinceLastStudy!=0 || currentStreakDays!=0) {
-                            StreakSection(
-                                currentMonth = currentDate.monthValue,
-                                daysSinceLastStudy = daysSinceLastStudy,
-                                currentStreakDays = currentStreakDays,
-                            )
+                    if (studyStatus != null) {
+                        StreakSection(
+                            currentMonth = currentDate.monthValue,
+                            studyStatus = studyStatus,
+                            daysSinceLastStudy = statistics.daysSinceLastStudy,
+                            currentStreakDays = statistics.currentStreakDays,
+                        )
 
-                            Spacer(Modifier.height(16.dp))
-                        }
+                        Spacer(Modifier.height(16.dp))
                     }
 
                     WeeklyStatistics(statistics.weeklyReview)
@@ -203,6 +204,7 @@ fun WeeklyStatistics(
 private fun StatisticsScreenPreview() {
     TogedyTheme {
         StatisticsScreen(
+            studyStatus = null,
             statisticsState = UiState.Success(
                 DailyStatistics(
                     daysSinceLastStudy = 0,

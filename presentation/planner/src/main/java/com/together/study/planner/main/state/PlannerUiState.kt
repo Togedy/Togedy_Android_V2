@@ -7,6 +7,7 @@ import com.together.study.planner.model.DailyStatistics
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.SubjectItem
 import com.together.study.planner.model.TimeTable
+import com.together.study.planner.type.StudyStatus
 
 @Immutable
 data class PlannerUiState(
@@ -14,6 +15,7 @@ data class PlannerUiState(
     val plannerSubjectState: UiState<List<PlannerSubject>> = UiState.Loading,
     val timeTableState: UiState<List<TimeTable>> = UiState.Loading,
     val statisticsState: UiState<DailyStatistics> = UiState.Loading,
+    val studyStatus: StudyStatus? = null,
     val monthlyHeatmapState: UiState<List<Int>> = UiState.Loading,
     val subjects: List<SubjectItem> = emptyList(),
 )

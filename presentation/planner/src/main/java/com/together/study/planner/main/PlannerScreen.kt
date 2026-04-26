@@ -53,6 +53,7 @@ import com.together.study.planner.model.SubjectItem
 import com.together.study.planner.model.TaskItem
 import com.together.study.planner.model.TimeTable
 import com.together.study.planner.type.PlannerSheetType
+import com.together.study.planner.type.StudyStatus
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -86,6 +87,7 @@ internal fun PlannerScreen(
         plannerSubjectState = uiState.plannerSubjectState,
         timeTableState = uiState.timeTableState,
         statisticsState = uiState.statisticsState,
+        studyStatus = uiState.studyStatus,
         monthlyHeatmapState = uiState.monthlyHeatmapState,
         modifier = modifier,
         onTabClick = viewModel::updateSelectedTab,
@@ -94,9 +96,7 @@ internal fun PlannerScreen(
         onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
-        onImageDeleteClick = {
-            viewModel.deleteImage()
-        },
+        onImageDeleteClick =viewModel::deleteImage,
         onImageEditClick = { onImageEditNavigate(selectedDate.toString()) },
         onAddDoneBtnClick = viewModel::saveNewSubject,
         onTaskPlusButtonClick = viewModel::addTempTask,
@@ -118,6 +118,7 @@ private fun PlannerScreen(
     plannerSubjectState: UiState<List<PlannerSubject>>,
     timeTableState: UiState<List<TimeTable>>,
     statisticsState: UiState<DailyStatistics>,
+    studyStatus: StudyStatus?,
     monthlyHeatmapState: UiState<List<Int>>,
     modifier: Modifier = Modifier,
     onTabClick: (PlannerMainTab) -> Unit,
@@ -186,6 +187,7 @@ private fun PlannerScreen(
                     onImageEditButtonClick = { /*기능없음*/ },
                 )
             }
+
             is UiState.Success -> {
                 val data = plannerInfoState.data
                 PlannerTopSection(
@@ -255,7 +257,10 @@ private fun PlannerScreen(
 
                 1 -> TimeTableScreen(timeTableState = timeTableState)
 
-                2 -> StatisticsScreen(statisticsState)
+                2 -> StatisticsScreen(
+                    studyStatus = studyStatus,
+                    statisticsState = statisticsState,
+                )
             }
         }
     }
