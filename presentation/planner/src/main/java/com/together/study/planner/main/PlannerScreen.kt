@@ -42,9 +42,9 @@ import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.planner.component.DDaySection
 import com.together.study.planner.component.PlannerDropDownScrim
 import com.together.study.planner.component.TimerSection
-import com.together.study.planner.component.DDaySection
 import com.together.study.planner.main.state.PlannerSheetState
 import com.together.study.planner.model.DailyPlannerInfo
 import com.together.study.planner.model.DailyStatistics
@@ -53,6 +53,7 @@ import com.together.study.planner.model.SubjectItem
 import com.together.study.planner.model.TaskItem
 import com.together.study.planner.model.TimeTable
 import com.together.study.planner.type.PlannerSheetType
+import com.together.study.planner.type.StudyStatus
 import com.together.study.util.noRippleClickable
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -86,6 +87,7 @@ internal fun PlannerScreen(
         plannerSubjectState = uiState.plannerSubjectState,
         timeTableState = uiState.timeTableState,
         statisticsState = uiState.statisticsState,
+        studyStatus = uiState.studyStatus,
         monthlyHeatmapState = uiState.monthlyHeatmapState,
         modifier = modifier,
         onTabClick = viewModel::updateSelectedTab,
@@ -94,9 +96,7 @@ internal fun PlannerScreen(
         onSheetVisibilityChange = viewModel::updateBottomSheetVisibility,
         onPlayButtonClick = onTimerNavigate,
         onEditSubjectClick = onEditSubjectNavigate,
-        onImageDeleteClick = {
-            viewModel.deleteImage()
-        },
+        onImageDeleteClick =viewModel::deleteImage,
         onImageEditClick = { onImageEditNavigate(selectedDate.toString()) },
         onAddDoneBtnClick = viewModel::saveNewSubject,
         onTaskPlusButtonClick = viewModel::addTempTask,
@@ -118,6 +118,7 @@ private fun PlannerScreen(
     plannerSubjectState: UiState<List<PlannerSubject>>,
     timeTableState: UiState<List<TimeTable>>,
     statisticsState: UiState<DailyStatistics>,
+    studyStatus: StudyStatus?,
     monthlyHeatmapState: UiState<List<Int>>,
     modifier: Modifier = Modifier,
     onTabClick: (PlannerMainTab) -> Unit,
@@ -171,7 +172,6 @@ private fun PlannerScreen(
 
                 PlannerTopSection(
                     selectedDate = selectedDate,
-                    hasDDay = data.hasDday,
                     remainingDays = data.remainingDays,
                     dDayName = data.userScheduleName,
                     showDropdown = showDropdown,
@@ -187,11 +187,11 @@ private fun PlannerScreen(
                     onImageEditButtonClick = { /*기능없음*/ },
                 )
             }
+
             is UiState.Success -> {
                 val data = plannerInfoState.data
                 PlannerTopSection(
                     selectedDate = selectedDate,
-                    hasDDay = data.hasDday,
                     remainingDays = data.remainingDays,
                     dDayName = data.userScheduleName,
                     showDropdown = showDropdown,
@@ -257,7 +257,10 @@ private fun PlannerScreen(
 
                 1 -> TimeTableScreen(timeTableState = timeTableState)
 
-                2 -> StatisticsScreen(statisticsState)
+                2 -> StatisticsScreen(
+                    studyStatus = studyStatus,
+                    statisticsState = statisticsState,
+                )
             }
         }
     }
@@ -283,7 +286,6 @@ private fun PlannerScreen(
 @Composable
 private fun PlannerTopSection(
     selectedDate: LocalDate,
-    hasDDay: Boolean,
     remainingDays: Int?,
     dDayName: String?,
     showDropdown: Boolean,

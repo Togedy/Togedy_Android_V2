@@ -16,6 +16,7 @@ import com.together.study.planner.usecase.GetDailyStatisticsUseCase
 import com.together.study.planner.usecase.GetDailyTimetableUseCase
 import com.together.study.planner.usecase.GetMonthlyHeatmapUseCase
 import com.together.study.planner.usecase.GetPlannerTaskListUseCase
+import com.together.study.planner.usecase.GetStudyStatusUseCase
 import com.together.study.planner.usecase.GetSubjectsUseCase
 import com.together.study.planner.usecase.PostSubjectUseCase
 import com.together.study.planner.usecase.UpdateTaskCheckedUseCase
@@ -37,6 +38,7 @@ internal class PlannerViewModel @Inject constructor(
     private val getPlannerTaskListUseCase: GetPlannerTaskListUseCase,
     private val getDailyTimetableUseCase: GetDailyTimetableUseCase,
     private val getDailyStatisticsUseCase: GetDailyStatisticsUseCase,
+    private val getStudyStatusUseCase: GetStudyStatusUseCase,
     private val getMonthlyHeatmapUseCase: GetMonthlyHeatmapUseCase,
     private val deleteImageUseCase: DeleteImageUseCase,
     private val updateTaskContentUseCase: UpdateTaskContentUseCase,
@@ -125,6 +127,17 @@ internal class PlannerViewModel @Inject constructor(
         getDailyStatisticsUseCase(selectedDate.value.toString())
             .onSuccess { result ->
                 _uiState.update { it.copy(statisticsState = UiState.Success(result)) }
+
+                if (result.daysSinceLastStudy != 0 || result.currentStreakDays != 0) {
+                    _uiState.update {
+                        it.copy(
+                            studyStatus = getStudyStatusUseCase(
+                                result.daysSinceLastStudy,
+                                result.currentStreakDays,
+                            )
+                        )
+                    }
+                }
             }
             .onFailure { e ->
                 _uiState.update {
