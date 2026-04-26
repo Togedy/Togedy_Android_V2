@@ -71,6 +71,7 @@ dependencies {
     implementation(projects.data.mypage)
     implementation(projects.data.timer)
     implementation(projects.presentation.main)
+    implementation(projects.presentation.timer)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
