@@ -1,5 +1,6 @@
 package com.together.study.timer
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
@@ -62,6 +63,13 @@ internal fun TimerRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
+    val handleBack = {
+        viewModel.onExitTimer()
+        onBackClick()
+    }
+
+    BackHandler(onBack = handleBack)
+
     LaunchedEffect(Unit) {
         viewModel.bindService()
     }
@@ -78,10 +86,7 @@ internal fun TimerRoute(
         subjects = subjects,
         isPlaying = uiState.isPlaying,
         modifier = modifier,
-        onBackClick = {
-            viewModel.onExitTimer()
-            onBackClick()
-        },
+        onBackClick = handleBack,
         onPlayButtonClick = viewModel::togglePlay,
         onSubjectChanged = viewModel::updateSelectedSubject,
     )
