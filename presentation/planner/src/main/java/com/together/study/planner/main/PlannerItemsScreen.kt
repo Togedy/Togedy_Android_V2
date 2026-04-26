@@ -104,9 +104,6 @@ internal fun PlannerItemsScreen(
                         timer = subject.subjectStudyTime,
                         onPlusButtonClick = { onTaskPlusButtonClick(subject.subjectId!!) },
                         onTaskNameChange = onTaskNameChange,
-                        onTaskEditButtonClick = {
-                            /* TODO: 추후 수정 */
-                        },
                         onCheckClick = onCheckClick,
                         onDeleteDoneClick = { taskId ->
                             onDeleteDoneClick(taskId, subject.subjectId!!)
@@ -134,7 +131,6 @@ fun SubjectSection(
     timer: String? = null,
     onPlusButtonClick: () -> Unit,
     onTaskNameChange: (Long?, String, String, Long) -> Unit,
-    onTaskEditButtonClick: () -> Unit,
     onCheckClick: (Long, Boolean) -> Unit,
     onDeleteDoneClick: (Long) -> Unit,
 ) {
