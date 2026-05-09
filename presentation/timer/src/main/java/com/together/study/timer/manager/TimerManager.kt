@@ -10,7 +10,10 @@ import com.together.study.timer.service.TimerWorkingService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,12 +23,19 @@ class TimerManager @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     private var isBound = false
+    private val managerScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Main.immediate
+    )
+
+    private var observeJob: Job? = null
 
     private var service: TimerWorkingService? = null
     private var pendingStartSubjectId: Long? = null
 
-    val elapsedTime = MutableStateFlow(0)
-    val isPlaying = MutableStateFlow(false)
+    private val _elapsedTime = MutableStateFlow(0)
+    val elapsedTime = _elapsedTime.asStateFlow()
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying = _isPlaying.asStateFlow()
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -41,24 +51,27 @@ class TimerManager @Inject constructor(
 
         override fun onServiceDisconnected(name: ComponentName?) {
             service = null
+            observeJob?.cancel()
+            observeJob = null
         }
     }
 
     fun bind() {
         if (isBound) return
 
-        val result = context.bindService(
+        isBound = context.bindService(
             Intent(context, TimerWorkingService::class.java),
             connection,
-            Context.BIND_AUTO_CREATE
+            Context.BIND_AUTO_CREATE,
         )
-
-        isBound = result
     }
 
     fun unbind() {
         runCatching {
             if (isBound) {
+                observeJob?.cancel()
+                observeJob = null
+
                 context.unbindService(connection)
                 isBound = false
             }
@@ -72,7 +85,7 @@ class TimerManager @Inject constructor(
         if (service != null) {
             service?.start(subjectId)
         } else {
-            pendingStartSubjectId = subjectId  // 🔥 저장
+            pendingStartSubjectId = subjectId
         }
     }
 
@@ -82,11 +95,20 @@ class TimerManager @Inject constructor(
 
     private fun observe() {
         service?.let { svc ->
-            CoroutineScope(Dispatchers.Main).launch {
-                svc.elapsedTime.collect { elapsedTime.value = it }
-            }
-            CoroutineScope(Dispatchers.Main).launch {
-                svc.isPlaying.collect { isPlaying.value = it }
+            observeJob?.cancel()
+            
+            observeJob = managerScope.launch {
+                launch {
+                    svc.elapsedTime.collect {
+                        _elapsedTime.value = it
+                    }
+                }
+
+                launch {
+                    svc.isPlaying.collect {
+                        _isPlaying.value = it
+                    }
+                }
             }
         }
     }
