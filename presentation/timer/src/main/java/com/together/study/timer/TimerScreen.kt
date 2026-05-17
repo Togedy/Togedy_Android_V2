@@ -66,9 +66,15 @@ internal fun TimerRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
+    var isExitDialogVisible by remember { mutableStateOf(false) }
+
     val handleBack = {
-        viewModel.onExitTimer()
-        onBackClick()
+        if (uiState.isPlaying) {
+            isExitDialogVisible = true
+        } else {
+            viewModel.onExitTimer()
+            onBackClick()
+        }
     }
 
     BackHandler(onBack = handleBack)
@@ -101,6 +107,27 @@ internal fun TimerRoute(
         },
         onSubjectChanged = viewModel::updateSelectedSubject,
     )
+
+    if (isExitDialogVisible) {
+        TogedyBasicDialog(
+            title = "타이머 종료",
+            subTitle = {
+                Text(
+                    text = "타이머가 진행중입니다.\n종료하시겠습니까?",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray700,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            buttonText = "종료",
+            onDismissRequest = { isExitDialogVisible = false },
+            onButtonClick = {
+                isExitDialogVisible = false
+                viewModel.onExitTimer()
+                onBackClick()
+            },
+        )
+    }
 
     if (isNoSubjectDialogVisible) {
         TogedyBasicDialog(
