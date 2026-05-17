@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +45,7 @@ import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.timer.component.SubjectChangeDialog
 import com.together.study.timer.component.TimerBottomSheet
 import com.together.study.timer.component.TimerButton
@@ -57,6 +59,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun TimerRoute(
     onBackClick: () -> Unit,
+    onNavigateToAddSubject: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TimerViewModel = hiltViewModel(),
 ) {
@@ -77,6 +80,8 @@ internal fun TimerRoute(
     val totalTime = (uiState.totalStudyTime as? UiState.Success)?.data ?: 0L
     val subjects = (uiState.subjectTimers as? UiState.Success)?.data ?: emptyList()
 
+    var isNoSubjectDialogVisible by remember { mutableStateOf(false) }
+
     TimerScreen(
         scope = scope,
         timer = formatTime(uiState.elapsedTime),
@@ -87,9 +92,36 @@ internal fun TimerRoute(
         isPlaying = uiState.isPlaying,
         modifier = modifier,
         onBackClick = handleBack,
-        onPlayButtonClick = viewModel::togglePlay,
+        onPlayButtonClick = {
+            if (subjects.isEmpty()) {
+                isNoSubjectDialogVisible = true
+            } else {
+                viewModel.togglePlay()
+            }
+        },
         onSubjectChanged = viewModel::updateSelectedSubject,
     )
+
+    if (isNoSubjectDialogVisible) {
+        TogedyBasicDialog(
+            title = "과목 추가 필요",
+            subTitle = {
+                Text(
+                    text = "등록된 과목이 없습니다.\n과목을 추가하시겠습니까?",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray700,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            buttonText = "추가하기",
+            onDismissRequest = { isNoSubjectDialogVisible = false },
+            onButtonClick = {
+                isNoSubjectDialogVisible = false
+                viewModel.onExitTimer()
+                onNavigateToAddSubject()
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

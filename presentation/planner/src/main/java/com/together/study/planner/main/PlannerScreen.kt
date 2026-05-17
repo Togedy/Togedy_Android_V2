@@ -61,6 +61,8 @@ import java.time.LocalDate
 @Composable
 internal fun PlannerScreen(
     modifier: Modifier = Modifier,
+    shouldOpenSubjectAdd: Boolean = false,
+    onClearSubjectAddFlag: () -> Unit = {},
     onShareNavigate: (Int, Int, Int) -> Unit,
     onTimerNavigate: () -> Unit,
     onEditSubjectNavigate: () -> Unit,
@@ -76,6 +78,13 @@ internal fun PlannerScreen(
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             viewModel.load()
+        }
+    }
+
+    LaunchedEffect(shouldOpenSubjectAdd) {
+        if (shouldOpenSubjectAdd) {
+            viewModel.updateBottomSheetVisibility(PlannerSheetType.SUBJECT_ADD)
+            onClearSubjectAddFlag()
         }
     }
 

@@ -55,6 +55,7 @@ internal fun MyPageRoute(
         viewModel.loadUserInfo()
     }
 
+
     when (uiState.value.userInfoState) {
         is UiState.Loading -> TogedyLoadingScreen()
         is UiState.Success ->

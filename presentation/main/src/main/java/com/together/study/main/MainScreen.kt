@@ -50,6 +50,8 @@ import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.onboarding.navigation.Onboarding
 import com.together.study.onboarding.navigation.navigateToOnboarding
 import com.together.study.onboarding.navigation.onboardingGraph
+import com.together.study.planner.navigation.Planner
+import com.together.study.planner.navigation.SHOULD_OPEN_SUBJECT_ADD_KEY
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
@@ -350,6 +352,11 @@ private fun MainNavHost(
 
         timerGraph(
             navigateToUp = navigator.navController::popBackStack,
+            onNavigateToAddSubject = {
+                navigator.navController.getBackStackEntry<Planner>()
+                    .savedStateHandle[SHOULD_OPEN_SUBJECT_ADD_KEY] = true
+                navigator.navController.popBackStack()
+            },
             modifier = modifier,
         )
 
