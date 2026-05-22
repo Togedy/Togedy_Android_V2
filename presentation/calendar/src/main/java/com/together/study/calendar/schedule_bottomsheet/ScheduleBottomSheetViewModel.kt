@@ -139,8 +139,6 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
                     it.copy(isMemoOpen = !_bottomSheetState.value.isMemoOpen)
                 }
             }
-
-            else -> {}
         }
     }
 
@@ -151,9 +149,9 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
             return UserSchedule(
                 userScheduleName = userScheduleName,
                 startDate = startDateValue.toString(),
-                startTime = startTimeValue,
+                startTime = "$startTimeValue:00",
                 endDate = endDate,
-                endTime = endTimeValue,
+                endTime = "$endTimeValue:00",
                 memo = memoValue,
                 category = categoryValue!!,
                 dDay = dDayValue,
