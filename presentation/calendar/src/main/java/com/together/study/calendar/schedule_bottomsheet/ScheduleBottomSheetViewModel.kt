@@ -101,15 +101,15 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     fun postUserSchedule() = viewModelScope.launch {
         userScheduleRepository.postUserSchedule(toUserSchedule())
-            .onSuccess { Timber.tag("[okhttp] Schedule API - SUCCESS").d("$it") }
-            .onFailure { Timber.tag("[okhttp] Schedule API - FAILURE").d("${it.message}") }
+            .onSuccess { Timber.tag("[okhttp] postUserSchedule API - SUCCESS").d("$it") }
+            .onFailure { Timber.tag("[okhttp] postUserSchedule API - FAILURE").d("${it.message}") }
 
     }
 
     fun patchUserSchedule(scheduleId: Long) = viewModelScope.launch {
         userScheduleRepository.patchUserSchedule(scheduleId, toUserSchedule())
-            .onSuccess { Timber.tag("[okhttp] Schedule API - SUCCESS").d("$it") }
-            .onFailure { Timber.tag("[okhttp] Schedule API - FAILURE").d("${it.message}") }
+            .onSuccess { Timber.tag("[okhttp] patchUserSchedule API - SUCCESS").d("$it") }
+            .onFailure { Timber.tag("[okhttp] patchUserSchedule API - FAILURE").d("${it.message}") }
 
     }
 
@@ -161,9 +161,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     private suspend fun getCategoryItems() {
         getCategoryUseCase()
-            .onSuccess { result ->
-                _uiState.update { it.copy(categories = result) }
-            }
+            .onSuccess { result -> _uiState.update { it.copy(categories = result) } }
             .onFailure(Timber::e)
     }
 
