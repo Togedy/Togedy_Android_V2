@@ -102,15 +102,14 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
     fun postUserSchedule() = viewModelScope.launch {
         userScheduleRepository.postUserSchedule(toUserSchedule())
             .onSuccess { Timber.tag("[okhttp] postUserSchedule API - SUCCESS").d("$it") }
-            .onFailure { Timber.tag("[okhttp] postUserSchedule API - FAILURE").d("${it.message}") }
+            .onFailure { Timber.tag("[okhttp] postUserSchedule API - FAILURE").d("$it") }
 
     }
 
     fun patchUserSchedule(scheduleId: Long) = viewModelScope.launch {
         userScheduleRepository.patchUserSchedule(scheduleId, toUserSchedule())
             .onSuccess { Timber.tag("[okhttp] patchUserSchedule API - SUCCESS").d("$it") }
-            .onFailure { Timber.tag("[okhttp] patchUserSchedule API - FAILURE").d("${it.message}") }
-
+            .onFailure { Timber.tag("[okhttp] patchUserSchedule API - FAILURE").d("$it") }
     }
 
     fun updateBottomSheetVisibility(type: ScheduleSubSheetType) {
@@ -149,9 +148,9 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
             return UserSchedule(
                 userScheduleName = userScheduleName,
                 startDate = startDateValue.toString(),
-                startTime = "$startTimeValue:00",
+                startTime = startTimeValue?.let { "$it:00" },
                 endDate = endDate,
-                endTime = "$endTimeValue:00",
+                endTime = endTimeValue?.let { "$it:00" },
                 memo = memoValue,
                 category = categoryValue!!,
                 dDay = dDayValue,
