@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -83,6 +84,7 @@ internal fun CalendarRoute(
         onYearMonthChange = calendarViewModel::updateCurrentDate,
         updateMonthlyCalendar = { calendarViewModel.changeIsUpdateNeeded(true) },
         updateDailySchedule = { dailyDialogViewModel.changeIsUpdateNeeded(true) },
+        isUpdateNeeded = { calendarViewModel.changeIsUpdateNeeded(true) },
         dailyDialogViewModel = dailyDialogViewModel,
         modifier = modifier,
     )
@@ -99,6 +101,7 @@ private fun CalendarScreen(
     onCategoryDetailNavigate: () -> Unit,
     updateMonthlyCalendar: () -> Unit,
     updateDailySchedule: () -> Unit,
+    isUpdateNeeded: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -125,6 +128,7 @@ private fun CalendarScreen(
                     onYearMonthChange = onYearMonthChange,
                     updateMonthlyCalendar = updateMonthlyCalendar,
                     updateDailySchedule = updateDailySchedule,
+                    isUpdateNeeded = isUpdateNeeded,
                     dailyDialogViewModel = dailyDialogViewModel,
                     modifier = modifier,
                 )
@@ -147,6 +151,7 @@ private fun CalendarSuccessScreen(
     onYearMonthChange: (LocalDate) -> Unit,
     updateMonthlyCalendar: () -> Unit,
     updateDailySchedule: () -> Unit,
+    isUpdateNeeded: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -155,12 +160,18 @@ private fun CalendarSuccessScreen(
     var isDailyDialogVisible by remember { mutableStateOf(false) }
     var selectedScheduleId by remember { mutableStateOf<Long?>(null) }
     var isScheduleBottomSheetVisible by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(currentYearMonth) {
+        listState.animateScrollToItem(0)
+    }
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(color = TogedyTheme.colors.white)
             .padding(horizontal = 16.dp),
+        state = listState,
     ) {
         stickyHeader {
             CalendarHeader(
@@ -199,7 +210,10 @@ private fun CalendarSuccessScreen(
     if (isDailyDialogVisible) {
         DailyScheduleDialog(
             date = currentDate,
-            onDismissRequest = { isDailyDialogVisible = false },
+            onDismissRequest = {
+                isDailyDialogVisible = false
+                isUpdateNeeded()
+            },
             onScheduleItemClick = { scheduleType, id ->
                 if (scheduleType == ScheduleType.USER) {
                     selectedScheduleId = id
@@ -217,7 +231,10 @@ private fun CalendarSuccessScreen(
 
     if (isScheduleBottomSheetVisible) {
         ScheduleBottomSheet(
-            onDismissRequest = { isScheduleBottomSheetVisible = false },
+            onDismissRequest = {
+                isScheduleBottomSheetVisible = false
+                isUpdateNeeded()
+            },
             onDoneClick = {
                 isScheduleBottomSheetVisible = false
                 selectedScheduleId = null
