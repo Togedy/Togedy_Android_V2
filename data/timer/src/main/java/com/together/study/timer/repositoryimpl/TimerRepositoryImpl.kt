@@ -14,7 +14,11 @@ class TimerRepositoryImpl @Inject constructor(
 ) : TimerRepository {
     override suspend fun getTotalStudyTimer(): Result<Long> =
         runCatching {
-            timerDataSource.getTotalStudyTimer().response.studyTime
+            val baseResponse = timerDataSource.getTotalStudyTimer()
+            if (!baseResponse.isSuccess) {
+                throw Exception("API returned isSuccess=false")
+            }
+            baseResponse.response.studyTime
         }
 
     override suspend fun getRunningTimer(): Result<RunningTimer> =

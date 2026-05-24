@@ -57,6 +57,9 @@ internal class TimerViewModel @Inject constructor(
                     it.copy(totalStudyTime = UiState.Success(total))
                 }
             }
+            .onFailure { e ->
+                _uiState.update { it.copy(subjectTimers = UiState.Failure(e.message.toString())) }
+            }
     }
 
     private fun getSubjectTimers() = viewModelScope.launch {
@@ -68,6 +71,9 @@ internal class TimerViewModel @Inject constructor(
                         selectedSubject = subjects.firstOrNull(),
                     )
                 }
+            }
+            .onFailure { e ->
+                _uiState.update { it.copy(subjectTimers = UiState.Failure(e.message.toString())) }
             }
     }
 

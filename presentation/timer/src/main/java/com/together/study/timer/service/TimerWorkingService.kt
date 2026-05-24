@@ -47,10 +47,24 @@ class TimerWorkingService : Service() {
 
     override fun onBind(intent: Intent?): IBinder = BinderImpl()
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForegroundInternal()
+
+        val subjectId = intent?.getLongExtra("subjectId", -1L) ?: -1L
+        if (subjectId != -1L && !_isPlaying.value) {
+            scope.launch { start(subjectId) }
+        }
+
+        return START_NOT_STICKY
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stop()
+    }
+
     fun start(subjectId: Long) {
         if (_isPlaying.value) return
-
-        startForegroundInternal()
 
         scope.launch {
             startTimerUseCase(subjectId)
@@ -58,6 +72,10 @@ class TimerWorkingService : Service() {
                     timerId = it.timerId
                     _isPlaying.value = true
                     startTicking()
+                }
+                .onFailure {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                    stopSelf()
                 }
         }
     }
@@ -93,6 +111,7 @@ class TimerWorkingService : Service() {
 
     private fun stopTicking() {
         timerJob?.cancel()
+        _elapsedTime.value = 0
     }
 
     private fun startForegroundInternal() {

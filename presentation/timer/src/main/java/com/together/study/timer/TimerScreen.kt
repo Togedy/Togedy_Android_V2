@@ -264,17 +264,18 @@ private fun TimerScreen(
     if (isSubjectChangeDialogVisible) {
         SubjectChangeDialog(
             subjectName = tempSelectedSubject?.subjectName ?: "",
-            onDismissRequest = { isSubjectChangeDialogVisible = false },
+            onDismissRequest = {
+                isSubjectChangeDialogVisible = false
+                tempSelectedSubject = null
+            },
             onConfirmClick = {
                 tempSelectedSubject?.let {
                     if (selectedSubject != it) {
-                        if (isPlaying) {
-                            onPlayButtonClick()
-                        }
+                        if (isPlaying) onPlayButtonClick()
                         onSubjectChanged(it)
-                        isSubjectChangeDialogVisible = false
-                        tempSelectedSubject = null
                     }
+                    isSubjectChangeDialogVisible = false
+                    tempSelectedSubject = null
                 }
             }
         )
