@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -109,12 +110,14 @@ internal fun DailyScheduleDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         schedulesInfo.dailyScheduleList.forEach { schedule ->
-                            DailyScheduleItem(
-                                coroutineScope = coroutineScope,
-                                schedule = schedule,
-                                onScheduleItemClick = onScheduleItemClick,
-                                onDeleteClick = dailyDialogViewModel::deleteSchedule,
-                            )
+                            key(schedule.scheduleId) {
+                                DailyScheduleItem(
+                                    coroutineScope = coroutineScope,
+                                    schedule = schedule,
+                                    onScheduleItemClick = onScheduleItemClick,
+                                    onDeleteClick = dailyDialogViewModel::deleteSchedule,
+                                )
+                            }
                         }
                     }
                 }
