@@ -127,7 +127,10 @@ internal fun TimerBottomSheet(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            SubjectTitle(subject = subject)
+                            SubjectTitle(
+                                subject = subject,
+                                modifier = Modifier.weight(1f),
+                            )
 
                             Text(
                                 text = formatTime(subject.studyTime.toInt() + elapsedTime),

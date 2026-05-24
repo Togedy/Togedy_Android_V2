@@ -43,14 +43,17 @@ class TimerManager @Inject constructor(
 
             observe()
 
-            pendingStartSubjectId?.let {
-                service?.start(it)
-                pendingStartSubjectId = null
+            if (!service!!.isPlaying.value) {
+                pendingStartSubjectId?.let {
+                    service?.start(it)
+                }
             }
+            pendingStartSubjectId = null
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             service = null
+            isBound = false
             observeJob?.cancel()
             observeJob = null
         }
@@ -71,7 +74,6 @@ class TimerManager @Inject constructor(
             if (isBound) {
                 observeJob?.cancel()
                 observeJob = null
-
                 context.unbindService(connection)
                 isBound = false
             }
@@ -79,35 +81,30 @@ class TimerManager @Inject constructor(
     }
 
     fun start(subjectId: Long) {
-        val intent = Intent(context, TimerWorkingService::class.java)
+        val intent = Intent(context, TimerWorkingService::class.java).apply {
+            putExtra("subjectId", subjectId)
+        }
         ContextCompat.startForegroundService(context, intent)
 
-        if (service != null) {
-            service?.start(subjectId)
-        } else {
-            pendingStartSubjectId = subjectId
-        }
+        if (service == null) pendingStartSubjectId = subjectId
     }
 
     fun stop() {
         service?.stop()
     }
 
+
     private fun observe() {
         service?.let { svc ->
             observeJob?.cancel()
-            
+
             observeJob = managerScope.launch {
                 launch {
-                    svc.elapsedTime.collect {
-                        _elapsedTime.value = it
-                    }
+                    svc.elapsedTime.collect { _elapsedTime.value = it }
                 }
 
                 launch {
-                    svc.isPlaying.collect {
-                        _isPlaying.value = it
-                    }
+                    svc.isPlaying.collect { _isPlaying.value = it }
                 }
             }
         }
