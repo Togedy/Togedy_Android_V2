@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
     implementation(projects.domain.planner)
+    implementation(projects.domain.timer)
     implementation(projects.presentation.study)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)

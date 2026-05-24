@@ -43,6 +43,7 @@ include(
     ":data:mypage",
     ":data:gallery",
     ":data:auth",
+    ":data:timer",
 )
 include(
     ":domain:dummy",
@@ -55,6 +56,7 @@ include(
     ":domain:mypage",
     ":domain:gallery",
     ":domain:chatbot",
+    ":domain:timer",
 )
 include(
     ":presentation:main",

@@ -102,11 +102,9 @@ internal fun PlannerItemsScreen(
                         subjectName = subject.subjectName,
                         subjectColor = subject.subjectColor,
                         taskItems = subject.tasks,
+                        timer = subject.subjectStudyTime,
                         onPlusButtonClick = { onTaskPlusButtonClick(subject.subjectId!!) },
                         onTaskNameChange = onTaskNameChange,
-                        onTaskEditButtonClick = {
-                            /* TODO: 추후 수정 */
-                        },
                         onCheckClick = onCheckClick,
                         onDeleteDoneClick = { taskId ->
                             onDeleteDoneClick(taskId, subject.subjectId!!)
@@ -134,11 +132,13 @@ fun SubjectSection(
     timer: String? = null,
     onPlusButtonClick: () -> Unit,
     onTaskNameChange: (Long?, String, String, Long) -> Unit,
-    onTaskEditButtonClick: () -> Unit,
     onCheckClick: (Long, Boolean) -> Unit,
     onDeleteDoneClick: (Long) -> Unit,
 ) {
     val subjectColor = subjectColor.toPlannerSubjectColorOrDefault().asColor()
+    val timeColor =
+        if (timer == null || timer == "00:00:00") TogedyTheme.colors.gray500
+        else TogedyTheme.colors.green
     var selectedKey by remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -185,7 +185,7 @@ fun SubjectSection(
             Text(
                 text = timer ?: "00:00:00",
                 style = TogedyTheme.typography.body13m,
-                color = TogedyTheme.colors.gray500,
+                color = timeColor,
             )
         }
 
