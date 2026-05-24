@@ -33,17 +33,17 @@ enum class MainTab(
         contentDescription = "캘린더",
         route = Calendar,
     ),
-    CHATBOT(
-        defaultIcon = ic_ai,
-        selectedIcon = ic_ai_selected,
-        contentDescription = "입시GPT",
-        route = ChatBot,
-    ),
     PLANNER(
         defaultIcon = ic_planner,
         selectedIcon = ic_planner_selected,
         contentDescription = "플래너",
         route = Planner,
+    ),
+    CHATBOT(
+        defaultIcon = ic_ai,
+        selectedIcon = ic_ai_selected,
+        contentDescription = "입시GPT",
+        route = ChatBot,
     ),
     STUDY(
         defaultIcon = ic_study,
