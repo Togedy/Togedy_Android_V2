@@ -258,6 +258,9 @@ private fun PlannerScreen(
             when (page) {
                 0 -> PlannerItemsScreen(
                     plannerSubjectState = plannerSubjectState,
+                    onSubjectAddClick = {
+                        onSheetVisibilityChange(PlannerSheetType.SUBJECT_ADD)
+                    },
                     onTaskPlusButtonClick = onTaskPlusButtonClick,
                     onTaskNameChange = onTaskNameChange,
                     onCheckClick = onCheckClick,
