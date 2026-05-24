@@ -70,6 +70,10 @@ internal fun CalendarRoute(
     val currentDialogDate by calendarViewModel.currentDialogDate.collectAsStateWithLifecycle()
     val isUpdateNeeded by calendarViewModel.isUpdateNeeded.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        calendarViewModel.getNotice()
+    }
+
     LaunchedEffect(isUpdateNeeded) {
         calendarViewModel.getCalendarInfo()
     }

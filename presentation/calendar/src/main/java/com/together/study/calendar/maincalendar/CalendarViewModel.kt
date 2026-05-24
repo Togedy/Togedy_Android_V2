@@ -55,7 +55,6 @@ internal class CalendarViewModel @Inject constructor(
     )
 
     fun getCalendarInfo() = viewModelScope.launch {
-        getNotice()
         getDDay()
         getSchedule()
         changeIsUpdateNeeded(false)
