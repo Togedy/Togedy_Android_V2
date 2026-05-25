@@ -44,7 +44,9 @@ import coil.request.ImageRequest
 import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.R.drawable.ic_check_green
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
+import com.together.study.designsystem.R.drawable.ic_lock
 import com.together.study.designsystem.R.drawable.img_character_done
+import com.together.study.designsystem.R.drawable.img_character_speaker_no_gradient
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
@@ -73,6 +75,7 @@ internal fun StudyUpdateDoneRoute(
 ) {
     val toast = LocalTogedyToast.current
     val isSubmitLoading by viewModel.isSubmitLoading.collectAsState()
+    val userProfileImageUrl by viewModel.userProfileImageUrl.collectAsState()
     var showLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(isSubmitLoading) {
@@ -151,7 +154,8 @@ internal fun StudyUpdateDoneRoute(
         isChallenge = isChallenge,
         selectedStudyTime = studyTimeOption,
         updateType = updateType,
-        isLoading = showLoading
+        isLoading = showLoading,
+        userProfileImageUrl = userProfileImageUrl,
     )
 }
 
@@ -170,7 +174,8 @@ fun StudyUpdateDoneScreen(
     isChallenge: Boolean = false,
     selectedStudyTime: StudyTimeOption = StudyTimeOption.FIVE_HOURS,
     updateType: StudyUpdateType = StudyUpdateType.CREATE,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    userProfileImageUrl: String? = null,
 ) {
     val context = LocalContext.current
     Box(modifier = modifier.fillMaxSize()) {
@@ -337,7 +342,7 @@ fun StudyUpdateDoneScreen(
 
                     // 스터디 소개
                     Text(
-                        text = studyIntroduce.ifEmpty { "스터디 소개" },
+                        text = studyIntroduce.ifEmpty { "스터디 소개\n스터디 소개\n스터디 소개" },
                         style = TogedyTheme.typography.body12m.copy(
                             color = TogedyTheme.colors.gray600
                         ),
@@ -352,16 +357,22 @@ fun StudyUpdateDoneScreen(
                             .padding(top = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(img_character_done),
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(userProfileImageUrl)
+                                .build(),
                             contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(img_character_speaker_no_gradient),
+                            placeholder = painterResource(img_character_speaker_no_gradient),
+                            fallback = painterResource(img_character_speaker_no_gradient),
                             modifier = Modifier
-                                .fillMaxWidth(20f / 320f)
-                                .aspectRatio(1f),
+                                .size(18.dp)
+                                .clip(RoundedCornerShape(50)),
                         )
 
                         Text(
-                            text = memberCount?.toString() ?: "-",
+                            text = "1",
                             style = TogedyTheme.typography.body12m.copy(
                                 color = TogedyTheme.colors.gray400
                             ),
@@ -376,7 +387,7 @@ fun StudyUpdateDoneScreen(
                         )
 
                         Text(
-                            text = "30",
+                            text = memberCount?.toString() ?: "-",
                             style = TogedyTheme.typography.body12m.copy(
                                 color = TogedyTheme.colors.black
                             ),
@@ -420,7 +431,7 @@ fun StudyUpdateDoneScreen(
 
                             if (studyPassword.isNotEmpty()) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(ic_left_chevron_green),
+                                    imageVector = ImageVector.vectorResource(ic_lock),
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(16.dp)

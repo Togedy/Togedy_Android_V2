@@ -9,6 +9,7 @@ import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudyUpdateRepository
 import com.together.study.studyupdate.component.StudyTimeOption
+import com.together.study.user.usecase.GetUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,10 +27,24 @@ internal class StudyUpdateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val studyUpdateRepository: StudyUpdateRepository,
     private val studyDetailRepository: StudyDetailRepository,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>("studyId") ?: 0L
     val updateType: StudyUpdateType =
         savedStateHandle.get<StudyUpdateType>("updateType") ?: StudyUpdateType.CREATE
+
+    private val _userProfileImageUrl = MutableStateFlow<String?>(null)
+    val userProfileImageUrl: StateFlow<String?> = _userProfileImageUrl.asStateFlow()
+
+    init {
+        loadUserProfile()
+    }
+
+    private fun loadUserProfile() = viewModelScope.launch {
+        getUserInfoUseCase().onSuccess { userInfo ->
+            _userProfileImageUrl.update { userInfo.userProfileImageUrl }
+        }
+    }
 
     // 상태 관리
     private val _isChallenge =
