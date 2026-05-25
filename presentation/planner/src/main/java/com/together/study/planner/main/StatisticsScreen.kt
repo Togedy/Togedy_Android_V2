@@ -176,7 +176,7 @@ fun WeeklyStatistics(
                                 imageVector = ImageVector.vectorResource(ic_check_green),
                                 contentDescription = null,
                                 tint = TogedyTheme.colors.white,
-                            )
+                            )당
                         } else {
                             Text(
                                 text = daysOfWeek[index],
@@ -192,6 +192,8 @@ fun WeeklyStatistics(
                         text = time,
                         style = TogedyTheme.typography.chip10sb,
                         color = TogedyTheme.colors.gray600,
+                        maxLines = 1,
+                        softWrap = false,
                     )
                 }
             }
