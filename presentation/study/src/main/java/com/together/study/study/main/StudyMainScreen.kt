@@ -60,6 +60,7 @@ internal fun StudyMainRoute(
     onStudyUpdateNavigate: (Boolean) -> Unit,
     onStudySearchNavigate: () -> Unit,
     onStudyDetailNavigate: (Long) -> Unit,
+    onTimerNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StudyMainViewModel = hiltViewModel(),
 ) {
@@ -83,6 +84,7 @@ internal fun StudyMainRoute(
         onUpdateButtonClick = onStudyUpdateNavigate,
         onSearchButtonClick = onStudySearchNavigate,
         onStudyItemClick = onStudyDetailNavigate,
+        onPlayButtonClick = onTimerNavigate,
         onTagFilterClick = viewModel::updateTagFilters,
         onSortOptionClick = viewModel::updateSortOption,
         onJoinableClick = viewModel::updateIsJoinable,
@@ -100,6 +102,7 @@ private fun StudyMainScreen(
     onUpdateButtonClick: (Boolean) -> Unit,
     onSearchButtonClick: () -> Unit,
     onStudyItemClick: (Long) -> Unit,
+    onPlayButtonClick: () -> Unit,
     onTagFilterClick: (StudyTagType) -> Unit,
     onSortOptionClick: (StudySortingType) -> Unit,
     onJoinableClick: () -> Unit,
@@ -188,7 +191,12 @@ private fun StudyMainScreen(
                         is UiState.Success -> {
                             LazyColumn(modifier = Modifier.fillMaxSize()) {
                                 with(uiState.myStudyState.data) {
-                                    item { TimerSection(studyMainTimerInfo) }
+                                    item {
+                                        TimerSection(
+                                            studyMainTimerInfo = studyMainTimerInfo,
+                                            onPlayButtonClick = onPlayButtonClick,
+                                        )
+                                    }
 
                                     item {
                                         Box(

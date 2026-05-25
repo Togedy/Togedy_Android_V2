@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,19 +25,24 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.together.study.designsystem.R.drawable.ic_play_button
 import com.together.study.designsystem.R.drawable.img_character_achieved
 import com.together.study.designsystem.R.drawable.img_character_heart
 import com.together.study.designsystem.R.drawable.img_character_speaker
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.model.StudyMainTimerInfo
+import com.together.study.util.noRippleClickable
 
 @Composable
 internal fun TimerSection(
     studyMainTimerInfo: StudyMainTimerInfo,
+    onPlayButtonClick: () -> Unit,
 ) {
     val imageResource =
         if (studyMainTimerInfo.hasChallenge) {
@@ -93,11 +100,15 @@ internal fun TimerSection(
                 color = timerColor,
             )
 
-            Box(
-                modifier = Modifier.size(30.dp)
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_play_button),
+                contentDescription = "타이머 시작 버튼",
+                tint = TogedyTheme.colors.white,
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(top = 10.dp)
+                    .noRippleClickable(onPlayButtonClick),
             )
-
-            Spacer(Modifier.height(20.dp))
         }
 
         if (studyMainTimerInfo.studyTime == null) {
@@ -171,8 +182,8 @@ fun RingProgress(
 private fun MainScreenPreview() {
     TogedyTheme {
         Column {
-            TimerSection(studyMainTimerInfo = StudyMainTimerInfo.mock1)
-            TimerSection(studyMainTimerInfo = StudyMainTimerInfo.mock2)
+            TimerSection(studyMainTimerInfo = StudyMainTimerInfo.mock1, onPlayButtonClick = {})
+            TimerSection(studyMainTimerInfo = StudyMainTimerInfo.mock2, onPlayButtonClick = {})
         }
     }
 }

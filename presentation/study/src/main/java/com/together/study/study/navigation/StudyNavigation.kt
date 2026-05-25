@@ -24,6 +24,7 @@ fun NavGraphBuilder.studyGraph(
     navigateToStudyUpdate: (Boolean) -> Unit,
     navigateToStudySearch: () -> Unit,
     navigateToStudyDetail: (Long) -> Unit,
+    navigateToTimer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Study> {
@@ -31,6 +32,7 @@ fun NavGraphBuilder.studyGraph(
             onStudyUpdateNavigate = navigateToStudyUpdate,
             onStudySearchNavigate = navigateToStudySearch,
             onStudyDetailNavigate = navigateToStudyDetail,
+            onTimerNavigate = navigateToTimer,
             modifier = modifier,
         )
     }

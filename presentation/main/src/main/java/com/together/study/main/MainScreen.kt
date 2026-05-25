@@ -271,6 +271,7 @@ private fun MainNavHost(
             },
             navigateToStudySearch = navigator.navController::navigateToStudySearch,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
+            navigateToTimer = navigator.navController::navigateToTimer,
             modifier = modifier,
         )
 
@@ -354,9 +355,18 @@ private fun MainNavHost(
         timerGraph(
             navigateToUp = navigator.navController::popBackStack,
             onNavigateToAddSubject = {
+                val poppedToPlanner = navigator.navController.popBackStack(
+                    route = Planner,
+                    inclusive = false,
+                )
+
+                if (!poppedToPlanner) {
+                    navigator.navController.popBackStack()
+                    navigator.navigate(MainTab.PLANNER)
+                }
+
                 navigator.navController.getBackStackEntry<Planner>()
                     .savedStateHandle[SHOULD_OPEN_SUBJECT_ADD_KEY] = true
-                navigator.navController.popBackStack()
             },
             modifier = modifier,
         )
