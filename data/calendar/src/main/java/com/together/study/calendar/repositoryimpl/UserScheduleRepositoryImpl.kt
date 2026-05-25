@@ -13,6 +13,7 @@ class UserScheduleRepositoryImpl @Inject constructor(
     override suspend fun postUserSchedule(userSchedule: UserSchedule): Result<Unit> =
         runCatching {
             userScheduleDataSource.postUserSchedule(request = userSchedule.toData())
+            Unit
         }
 
     override suspend fun getUserSchedule(userScheduleId: Long): Result<UserSchedule> =

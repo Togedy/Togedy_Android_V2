@@ -148,9 +148,9 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
             return UserSchedule(
                 userScheduleName = userScheduleName,
                 startDate = startDateValue.toString(),
-                startTime = startTimeValue?.let { "$it:00" },
+                startTime = startTimeValue?.let { if (it.length == 5) "$it:00" else it },
                 endDate = endDate,
-                endTime = endTimeValue?.let { "$it:00" },
+                endTime = endTimeValue?.let { if (it.length == 5) "$it:00" else it },
                 memo = memoValue,
                 category = categoryValue!!,
                 dDay = dDayValue,

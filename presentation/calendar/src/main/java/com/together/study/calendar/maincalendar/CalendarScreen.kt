@@ -88,7 +88,7 @@ internal fun CalendarRoute(
         onYearMonthChange = calendarViewModel::updateCurrentDate,
         updateMonthlyCalendar = { calendarViewModel.changeIsUpdateNeeded(true) },
         updateDailySchedule = { dailyDialogViewModel.changeIsUpdateNeeded(true) },
-        isUpdateNeeded = { calendarViewModel.changeIsUpdateNeeded(true) },
+        onUpdateNeeded = { calendarViewModel.changeIsUpdateNeeded(true) },
         dailyDialogViewModel = dailyDialogViewModel,
         modifier = modifier,
     )
@@ -105,7 +105,7 @@ private fun CalendarScreen(
     onCategoryDetailNavigate: () -> Unit,
     updateMonthlyCalendar: () -> Unit,
     updateDailySchedule: () -> Unit,
-    isUpdateNeeded: () -> Unit,
+    onUpdateNeeded: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -132,7 +132,7 @@ private fun CalendarScreen(
                     onYearMonthChange = onYearMonthChange,
                     updateMonthlyCalendar = updateMonthlyCalendar,
                     updateDailySchedule = updateDailySchedule,
-                    isUpdateNeeded = isUpdateNeeded,
+                    onUpdateNeeded = onUpdateNeeded,
                     dailyDialogViewModel = dailyDialogViewModel,
                     modifier = modifier,
                 )
@@ -155,7 +155,7 @@ private fun CalendarSuccessScreen(
     onYearMonthChange: (LocalDate) -> Unit,
     updateMonthlyCalendar: () -> Unit,
     updateDailySchedule: () -> Unit,
-    isUpdateNeeded: () -> Unit,
+    onUpdateNeeded: () -> Unit,
     dailyDialogViewModel: DailyDialogViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -216,7 +216,7 @@ private fun CalendarSuccessScreen(
             date = currentDate,
             onDismissRequest = {
                 isDailyDialogVisible = false
-                isUpdateNeeded()
+                onUpdateNeeded()
             },
             onScheduleItemClick = { scheduleType, id ->
                 if (scheduleType == ScheduleType.USER) {
@@ -237,7 +237,7 @@ private fun CalendarSuccessScreen(
         ScheduleBottomSheet(
             onDismissRequest = {
                 isScheduleBottomSheetVisible = false
-                isUpdateNeeded()
+                onUpdateNeeded()
             },
             onDoneClick = {
                 isScheduleBottomSheetVisible = false
