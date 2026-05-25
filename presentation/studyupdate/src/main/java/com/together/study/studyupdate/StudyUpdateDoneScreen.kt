@@ -496,7 +496,8 @@ fun StudyUpdateDoneScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = TogedyTheme.colors.black.copy(alpha = 0.3f)),
+                .background(color = TogedyTheme.colors.black.copy(alpha = 0.3f))
+                .noRippleClickable { },
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(color = TogedyTheme.colors.green)
