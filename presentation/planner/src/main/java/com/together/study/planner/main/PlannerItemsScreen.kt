@@ -269,16 +269,19 @@ fun SubjectSection(
 
                         val taskKey = task.taskId?.toString() ?: task.tempId
 
-                        Icon(
-                            imageVector = ImageVector.vectorResource(ic_kebap_menu),
-                            contentDescription = "투두 편집 버튼",
-                            tint = TogedyTheme.colors.gray800,
-                            modifier = Modifier
-                                .size(16.dp)
-                                .noRippleClickable {
-                                    selectedKey = if (selectedKey == taskKey) null else taskKey
-                                },
-                        )
+                        if (task.taskId != null) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(ic_kebap_menu),
+                                contentDescription = "투두 편집 버튼",
+                                tint = TogedyTheme.colors.gray800,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .noRippleClickable {
+                                        selectedKey =
+                                            if (selectedKey == taskKey) null else taskKey
+                                    },
+                            )
+                        }
                     }
 
                     val taskKey = task.taskId?.toString() ?: task.tempId
