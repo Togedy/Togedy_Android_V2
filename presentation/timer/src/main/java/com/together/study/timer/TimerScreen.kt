@@ -268,7 +268,6 @@ private fun TimerScreen(
                     if (selectedSubject != null) {
                         TimerSelectedSubject(
                             subject = selectedSubject,
-                            textColor = textColor,
                             onSubjectClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                         )
                     } else {
@@ -279,7 +278,6 @@ private fun TimerScreen(
                                 subjectColor = "SUBJECT_COLOR1",
                                 studyTime = 0L,
                             ),
-                            textColor = textColor,
                             onSubjectClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                         )
                     }
