@@ -1,24 +1,30 @@
 package com.together.study.planner.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -42,9 +48,9 @@ internal fun PlannerDropDownScrim(
         Popup(
             onDismissRequest = onDismissRequest,
             properties = PopupProperties(
-                focusable = true,
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true,
+                focusable = false,
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
             )
         ) {
             Box(
@@ -59,8 +65,9 @@ internal fun PlannerDropDownScrim(
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
-        modifier = modifier
-            .background(TogedyTheme.colors.white, RoundedCornerShape(8.dp)),
+        modifier = modifier.removeVerticalPadding(6.dp),
+        shape = RoundedCornerShape(8.dp),
+        containerColor = TogedyTheme.colors.white,
     ) {
         Column {
             PlannerDropDownScrimItem(
@@ -99,27 +106,37 @@ fun PlannerDropDownScrimItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    DropdownMenuItem(
-        text = {
-            Text(
-                text = text,
-                style = TogedyTheme.typography.body13b,
-                color = TogedyTheme.colors.gray700,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        },
-        trailingIcon = {
-            Icon(
-                imageVector = ImageVector.vectorResource(imageResId),
-                contentDescription = null,
-                tint = iconColor,
-                modifier = Modifier.size(16.dp)
-            )
-        },
-        onClick = onClick,
-        modifier = modifier.background(color = TogedyTheme.colors.white),
-        contentPadding = PaddingValues(0.dp),
-    )
+    Row(
+        modifier = modifier
+            .background(color = TogedyTheme.colors.white)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = text,
+            style = TogedyTheme.typography.body13b,
+            color = TogedyTheme.colors.gray700,
+        )
+
+        Spacer(modifier = Modifier.width(9.dp))
+
+        Icon(
+            imageVector = ImageVector.vectorResource(imageResId),
+            contentDescription = null,
+            tint = iconColor,
+            modifier = Modifier.size(16.dp),
+        )
+    }
+}
+
+private fun Modifier.removeVerticalPadding(padding: Dp) = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    val offsetPx = padding.roundToPx()
+    layout(placeable.width, placeable.height - offsetPx * 2) {
+        placeable.place(0, -offsetPx)
+    }
 }
 
 @Preview()
