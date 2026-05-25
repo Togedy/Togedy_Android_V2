@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.together.study.common.state.UiState
@@ -173,33 +174,41 @@ fun SubjectSection(
 
             Spacer(Modifier.width(8.dp))
 
-            Text(
-                text = subjectName,
-                style = TogedyTheme.typography.body14b,
-                color = TogedyTheme.colors.black,
-            )
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = subjectName,
+                    style = TogedyTheme.typography.body14b,
+                    color = TogedyTheme.colors.black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
 
-            Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(8.dp))
 
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_add_24),
-                contentDescription = "투두 추가 버튼",
-                tint = TogedyTheme.colors.gray700,
-                modifier = Modifier
-                    .background(
-                        TogedyTheme.colors.gray200,
-                        RoundedCornerShape(50.dp)
-                    )
-                    .size(18.dp)
-                    .noRippleClickable(onPlusButtonClick)
-            )
-
-            Spacer(Modifier.weight(1f))
+                Icon(
+                    imageVector = ImageVector.vectorResource(ic_add_24),
+                    contentDescription = "투두 추가 버튼",
+                    tint = TogedyTheme.colors.gray700,
+                    modifier = Modifier
+                        .background(
+                            TogedyTheme.colors.gray200,
+                            RoundedCornerShape(50.dp)
+                        )
+                        .size(18.dp)
+                        .noRippleClickable(onPlusButtonClick)
+                )
+            }
 
             Text(
                 text = timer ?: "00:00:00",
                 style = TogedyTheme.typography.body13m,
                 color = timeColor,
+                maxLines = 1,
+                modifier = Modifier.padding(start = 10.dp),
             )
         }
 
