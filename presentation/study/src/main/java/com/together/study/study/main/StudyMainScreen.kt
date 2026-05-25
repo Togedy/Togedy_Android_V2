@@ -1,5 +1,8 @@
 package com.together.study.study.main
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,8 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,7 +53,6 @@ import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
 import com.together.study.study.main.state.StudyMainUiState
 import com.together.study.util.noRippleClickable
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun StudyMainRoute(
@@ -109,51 +108,37 @@ private fun StudyMainScreen(
     onChallengeClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     var isSortBottomSheetVisible by remember { mutableStateOf(false) }
-    val mainColor =
-        if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.white
-        else TogedyTheme.colors.black
-    val subColor =
-        if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.gray700
-        else TogedyTheme.colors.gray500
-    val backgroundColor =
-        if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.black
-        else TogedyTheme.colors.gray50
+
+    val animationDuration = 300
+    val mainColor by animateColorAsState(
+        targetValue = if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.white else TogedyTheme.colors.black,
+        animationSpec = tween(animationDuration),
+        label = "mainColor",
+    )
+    val subColor by animateColorAsState(
+        targetValue = if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.gray700 else TogedyTheme.colors.gray500,
+        animationSpec = tween(animationDuration),
+        label = "subColor",
+    )
+    val backgroundColor by animateColorAsState(
+        targetValue = if (selectedTab == StudyMainTab.MAIN) TogedyTheme.colors.black else TogedyTheme.colors.gray50,
+        animationSpec = tween(animationDuration),
+        label = "backgroundColor",
+    )
     val topSectionModifier = Modifier
         .fillMaxWidth()
         .background(backgroundColor)
-
-
-    val pagerState = rememberPagerState(
-        initialPage = StudyMainTab.entries.indexOf(selectedTab),
-        pageCount = { StudyMainTab.entries.size }
-    )
-
-    LaunchedEffect(selectedTab) {
-        val targetIndex = StudyMainTab.entries.indexOf(selectedTab)
-        if (pagerState.currentPage != targetIndex) {
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(targetIndex)
-            }
-        }
-    }
-
-    LaunchedEffect(pagerState.currentPage) {
-        val currentTab = StudyMainTab.entries[pagerState.currentPage]
-        if (selectedTab != currentTab) onTabClick(currentTab)
-    }
 
     var showStudyTypeDropdown by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(TogedyTheme.colors.gray200)
-            .statusBarsPadding(),
+            .background(TogedyTheme.colors.gray200),
     ) {
         Box(modifier = topSectionModifier) {
-            Column {
+            Column(modifier = Modifier.statusBarsPadding()) {
                 Spacer(Modifier.height(22.dp))
 
                 TitleSection(
@@ -178,11 +163,13 @@ private fun StudyMainScreen(
             }
         }
 
-        HorizontalPager(
-            state = pagerState,
+        Crossfade(
+            targetState = selectedTab,
+            animationSpec = tween(animationDuration),
             modifier = Modifier.weight(1f),
-        ) { page ->
-            when (StudyMainTab.entries[page]) {
+            label = "studyMainContent",
+        ) { tab ->
+            when (tab) {
                 StudyMainTab.MAIN -> {
                     when (uiState.myStudyState) {
                         is UiState.Empty -> {}
