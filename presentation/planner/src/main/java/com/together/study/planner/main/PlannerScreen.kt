@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -166,6 +167,7 @@ private fun PlannerScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.white)
+            .statusBarsPadding()
             .padding(top = 20.dp),
     ) {
         when (plannerInfoState) {
