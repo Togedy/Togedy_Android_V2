@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -55,7 +56,8 @@ internal fun GalleryScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(TogedyTheme.colors.white),
+            .background(TogedyTheme.colors.white)
+            .statusBarsPadding(),
     ) {
         GalleryTopBar(
             title = uiState.selectedAlbum?.name ?: "전체 사진",
