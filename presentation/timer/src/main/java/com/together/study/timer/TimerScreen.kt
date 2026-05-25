@@ -200,7 +200,7 @@ private fun TimerScreen(
                         subjectColor.copy(alpha = alpha),
                         TogedyTheme.colors.black.copy(alpha = alpha)
                     ),
-                    radius = radius
+                    radius = radius.coerceAtLeast(0.01f)
                 )
             )
         else Modifier
