@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
@@ -88,7 +90,9 @@ internal fun ScheduleBottomSheet(
             modifier = modifier.fillMaxHeight(0.62f),
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 ScheduleNameSection(
                     scheduleName = userScheduleName,
@@ -102,9 +106,7 @@ internal fun ScheduleBottomSheet(
                     startDateTime = Pair(startDateValue, startTimeValue),
                     endDateTime = Pair(endDateValue, endTimeValue),
                     onCalendarOpen = {
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubSheetType.CALENDAR
-                        )
+                        viewModel.updateBottomSheetVisibility(ScheduleSubSheetType.CALENDAR)
                     },
                     onTimeChange = { startTime, endTime ->
                         viewModel.updateStartTime(startTime?.toString())
@@ -117,9 +119,7 @@ internal fun ScheduleBottomSheet(
                 ScheduleCategorySection(
                     category = categoryValue,
                     onCategoryClick = {
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubSheetType.CATEGORY
-                        )
+                        viewModel.updateBottomSheetVisibility(ScheduleSubSheetType.CATEGORY)
                     },
                 )
 
@@ -128,9 +128,7 @@ internal fun ScheduleBottomSheet(
                 ScheduleMemoSection(
                     memo = memoValue ?: "",
                     onMemoClick = {
-                        viewModel.updateBottomSheetVisibility(
-                            ScheduleSubSheetType.MEMO
-                        )
+                        viewModel.updateBottomSheetVisibility(ScheduleSubSheetType.MEMO)
                     },
                 )
 
@@ -179,7 +177,7 @@ private fun ScheduleNameSection(
 
         Spacer(Modifier.width(8.dp))
 
-        BasicTextField( // TODO: 추후 컴포넌트로 분리
+        BasicTextField(
             value = scheduleName,
             onValueChange = onNameChange,
             textStyle = textStyle,
