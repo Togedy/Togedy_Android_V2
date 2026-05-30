@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.content.ContextCompat
 import com.together.study.timer.service.TimerWorkingService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -91,6 +92,21 @@ class TimerManager @Inject constructor(
 
     fun stop() {
         service?.stop()
+    }
+
+    // 앱이 백그라운드로 진입한 시점에 호출
+    // 화면이 켜진 채로 나간 경우(홈 / 다른 앱 / 푸시)는 정지
+    // 화면이 꺼진 경우(잠금 / 화면 타임아웃)는 유지
+    fun onEnterBackground() {
+        if (_isPlaying.value && isLeavingApp()) {
+            stop()
+        }
+    }
+
+    // 화면이 켜진 채 백그라운드 진입 이탈 판정
+    private fun isLeavingApp(): Boolean {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
+        return powerManager?.isInteractive ?: true
     }
 
 

@@ -39,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
@@ -78,6 +80,11 @@ internal fun TimerRoute(
     }
 
     BackHandler(onBack = handleBack)
+
+    // 앱이 백그라운드로 진입(홈 / 다른 앱 / 푸시)하면 타이머 정지 여부 위임
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        viewModel.onAppBackgrounded()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.bindService()

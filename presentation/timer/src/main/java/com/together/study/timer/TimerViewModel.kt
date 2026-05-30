@@ -96,6 +96,10 @@ internal class TimerViewModel @Inject constructor(
         timerManager.stop()
     }
 
+    fun onAppBackgrounded() {
+        timerManager.onEnterBackground()
+    }
+
     override fun onCleared() {
         super.onCleared()
         timerManager.unbind()
