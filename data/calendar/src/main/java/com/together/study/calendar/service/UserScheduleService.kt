@@ -3,6 +3,7 @@ package com.together.study.calendar.service
 import com.together.study.calendar.dto.UserScheduleRequest
 import com.together.study.calendar.dto.UserScheduleResponse
 import com.together.study.remote.model.BaseResponse
+import com.together.study.remote.model.EmptyDataResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -14,7 +15,7 @@ interface UserScheduleService {
     @POST("calendars/users")
     suspend fun postUserSchedule(
         @Body userScheduleRequest: UserScheduleRequest,
-    ): BaseResponse<Boolean>
+    ): EmptyDataResponse
 
     @GET("calendars/users/{userScheduleId}")
     suspend fun getUserSchedule(

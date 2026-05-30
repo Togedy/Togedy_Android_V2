@@ -23,4 +23,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.timber)
+
+    implementation(libs.richtext.ui.material3)
+    implementation(libs.richtext.commonmark)
 }

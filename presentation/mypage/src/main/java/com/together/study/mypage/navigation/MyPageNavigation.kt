@@ -16,6 +16,8 @@ import com.together.study.mypage.ui.account.ProfileEditRoute
 import com.together.study.mypage.ui.settings.FeedbackRoute
 import com.together.study.mypage.ui.settings.NoticeDetailRoute
 import com.together.study.mypage.ui.settings.NoticeMainRoute
+import com.together.study.mypage.ui.settings.PrivacyPolicyRoute
+import com.together.study.mypage.ui.settings.TermsOfServiceRoute
 import kotlinx.serialization.Serializable
 
 fun NavController.navigateToMyPage(
@@ -47,6 +49,14 @@ fun NavController.navigateToFeedback(
     navOptions: NavOptions? = null,
 ) = navigate(Feedback, navOptions)
 
+fun NavController.navigateToTermsOfService(
+    navOptions: NavOptions? = null,
+) = navigate(TermsOfService, navOptions)
+
+fun NavController.navigateToPrivacyPolicy(
+    navOptions: NavOptions? = null,
+) = navigate(PrivacyPolicy, navOptions)
+
 fun NavGraphBuilder.myPageGraph(
     navigateToUp: () -> Unit,
     navigateToCreateStudy: () -> Unit,
@@ -67,8 +77,8 @@ fun NavGraphBuilder.myPageGraph(
             onNoticeNavigate = navController::navigateToNoticeMain,
             onContactUsNavigate = navController::navigateToFeedback,
             onLeaveReviewNavigate = {},
-            onTermsOfServiceNavigate = {},
-            onPrivacyPolicyNavigate = {},
+            onTermsOfServiceNavigate = navController::navigateToTermsOfService,
+            onPrivacyPolicyNavigate = navController::navigateToPrivacyPolicy,
             modifier = modifier,
         )
     }
@@ -127,6 +137,20 @@ fun NavGraphBuilder.myPageGraph(
             modifier = modifier,
         )
     }
+
+    composable<TermsOfService> {
+        TermsOfServiceRoute(
+            onBackButtonClick = navigateToUp,
+            modifier = modifier,
+        )
+    }
+
+    composable<PrivacyPolicy> {
+        PrivacyPolicyRoute(
+            onBackButtonClick = navigateToUp,
+            modifier = modifier,
+        )
+    }
 }
 
 @Serializable
@@ -151,5 +175,11 @@ data class NoticeDetail(
 
 @Serializable
 data object Feedback : Route
+
+@Serializable
+data object TermsOfService : Route
+
+@Serializable
+data object PrivacyPolicy : Route
 
 const val CROPPED_IMAGE_PATH_KEY = "croppedImagePath"

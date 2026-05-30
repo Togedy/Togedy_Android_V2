@@ -43,14 +43,16 @@ internal fun ScheduleDateTimeSection(
 ) {
     val currentTime = LocalTime.of(LocalTime.now().hour, 0)
     val startDate = startDateTime.first
-    val endDate = endDateTime.first ?: startDate
-
     var startTime by remember { mutableStateOf(startDateTime.second?.toLocalTime() ?: currentTime) }
     var endTime by remember {
         mutableStateOf(
-            endDateTime.second?.toLocalTime() ?: currentTime.plusHours(1)
+            endDateTime.second?.toLocalTime() ?: run {
+                val nextHour = currentTime.hour + 1
+                if (nextHour >= 24) LocalTime.of(23, 59) else LocalTime.of(nextHour, 0)
+            }
         )
     }
+    val endDate = endDateTime.first ?: startDate
 
     var isAllDay by remember { mutableStateOf(startTime == null) }
 
@@ -69,8 +71,9 @@ internal fun ScheduleDateTimeSection(
                     endTime = null
                 } else {
                     val now = LocalTime.now().formatToDefaultLocalTime()
-                    startTime = LocalTime.of(now.hour, 0)
-                    endTime = LocalTime.of(now.hour + 1, 0)
+                    val startHour = now.hour
+                    startTime = LocalTime.of(startHour, 0)
+                    endTime = if (startHour + 1 >= 24) LocalTime.of(23, 59) else LocalTime.of(startHour + 1, 0)
                 }
             }
         )

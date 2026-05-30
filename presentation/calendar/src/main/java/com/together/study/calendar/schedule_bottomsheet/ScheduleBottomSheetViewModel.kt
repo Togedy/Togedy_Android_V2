@@ -101,16 +101,15 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     fun postUserSchedule() = viewModelScope.launch {
         userScheduleRepository.postUserSchedule(toUserSchedule())
-            .onSuccess { Timber.tag("[okhttp] Schedule API - SUCCESS").d("$it") }
-            .onFailure { Timber.tag("[okhttp] Schedule API - FAILURE").d("${it.message}") }
+            .onSuccess { Timber.tag("[okhttp] postUserSchedule API - SUCCESS").d("$it") }
+            .onFailure { Timber.tag("[okhttp] postUserSchedule API - FAILURE").d("$it") }
 
     }
 
     fun patchUserSchedule(scheduleId: Long) = viewModelScope.launch {
         userScheduleRepository.patchUserSchedule(scheduleId, toUserSchedule())
-            .onSuccess { Timber.tag("[okhttp] Schedule API - SUCCESS").d("$it") }
-            .onFailure { Timber.tag("[okhttp] Schedule API - FAILURE").d("${it.message}") }
-
+            .onSuccess { Timber.tag("[okhttp] patchUserSchedule API - SUCCESS").d("$it") }
+            .onFailure { Timber.tag("[okhttp] patchUserSchedule API - FAILURE").d("$it") }
     }
 
     fun updateBottomSheetVisibility(type: ScheduleSubSheetType) {
@@ -139,8 +138,6 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
                     it.copy(isMemoOpen = !_bottomSheetState.value.isMemoOpen)
                 }
             }
-
-            else -> {}
         }
     }
 
@@ -151,9 +148,9 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
             return UserSchedule(
                 userScheduleName = userScheduleName,
                 startDate = startDateValue.toString(),
-                startTime = startTimeValue,
+                startTime = startTimeValue?.let { if (it.length == 5) "$it:00" else it },
                 endDate = endDate,
-                endTime = endTimeValue,
+                endTime = endTimeValue?.let { if (it.length == 5) "$it:00" else it },
                 memo = memoValue,
                 category = categoryValue!!,
                 dDay = dDayValue,
@@ -163,9 +160,7 @@ internal class ScheduleBottomSheetViewModel @Inject constructor(
 
     private suspend fun getCategoryItems() {
         getCategoryUseCase()
-            .onSuccess { result ->
-                _uiState.update { it.copy(categories = result) }
-            }
+            .onSuccess { result -> _uiState.update { it.copy(categories = result) } }
             .onFailure(Timber::e)
     }
 

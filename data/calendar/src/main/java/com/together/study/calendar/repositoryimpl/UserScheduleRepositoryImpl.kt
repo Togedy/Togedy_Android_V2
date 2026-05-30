@@ -10,9 +10,10 @@ import javax.inject.Inject
 class UserScheduleRepositoryImpl @Inject constructor(
     private val userScheduleDataSource: UserScheduleDataSource,
 ) : UserScheduleRepository {
-    override suspend fun postUserSchedule(userSchedule: UserSchedule): Result<Boolean> =
+    override suspend fun postUserSchedule(userSchedule: UserSchedule): Result<Unit> =
         runCatching {
-            userScheduleDataSource.postUserSchedule(request = userSchedule.toData()).response
+            userScheduleDataSource.postUserSchedule(request = userSchedule.toData())
+            Unit
         }
 
     override suspend fun getUserSchedule(userScheduleId: Long): Result<UserSchedule> =
