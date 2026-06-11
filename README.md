@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="https://github.com/Togedy/Togedy_Android_V2/raw/main/app/src/main/res/drawable/ic_launcher_foreground.png" width="120" alt="Togedy Logo"/>
-</p>
+<img width="1920" height="1080" alt="togedy2" src="https://github.com/user-attachments/assets/e9f1ea4d-8cf5-4c82-ab71-11664b4410d0" />
 
-<h1 align="center">Togedy</h1>
+<h1 align="center">
+  <img width="72" height="72" alt="togedy_logo" src="https://github.com/user-attachments/assets/73d6678d-f4f2-4bcd-94ef-b2442e142c5e" /> Togedy</h1>
 
 <p align="center">
   <b>Together + Study</b> — 입시생과 함께 공부하고, 입시준비를 도와주는 서비스
@@ -101,5 +100,5 @@ Togedy_Android_V2
 ---
 
 <p align="center">
-  Made with ❤️ by Togedy Team
+  Made with by Togedy Team
 </p>
