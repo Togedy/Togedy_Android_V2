@@ -100,5 +100,5 @@ Togedy_Android_V2
 ---
 
 <p align="center">
-  Made with by Togedy Team
+  Made by Togedy Team
 </p>
