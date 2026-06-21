@@ -29,6 +29,15 @@ android {
         manifestPlaceholders["kakaoScheme"] = "kakao$kakaoNativeKey"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(localProps.getProperty("release.store.file"))
+            storePassword = localProps.getProperty("release.store.password")
+            keyAlias = localProps.getProperty("release.key.alias")
+            keyPassword = localProps.getProperty("release.key.password")
+        }
+    }
+
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
@@ -39,6 +48,7 @@ android {
         }
         // 추후 릴리즈 시 사용
         getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
