@@ -24,6 +24,7 @@ interface StudyUpdateRepository {
         studyTag: String,
         studyPassword: String?,
         studyImageUri: String?,
+        removeStudyImage: Boolean,
     ): Result<Unit>
 }
 

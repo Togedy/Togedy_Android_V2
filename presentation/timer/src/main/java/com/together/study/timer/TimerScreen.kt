@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -230,7 +231,7 @@ private fun TimerScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.black)
-            .padding(top = 40.dp),
+            .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TogedyTopBar(

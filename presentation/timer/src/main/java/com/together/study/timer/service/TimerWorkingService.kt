@@ -101,6 +101,7 @@ class TimerWorkingService : Service() {
 
     private fun startTicking() {
         timerJob?.cancel()
+        _elapsedTime.value = 0
         timerJob = scope.launch {
             while (true) {
                 delay(1000)
@@ -111,7 +112,6 @@ class TimerWorkingService : Service() {
 
     private fun stopTicking() {
         timerJob?.cancel()
-        _elapsedTime.value = 0
     }
 
     private fun startForegroundInternal() {

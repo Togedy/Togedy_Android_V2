@@ -32,8 +32,8 @@ fun TextWithMoreButton(
     maxLines: Int = 4,
     modifier: Modifier = Modifier,
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-    var truncateIndex by remember { mutableIntStateOf(-1) }
+    var isExpanded by remember(text) { mutableStateOf(false) }
+    var truncateIndex by remember(text, maxLines) { mutableIntStateOf(-1) }
 
     val contentColor = TogedyTheme.colors.gray600
     val buttonColor = TogedyTheme.colors.green
@@ -65,6 +65,8 @@ fun TextWithMoreButton(
                             val lineEndIndex = result.getLineEnd(lastLineIndex, visibleEnd = true)
                             truncateIndex =
                                 (lineEndIndex - ELLIPSIS_WIDTH_IN_CHARS).coerceAtLeast(0)
+                        } else {
+                            truncateIndex = -2
                         }
                     } else {
                         // overflow 없음 → 더보기 불필요
