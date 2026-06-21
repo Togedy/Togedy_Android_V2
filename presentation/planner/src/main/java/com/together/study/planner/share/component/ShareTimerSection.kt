@@ -56,6 +56,7 @@ internal fun ShareTimerSection(
                 .data(timerImageUrl)
                 .allowHardware(false)
                 .build(),
+            modifier = Modifier.matchParentSize(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             colorFilter = ColorFilter.tint(
@@ -89,11 +90,11 @@ internal fun ShareTimerSection(
                 )
             }
 
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = timer.toTimerType(),
-                style = TogedyTheme.typography.time40l,
+                style = TogedyTheme.typography.time40b,
                 fontWeight = FontWeight.ExtraBold,
                 color = TogedyTheme.colors.white,
             )
