@@ -48,9 +48,9 @@ internal fun PlannerDropDownScrim(
         Popup(
             onDismissRequest = onDismissRequest,
             properties = PopupProperties(
-                focusable = false,
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
+                focusable = true,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
             )
         ) {
             Box(
