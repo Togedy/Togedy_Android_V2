@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -170,6 +171,7 @@ fun StudyUpdateScreen(
         modifier = modifier
             .fillMaxSize()
             .background(color = TogedyTheme.colors.gray50)
+            .statusBarsPadding()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     keyboardController?.hide()
@@ -180,7 +182,6 @@ fun StudyUpdateScreen(
     ) {
         TogedyTopBar(
             title = title,
-            modifier = Modifier.padding(top = 23.dp),
             leftIcon = ImageVector.vectorResource(ic_left_chevron_green),
             leftIconColor = TogedyTheme.colors.gray800,
             onLeftClicked = onBackClick

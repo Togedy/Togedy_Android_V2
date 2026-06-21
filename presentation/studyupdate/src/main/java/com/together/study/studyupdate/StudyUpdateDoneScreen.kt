@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -182,12 +183,12 @@ fun StudyUpdateDoneScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = TogedyTheme.colors.gray50),
+            .background(color = TogedyTheme.colors.gray50)
+            .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TogedyTopBar(
             title = if (updateType == StudyUpdateType.UPDATE) "스터디 수정" else "스터디 생성",
-            modifier = Modifier.padding(top = 23.dp),
             leftIcon = ImageVector.vectorResource(ic_left_chevron_green),
             leftIconColor = TogedyTheme.colors.gray800,
             onLeftClicked = onBackClick
