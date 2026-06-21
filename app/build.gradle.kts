@@ -39,7 +39,6 @@ android {
         }
         // 추후 릴리즈 시 사용
         getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
