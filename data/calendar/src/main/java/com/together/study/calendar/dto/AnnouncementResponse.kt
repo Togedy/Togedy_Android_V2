@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AnnouncementResponse(
     @SerialName("hasAnnouncement") val hasAnnouncement: Boolean,
-    @SerialName("announcement") val announcement: String,
+    @SerialName("announcement") val announcement: String?,
 )

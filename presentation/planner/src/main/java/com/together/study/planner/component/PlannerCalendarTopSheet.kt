@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -146,10 +147,17 @@ fun PlannerCalendarTopSheet(
                                         if (colorIndex >= data.size) 0
                                         else data[colorIndex]
 
+                                    val isToday = day.isNotEmpty() && LocalDate.now().let { now ->
+                                        now.year == selectedDate.year &&
+                                                now.monthValue == selectedDate.monthValue &&
+                                                day == now.dayOfMonth.toString()
+                                    }
+
                                     CalendarDayBlock(
                                         day = day,
                                         stack = stack,
                                         isSelected = day == selectedDate.dayOfMonth.toString(),
+                                        isToday = isToday,
                                         modifier = Modifier
                                             .weight(1f)
                                             .aspectRatio(1f),
@@ -193,18 +201,19 @@ private fun CalendarDayBlock(
     day: String,
     stack: Int,
     isSelected: Boolean,
+    isToday: Boolean,
     modifier: Modifier = Modifier,
     onDateClick: () -> Unit,
 ) {
     val roundedCornerShape = RoundedCornerShape(6.dp)
     val isDayOfMonth = day.isNotEmpty()
     val stackColor = when (stack) {
-        1 -> TogedyTheme.colors.gray200
+        1 -> TogedyTheme.colors.white
         2 -> TogedyTheme.colors.green500
         3 -> TogedyTheme.colors.green600
         4 -> TogedyTheme.colors.green800
         5 -> TogedyTheme.colors.green
-        else -> TogedyTheme.colors.gray200
+        else -> TogedyTheme.colors.white
     }
     val textColor =
         if (isSelected) TogedyTheme.colors.white
@@ -228,6 +237,18 @@ private fun CalendarDayBlock(
                 .noRippleClickable(onDateClick),
             contentAlignment = Alignment.Center,
         ) {
+            if (isDayOfMonth && isToday) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 8.dp)
+                        .size(4.dp)
+                        .background(
+                            color = if (isSelected) TogedyTheme.colors.white else TogedyTheme.colors.black,
+                            shape = CircleShape
+                        )
+                )
+            }
             Text(
                 text = day,
                 style = TogedyTheme.typography.body14m,
@@ -247,7 +268,7 @@ private fun PlannerCalendarTopSheetPreview() {
             monthlyHeatmapState = UiState.Success(
                 listOf(
                     0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5,
-                    0, 1, 2, 3, 4, 5
+                    0, 1, 2, 3, 4, 4, 4
                 )
             ),
             onDismissRequest = {},

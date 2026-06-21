@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.together.study.designsystem.R
 
+val PretendardExtraBold = FontFamily(Font(R.font.pretendard_extrabold, FontWeight.ExtraBold))
 val PretendardBold = FontFamily(Font(R.font.pretendard_bold, FontWeight.Bold))
 val PretendardSemiBold = FontFamily(Font(R.font.pretendard_semibold, FontWeight.SemiBold))
 val PretendardMedium = FontFamily(Font(R.font.pretendard_medium, FontWeight.Medium))
@@ -153,9 +154,10 @@ fun TogedyTypography() = TogedyTypography(
         lineHeight = 48.sp,
     ),
     time40b = TogedyTextStyle(
-        fontFamily = PretendardBold,
+        fontFamily = PretendardExtraBold,
         fontSize = 40.sp,
         lineHeight = 48.sp,
+        letterSpacing = 0.01.em
     ),
     time46r = TogedyTextStyle(
         fontFamily = PretendardRegular,
@@ -185,6 +187,8 @@ fun TogedyTypographyPreview() {
             Text("chip14b - TogedyTheme", style = TogedyTheme.typography.chip14b)
             Text("chip10sb - TogedyTheme", style = TogedyTheme.typography.chip10sb)
             Text("time40l - TogedyTheme", style = TogedyTheme.typography.time40l)
+            Text("time40B - TogedyTheme", style = TogedyTheme.typography.time40b)
+
         }
     }
 }
