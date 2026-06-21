@@ -15,8 +15,12 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", properties.getProperty("base.url"))
+            buildConfigField("String", "BASE_URL", properties.getProperty("base.url.debug"))
             buildConfigField("String", "ACCESS_TOKEN", properties.getProperty("test.access.token"))
+        }
+        release {
+            buildConfigField("String", "BASE_URL", properties.getProperty("base.url.release"))
+            buildConfigField("String", "ACCESS_TOKEN", "\"\"")
         }
     }
 }
