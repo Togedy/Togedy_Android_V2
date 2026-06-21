@@ -65,6 +65,8 @@ fun TextWithMoreButton(
                             val lineEndIndex = result.getLineEnd(lastLineIndex, visibleEnd = true)
                             truncateIndex =
                                 (lineEndIndex - ELLIPSIS_WIDTH_IN_CHARS).coerceAtLeast(0)
+                        } else {
+                            truncateIndex = -2
                         }
                     } else {
                         // overflow 없음 → 더보기 불필요
