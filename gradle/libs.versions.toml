@@ -6,7 +6,7 @@ richtextUiMaterial3 = "0.20.0"
 targetSdk = "35"
 compileSdk = "35"
 jvmTarget = "17"
-versionCode = "2"
+versionCode = "2606210"
 versionName = "0.0.1"
 
 lifecycleRuntimeKtx = "2.8.7"
