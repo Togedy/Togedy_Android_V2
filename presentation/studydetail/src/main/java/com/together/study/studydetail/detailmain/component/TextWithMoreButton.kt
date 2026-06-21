@@ -32,8 +32,8 @@ fun TextWithMoreButton(
     maxLines: Int = 4,
     modifier: Modifier = Modifier,
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-    var truncateIndex by remember { mutableIntStateOf(-1) }
+    var isExpanded by remember(text) { mutableStateOf(false) }
+    var truncateIndex by remember(text, maxLines) { mutableIntStateOf(-1) }
 
     val contentColor = TogedyTheme.colors.gray600
     val buttonColor = TogedyTheme.colors.green
