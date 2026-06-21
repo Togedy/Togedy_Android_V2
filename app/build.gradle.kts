@@ -38,17 +38,17 @@ android {
             manifestPlaceholders["appIcon"] = "@mipmap/ic_app_dev"
         }
         // 추후 릴리즈 시 사용
-//        getByName("release") {
-//            signingConfig = signingConfigs.getByName("release")
-//            isMinifyEnabled = true
-//            isShrinkResources = true
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
-//            manifestPlaceholders["appName"] = "@string/app_name"
-//            manifestPlaceholders["appIcon"] = "@drawable/ic_app"
-//        }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            manifestPlaceholders["appName"] = "@string/app_name"
+            manifestPlaceholders["appIcon"] = "@drawable/ic_app"
+        }
     }
 }
 
