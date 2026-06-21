@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,15 +36,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.theme.TogedyTheme
+import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.timer.component.SubjectChangeDialog
 import com.together.study.timer.component.TimerBottomSheet
 import com.together.study.timer.component.TimerButton
@@ -57,18 +62,30 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun TimerRoute(
     onBackClick: () -> Unit,
+    onNavigateToAddSubject: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TimerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
+    var isExitDialogVisible by remember { mutableStateOf(false) }
+
     val handleBack = {
-        viewModel.onExitTimer()
-        onBackClick()
+        if (uiState.isPlaying) {
+            isExitDialogVisible = true
+        } else {
+            viewModel.onExitTimer()
+            onBackClick()
+        }
     }
 
     BackHandler(onBack = handleBack)
+
+    // 앱이 백그라운드로 진입(홈 / 다른 앱 / 푸시)하면 타이머 정지 여부 위임
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        viewModel.onAppBackgrounded()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.bindService()
@@ -76,6 +93,8 @@ internal fun TimerRoute(
 
     val totalTime = (uiState.totalStudyTime as? UiState.Success)?.data ?: 0L
     val subjects = (uiState.subjectTimers as? UiState.Success)?.data ?: emptyList()
+
+    var isNoSubjectDialogVisible by remember { mutableStateOf(false) }
 
     TimerScreen(
         scope = scope,
@@ -87,9 +106,57 @@ internal fun TimerRoute(
         isPlaying = uiState.isPlaying,
         modifier = modifier,
         onBackClick = handleBack,
-        onPlayButtonClick = viewModel::togglePlay,
+        onPlayButtonClick = {
+            if (subjects.isEmpty()) {
+                isNoSubjectDialogVisible = true
+            } else {
+                viewModel.togglePlay()
+            }
+        },
         onSubjectChanged = viewModel::updateSelectedSubject,
     )
+
+    if (isExitDialogVisible) {
+        TogedyBasicDialog(
+            title = "타이머 종료",
+            subTitle = {
+                Text(
+                    text = "타이머가 진행중입니다.\n종료하시겠습니까?",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray700,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            buttonText = "종료",
+            onDismissRequest = { isExitDialogVisible = false },
+            onButtonClick = {
+                isExitDialogVisible = false
+                viewModel.onExitTimer()
+                onBackClick()
+            },
+        )
+    }
+
+    if (isNoSubjectDialogVisible) {
+        TogedyBasicDialog(
+            title = "과목 추가 필요",
+            subTitle = {
+                Text(
+                    text = "등록된 과목이 없습니다.\n과목을 추가하시겠습니까?",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray700,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            buttonText = "추가하기",
+            onDismissRequest = { isNoSubjectDialogVisible = false },
+            onButtonClick = {
+                isNoSubjectDialogVisible = false
+                viewModel.onExitTimer()
+                onNavigateToAddSubject()
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -141,7 +208,7 @@ private fun TimerScreen(
                         subjectColor.copy(alpha = alpha),
                         TogedyTheme.colors.black.copy(alpha = alpha)
                     ),
-                    radius = radius
+                    radius = radius.coerceAtLeast(0.01f)
                 )
             )
         else Modifier
@@ -164,7 +231,7 @@ private fun TimerScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.black)
-            .padding(top = 40.dp),
+            .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TogedyTopBar(
@@ -209,7 +276,6 @@ private fun TimerScreen(
                     if (selectedSubject != null) {
                         TimerSelectedSubject(
                             subject = selectedSubject,
-                            textColor = textColor,
                             onSubjectClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                         )
                     } else {
@@ -220,7 +286,6 @@ private fun TimerScreen(
                                 subjectColor = "SUBJECT_COLOR1",
                                 studyTime = 0L,
                             ),
-                            textColor = textColor,
                             onSubjectClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                         )
                     }

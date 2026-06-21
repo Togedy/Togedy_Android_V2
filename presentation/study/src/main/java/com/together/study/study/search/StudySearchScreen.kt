@@ -1,7 +1,9 @@
 package com.together.study.study.search
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -25,7 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.common.type.study.StudySortingType
 import com.together.study.designsystem.R.drawable.ic_arrow_left_24
+import com.together.study.designsystem.R.drawable.img_character_question
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.theme.TogedyTheme
@@ -94,6 +100,7 @@ fun StudySearchScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
+            .statusBarsPadding()
             .padding(horizontal = 16.dp),
     ) {
         Row(
@@ -221,11 +228,26 @@ fun SuccessResultScreen(
 
         if (resultStudies.isEmpty()) {
             item {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 60.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                 ) {
+                    Image(
+                        painter = painterResource(img_character_question),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp),
+                    )
+
+                    Spacer(Modifier.height(14.dp))
+
                     Text(
-                        text = "${searchTerm}에 대한 검색 결과가 없습니다"
+                        text = "\"${searchTerm}\"에 대한\n검색 결과가 없어요",
+                        style = TogedyTheme.typography.body14m,
+                        color = TogedyTheme.colors.gray500,
+                        textAlign = TextAlign.Center,
                     )
                 }
             }

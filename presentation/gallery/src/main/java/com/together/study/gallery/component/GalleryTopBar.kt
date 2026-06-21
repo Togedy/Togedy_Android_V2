@@ -15,6 +15,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.together.study.designsystem.R.drawable.ic_left_chevron
+import com.together.study.designsystem.R.drawable.ic_dropdown_filled_8
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 
@@ -36,8 +37,9 @@ internal fun GalleryTopBar(
             horizontalArrangement = Arrangement.Center,
         ) {
             Row(
-                modifier = Modifier.noRippleClickable(onAlbumSelectClick)
-            ) {
+                modifier = Modifier.noRippleClickable(onAlbumSelectClick),
+                verticalAlignment = Alignment.CenterVertically,
+                ) {
                 Text(
                     text = title,
                     style = TogedyTheme.typography.title16sb,
@@ -47,7 +49,7 @@ internal fun GalleryTopBar(
                 )
 
                 Icon(
-                    imageVector = ImageVector.vectorResource(ic_left_chevron),
+                    imageVector = ImageVector.vectorResource(ic_dropdown_filled_8),
                     contentDescription = null,
                 )
             }

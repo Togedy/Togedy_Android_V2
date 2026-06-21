@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -61,6 +62,8 @@ import java.time.LocalDate
 @Composable
 internal fun PlannerScreen(
     modifier: Modifier = Modifier,
+    shouldOpenSubjectAdd: Boolean = false,
+    onClearSubjectAddFlag: () -> Unit = {},
     onShareNavigate: (Int, Int, Int) -> Unit,
     onTimerNavigate: () -> Unit,
     onEditSubjectNavigate: () -> Unit,
@@ -76,6 +79,13 @@ internal fun PlannerScreen(
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             viewModel.load()
+        }
+    }
+
+    LaunchedEffect(shouldOpenSubjectAdd) {
+        if (shouldOpenSubjectAdd) {
+            viewModel.updateBottomSheetVisibility(PlannerSheetType.SUBJECT_ADD)
+            onClearSubjectAddFlag()
         }
     }
 
@@ -157,6 +167,7 @@ private fun PlannerScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.white)
+            .statusBarsPadding()
             .padding(top = 20.dp),
     ) {
         when (plannerInfoState) {
@@ -249,6 +260,9 @@ private fun PlannerScreen(
             when (page) {
                 0 -> PlannerItemsScreen(
                     plannerSubjectState = plannerSubjectState,
+                    onSubjectAddClick = {
+                        onSheetVisibilityChange(PlannerSheetType.SUBJECT_ADD)
+                    },
                     onTaskPlusButtonClick = onTaskPlusButtonClick,
                     onTaskNameChange = onTaskNameChange,
                     onCheckClick = onCheckClick,

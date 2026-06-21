@@ -1,52 +1,38 @@
 package com.together.study.timer.component
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
-import com.together.study.designsystem.R.drawable.ic_right_chevron_green
+import androidx.compose.ui.text.style.TextAlign
+import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.timer.model.SubjectTimer
+import com.together.study.util.asColor
 import com.together.study.util.noRippleClickable
 
+private const val MAX_WIDTH_FRACTION = 220f / 360f
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun TimerSelectedSubject(
     subject: SubjectTimer,
-    textColor: Color,
     modifier: Modifier = Modifier,
     onSubjectClick: () -> Unit,
 ) {
-    Row(
+    val subjectColor = subject.subjectColor.toPlannerSubjectColorOrDefault().asColor()
+
+    Text(
+        text = subject.subjectName,
+        style = TogedyTheme.typography.body14b,
+        color = subjectColor,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
         modifier = modifier
-            .border(1.dp, textColor, RoundedCornerShape(40.dp))
-            .noRippleClickable(onSubjectClick),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        SubjectTitle(
-            subject = subject,
-            textColor = textColor,
-            modifier = Modifier
-                .padding(vertical = 6.dp)
-                .padding(start = 12.dp),
-        )
-
-        Spacer(Modifier.width(2.dp))
-
-        Icon(
-            imageVector = ImageVector.vectorResource(ic_right_chevron_green),
-            contentDescription = null,
-            tint = TogedyTheme.colors.gray600,
-            modifier = Modifier.padding(end = 4.dp),
-        )
-    }
+            .noRippleClickable(onSubjectClick)
+            .fillMaxWidth(MAX_WIDTH_FRACTION)
+            .basicMarquee(),
+    )
 }

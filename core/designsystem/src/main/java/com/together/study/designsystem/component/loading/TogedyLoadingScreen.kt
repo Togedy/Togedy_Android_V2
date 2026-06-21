@@ -15,8 +15,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 fun TogedyLoadingScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .fillMaxSize()
-            .background(TogedyTheme.colors.white),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(

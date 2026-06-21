@@ -62,6 +62,7 @@ internal fun SubjectDetailBottomSheet(
         title = title,
         showDone = true,
         isDoneActivate = subjectName.isNotEmpty(),
+        sheetModifier = Modifier.padding(top = 60.dp),
         onDoneClick = {
             if (subject == null) onDoneClick(
                 SubjectItem(
@@ -113,7 +114,8 @@ internal fun SubjectDetailBottomSheet(
                             )
                         }
                         innerTextField()
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 

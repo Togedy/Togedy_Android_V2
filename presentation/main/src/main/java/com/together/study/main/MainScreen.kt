@@ -4,6 +4,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -50,6 +51,8 @@ import com.together.study.mypage.navigation.myPageGraph
 import com.together.study.onboarding.navigation.Onboarding
 import com.together.study.onboarding.navigation.navigateToOnboarding
 import com.together.study.onboarding.navigation.onboardingGraph
+import com.together.study.planner.navigation.Planner
+import com.together.study.planner.navigation.SHOULD_OPEN_SUBJECT_ADD_KEY
 import com.together.study.planner.navigation.plannerGraph
 import com.together.study.search.navigation.navigateToUnivSearch
 import com.together.study.search.navigation.univSearchGraph
@@ -171,8 +174,8 @@ fun MainScreen(
                         showChatBotExitDialogState.value = true
                     },
                     modifier = Modifier
-                        .padding(innerPadding)
-                        .consumeWindowInsets(innerPadding)
+                        .padding(bottom = innerPadding.calculateBottomPadding())
+                        .consumeWindowInsets(PaddingValues(bottom = innerPadding.calculateBottomPadding()))
                 )
             }
         }
@@ -268,6 +271,7 @@ private fun MainNavHost(
             },
             navigateToStudySearch = navigator.navController::navigateToStudySearch,
             navigateToStudyDetail = navigator.navController::navigateToStudyDetail,
+            navigateToTimer = navigator.navController::navigateToTimer,
             modifier = modifier,
         )
 
@@ -350,6 +354,20 @@ private fun MainNavHost(
 
         timerGraph(
             navigateToUp = navigator.navController::popBackStack,
+            onNavigateToAddSubject = {
+                val poppedToPlanner = navigator.navController.popBackStack(
+                    route = Planner,
+                    inclusive = false,
+                )
+
+                if (!poppedToPlanner) {
+                    navigator.navController.popBackStack()
+                    navigator.navigate(MainTab.PLANNER)
+                }
+
+                navigator.navController.getBackStackEntry<Planner>()
+                    .savedStateHandle[SHOULD_OPEN_SUBJECT_ADD_KEY] = true
+            },
             modifier = modifier,
         )
 

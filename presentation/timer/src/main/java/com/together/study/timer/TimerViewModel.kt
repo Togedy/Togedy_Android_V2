@@ -78,6 +78,7 @@ internal class TimerViewModel @Inject constructor(
     }
 
     fun updateSelectedSubject(subject: SubjectTimer) {
+        timerManager.resetAccumulatedTime()
         _uiState.update { it.copy(selectedSubject = subject) }
     }
 
@@ -94,6 +95,11 @@ internal class TimerViewModel @Inject constructor(
 
     fun onExitTimer() {
         timerManager.stop()
+        timerManager.resetAccumulatedTime()
+    }
+
+    fun onAppBackgrounded() {
+        timerManager.onEnterBackground()
     }
 
     override fun onCleared() {

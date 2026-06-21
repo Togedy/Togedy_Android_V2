@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -147,7 +148,7 @@ fun PlannerShareScreen(
         Column(
             modifier = Modifier
                 .background(TogedyTheme.colors.white)
-                .padding(top = 24.dp),
+                .statusBarsPadding(),
         ) {
             TogedyTopBar(
                 title = "이미지로 공유",

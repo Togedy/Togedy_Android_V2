@@ -51,6 +51,7 @@ class StudyUpdateDataSource @Inject constructor(
         studyTag: String,
         studyPassword: String?,
         studyImageUri: Uri?,
+        removeStudyImage: Boolean,
     ) = studyUpdateService.updateStudy(
         studyId = studyId,
         challengeGoalTime = challengeGoalTime?.toString()
@@ -69,6 +70,7 @@ class StudyUpdateDataSource @Inject constructor(
                 MultipartBody.Part.createFormData("studyImage", file.name, requestFile)
             }
         },
+        removeStudyImage = removeStudyImage.toString().toRequestBody("text/plain".toMediaType()),
     )
 }
 

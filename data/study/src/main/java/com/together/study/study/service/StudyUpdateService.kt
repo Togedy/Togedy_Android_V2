@@ -42,6 +42,7 @@ interface StudyUpdateService {
         @Part("studyTag") studyTag: RequestBody,
         @Part("studyPassword") studyPassword: RequestBody?,
         @Part studyImage: MultipartBody.Part?,
+        @Part("removeStudyImage") removeStudyImage: RequestBody,
     ): EmptyDataResponse
 }
 

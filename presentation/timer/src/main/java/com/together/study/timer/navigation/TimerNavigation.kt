@@ -15,12 +15,14 @@ fun NavController.navigateToTimer(
 
 fun NavGraphBuilder.timerGraph(
     navigateToUp: () -> Unit,
+    onNavigateToAddSubject: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     composable<Timer> {
         TimerRoute(
             modifier = modifier,
             onBackClick = navigateToUp,
+            onNavigateToAddSubject = onNavigateToAddSubject,
         )
     }
 }

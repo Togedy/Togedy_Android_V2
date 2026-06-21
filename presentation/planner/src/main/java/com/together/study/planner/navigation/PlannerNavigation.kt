@@ -27,6 +27,8 @@ fun NavController.navigateToSharePlanner(
     navOptions: NavOptions? = null,
 ) = navigate(PlannerShare(year, month, day), navOptions)
 
+const val SHOULD_OPEN_SUBJECT_ADD_KEY = "should_open_subject_add"
+
 fun NavGraphBuilder.plannerGraph(
     navigateToUp: () -> Unit,
     navigateToGallery: (String) -> Unit,
@@ -34,9 +36,16 @@ fun NavGraphBuilder.plannerGraph(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    composable<Planner> {
+    composable<Planner> { entry ->
+        val shouldOpenSubjectAdd =
+            entry.savedStateHandle.get<Boolean>(SHOULD_OPEN_SUBJECT_ADD_KEY) == true
+
         PlannerScreen(
             modifier = modifier,
+            shouldOpenSubjectAdd = shouldOpenSubjectAdd,
+            onClearSubjectAddFlag = {
+                entry.savedStateHandle.remove<Boolean>(SHOULD_OPEN_SUBJECT_ADD_KEY)
+            },
             onShareNavigate = navController::navigateToSharePlanner,
             onTimerNavigate = navigateToTimer,
             onEditSubjectNavigate = navController::navigateToSubjectDetail,

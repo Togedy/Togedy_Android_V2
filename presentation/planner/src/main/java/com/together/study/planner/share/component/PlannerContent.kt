@@ -54,10 +54,12 @@ internal fun PlannerContent(
                 Spacer(Modifier.width(4.dp))
 
                 Box(
-                    modifier = Modifier.then(
-                        if (plan.subjectId !in selectedSubjects) Modifier.blur(10.dp)
-                        else Modifier
-                    )
+                    modifier = Modifier
+                        .weight(1f)
+                        .then(
+                            if (plan.subjectId !in selectedSubjects) Modifier.blur(10.dp)
+                            else Modifier
+                        )
                 ) {
                     Text(
                         text = plan.subjectName,
@@ -66,7 +68,7 @@ internal fun PlannerContent(
                     )
                 }
 
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.width(4.dp))
 
                 Text(
                     text = "${plan.checkedTaskCount ?: ""}",

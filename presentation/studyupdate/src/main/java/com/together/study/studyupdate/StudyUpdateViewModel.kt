@@ -9,6 +9,7 @@ import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudyUpdateRepository
 import com.together.study.studyupdate.component.StudyTimeOption
+import com.together.study.user.usecase.GetUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,10 +27,24 @@ internal class StudyUpdateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val studyUpdateRepository: StudyUpdateRepository,
     private val studyDetailRepository: StudyDetailRepository,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>("studyId") ?: 0L
     val updateType: StudyUpdateType =
         savedStateHandle.get<StudyUpdateType>("updateType") ?: StudyUpdateType.CREATE
+
+    private val _userProfileImageUrl = MutableStateFlow<String?>(null)
+    val userProfileImageUrl: StateFlow<String?> = _userProfileImageUrl.asStateFlow()
+
+    init {
+        loadUserProfile()
+    }
+
+    private fun loadUserProfile() = viewModelScope.launch {
+        getUserInfoUseCase().onSuccess { userInfo ->
+            _userProfileImageUrl.update { userInfo.userProfileImageUrl }
+        }
+    }
 
     // 상태 관리
     private val _isChallenge =
@@ -82,8 +97,14 @@ internal class StudyUpdateViewModel @Inject constructor(
     // 상태 저장 함수
     fun updateStudyName(name: String) {
         _studyName.update { name }
-        _isStudyNameDuplicate.update { null }
-        _studyNameErrorMessage.update { null }
+        // 수정 모드인 경우 같은 이름 자동 통과
+        if (updateType == StudyUpdateType.UPDATE && name == originalStudyName) {
+            _isStudyNameDuplicate.update { false }
+            _studyNameErrorMessage.update { null }
+        } else {
+            _isStudyNameDuplicate.update { null }
+            _studyNameErrorMessage.update { null }
+        }
     }
 
     fun updateStudyIntroduce(introduce: String) {
@@ -154,6 +175,13 @@ internal class StudyUpdateViewModel @Inject constructor(
             return@launch
         }
 
+        // 수정 모드에서 원래 이름 통과
+        if (updateType == StudyUpdateType.UPDATE && name == originalStudyName) {
+            _isStudyNameDuplicate.update { false }
+            _studyNameErrorMessage.update { "사용가능한 스터디 이름입니다" }
+            return@launch
+        }
+
         _isDuplicateCheckLoading.update { true }
         _studyNameErrorMessage.update { null }
 
@@ -198,6 +226,10 @@ internal class StudyUpdateViewModel @Inject constructor(
                 _studyPassword.update { studyDetailInfo.studyPassword ?: "" }
                 _selectedMemberCount.update { studyDetailInfo.studyMemberLimit }
                 _isChallenge.update { studyDetailInfo.studyType == "CHALLENGE" }
+
+                // 수정 모드 진입 시 원래 이름 통과
+                _isStudyNameDuplicate.update { false }
+                _studyNameErrorMessage.update { "사용가능한 스터디 이름입니다" }
             },
             onFailure = { throwable ->
                 Timber.e(throwable, "스터디 호출에 실패")
@@ -251,6 +283,8 @@ internal class StudyUpdateViewModel @Inject constructor(
         onFailure: (String) -> Unit,
     ) = viewModelScope.launch {
         _isSubmitLoading.update { true }
+
+        val shouldRemoveImage = originalStudyImageUri != null && studyImageUri == null
         studyUpdateRepository.updateStudy(
             studyId = studyId,
             challengeGoalTime = challengeGoalTime,
@@ -260,6 +294,7 @@ internal class StudyUpdateViewModel @Inject constructor(
             studyTag = studyTag,
             studyPassword = studyPassword,
             studyImageUri = studyImageUri?.toString(),
+            removeStudyImage = shouldRemoveImage,
         ).fold(
             onSuccess = {
                 _isSubmitLoading.update { false }

@@ -192,6 +192,8 @@ fun WeeklyStatistics(
                         text = time,
                         style = TogedyTheme.typography.chip10sb,
                         color = TogedyTheme.colors.gray600,
+                        maxLines = 1,
+                        softWrap = false,
                     )
                 }
             }
