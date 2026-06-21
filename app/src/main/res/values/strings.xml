@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Togedy_Android_V2</string>
+    <string name="app_name">Togedy</string>
+    <string name="app_name_dev">Togedy_DEV</string>
 </resources>
