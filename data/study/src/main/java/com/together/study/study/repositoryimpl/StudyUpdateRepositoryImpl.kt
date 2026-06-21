@@ -49,6 +49,7 @@ class StudyUpdateRepositoryImpl @Inject constructor(
         studyTag: String,
         studyPassword: String?,
         studyImageUri: String?,
+        removeStudyImage: Boolean,
     ): Result<Unit> = runCatching<Unit> {
         val uri = studyImageUri?.toUri()
         studyUpdateDataSource.updateStudy(
@@ -60,6 +61,7 @@ class StudyUpdateRepositoryImpl @Inject constructor(
             studyTag = studyTag,
             studyPassword = studyPassword,
             studyImageUri = uri,
+            removeStudyImage = removeStudyImage,
         )
     }.recoverCatching { throwable ->
         val serverMessage = throwable.getHttpExceptionMessage()

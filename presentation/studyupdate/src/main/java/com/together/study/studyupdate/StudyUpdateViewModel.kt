@@ -266,6 +266,8 @@ internal class StudyUpdateViewModel @Inject constructor(
         onFailure: (String) -> Unit,
     ) = viewModelScope.launch {
         _isSubmitLoading.update { true }
+
+        val shouldRemoveImage = originalStudyImageUri != null && studyImageUri == null
         studyUpdateRepository.updateStudy(
             studyId = studyId,
             challengeGoalTime = challengeGoalTime,
@@ -275,6 +277,7 @@ internal class StudyUpdateViewModel @Inject constructor(
             studyTag = studyTag,
             studyPassword = studyPassword,
             studyImageUri = studyImageUri?.toString(),
+            removeStudyImage = shouldRemoveImage,
         ).fold(
             onSuccess = {
                 _isSubmitLoading.update { false }
