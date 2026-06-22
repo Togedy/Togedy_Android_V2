@@ -48,7 +48,11 @@
         <service
             android:name="com.together.study.timer.service.TimerWorkingService"
             android:exported="false"
-            android:foregroundServiceType="specialUse" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="learning_timer_sync" />
+        </service>
     </application>
 
 </manifest>
