@@ -29,6 +29,15 @@ android {
         manifestPlaceholders["kakaoScheme"] = "kakao$kakaoNativeKey"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(localProps.getProperty("release.store.file"))
+            storePassword = localProps.getProperty("release.store.password")
+            keyAlias = localProps.getProperty("release.key.alias")
+            keyPassword = localProps.getProperty("release.key.password")
+        }
+    }
+
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
