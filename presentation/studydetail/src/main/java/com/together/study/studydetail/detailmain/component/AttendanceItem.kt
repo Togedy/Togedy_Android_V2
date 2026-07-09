@@ -30,7 +30,6 @@ import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyColors
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.model.StudyAttendance
-import com.together.study.util.toLocalTimeWithSecond
 import java.time.LocalDate
 
 private val dayOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
@@ -106,12 +105,19 @@ private fun getPaletteForRanking(ranking: Int, colors: TogedyColors): RankingPal
 private fun formatStudyTime(time: String?): String {
     if (time == null) return ""
 
-    val localTime = time.toLocalTimeWithSecond()
-    val hour = if (localTime.hour == 0) "" else "${localTime.hour}H"
-    val minute = if (localTime.minute == 0) "" else "${localTime.minute}M"
+    val parts = time.split(":").mapNotNull { it.toIntOrNull() }
+    if (parts.isEmpty()) return ""
+
+    val hourValue = parts.getOrElse(0) { 0 }
+    val minuteValue = parts.getOrElse(1) { 0 }
+    val secondValue = parts.getOrElse(2) { 0 }
+
+    val hour = if (hourValue == 0) "" else "${hourValue}H"
+    val minute = if (minuteValue == 0) "" else "${minuteValue}M"
+    val seconds = if (secondValue == 0) "" else "${secondValue}s"
 
     return when {
-        hour.isEmpty() && minute.isEmpty() -> ""
+        hour.isEmpty() && minute.isEmpty() && !seconds.isEmpty() -> seconds
         hour.isEmpty() -> minute
         minute.isEmpty() -> hour
         else -> "$hour\n$minute"
