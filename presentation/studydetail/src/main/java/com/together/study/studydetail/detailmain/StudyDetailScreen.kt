@@ -53,7 +53,6 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_play_button
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.R.drawable.ic_settings_24
-import com.together.study.designsystem.R.drawable.ic_share_20
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
@@ -388,14 +387,14 @@ private fun StudyDetailSuccessScreen(
 
             Spacer(Modifier.weight(1f))
 
-            Icon(
-                imageVector = ImageVector.vectorResource(ic_share_20),
-                contentDescription = "공유 버튼",
-                tint = iconColor,
-                modifier = Modifier
-                    .size(20.dp)
-                    .noRippleClickable(onShareButtonClick),
-            )
+//            Icon(
+//                imageVector = ImageVector.vectorResource(ic_share_20),
+//                contentDescription = "공유 버튼",
+//                tint = iconColor,
+//                modifier = Modifier
+//                    .size(20.dp)
+//                    .noRippleClickable(onShareButtonClick),
+//            )
 
             if (studyInfo.isJoined) {
                 Spacer(Modifier.width(8.dp))
