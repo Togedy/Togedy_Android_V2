@@ -110,7 +110,10 @@ internal fun PlannerItemsScreen(
                         )
                     }
                 } else {
-                    itemsIndexed(subjects) { index, subject ->
+                    itemsIndexed(
+                        items = subjects,
+                        key = { _, subject -> subject.subjectId ?: subject.subjectName },
+                    ) { index, subject ->
                         SubjectSection(
                             subjectId = subject.subjectId!!,
                             subjectName = subject.subjectName,
@@ -237,19 +240,28 @@ fun SubjectSection(
                             .padding(bottom = bottomPadding),
                         verticalAlignment = Alignment.Top,
                     ) {
+                        var isChecked by remember(task.taskId, task.tempId) {
+                            mutableStateOf(task.isChecked)
+                        }
+
+                        LaunchedEffect(task.isChecked) {
+                            isChecked = task.isChecked
+                        }
+
                         val stateColor =
-                            if (task.isChecked) subjectColor
+                            if (isChecked) subjectColor
                             else TogedyTheme.colors.gray300
 
                         Box(
                             modifier = Modifier
-                                .noRippleClickable {
-                                    task.taskId?.let {
-                                        onCheckClick(it, !task.isChecked)
-                                    }
-                                }
                                 .size(16.dp)
                                 .background(stateColor, RoundedCornerShape(4.dp))
+                                .noRippleClickable {
+                                    val taskId = task.taskId ?: return@noRippleClickable
+                                    val newValue = !isChecked
+                                    isChecked = newValue
+                                    onCheckClick(taskId, newValue)
+                                }
                         )
 
                         Spacer(Modifier.width(8.dp))

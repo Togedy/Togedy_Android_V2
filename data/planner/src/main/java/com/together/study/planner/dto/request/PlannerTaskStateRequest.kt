@@ -1,8 +1,9 @@
 package com.together.study.planner.dto.request
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlannerTaskStateRequest(
-    val isChecked: Boolean,
+    @SerialName("isChecked") val isChecked: Boolean,
 )
