@@ -364,12 +364,19 @@ private fun StudyTimeTitleSection(modifier: Modifier = Modifier) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(1.dp),
             ) {
-                repeat(5) {
+                listOf(
+                    TogedyTheme.colors.gray200,
+                    TogedyTheme.colors.green500,
+                    TogedyTheme.colors.green600,
+                    TogedyTheme.colors.green800,
+                    TogedyTheme.colors.green,
+                ).forEach { color ->
                     Box(
                         modifier = Modifier
                             .size(8.dp)
                             .background(
-                                color = TogedyTheme.colors.gray400, shape = RoundedCornerShape(2.dp)
+                                color = color,
+                                shape = RoundedCornerShape(2.dp),
                             ),
                     )
                 }
