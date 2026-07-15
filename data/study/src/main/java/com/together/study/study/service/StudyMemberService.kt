@@ -5,6 +5,7 @@ import com.together.study.remote.model.EmptyDataResponse
 import com.together.study.study.dto.StudyMemberPlannerResponse
 import com.together.study.study.dto.StudyMemberProfileResponse
 import com.together.study.study.dto.StudyMemberTimeBlockResponse
+import com.together.study.study.dto.UpdatePlannerVisibilityRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -33,6 +34,6 @@ interface StudyMemberService {
     suspend fun updatePlannerVisibility(
         @Path("studyId") studyId: Long,
         @Path("userId") userId: Long,
-        @Body isPlannerVisible: Boolean,
+        @Body body: UpdatePlannerVisibilityRequest,
     ): EmptyDataResponse
 }
