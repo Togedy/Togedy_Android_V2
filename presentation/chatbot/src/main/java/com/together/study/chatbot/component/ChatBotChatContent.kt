@@ -29,6 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.together.study.chatbot.model.ChatMessage
 import com.together.study.designsystem.theme.TogedyTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 internal fun ChatBotChatContent(
@@ -43,12 +46,16 @@ internal fun ChatBotChatContent(
         displayedMessageIds = displayedMessageIds + messages.map { it.id }.toSet()
     }
 
+    val todayText = remember {
+        LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd E", Locale.KOREAN))
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
         Text(
-            text = "2025.11.19 수",
+            text = todayText,
             style = TogedyTheme.typography.body13m,
             color = TogedyTheme.colors.gray700,
             modifier = Modifier

@@ -73,7 +73,7 @@ class TokenAuthenticator @Inject constructor(
             val request = Request.Builder()
                 .url("${data.remote.BuildConfig.BASE_URL}auth/reissue")
                 .post("".toRequestBody("application/json".toMediaType()))
-                .header("Refresh-Token", refreshToken)
+                .header("Refresh-Token", "Bearer $refreshToken")
                 .build()
 
             client.newCall(request).execute().use { reissueResponse ->
@@ -84,8 +84,8 @@ class TokenAuthenticator @Inject constructor(
 
                 val body = reissueResponse.body?.string() ?: return@use null
                 val result = json.decodeFromString<BaseResponse<ReissueResponse>>(body)
-                val accessToken = result.response.accessToken.removePrefix("Bearer ")
-                val newRefreshToken = result.response.refreshToken.removePrefix("Bearer ")
+                val accessToken = result.response.accessToken.removePrefix("Bearer ").trim()
+                val newRefreshToken = result.response.refreshToken.removePrefix("Bearer ").trim()
 
                 tokenDataStore.setTokens(accessToken, newRefreshToken)
 
