@@ -41,6 +41,7 @@ internal fun StatisticsScreen(
     studyStatus: StudyStatus?,
     statisticsState: UiState<DailyStatistics>,
     modifier: Modifier = Modifier,
+    isToday: Boolean,
 ) {
     val listState = rememberLazyListState()
     val currentDate = LocalDate.now()
@@ -62,7 +63,7 @@ internal fun StatisticsScreen(
                 item {
                     Spacer(Modifier.height(14.dp))
 
-                    if (studyStatus != null) {
+                    if (studyStatus != null && isToday) {
                         StreakSection(
                             currentMonth = currentDate.monthValue,
                             studyStatus = studyStatus,
@@ -73,7 +74,10 @@ internal fun StatisticsScreen(
                         Spacer(Modifier.height(16.dp))
                     }
 
-                    WeeklyStatistics(statistics.weeklyReview)
+                    WeeklyStatistics(
+                        weeklyReview = statistics.weeklyReview,
+                        isCurrentWeek = isToday,
+                    )
 
                     Spacer(Modifier.height(16.dp))
 
@@ -122,6 +126,7 @@ fun MonthlyStatistics(
 fun WeeklyStatistics(
     weeklyReview: List<String?>,
     modifier: Modifier = Modifier,
+    isCurrentWeek: Boolean,
 ) {
     Column(
         modifier = modifier
@@ -141,23 +146,25 @@ fun WeeklyStatistics(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             weeklyReview.forEachIndexed { index, dayRecord ->
-                val backgroundColor = when (dayRecord) {
+                val record = if (!isCurrentWeek && dayRecord == null) "00:00:00" else dayRecord
+
+                val backgroundColor = when (record) {
                     "00:00:00" -> TogedyTheme.colors.gray100
                     null -> TogedyTheme.colors.white
                     else -> TogedyTheme.colors.green
                 }
                 val borderColor =
-                    if (dayRecord == null) TogedyTheme.colors.gray200
+                    if (record == null) TogedyTheme.colors.gray200
                     else backgroundColor
-                val contentColor = when (dayRecord) {
+                val contentColor = when (record) {
                     "00:00:00" -> TogedyTheme.colors.gray400
                     null -> TogedyTheme.colors.gray600
                     else -> TogedyTheme.colors.white
                 }
-                val time = when (dayRecord) {
+                val time = when (record) {
                     "00:00:00" -> "-"
                     null -> ""
-                    else -> dayRecord
+                    else -> record
                 }
 
                 Column(
@@ -223,6 +230,7 @@ private fun StatisticsScreenPreview() {
                     monthlyReview = listOf(),
                 ),
             ),
+            isToday = true,
         )
     }
 }
