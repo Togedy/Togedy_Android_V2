@@ -1,4 +1,4 @@
-package com.together.study.studydetail.component
+package com.together.study.studymember.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
