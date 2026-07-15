@@ -38,7 +38,7 @@ fun StudyBlock(
 
         Spacer(Modifier.height(10.dp))
 
-        days.chunked(7).forEachIndexed { weekIndex, week ->
+        days.chunked(7).forEach { week ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -47,10 +47,12 @@ fun StudyBlock(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 week.forEachIndexed { dayIndex, day ->
-                    val colorIndex = weekIndex * 7 + dayIndex
-                    val stack =
-                        if (colorIndex >= studyTimeList.size) 0
-                        else studyTimeList[colorIndex]
+                    val dayOfMonth = day.toIntOrNull()
+                    val stack = dayOfMonth
+                        ?.minus(1)
+                        ?.takeIf { it in studyTimeList.indices }
+                        ?.let { studyTimeList[it] }
+                        ?: 0
 
                     CalendarDayBlock(
                         day = day,

@@ -133,7 +133,7 @@ fun PlannerCalendarTopSheet(
 
                     is UiState.Success -> {
                         val data = monthlyHeatmapState.data
-                        days.chunked(7).forEachIndexed { weekIndex, week ->
+                        days.chunked(7).forEach { week ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -142,33 +142,37 @@ fun PlannerCalendarTopSheet(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 week.forEachIndexed { dayIndex, day ->
-                                    val colorIndex = weekIndex * 7 + dayIndex
-                                    val stack =
-                                        if (colorIndex >= data.size) 0
-                                        else data[colorIndex]
+                                    val dayOfMonth = day.toIntOrNull()
+                                    val stack = dayOfMonth
+                                        ?.minus(1)
+                                        ?.takeIf { it in data.indices }
+                                        ?.let { data[it] }
+                                        ?: 0
 
-                                    val isToday = day.isNotEmpty() && LocalDate.now().let { now ->
+                                    val isToday = dayOfMonth != null && LocalDate.now().let { now ->
                                         now.year == selectedDate.year &&
                                                 now.monthValue == selectedDate.monthValue &&
-                                                day == now.dayOfMonth.toString()
+                                                dayOfMonth == now.dayOfMonth
                                     }
 
                                     CalendarDayBlock(
                                         day = day,
                                         stack = stack,
-                                        isSelected = day == selectedDate.dayOfMonth.toString(),
+                                        isSelected = dayOfMonth == selectedDate.dayOfMonth,
                                         isToday = isToday,
                                         modifier = Modifier
                                             .weight(1f)
                                             .aspectRatio(1f),
                                         onDateClick = {
-                                            onDateChange(
-                                                LocalDate.of(
-                                                    selectedDate.year,
-                                                    selectedDate.monthValue,
-                                                    day.toInt()
+                                            if (dayOfMonth != null) {
+                                                onDateChange(
+                                                    LocalDate.of(
+                                                        selectedDate.year,
+                                                        selectedDate.monthValue,
+                                                        dayOfMonth
+                                                    )
                                                 )
-                                            )
+                                            }
                                         }
                                     )
 
