@@ -38,7 +38,7 @@ fun StudyDetailDialogScreen(
             )
         }
 
-        if (isUserBottomSheetVisible) {
+        if (isUserBottomSheetVisible && userId != 0L) {
             MemberDetailBottomSheet(
                 studyId = studyId,
                 memberId = userId,

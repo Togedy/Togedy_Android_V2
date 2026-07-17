@@ -69,7 +69,7 @@ internal fun MemberDetailSection(
     val context = LocalContext.current
     var selectedTab by remember { mutableStateOf(StudyMemberTab.STUDY_TIME) }
 
-    val isPlannerVisible by viewModel.isPlannerVisibleToggle.collectAsStateWithLifecycle()
+    val isPlannerVisibleToggle by viewModel.isPlannerVisibleToggle.collectAsStateWithLifecycle()
     val memberUiState by viewModel.memberUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(studyId, memberId) {
@@ -78,7 +78,21 @@ internal fun MemberDetailSection(
 
     when (memberUiState.isLoaded) {
         is UiState.Empty -> {}
-        is UiState.Failure -> {}
+        is UiState.Failure -> {
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "멤버 정보를 불러오지 못했어요",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray500,
+                )
+            }
+        }
+
         is UiState.Loading -> TogedyLoadingScreen()
         is UiState.Success<*> -> {
             val user = (memberUiState.profileState as UiState.Success).data
@@ -87,17 +101,16 @@ internal fun MemberDetailSection(
             MemberDetailSuccessScreen(
                 context = context,
                 selectedTab = selectedTab,
-                isPlannerVisible = isPlannerVisible,
+                isPlannerVisibleToggle = isPlannerVisibleToggle,
                 user = user,
                 studyTimeBlocks = (memberUiState.timeBlocksState as UiState.Success<StudyMemberTimeBlocks>).data,
                 dailyPlanner = dailyPlanner,
                 modifier = modifier,
                 onTabChange = { selectedTab = it },
                 onPlannerVisibleToggleClick = {
-                    viewModel.onPlannerVisibleToggleClicked(
-                        isPlannerVisible
-                    )
-                })
+                    viewModel.onPlannerVisibleToggleClicked(isPlannerVisibleToggle)
+                },
+            )
         }
     }
 }
@@ -106,7 +119,7 @@ internal fun MemberDetailSection(
 private fun MemberDetailSuccessScreen(
     context: Context,
     selectedTab: StudyMemberTab,
-    isPlannerVisible: Boolean,
+    isPlannerVisibleToggle: Boolean,
     user: StudyMemberProfile,
     studyTimeBlocks: StudyMemberTimeBlocks,
     dailyPlanner: StudyMemberPlanner,
@@ -230,53 +243,52 @@ private fun MemberDetailSuccessScreen(
             }
 
             StudyMemberTab.PLANNER -> {
-                with(dailyPlanner) {
-                    PlannerTitleSection(
-                        isMyPlanner = isMyPlanner,
-                        isPlannerVisible = isPlannerVisible,
-                        completedPlanCount = completedPlanCount,
-                        totalPlanCount = totalPlanCount,
-                    )
+                PlannerTitleSection(
+                    isMyPlanner = dailyPlanner.isMyPlanner,
+                    isPlannerVisible = dailyPlanner.isPlannerVisible,
+                    completedPlanCount = dailyPlanner.completedPlanCount,
+                    totalPlanCount = dailyPlanner.totalPlanCount,
+                )
 
-                    if (isMyPlanner) {
+                if (dailyPlanner.isMyPlanner) {
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 20.dp)
+                            .background(
+                                TogedyTheme.colors.gray100, RoundedCornerShape(8.dp)
+                            ),
+                    ) {
                         Row(
                             modifier = Modifier
-                                .padding(horizontal = 16.dp)
+                                .fillMaxWidth()
+                                .padding(14.dp)
                                 .background(
                                     TogedyTheme.colors.gray100, RoundedCornerShape(8.dp)
                                 ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(14.dp)
-                                    .background(
-                                        TogedyTheme.colors.gray100, RoundedCornerShape(8.dp)
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(
-                                    text = "다른 멤버에게 공개할래요",
-                                    style = TogedyTheme.typography.chip10sb,
-                                    color = TogedyTheme.colors.gray900,
-                                )
+                            Text(
+                                text = "다른 멤버에게 공개할래요",
+                                style = TogedyTheme.typography.chip10sb,
+                                color = TogedyTheme.colors.gray900,
+                            )
 
-                                TogedyToggleButton(
-                                    isToggleOn = isPlannerVisible,
-                                    onToggleClick = onPlannerVisibleToggleClick,
-                                )
-                            }
+                            TogedyToggleButton(
+                                isToggleOn = isPlannerVisibleToggle,
+                                onToggleClick = onPlannerVisibleToggleClick,
+                            )
                         }
                     }
+                }
 
-                    when {
-                        !isPlannerVisible && !isMyPlanner -> UnOpenedPlanner()
-                        dailyPlanner.dailyPlanner != null -> UserDailyPlanner(
-                            plans = dailyPlanner.dailyPlanner ?: emptyList()
-                        )
-                        else -> EmptyDailyPlanner()
-                    }
+                when {
+                    !dailyPlanner.isMyPlanner && !dailyPlanner.isPlannerVisible -> UnOpenedPlanner()
+                    dailyPlanner.dailyPlanner != null -> UserDailyPlanner(
+                        plans = dailyPlanner.dailyPlanner.orEmpty()
+                    )
+                    else -> EmptyDailyPlanner()
                 }
             }
         }
@@ -492,7 +504,7 @@ private fun MemberDetailSectionPreview() {
         MemberDetailSuccessScreen(
             context = context,
             selectedTab = StudyMemberTab.PLANNER,
-            isPlannerVisible = true,
+            isPlannerVisibleToggle = true,
             user = StudyMemberProfile(
                 userName = "감자도리",
                 userStatus = "",
