@@ -146,25 +146,23 @@ fun WeeklyStatistics(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             weeklyReview.forEachIndexed { index, dayRecord ->
-                val record = if (!isCurrentWeek && dayRecord == null) "00:00:00" else dayRecord
-
-                val backgroundColor = when (record) {
+                val backgroundColor = when (dayRecord) {
                     "00:00:00" -> TogedyTheme.colors.gray100
                     null -> TogedyTheme.colors.white
                     else -> TogedyTheme.colors.green
                 }
                 val borderColor =
-                    if (record == null) TogedyTheme.colors.gray200
+                    if (dayRecord == null) TogedyTheme.colors.gray200
                     else backgroundColor
-                val contentColor = when (record) {
+                val contentColor = when (dayRecord) {
                     "00:00:00" -> TogedyTheme.colors.gray400
                     null -> TogedyTheme.colors.gray600
                     else -> TogedyTheme.colors.white
                 }
-                val time = when (record) {
+                val time = when (dayRecord) {
                     "00:00:00" -> "-"
                     null -> ""
-                    else -> record
+                    else -> dayRecord
                 }
 
                 Column(
