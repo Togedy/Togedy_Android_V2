@@ -2,10 +2,10 @@ package com.together.study.study.mapper
 
 import com.together.study.study.dto.DailyPlannerResponse
 import com.together.study.study.dto.MonthlyStudyTimeResponse
-import com.together.study.study.dto.PlanResponse
 import com.together.study.study.dto.StudyMemberPlannerResponse
 import com.together.study.study.dto.StudyMemberProfileResponse
 import com.together.study.study.dto.StudyMemberTimeBlockResponse
+import com.together.study.study.dto.TaskResponse
 import com.together.study.study.model.StudyMemberPlanner
 import com.together.study.study.model.StudyMemberPlanner.DailyPlanner
 import com.together.study.study.model.StudyMemberPlanner.Plan
@@ -49,12 +49,12 @@ fun StudyMemberPlannerResponse.toDomain(): StudyMemberPlanner =
 
 fun DailyPlannerResponse.toDailyPlanner(): DailyPlanner =
     DailyPlanner(
-        studyCategoryName = studyCategoryName,
-        planList = planList.map { it.toPlan() }
+        studyCategoryName = studySubjectName,
+        planList = taskList.map { it.toPlan() }
     )
 
-fun PlanResponse.toPlan(): Plan =
+fun TaskResponse.toPlan(): Plan =
     Plan(
-        planName = planName,
-        planStatus = planStatus,
+        planName = taskName,
+        planStatus = if (isChecked) "완료" else "미완료",
     )
