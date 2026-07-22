@@ -114,23 +114,25 @@ internal fun PlannerItemsScreen(
                         items = subjects,
                         key = { _, subject -> subject.subjectId ?: subject.subjectName },
                     ) { index, subject ->
-                        SubjectSection(
-                            subjectId = subject.subjectId!!,
-                            subjectName = subject.subjectName,
-                            subjectColor = subject.subjectColor,
-                            taskItems = subject.tasks,
-                            timer = subject.subjectStudyTime,
-                            onPlusButtonClick = { onTaskPlusButtonClick(subject.subjectId!!) },
-                            onTaskNameChange = onTaskNameChange,
-                            onCheckClick = onCheckClick,
-                            onDeleteDoneClick = { taskId ->
-                                onDeleteDoneClick(taskId, subject.subjectId!!)
-                            }
-                        )
+                        subject.subjectId?.let { subjectId ->
+                            SubjectSection(
+                                subjectId = subjectId,
+                                subjectName = subject.subjectName,
+                                subjectColor = subject.subjectColor,
+                                taskItems = subject.tasks,
+                                timer = subject.subjectStudyTime,
+                                onPlusButtonClick = { onTaskPlusButtonClick(subjectId) },
+                                onTaskNameChange = onTaskNameChange,
+                                onCheckClick = onCheckClick,
+                                onDeleteDoneClick = { taskId ->
+                                    onDeleteDoneClick(taskId, subjectId)
+                                }
+                            )
 
-                        Spacer(Modifier.height(8.dp))
+                            Spacer(Modifier.height(8.dp))
 
-                        if (index == subjects.lastIndex) Spacer(Modifier.height(20.dp))
+                            if (index == subjects.lastIndex) Spacer(Modifier.height(20.dp))
+                        }
                     }
                 }
             }
