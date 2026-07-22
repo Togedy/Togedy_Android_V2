@@ -56,17 +56,17 @@ internal class MemberDetailViewModel @Inject constructor(
         )
     )
 
-    fun getStudyMemberInfo(studyId: Long?, memberId: Long?) = viewModelScope.launch {
+    fun getStudyMemberInfo(studyId: Long?, memberId: Long?) {
         if (studyId != null && memberId != null) {
-            this@MemberDetailViewModel.studyId = studyId
-            this@MemberDetailViewModel.memberId = memberId
+            this.studyId = studyId
+            this.memberId = memberId
         }
 
-        if (this@MemberDetailViewModel.studyId == 0L || this@MemberDetailViewModel.memberId == 0L) {
+        if (this.studyId == 0L || this.memberId == 0L) {
             _profileState.value = UiState.Failure("invalid member id")
             _timeBlockState.value = UiState.Failure("invalid member id")
             _plannerState.value = UiState.Failure("invalid member id")
-            return@launch
+            return
         }
 
         _profileState.value = UiState.Loading

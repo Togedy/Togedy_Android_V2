@@ -117,7 +117,7 @@ private fun formatStudyTime(time: String?): String {
     val seconds = if (secondValue == 0) "" else "${secondValue}s"
 
     return when {
-        hour.isEmpty() && minute.isEmpty() && !seconds.isEmpty() -> seconds
+        hour.isEmpty() && minute.isEmpty() && seconds.isNotEmpty() -> seconds
         hour.isEmpty() -> minute
         minute.isEmpty() -> hour
         else -> "$hour\n$minute"

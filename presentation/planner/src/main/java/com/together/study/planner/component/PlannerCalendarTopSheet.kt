@@ -133,6 +133,7 @@ fun PlannerCalendarTopSheet(
 
                     is UiState.Success -> {
                         val data = monthlyHeatmapState.data
+                        val today = LocalDate.now()
                         days.chunked(7).forEach { week ->
                             Row(
                                 modifier = Modifier
@@ -149,11 +150,10 @@ fun PlannerCalendarTopSheet(
                                         ?.let { data[it] }
                                         ?: 0
 
-                                    val isToday = dayOfMonth != null && LocalDate.now().let { now ->
-                                        now.year == selectedDate.year &&
-                                                now.monthValue == selectedDate.monthValue &&
-                                                dayOfMonth == now.dayOfMonth
-                                    }
+                                    val isToday = dayOfMonth != null &&
+                                        today.year == selectedDate.year &&
+                                        today.monthValue == selectedDate.monthValue &&
+                                        dayOfMonth == today.dayOfMonth
 
                                     CalendarDayBlock(
                                         day = day,

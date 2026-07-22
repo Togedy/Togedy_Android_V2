@@ -222,12 +222,8 @@ fun SubjectSection(
         taskItems.forEachIndexed { index, task ->
             key(task.taskId ?: task.tempId) {
 
-                var currentName by remember(task.taskId, task.tempId) {
+                var currentName by remember(task.taskId, task.tempId, task.taskName) {
                     mutableStateOf(task.taskName)
-                }
-
-                LaunchedEffect(task.taskName) {
-                    currentName = task.taskName
                 }
 
                 val bottomPadding = if (index == taskItems.lastIndex) 0.dp else 12.dp
@@ -242,12 +238,8 @@ fun SubjectSection(
                             .padding(bottom = bottomPadding),
                         verticalAlignment = Alignment.Top,
                     ) {
-                        var isChecked by remember(task.taskId, task.tempId) {
+                        var isChecked by remember(task.taskId, task.tempId, task.isChecked) {
                             mutableStateOf(task.isChecked)
-                        }
-
-                        LaunchedEffect(task.isChecked) {
-                            isChecked = task.isChecked
                         }
 
                         val stateColor =
