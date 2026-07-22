@@ -14,12 +14,12 @@ data class StudyMemberPlannerResponse(
 
 @Serializable
 data class DailyPlannerResponse(
-    @SerialName("studyCategoryName") val studyCategoryName: String,
-    @SerialName("planList") val planList: List<PlanResponse>,
+    @SerialName("studySubjectName") val studySubjectName: String,
+    @SerialName("taskList") val taskList: List<TaskResponse>,
 )
 
 @Serializable
-data class PlanResponse(
-    @SerialName("planName") val planName: String,
-    @SerialName("planStatus") val planStatus: String,
+data class TaskResponse(
+    @SerialName("taskName") val taskName: String,
+    @SerialName("isChecked") val isChecked: Boolean,
 )

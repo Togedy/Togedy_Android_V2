@@ -35,6 +35,6 @@ class PlannerTaskRepositoryImpl @Inject constructor(
 
     override suspend fun updateTaskChecked(taskId: Long, isChecked: Boolean): Result<Unit> =
         runCatching {
-            plannerTaskDataSource.updateTaskChecked(taskId, isChecked).response
+            plannerTaskDataSource.updateTaskChecked(taskId, isChecked)
         }
 }

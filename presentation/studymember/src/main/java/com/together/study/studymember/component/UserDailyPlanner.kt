@@ -1,12 +1,10 @@
-package com.together.study.studydetail.component
+package com.together.study.studymember.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,12 +27,10 @@ internal fun UserDailyPlanner(
     plans: List<DailyPlanner>,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier
-            .padding(horizontal = 20.dp)
-            .height(300.dp),
+    Column(
+        modifier = modifier.padding(horizontal = 20.dp),
     ) {
-        itemsIndexed(plans) { index, item ->
+        plans.forEach { item ->
             Column(
                 modifier = Modifier.padding(bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)

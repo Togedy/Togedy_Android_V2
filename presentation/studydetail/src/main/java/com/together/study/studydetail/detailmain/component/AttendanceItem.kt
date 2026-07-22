@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -20,14 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.together.study.designsystem.R
 import com.together.study.designsystem.theme.TogedyColors
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.model.StudyAttendance
-import com.together.study.util.toLocalTimeWithSecond
 import java.time.LocalDate
 
 private val dayOfWeek = listOf("월", "화", "수", "목", "금", "토", "일")
@@ -103,12 +105,19 @@ private fun getPaletteForRanking(ranking: Int, colors: TogedyColors): RankingPal
 private fun formatStudyTime(time: String?): String {
     if (time == null) return ""
 
-    val localTime = time.toLocalTimeWithSecond()
-    val hour = if (localTime.hour == 0) "" else "${localTime.hour}H"
-    val minute = if (localTime.minute == 0) "" else "${localTime.minute}M"
+    val parts = time.split(":").mapNotNull { it.toIntOrNull() }
+    if (parts.isEmpty()) return ""
+
+    val hourValue = parts.getOrElse(0) { 0 }
+    val minuteValue = parts.getOrElse(1) { 0 }
+    val secondValue = parts.getOrElse(2) { 0 }
+
+    val hour = if (hourValue == 0) "" else "${hourValue}H"
+    val minute = if (minuteValue == 0) "" else "${minuteValue}M"
+    val seconds = if (secondValue == 0) "" else "${secondValue}s"
 
     return when {
-        hour.isEmpty() && minute.isEmpty() -> ""
+        hour.isEmpty() && minute.isEmpty() && seconds.isNotEmpty() -> seconds
         hour.isEmpty() -> minute
         minute.isEmpty() -> hour
         else -> "$hour\n$minute"
@@ -139,15 +148,34 @@ internal fun AttendanceItem(
         ) {
             Box(
                 Modifier
-                    .size(24.dp)
-                    .background(TogedyTheme.colors.white),
+                    .size(24.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = ranking.toString(),
-                    style = TogedyTheme.typography.body14b,
-                    color = palette.dailyRankText,
-                )
+                when (ranking) {
+                    1 -> Icon(
+                        painter = painterResource(R.drawable.ic_first_place),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                    )
+
+                    2 -> Icon(
+                        painter = painterResource(R.drawable.ic_second_place),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                    )
+
+                    3 -> Icon(
+                        painter = painterResource(R.drawable.ic_third_place),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                    )
+
+                    else -> Text(
+                        text = ranking.toString(),
+                        style = TogedyTheme.typography.body14b,
+                        color = palette.dailyRankText,
+                    )
+                }
             }
 
             Spacer(Modifier.width(8.dp))

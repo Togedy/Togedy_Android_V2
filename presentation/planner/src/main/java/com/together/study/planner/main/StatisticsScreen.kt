@@ -41,6 +41,7 @@ internal fun StatisticsScreen(
     studyStatus: StudyStatus?,
     statisticsState: UiState<DailyStatistics>,
     modifier: Modifier = Modifier,
+    isToday: Boolean,
 ) {
     val listState = rememberLazyListState()
     val currentDate = LocalDate.now()
@@ -62,7 +63,7 @@ internal fun StatisticsScreen(
                 item {
                     Spacer(Modifier.height(14.dp))
 
-                    if (studyStatus != null) {
+                    if (studyStatus != null && isToday) {
                         StreakSection(
                             currentMonth = currentDate.monthValue,
                             studyStatus = studyStatus,
@@ -73,7 +74,10 @@ internal fun StatisticsScreen(
                         Spacer(Modifier.height(16.dp))
                     }
 
-                    WeeklyStatistics(statistics.weeklyReview)
+                    WeeklyStatistics(
+                        weeklyReview = statistics.weeklyReview,
+                        isCurrentWeek = isToday,
+                    )
 
                     Spacer(Modifier.height(16.dp))
 
@@ -122,6 +126,7 @@ fun MonthlyStatistics(
 fun WeeklyStatistics(
     weeklyReview: List<String?>,
     modifier: Modifier = Modifier,
+    isCurrentWeek: Boolean,
 ) {
     Column(
         modifier = modifier
@@ -223,6 +228,7 @@ private fun StatisticsScreenPreview() {
                     monthlyReview = listOf(),
                 ),
             ),
+            isToday = true,
         )
     }
 }

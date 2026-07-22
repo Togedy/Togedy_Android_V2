@@ -56,13 +56,22 @@ internal class MemberDetailViewModel @Inject constructor(
         )
     )
 
-    fun getStudyMemberInfo(studyId: Long?, memberId: Long?) = viewModelScope.launch {
+    fun getStudyMemberInfo(studyId: Long?, memberId: Long?) {
         if (studyId != null && memberId != null) {
-            this@MemberDetailViewModel.studyId = studyId
-            this@MemberDetailViewModel.memberId = memberId
+            this.studyId = studyId
+            this.memberId = memberId
         }
 
-        if (this@MemberDetailViewModel.studyId == 0L || this@MemberDetailViewModel.memberId == 0L) return@launch
+        if (this.studyId == 0L || this.memberId == 0L) {
+            _profileState.value = UiState.Failure("invalid member id")
+            _timeBlockState.value = UiState.Failure("invalid member id")
+            _plannerState.value = UiState.Failure("invalid member id")
+            return
+        }
+
+        _profileState.value = UiState.Loading
+        _timeBlockState.value = UiState.Loading
+        _plannerState.value = UiState.Loading
 
         getStudyMemberProfile()
         getStudyMemberTimeBlocks()
@@ -83,7 +92,10 @@ internal class MemberDetailViewModel @Inject constructor(
 
     fun getStudyMemberPlanner() = viewModelScope.launch {
         studyMemberRepository.getStudyMemberPlanner(studyId, memberId)
-            .onSuccess { _plannerState.value = UiState.Success(it) }
+            .onSuccess {
+                _plannerState.value = UiState.Success(it)
+                _isPlannerVisibleToggle.value = it.isPlannerVisible
+            }
             .onFailure { _plannerState.value = UiState.Failure(it.message.toString()) }
     }
 

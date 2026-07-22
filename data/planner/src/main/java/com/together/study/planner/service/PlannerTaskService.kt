@@ -33,5 +33,5 @@ interface PlannerTaskService {
     suspend fun updateTaskChecked(
         @Path("taskId") taskId: Long,
         @Body request: PlannerTaskStateRequest,
-    ): BaseResponse<Int>
+    ): EmptyDataResponse
 }
