@@ -26,13 +26,9 @@ class ApplicationPlugin : Plugin<Project> {
             configureAndroidLibrary()
 
             androidApplicationExtension {
-                composeOptions {
-                    kotlinCompilerExtensionVersion =
-                        libs.findVersion("kotlinCompilerExtensionVersion").get().requiredVersion
-                }
-
                 defaultConfig {
                     applicationId = "com.together.study"
+                    targetSdk = libs.version("targetSdk").toInt()
                     versionCode = libs.version("versionCode").toInt()
                     versionName = libs.version("versionName")
                 }

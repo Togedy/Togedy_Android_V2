@@ -11,11 +11,7 @@ class ComposePlugin : Plugin<Project> {
         with(target) {
             apply<ComposePlugin>()
 
-            androidExtension.apply {
-                buildFeatures {
-                    compose = true
-                }
-            }
+            androidExtension.buildFeatures.compose = true
         }
     }
 }

@@ -22,7 +22,6 @@ class ComposePlugin : Plugin<Project> {
             extensions.getByType<ComposeCompilerGradlePluginExtension>().apply {
                 val isRelease = System.getenv("BUILD_TYPE") == "release"
 
-                enableStrongSkippingMode.set(true)
                 includeSourceInformation.set(!isRelease)
                 includeTraceMarkers.set(!isRelease)
             }

@@ -3,14 +3,10 @@ package com.together.study.buildlogic.dsl
 import org.gradle.api.Project
 
 fun Project.configureAndroidLibrary() {
-    android {
-        setCompileSdkVersion(libs.version("compileSdk").toInt())
+    androidExtension.apply {
+        compileSdk = libs.version("compileSdk").toInt()
+        buildToolsVersion = libs.version("buildTools")
 
-        defaultConfig {
-            minSdk = libs.version("minSdk").toInt()
-            targetSdk = libs.version("targetSdk").toInt()
-
-            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
+        defaultConfig.minSdk = libs.version("minSdk").toInt()
     }
 }
