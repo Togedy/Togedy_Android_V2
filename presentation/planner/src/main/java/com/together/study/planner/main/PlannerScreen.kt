@@ -333,8 +333,9 @@ private fun PlannerTopSection(
                     contentDescription = "이전 버튼",
                     tint = TogedyTheme.colors.gray500,
                     modifier = Modifier
-                        .size(16.dp)
-                        .noRippleClickable(onDayBeforeClick),
+                        .noRippleClickable(onDayBeforeClick)
+                        .padding(horizontal = 12.dp)
+                        .size(16.dp),
                 )
 
                 Text(
@@ -351,8 +352,9 @@ private fun PlannerTopSection(
                     contentDescription = "다음 버튼",
                     tint = TogedyTheme.colors.gray500,
                     modifier = Modifier
-                        .size(16.dp)
-                        .noRippleClickable(onDayAfterClick),
+                        .noRippleClickable(onDayAfterClick)
+                        .padding(horizontal = 12.dp)
+                        .size(16.dp),
                 )
             }
 
