@@ -144,7 +144,7 @@ fun PlannerShareScreen(
     var isShareOptionVisible by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) {
         SystemBarIcons()
 
