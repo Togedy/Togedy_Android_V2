@@ -2,6 +2,7 @@ package com.together.study.designsystem.component.sheet
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.together.study.designsystem.theme.TogedyTheme
@@ -52,6 +54,7 @@ fun TogedyTopSheet(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .offset(y = offsetY)
+                .pointerInput(Unit) { detectTapGestures { } }
                 .background(
                     TogedyTheme.colors.white,
                     RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
