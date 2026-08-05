@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -39,6 +39,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.TogedyBasicButton
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.model.PlannerSubject
 import com.together.study.planner.model.ShareInfo
@@ -143,12 +144,14 @@ fun PlannerShareScreen(
     var isShareOptionVisible by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) {
+        SystemBarIcons()
+
         Column(
             modifier = Modifier
                 .background(TogedyTheme.colors.white)
-                .statusBarsPadding(),
+                .systemBarsPadding(),
         ) {
             TogedyTopBar(
                 title = "이미지로 공유",

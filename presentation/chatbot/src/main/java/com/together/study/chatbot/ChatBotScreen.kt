@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.chatbot.component.ChatBotChatContent
 import com.together.study.chatbot.component.ChatBotIntroContent
 import com.together.study.chatbot.component.ChatInputBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 
 @Composable
@@ -88,6 +89,8 @@ internal fun ChatBotScreen(
             listState.animateScrollToItem(uiState.messages.size - 1)
         }
     }
+
+    SystemBarIcons()
 
     Column(
         modifier = modifier

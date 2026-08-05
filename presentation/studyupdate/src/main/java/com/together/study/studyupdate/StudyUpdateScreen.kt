@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.together.study.common.type.study.StudyUpdateType
 import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studyupdate.component.StudyTimeOption
 import com.together.study.studyupdate.component.StudyUpdateImage
@@ -167,11 +168,13 @@ fun StudyUpdateScreen(
         onStudyImageChange(uri)
     }
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(color = TogedyTheme.colors.gray50)
-            .statusBarsPadding()
+            .systemBarsPadding()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     keyboardController?.hide()

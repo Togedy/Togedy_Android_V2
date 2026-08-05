@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +33,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.SubjectBox
 import com.together.study.planner.model.SubjectItem
@@ -75,11 +76,13 @@ fun SubjectEditScreen(
     var selectedIdForDelete: Long? by remember { mutableStateOf(null) }
     var isDeleteDialogOpen by remember { mutableStateOf(false) }
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.white)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
     ) {
         TogedyTopBar(
             title = "과목 편집",

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +37,7 @@ import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.topbar.TogedyTopBar
 import com.together.study.designsystem.component.wheelpicker.PickerPosition
 import com.together.study.designsystem.component.wheelpicker.TogedyScrollPicker
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studysettings.subsettings.event.MemberCountEditEvent
 import com.together.study.util.noRippleClickable
@@ -70,11 +71,13 @@ fun MemberCountEditScreen(
         }
     }
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
     ) {
         TogedyTopBar(
             title = "스터디 인원수 설정",

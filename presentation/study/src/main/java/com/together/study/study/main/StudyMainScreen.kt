@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -43,6 +44,7 @@ import com.together.study.designsystem.R.drawable.img_character_challenge
 import com.together.study.designsystem.R.drawable.img_character_speaker_no_gradient
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.tabbar.StudyMainTab
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.component.SortBottomSheet
 import com.together.study.study.component.StudyItem
@@ -129,6 +131,11 @@ private fun StudyMainScreen(
     val topSectionModifier = Modifier
         .fillMaxWidth()
         .background(backgroundColor)
+
+    SystemBarIcons(
+        darkStatusBarIcons = backgroundColor.luminance() > 0.5f,
+        darkNavigationBarIcons = true,
+    )
 
     var showStudyTypeDropdown by remember { mutableStateOf(false) }
 

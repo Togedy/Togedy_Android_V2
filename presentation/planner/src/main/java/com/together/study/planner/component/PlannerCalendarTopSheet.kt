@@ -70,10 +70,11 @@ fun PlannerCalendarTopSheet(
                     contentDescription = "이전 버튼",
                     tint = TogedyTheme.colors.gray500,
                     modifier = Modifier
-                        .size(16.dp)
                         .noRippleClickable {
                             onDateChange(selectedDate.minusMonths(1))
-                        },
+                        }
+                        .padding(horizontal = 12.dp)
+                        .size(16.dp),
                 )
 
                 Text(
@@ -91,10 +92,11 @@ fun PlannerCalendarTopSheet(
                     contentDescription = "다음 버튼",
                     tint = TogedyTheme.colors.gray500,
                     modifier = Modifier
-                        .size(16.dp)
                         .noRippleClickable {
                             onDateChange(selectedDate.plusMonths(1))
-                        },
+                        }
+                        .padding(horizontal = 12.dp)
+                        .size(16.dp),
                 )
             }
         },

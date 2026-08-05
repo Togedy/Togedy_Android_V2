@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studysettings.component.SettingsSection
 import com.together.study.studysettings.main.event.MemberSettingsEvent
@@ -70,11 +71,13 @@ fun MemberSettingsRoute(
         ),
     )
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.white)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
     ) {
         TogedyTopBar(
             title = "스터디 설정",

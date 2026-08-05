@@ -1,6 +1,6 @@
 package com.together.study.buildlogic.primitive
 
-import com.android.build.gradle.BaseExtension
+import com.together.study.buildlogic.dsl.androidExtension
 import com.together.study.buildlogic.dsl.implementation
 import com.together.study.buildlogic.dsl.library
 import com.together.study.buildlogic.dsl.libs
@@ -17,16 +17,13 @@ class KotlinPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(plugins) {
-                apply("org.jetbrains.kotlin.android")
                 apply("org.jetbrains.kotlin.plugin.serialization")
                 apply("org.jetbrains.kotlin.plugin.parcelize")
             }
 
-            extensions.getByType<BaseExtension>().apply {
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
-                }
+            androidExtension.compileOptions.apply {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
             }
 
             tasks.withType<KotlinCompile> {

@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 
 @Composable
@@ -33,6 +34,8 @@ internal fun SplashRoute(
 internal fun SplashScreen(
     modifier: Modifier = Modifier,
 ) {
+    SystemBarIcons()
+
     Box(
         modifier = modifier
             .fillMaxSize()

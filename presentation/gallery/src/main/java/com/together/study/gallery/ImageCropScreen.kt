@@ -45,6 +45,7 @@ import coil.compose.AsyncImage
 import com.together.study.common.event.TogedyUiEvent
 import com.together.study.common.event.TogedyUiEventBus
 import com.together.study.designsystem.R
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.model.CropRequest
 import com.together.study.gallery.type.CropShapeType
@@ -147,6 +148,9 @@ internal fun ImageCropScreen(
             isInitTransformed = true
         }
     }
+
+    
+    SystemBarIcons(darkStatusBarIcons = false)
 
     Box(
         modifier = Modifier

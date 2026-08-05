@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -51,6 +51,7 @@ import com.together.study.designsystem.R.drawable.ic_down_chevron_16
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.component.calendar.DayOfWeek
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.presentation.calendar.R.drawable.ic_volume_16
 import com.together.study.presentation.calendar.R.string.calendar_year_month
@@ -171,11 +172,13 @@ private fun CalendarSuccessScreen(
         listState.animateScrollToItem(0)
     }
 
+    SystemBarIcons()
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(color = TogedyTheme.colors.white)
-            .statusBarsPadding()
+            .systemBarsPadding()
             .padding(horizontal = 16.dp),
         state = listState,
     ) {

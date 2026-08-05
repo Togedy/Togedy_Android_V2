@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -47,6 +47,7 @@ import com.together.study.designsystem.R
 import com.together.study.designsystem.component.TogedyBottomSheet
 import com.together.study.designsystem.component.TogedyScheduleChip
 import com.together.study.designsystem.component.TogedySearchBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.search.component.SearchDetailAdmissionAdd
 import com.together.study.search.component.SearchDetailAdmissionSelector
@@ -100,11 +101,13 @@ private fun SearchScreen(
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(color = TogedyTheme.colors.gray50)
-            .statusBarsPadding()
+            .systemBarsPadding()
             .padding(top = 20.dp)
             .padding(horizontal = 16.dp)
     ) {

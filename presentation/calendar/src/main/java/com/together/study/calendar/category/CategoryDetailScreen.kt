@@ -37,6 +37,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.AddButton
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.util.noRippleClickable
 
@@ -76,6 +77,8 @@ fun CategoryDetailScreen(
     var isAddBottomSheetOpen by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
     var isDeleteDialogOpen by remember { mutableStateOf(false) }
+
+    SystemBarIcons()
 
     Column(
         modifier = modifier

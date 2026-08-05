@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -42,6 +42,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.component.tabbar.PlannerMainTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.planner.component.DDaySection
 import com.together.study.planner.component.PlannerDropDownScrim
@@ -163,11 +164,13 @@ private fun PlannerScreen(
         }
     }
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.white)
-            .statusBarsPadding()
+            .systemBarsPadding()
             .padding(top = 20.dp),
     ) {
         when (plannerInfoState) {
@@ -330,8 +333,9 @@ private fun PlannerTopSection(
                     contentDescription = "이전 버튼",
                     tint = TogedyTheme.colors.gray500,
                     modifier = Modifier
-                        .size(16.dp)
-                        .noRippleClickable(onDayBeforeClick),
+                        .noRippleClickable(onDayBeforeClick)
+                        .padding(horizontal = 12.dp)
+                        .size(16.dp),
                 )
 
                 Text(
@@ -348,8 +352,9 @@ private fun PlannerTopSection(
                     contentDescription = "다음 버튼",
                     tint = TogedyTheme.colors.gray500,
                     modifier = Modifier
-                        .size(16.dp)
-                        .noRippleClickable(onDayAfterClick),
+                        .noRippleClickable(onDayAfterClick)
+                        .padding(horizontal = 12.dp)
+                        .size(16.dp),
                 )
             }
 

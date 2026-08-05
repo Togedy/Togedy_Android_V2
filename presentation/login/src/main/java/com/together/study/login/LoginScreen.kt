@@ -46,6 +46,7 @@ import com.together.study.designsystem.R.drawable.ic_kakao_logo
 import com.together.study.presentation.login.R
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.login.state.LoginUiEvent
 import com.together.study.login.state.LoginUiState
@@ -141,6 +142,8 @@ internal fun LoginScreen(
     onKakaoLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    SystemBarIcons()
+
     Box(
         modifier = modifier
             .fillMaxSize()

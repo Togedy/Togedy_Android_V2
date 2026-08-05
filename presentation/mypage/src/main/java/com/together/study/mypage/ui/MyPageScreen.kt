@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_settings_24
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.MenuList
 import com.together.study.mypage.component.UserProfile
@@ -96,11 +97,13 @@ private fun MyPageScreen(
     onTermsOfServiceClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
 ) {
+    SystemBarIcons()
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
-            .statusBarsPadding()
+            .systemBarsPadding()
             .padding(horizontal = 14.dp),
     ) {
         stickyHeader {

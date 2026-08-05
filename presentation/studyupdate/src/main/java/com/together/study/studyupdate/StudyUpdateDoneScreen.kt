@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,6 +52,7 @@ import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.studyupdate.component.StudyTimeOption
 import com.together.study.util.noRippleClickable
@@ -180,11 +181,13 @@ fun StudyUpdateDoneScreen(
 ) {
     val context = LocalContext.current
     Box(modifier = modifier.fillMaxSize()) {
+    SystemBarIcons()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = TogedyTheme.colors.gray50)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TogedyTopBar(
