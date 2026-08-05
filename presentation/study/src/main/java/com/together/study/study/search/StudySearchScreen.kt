@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -41,6 +41,7 @@ import com.together.study.designsystem.R.drawable.ic_arrow_left_24
 import com.together.study.designsystem.R.drawable.img_character_question
 import com.together.study.designsystem.component.TogedySearchBar
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.component.SortBottomSheet
 import com.together.study.study.component.SortingFilterSection
@@ -96,11 +97,13 @@ fun StudySearchScreen(
 ) {
     var isSortBottomSheetVisible by remember { mutableStateOf(false) }
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .statusBarsPadding()
+            .systemBarsPadding()
             .padding(horizontal = 16.dp),
     ) {
         Row(

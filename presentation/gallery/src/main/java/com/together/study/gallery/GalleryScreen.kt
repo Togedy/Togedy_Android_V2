@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.bottomsheet.AlbumBottomSheet
 import com.together.study.gallery.component.GalleryItem
@@ -78,11 +79,13 @@ internal fun GalleryScreen(
         }
     }
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.white)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
     ) {
         GalleryTopBar(
             title = uiState.selectedAlbum?.name ?: "전체 사진",

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -27,6 +27,7 @@ import com.together.study.common.state.UiState
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.user.model.UserSettingInfo
 import com.together.study.util.noRippleClickable
@@ -72,11 +73,13 @@ private fun AccountSettingsScreen(
     onLogoutClick: () -> Unit,
     onDeleteAccountClick: () -> Unit,
 ) {
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
     ) {
         TogedyTopBar(
             title = "계정 관리",

@@ -26,10 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,6 +57,7 @@ import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
 import com.together.study.designsystem.component.tabbar.StudyDetailTab
 import com.together.study.designsystem.component.tabbar.TogedyTabBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.type.StudyRole
 import com.together.study.studydetail.detailmain.component.AttendanceItem
@@ -191,14 +191,17 @@ private fun StudyDetailSuccessScreen(
     var selectedUserId by remember { mutableLongStateOf(0) }
 
     val listState = rememberLazyListState()
-    var iconColor by remember { mutableStateOf(Color.White) }
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset }
-            .collect { scrollOffset ->
-                iconColor = if (scrollOffset > 60) Color.Black else Color.White
-            }
+    // 상단 이미지 영역 위치
+    val isImagePassed by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 0 }
     }
+    val iconColor = if (isImagePassed) Color.Black else Color.White
+
+    SystemBarIcons(
+        darkStatusBarIcons = isImagePassed,
+        darkNavigationBarIcons = true,
+    )
 
     LazyColumn(
         modifier = modifier

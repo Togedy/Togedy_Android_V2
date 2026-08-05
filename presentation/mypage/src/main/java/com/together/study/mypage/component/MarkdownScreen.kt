@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +19,7 @@ import com.halilibo.richtext.markdown.Markdown
 import com.halilibo.richtext.ui.material3.RichText
 import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -29,11 +30,13 @@ internal fun MarkdownScreen(
     content: String,
     onBackButtonClick: () -> Unit,
 ) {
+    SystemBarIcons()
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
     ) {
         stickyHeader {
             TogedyTopBar(

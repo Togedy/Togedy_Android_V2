@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,6 +47,7 @@ import com.together.study.common.state.UiState
 import com.together.study.common.type.planner.toPlannerSubjectColorOrDefault
 import com.together.study.designsystem.R.drawable.ic_delete_x_16
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.timer.component.SubjectChangeDialog
@@ -227,11 +228,13 @@ private fun TimerScreen(
     var isSubjectChangeDialogVisible by remember { mutableStateOf(false) }
     var tempSelectedSubject by remember { mutableStateOf<SubjectTimer?>(null) }
 
+    SystemBarIcons(darkStatusBarIcons = false)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.black)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TogedyTopBar(

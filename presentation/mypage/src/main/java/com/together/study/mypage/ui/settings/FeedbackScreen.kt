@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +26,7 @@ import com.together.study.designsystem.component.textfield.TogedyTextField
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.mypage.component.FeedbackContent
 import com.together.study.mypage.component.FeedbackTypeSelector
@@ -98,11 +99,13 @@ private fun FeedbackScreen(
 ) {
     var selectedTypeIdx by remember { mutableIntStateOf(-1) }
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
-            .statusBarsPadding(),
+            .systemBarsPadding(),
     ) {
         TogedyTopBar(
             title = "문의하기",

@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +28,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron_green
 import com.together.study.designsystem.component.toast.LocalTogedyToast
 import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.onboarding.state.OnboardingUiEvent
 import com.together.study.onboarding.state.OnboardingUiState
@@ -80,11 +81,13 @@ internal fun OnboardingScreen(
     )
     val coroutineScope = rememberCoroutineScope()
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray100)
-            .statusBarsPadding()
+            .systemBarsPadding()
     ) {
         TogedyTopBar(
             modifier = Modifier.fillMaxWidth(),

@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +31,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.component.button.TogedyBasicButton
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.topbar.TogedyTopBar
+import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 
 private const val FLOAT_ANIMATION_DURATION = 1200
@@ -55,11 +56,13 @@ internal fun DeleteAccountScreen(
         label = "floatY"
     )
 
+    SystemBarIcons()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(TogedyTheme.colors.gray50)
-            .statusBarsPadding()
+            .systemBarsPadding()
             .padding(bottom = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
