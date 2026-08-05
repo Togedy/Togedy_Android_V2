@@ -376,7 +376,7 @@ private fun StudyDetailSuccessScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .padding(top = 24.dp, bottom = 12.dp),
+                .padding(top = 48.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
