@@ -83,7 +83,6 @@ internal class PlannerViewModel @Inject constructor(
     }
 
     suspend fun getPlannerInfo() {
-        _uiState.update { it.copy(plannerInfoState = UiState.Loading) }
         getDailyPlannerInfoUseCase(selectedDate.value.toString())
             .onSuccess { result ->
                 _uiState.update { it.copy(plannerInfoState = UiState.Success(result)) }
@@ -97,7 +96,6 @@ internal class PlannerViewModel @Inject constructor(
     }
 
     suspend fun getPlannerTasks() {
-        _uiState.update { it.copy(plannerSubjectState = UiState.Loading) }
         getPlannerTaskListUseCase(selectedDate.value.toString())
             .onSuccess { result ->
                 _uiState.update { it.copy(plannerSubjectState = UiState.Success(result)) }
@@ -110,7 +108,6 @@ internal class PlannerViewModel @Inject constructor(
     }
 
     suspend fun getTimeTable() {
-        _uiState.update { it.copy(timeTableState = UiState.Loading) }
         getDailyTimetableUseCase(selectedDate.value.toString())
             .onSuccess { result ->
                 _uiState.update { it.copy(timeTableState = UiState.Success(result)) }
@@ -123,7 +120,6 @@ internal class PlannerViewModel @Inject constructor(
     }
 
     suspend fun getStatistics() {
-        _uiState.update { it.copy(statisticsState = UiState.Loading) }
         getDailyStatisticsUseCase(selectedDate.value.toString())
             .onSuccess { result ->
                 _uiState.update { it.copy(statisticsState = UiState.Success(result)) }
@@ -331,6 +327,14 @@ internal class PlannerViewModel @Inject constructor(
     fun updateSelectedDate(new: LocalDate) {
         previousDate = selectedDate.value
         _selectedDate.update { new }
+        _uiState.update {
+            it.copy(
+                plannerInfoState = UiState.Loading,
+                plannerSubjectState = UiState.Loading,
+                timeTableState = UiState.Loading,
+                statisticsState = UiState.Loading,
+            )
+        }
         load()
     }
 
