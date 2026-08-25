@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,14 +31,17 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.together.study.chatbot.component.ChatBotChatContent
 import com.together.study.chatbot.component.ChatBotIntroContent
 import com.together.study.chatbot.component.ChatInputBar
+import com.together.study.designsystem.component.dialog.TogedyBasicDialog
 import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
+
 
 @Composable
 internal fun ChatBotRoute(
@@ -58,6 +62,7 @@ internal fun ChatBotRoute(
         onInputTextChange = viewModel::updateInputText,
         onSendMessage = viewModel::sendMessage,
         onRequestExit = onRequestExit,
+        onDailyLimitDialogDismiss = viewModel::dismissDailyLimitDialog,
         modifier = modifier,
     )
 }
@@ -68,6 +73,7 @@ internal fun ChatBotScreen(
     onInputTextChange: (String) -> Unit,
     onSendMessage: (String) -> Unit,
     onRequestExit: () -> Unit,
+    onDailyLimitDialogDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
@@ -91,6 +97,24 @@ internal fun ChatBotScreen(
     }
 
     SystemBarIcons()
+
+    if (uiState.isDailyLimitDialogVisible) {
+        TogedyBasicDialog(
+            title = "오늘 질문을 모두 사용했어요",
+            subTitle = {
+                Text(
+                    text = "하루에 ${ChatBotViewModel.DAILY_QUESTION_LIMIT}번까지 질문할 수 있어요.\n내일 다시 이용해주세요.",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray700,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            buttonText = "확인",
+            cancelButtonText = null,
+            onDismissRequest = onDailyLimitDialogDismiss,
+            onButtonClick = onDailyLimitDialogDismiss,
+        )
+    }
 
     Column(
         modifier = modifier

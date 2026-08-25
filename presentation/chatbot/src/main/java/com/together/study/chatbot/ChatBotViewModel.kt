@@ -25,25 +25,39 @@ internal class ChatBotViewModel @Inject constructor(
         _uiState.update { it.copy(inputText = text) }
     }
 
+    fun dismissDailyLimitDialog() {
+        _uiState.update { it.copy(isDailyLimitDialogVisible = false) }
+    }
+
     fun sendMessage(message: String) {
         val currentState = _uiState.value
         if (message.isBlank() || currentState.isWaitingResponse) return
 
-        val userMessage = ChatMessage(
-            message = message,
-            isMine = true,
-            isAnimating = true,
-        )
-        _uiState.update {
-            it.copy(
-                messages = it.messages + userMessage,
-                inputText = "",
-                isChatMode = true,
-                isWaitingResponse = true,
-            )
-        }
+        _uiState.update { it.copy(isWaitingResponse = true) }
 
         viewModelScope.launch {
+            // 서버 응답 시 질문 갯수 10회 초과 확인
+            if (chatBotRepository.getTodayQuestionCount() >= DAILY_QUESTION_LIMIT) {
+                _uiState.update {
+                    it.copy(isWaitingResponse = false, isDailyLimitDialogVisible = true)
+                }
+                return@launch
+            }
+
+            val userMessage = ChatMessage(
+                message = message,
+                isMine = true,
+                isAnimating = true,
+            )
+            _uiState.update {
+                it.copy(
+                    messages = it.messages + userMessage,
+                    inputText = "",
+                    isChatMode = true,
+                    isWaitingResponse = true,
+                )
+            }
+
             // 300ms 딜레이 후 봇 응답 추가
             delay(300)
 
@@ -69,6 +83,9 @@ internal class ChatBotViewModel @Inject constructor(
                 question = message,
                 followUpAnswer = followUpAnswer,
             ).onSuccess { answer ->
+                // 서버 응답 시 금일 응답 갯수 추가
+                chatBotRepository.incrementTodayQuestionCount()
+
                 val fullResponse = answer.answer
 
                 // 로딩 메시지를 타이핑 애니메이션 메시지로 교체
@@ -130,5 +147,9 @@ internal class ChatBotViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    companion object {
+        const val DAILY_QUESTION_LIMIT = 10
     }
 }

@@ -9,4 +9,5 @@ data class ChatBotUiState(
     val isFollowUpRequired: Boolean = false,
     val lastBotAnswer: String? = null,
     val isWaitingResponse: Boolean = false,
+    val isDailyLimitDialogVisible: Boolean = false,
 )
