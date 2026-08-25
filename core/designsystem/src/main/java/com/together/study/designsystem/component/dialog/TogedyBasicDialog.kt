@@ -32,7 +32,9 @@ import com.together.study.designsystem.theme.TogedyTheme
  * @param buttonText 확인 버튼 내용
  * @param onDismissRequest 취소 버튼 클릭 또는 여백 클릭 시 호출되는 콜백
  * @param onButtonClick 확인 버튼 클릭 시 호출되는 콜백
- * @param buttonColor 확인 버튼 배경 색상(default : green)
+ * @param titleColor 제목 색상
+ * @param buttonColor 확인 버튼 배경 색상
+ * @param cancelButtonText 취소 버튼 내용, null 이면 확인 버튼만 표시
  * @param modifier 수정자
  */
 @Composable
@@ -44,6 +46,7 @@ fun TogedyBasicDialog(
     onButtonClick: () -> Unit,
     titleColor: Color = TogedyTheme.colors.gray900,
     buttonColor: Color = TogedyTheme.colors.green,
+    cancelButtonText: String? = "취소",
     modifier: Modifier = Modifier,
 ) {
     Dialog(
@@ -72,13 +75,15 @@ fun TogedyBasicDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                DialogButton(
-                    text = "취소",
-                    contentColor = TogedyTheme.colors.gray600,
-                    containerColor = TogedyTheme.colors.gray400,
-                    onButtonClick = onDismissRequest,
-                    modifier = Modifier.weight(1f),
-                )
+                if (cancelButtonText != null) {
+                    DialogButton(
+                        text = cancelButtonText,
+                        contentColor = TogedyTheme.colors.gray600,
+                        containerColor = TogedyTheme.colors.gray400,
+                        onButtonClick = onDismissRequest,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
 
                 DialogButton(
                     text = buttonText,
