@@ -507,7 +507,7 @@ private fun MemberDetailSectionPreview() {
             isPlannerVisibleToggle = true,
             user = StudyMemberProfile(
                 userName = "감자도리",
-                userStatus = "",
+                studying = false,
                 userProfileImageUrl = null,
                 userProfileMessage = "",
                 totalStudyTime = "2:00",

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StudyMemberProfileResponse(
     @SerialName("userName") val userName: String,
-    @SerialName("userStatus") val userStatus: String,
+    @SerialName("studying") val studying: Boolean = false,
     @SerialName("userProfileImageUrl") val userProfileImageUrl: String?,
     @SerialName("userProfileMessage") val userProfileMessage: String?,
     @SerialName("totalStudyTime") val totalStudyTime: String,

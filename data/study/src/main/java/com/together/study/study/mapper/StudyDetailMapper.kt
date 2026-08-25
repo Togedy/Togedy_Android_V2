@@ -36,7 +36,7 @@ fun StudyMemberResponse.toStudyMember(): StudyMember =
         userName = userName,
         userProfileImageUrl = userProfileImageUrl ?: "",
         studyRole = studyRole.toEnum(StudyRole.MEMBER),
-        userStatus = userStatus.toEnum(UserStatus.ACTIVE),
+        userStatus = if (studying) UserStatus.STUDYING else UserStatus.ACTIVE,
         studyTime = studyTime,
         lastActivatedAt = lastActivatedAt,
     )
