@@ -88,6 +88,11 @@ internal fun TimerRoute(
         viewModel.onAppBackgrounded()
     }
 
+    // 포그라운드로 복귀하면 서버가 타이머를 이미 종료했는지 확인
+    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+        viewModel.onAppForegrounded()
+    }
+
     LaunchedEffect(Unit) {
         viewModel.bindService()
     }
@@ -156,6 +161,24 @@ internal fun TimerRoute(
                 viewModel.onExitTimer()
                 onNavigateToAddSubject()
             },
+        )
+    }
+
+    if (uiState.isConnectionLost) {
+        TogedyBasicDialog(
+            title = "타이머 자동 종료",
+            subTitle = {
+                Text(
+                    text = "연결이 끊겨 타이머가 종료되었습니다.\n마지막으로 연결된 시점까지 저장되었어요.",
+                    style = TogedyTheme.typography.body14m,
+                    color = TogedyTheme.colors.gray700,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            buttonText = "확인",
+            cancelButtonText = null,
+            onDismissRequest = viewModel::onConnectionLostConfirmed,
+            onButtonClick = viewModel::onConnectionLostConfirmed,
         )
     }
 }
