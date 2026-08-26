@@ -10,4 +10,5 @@ interface TimerRepository {
     suspend fun getSummaryTimer(): Result<List<SubjectTimer>>
     suspend fun stopTimer(timerId: Long): Result<Timer>
     suspend fun startTimer(subjectId: Long): Result<Timer>
+    suspend fun sendHeartbeat(timerId: Long): Result<Unit>
 }
