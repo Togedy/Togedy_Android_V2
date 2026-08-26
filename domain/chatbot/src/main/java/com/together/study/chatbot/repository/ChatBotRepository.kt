@@ -7,4 +7,8 @@ interface ChatBotRepository {
         question: String,
         followUpAnswer: String? = null,
     ): Result<ChatBotAnswer>
+
+    suspend fun getTodayQuestionCount(): Int
+
+    suspend fun incrementTodayQuestionCount()
 }

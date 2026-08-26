@@ -17,7 +17,7 @@ import com.together.study.study.model.StudyMemberTimeBlocks.MonthlyStudyTime
 fun StudyMemberProfileResponse.toDomain(): StudyMemberProfile =
     StudyMemberProfile(
         userName = userName,
-        userStatus = userStatus,
+        studying = studying,
         userProfileImageUrl = userProfileImageUrl,
         userProfileMessage = userProfileMessage ?: "",
         totalStudyTime = totalStudyTime,

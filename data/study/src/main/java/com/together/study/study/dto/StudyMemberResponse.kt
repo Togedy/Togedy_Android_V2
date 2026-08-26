@@ -9,7 +9,7 @@ data class StudyMemberResponse(
     @SerialName("userName") val userName: String,
     @SerialName("userProfileImageUrl") val userProfileImageUrl: String?,
     @SerialName("studyRole") val studyRole: String,
-    @SerialName("userStatus") val userStatus: String,
+    @SerialName("studying") val studying: Boolean = false,
     @SerialName("studyTime") val studyTime: String?,
     @SerialName("lastActivatedAt") val lastActivatedAt: String?,
 )

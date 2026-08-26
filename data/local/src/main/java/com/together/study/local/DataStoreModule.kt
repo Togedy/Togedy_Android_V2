@@ -13,12 +13,20 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
     private const val TOKEN_PREFERENCE_NAME = "token_preference"
+    private const val CHAT_BOT_PREFERENCE_NAME = "chat_bot_preference"
 
     private val Context.provideDataStore by preferencesDataStore(TOKEN_PREFERENCE_NAME)
+    private val Context.provideChatBotDataStore by preferencesDataStore(CHAT_BOT_PREFERENCE_NAME)
 
     @Provides
     @Singleton
     fun provideTokenDataStore(
         @ApplicationContext context: Context
     ) = TokenDataStore(context.provideDataStore)
+
+    @Provides
+    @Singleton
+    fun provideChatBotDataStore(
+        @ApplicationContext context: Context
+    ) = ChatBotDataStore(context.provideChatBotDataStore)
 }

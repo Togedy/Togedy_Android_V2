@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,8 +22,6 @@ class MyPageViewModel @Inject constructor(
     val uiState: StateFlow<MyPageUiState> = _uiState.asStateFlow()
 
     fun loadUserInfo() = viewModelScope.launch {
-        _uiState.update { it.copy(userInfoState = UiState.Loading) }
-
         getUserInfoUseCase()
             .onSuccess { result ->
                 _uiState.value = MyPageUiState(userInfoState = UiState.Success(result))
