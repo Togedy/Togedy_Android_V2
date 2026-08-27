@@ -1,7 +1,7 @@
 package com.together.study.gallery.model
 
 data class CropRequest(
-    val imageId: Long,
+    val uri: String,
     val scale: Float,
     val offsetX: Float,
     val offsetY: Float,
