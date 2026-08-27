@@ -1,12 +1,12 @@
 package com.together.study.timer.manager
 
-import android.content.BroadcastReceiver
+import android.app.KeyguardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.content.ContextCompat
 import com.together.study.timer.service.TimerWorkingService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,10 +18,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val SCREEN_OFF_DETECTION_DELAY = 500L
+private const val TAG = "TimerManager"
+private const val SCREEN_STATE_SETTLE_DELAY = 500L
 
 @Singleton
 class TimerManager @Inject constructor(
@@ -34,21 +36,16 @@ class TimerManager @Inject constructor(
     private var pendingStartSubjectId: Long? = null
 
     private var accumulatedTime = 0
-    private var isScreenOff = false
+
+    private val powerManager by lazy { context.getSystemService(PowerManager::class.java) }
+    private val keyguardManager by lazy { context.getSystemService(KeyguardManager::class.java) }
 
     private val _elapsedTime = MutableStateFlow(0)
     val elapsedTime = _elapsedTime.asStateFlow()
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
-
-    private val screenReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                Intent.ACTION_SCREEN_OFF -> isScreenOff = true
-                Intent.ACTION_SCREEN_ON -> isScreenOff = false
-            }
-        }
-    }
+    private val _isConnectionLost = MutableStateFlow(false)
+    val isConnectionLost = _isConnectionLost.asStateFlow()
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -69,14 +66,6 @@ class TimerManager @Inject constructor(
     fun bind() {
         if (isBound) return
 
-        val filter = IntentFilter().apply {
-            addAction(Intent.ACTION_SCREEN_OFF)
-            addAction(Intent.ACTION_SCREEN_ON)
-        }
-        ContextCompat.registerReceiver(
-            context, screenReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED
-        )
-
         isBound = context.bindService(
             Intent(context, TimerWorkingService::class.java),
             connection,
@@ -85,7 +74,6 @@ class TimerManager @Inject constructor(
     }
 
     fun unbind() {
-        runCatching { context.unregisterReceiver(screenReceiver) }
         runCatching {
             if (isBound) {
                 observeJob?.cancel()
@@ -109,14 +97,36 @@ class TimerManager @Inject constructor(
         service?.stop()
     }
 
-    // 화면이 켜진 채로 나간 경우(홈 / 다른 앱 / 푸시)는 정지
-    // 화면이 꺼진 경우(잠금 / 화면 타임아웃)는 유지
+    /**
+     * 화면이 켜져 있고 잠금도 걸려 있지 않은 채로 앱을 벗어난 경우(홈 / 다른 앱 / 최근앱) 정지
+     */
     fun onEnterBackground() {
         if (!_isPlaying.value) return
         managerScope.launch {
-            delay(SCREEN_OFF_DETECTION_DELAY)
-            if (!isScreenOff) stop()
+            delay(SCREEN_STATE_SETTLE_DELAY)
+
+            val isScreenOn = powerManager.isInteractive
+            val isLocked = keyguardManager.isKeyguardLocked
+
+            if (isScreenOn && !isLocked) {
+                Timber.tag(TAG).d("화면 켜진 상태로 앱 이탈")
+                stop()
+            } else {
+                Timber.tag(TAG).d("잠금/화면 꺼짐")
+            }
         }
+    }
+
+    /**
+     * 포그라운드 복귀 시 서버가 타이머를 이미 종료했는지 확인
+     */
+    fun onEnterForeground() {
+        service?.syncNow()
+    }
+
+    fun clearConnectionLost() {
+        _isConnectionLost.value = false
+        service?.clearConnectionLost()
     }
 
     fun resetAccumulatedTime() {
@@ -130,6 +140,7 @@ class TimerManager @Inject constructor(
             observeJob = managerScope.launch {
                 launch { svc.elapsedTime.collect { _elapsedTime.value = accumulatedTime + it } }
                 launch { svc.isPlaying.collect { _isPlaying.value = it } }
+                launch { svc.isConnectionLost.collect { _isConnectionLost.value = it } }
             }
         }
     }

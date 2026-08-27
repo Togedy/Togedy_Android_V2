@@ -32,13 +32,18 @@ internal class TimerViewModel @Inject constructor(
 
     private fun observeServiceState() {
         viewModelScope.launch {
-            combine(timerManager.elapsedTime, timerManager.isPlaying) { time, playing ->
-                time to playing
-            }.collect { (time, playing) ->
+            combine(
+                timerManager.elapsedTime,
+                timerManager.isPlaying,
+                timerManager.isConnectionLost,
+            ) { time, playing, connectionLost ->
+                Triple(time, playing, connectionLost)
+            }.collect { (time, playing, connectionLost) ->
                 _uiState.update {
                     it.copy(
                         elapsedTime = time,
                         isPlaying = playing,
+                        isConnectionLost = connectionLost,
                     )
                 }
             }
@@ -65,10 +70,12 @@ internal class TimerViewModel @Inject constructor(
     private fun getSubjectTimers() = viewModelScope.launch {
         getSummaryTimerUseCase()
             .onSuccess { subjects ->
-                _uiState.update {
-                    it.copy(
+                _uiState.update { state ->
+                    state.copy(
                         subjectTimers = UiState.Success(subjects),
-                        selectedSubject = subjects.firstOrNull(),
+                        selectedSubject = state.selectedSubject
+                            ?.let { selected -> subjects.firstOrNull { it.subjectId == selected.subjectId } }
+                            ?: subjects.firstOrNull(),
                     )
                 }
             }
@@ -100,6 +107,16 @@ internal class TimerViewModel @Inject constructor(
 
     fun onAppBackgrounded() {
         timerManager.onEnterBackground()
+    }
+
+    fun onAppForegrounded() {
+        timerManager.onEnterForeground()
+    }
+
+    fun onConnectionLostConfirmed() {
+        timerManager.clearConnectionLost()
+        timerManager.resetAccumulatedTime()
+        loadInitialData()
     }
 
     override fun onCleared() {

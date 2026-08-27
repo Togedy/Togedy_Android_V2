@@ -7,7 +7,11 @@ import com.together.study.timer.model.RunningTimer
 import com.together.study.timer.model.SubjectTimer
 import com.together.study.timer.model.Timer
 import com.together.study.timer.repository.TimerRepository
+import retrofit2.HttpException
+import timber.log.Timber
 import javax.inject.Inject
+
+private const val TAG = "TimerHeartbeat"
 
 class TimerRepositoryImpl @Inject constructor(
     private val timerDataSource: TimerDataSource,
@@ -44,5 +48,12 @@ class TimerRepositoryImpl @Inject constructor(
         runCatching {
             val response = timerDataSource.startTimer(subjectId).response
             response.toDomain()
+        }
+
+    override suspend fun sendHeartbeat(timerId: Long): Result<Unit> =
+        runCatching {
+            val response = timerDataSource.sendHeartbeat(timerId)
+            if (response.isSuccessful) return@runCatching
+            throw HttpException(response)
         }
 }

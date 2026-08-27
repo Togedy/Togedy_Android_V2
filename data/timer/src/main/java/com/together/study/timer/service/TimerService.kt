@@ -7,9 +7,12 @@ import com.together.study.timer.dto.StopTimerRequest
 import com.together.study.timer.dto.SubjectTimerResponse
 import com.together.study.timer.dto.TimerResponse
 import com.together.study.timer.dto.TotalTimerResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface TimerService {
     @GET("timers/total")
@@ -30,4 +33,9 @@ interface TimerService {
     suspend fun startTimer(
         @Body subjectId: StartTimerRequest,
     ): BaseResponse<TimerResponse>
+
+    @PATCH("timers/{timerId}/heartbeat")
+    suspend fun sendHeartbeat(
+        @Path("timerId") timerId: Long,
+    ): Response<Unit>
 }
