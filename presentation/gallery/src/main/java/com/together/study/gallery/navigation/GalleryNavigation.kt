@@ -7,7 +7,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.together.study.common.navigation.Route
-import com.together.study.gallery.GalleryScreen
 import com.together.study.gallery.ImageCropScreen
 import com.together.study.gallery.ImageCropViewModel
 import com.together.study.gallery.type.CropShapeType
@@ -16,32 +15,14 @@ import kotlinx.serialization.Serializable
 fun NavController.navigateToGallery(
     date: String,
     navOptions: NavOptions? = null,
-) = navigate(TogedyGallery(date), navOptions)
-
-fun NavController.navigateToCropImage(
-    imageId: Long,
-    date: String,
-    navOptions: NavOptions? = null,
-) = navigate(TogedyCropImage(imageId, date), navOptions)
+) = navigate(TogedyCropImage(date), navOptions)
 
 fun NavGraphBuilder.galleryGraph(
     modifier: Modifier = Modifier,
     navigateToUp: () -> Unit,
     onUploadSuccess: () -> Unit,
     onProfileCropSuccess: ((String) -> Unit)? = null,
-    navController: NavController,
 ) {
-    composable<TogedyGallery> { backStackEntry ->
-        val route = backStackEntry.toRoute<TogedyGallery>()
-        GalleryScreen(
-            onBackClick = navigateToUp,
-            onImageClick = { imageId ->
-                navController.navigateToCropImage(imageId, route.date)
-            },
-            modifier = modifier,
-        )
-    }
-
     composable<TogedyCropImage> { backStackEntry ->
         val route = backStackEntry.toRoute<TogedyCropImage>()
         val isProfile = route.date == ImageCropViewModel.PROFILE_DATE
@@ -52,7 +33,6 @@ fun NavGraphBuilder.galleryGraph(
         }
 
         ImageCropScreen(
-            imageId = route.imageId,
             cropShape = cropShape,
             onBackClick = navigateToUp,
             onUploadSuccess = onUploadSuccess,
@@ -63,12 +43,6 @@ fun NavGraphBuilder.galleryGraph(
 }
 
 @Serializable
-data class TogedyGallery(
-    val date: String,
-) : Route
-
-@Serializable
 data class TogedyCropImage(
-    val imageId: Long,
     val date: String,
 ) : Route
