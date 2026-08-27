@@ -1,5 +1,6 @@
 package com.together.study.gallery
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +27,15 @@ class ImageCropViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ImageCropUiState>(ImageCropUiState.Idle)
     val uiState: StateFlow<ImageCropUiState> = _uiState.asStateFlow()
 
+    // 선택한 사진 URI
+    private val _selectedUri = MutableStateFlow<Uri?>(null)
+    val selectedUri: StateFlow<Uri?> = _selectedUri.asStateFlow()
+
     private val isCropOnly = route.date == PROFILE_DATE
+
+    fun selectImage(uri: Uri) {
+        _selectedUri.value = uri
+    }
 
     fun cropAndUpload(request: CropRequest) {
         viewModelScope.launch {

@@ -1,5 +1,9 @@
 package com.together.study.gallery
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -49,7 +53,6 @@ import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.model.CropRequest
 import com.together.study.gallery.type.CropShapeType
-import com.together.study.gallery.util.toUri
 import com.together.study.util.noRippleClickable
 
 private const val ResetHeightRatio = 0.8f
@@ -60,9 +63,86 @@ private data class CropTransform(
 )
 
 /**
- * 이미지 크롭 화면
- *
- * 동작 기준
+ * 이미지 선택 및 크롭 화면
+ */
+@Composable
+internal fun ImageCropScreen(
+    cropShape: CropShapeType,
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    onUploadSuccess: () -> Unit,
+    onCropSuccess: ((String) -> Unit)? = null,
+    viewModel: ImageCropViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedUri by viewModel.selectedUri.collectAsStateWithLifecycle()
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+    ) { uri ->
+        if (uri == null) onBackClick() else viewModel.selectImage(uri)
+    }
+
+    LaunchedEffect(Unit) {
+        if (viewModel.selectedUri.value == null) {
+            photoPickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }
+    }
+
+    LaunchedEffect(uiState) {
+        when (val state = uiState) {
+            is ImageCropUiState.Success -> {
+                val filePath = state.filePath
+                if (filePath != null && onCropSuccess != null) {
+                    onCropSuccess(filePath)
+                } else {
+                    onUploadSuccess()
+                }
+            }
+
+            is ImageCropUiState.Error -> {
+                TogedyUiEventBus.send(
+                    TogedyUiEvent.ShowToast(message = state.message)
+                )
+            }
+
+            else -> {}
+        }
+    }
+
+    SystemBarIcons(darkStatusBarIcons = false)
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(TogedyTheme.colors.black),
+    ) {
+        selectedUri?.let { uri ->
+            ImageCropContent(
+                uri = uri,
+                cropShape = cropShape,
+                onBackClick = onBackClick,
+                onDoneClick = viewModel::cropAndUpload,
+            )
+        }
+
+        if (uiState is ImageCropUiState.Loading) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = TogedyTheme.colors.green)
+            }
+        }
+    }
+}
+
+/**
+ * 크롭 동작 기준
  * - `Fit`은 현재 크롭 영역을 빈 공간 없이 정확히 채우는 최소 배율입니다.
  * - `초기화`는 이미지 높이가 화면 높이의 80%를 차지하도록 맞추되, 크롭 영역을 못 채우면 `Fit` 배율로 보정합니다.
  * - 첫 진입 시 초기 배율과 위치도 `초기화`와 동일하게 적용합니다.
@@ -73,29 +153,25 @@ private data class CropTransform(
  * - `3023x4032` 같은 3:4 세로 사진은 `초기화`가 `Fit`보다 더 크게 보입니다. (가로로 찍은 사진)
  */
 @Composable
-internal fun ImageCropScreen(
-    imageId: Long,
+private fun ImageCropContent(
+    uri: Uri,
     cropShape: CropShapeType,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onUploadSuccess: () -> Unit,
-    onCropSuccess: ((String) -> Unit)? = null,
-    viewModel: ImageCropViewModel = hiltViewModel(),
+    onDoneClick: (CropRequest) -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var isInitTransformed by remember(imageId) { mutableStateOf(false) }
-    var scale by remember(imageId) { mutableFloatStateOf(1f) }
-    var offset by remember(imageId) { mutableStateOf(Offset.Zero) }
-    val uri = remember(imageId) { imageId.toUri() }
+    var isInitTransformed by remember(uri) { mutableStateOf(false) }
+    var scale by remember(uri) { mutableFloatStateOf(1f) }
+    var offset by remember(uri) { mutableStateOf(Offset.Zero) }
 
-    var imageWidth by remember(imageId) { mutableFloatStateOf(0f) }
-    var imageHeight by remember(imageId) { mutableFloatStateOf(0f) }
+    var imageWidth by remember(uri) { mutableFloatStateOf(0f) }
+    var imageHeight by remember(uri) { mutableFloatStateOf(0f) }
 
-    var viewWidth by remember(imageId) { mutableFloatStateOf(0f) }
-    var viewHeight by remember(imageId) { mutableFloatStateOf(0f) }
+    var viewWidth by remember(uri) { mutableFloatStateOf(0f) }
+    var viewHeight by remember(uri) { mutableFloatStateOf(0f) }
 
-    var cropWidth by remember(imageId) { mutableFloatStateOf(0f) }
-    var cropHeight by remember(imageId) { mutableFloatStateOf(0f) }
+    var cropWidth by remember(uri) { mutableFloatStateOf(0f) }
+    var cropHeight by remember(uri) { mutableFloatStateOf(0f) }
 
     val fitScale = calculateFitScale(
         imageWidth = imageWidth,
@@ -142,173 +218,142 @@ internal fun ImageCropScreen(
         offset = nextTransform.offset
     }
 
-    LaunchedEffect(isInitTransformCalculated, resetScale, imageId) {
+    LaunchedEffect(isInitTransformCalculated, resetScale, uri) {
         if (!isInitTransformed && isInitTransformCalculated) {
             applyCenteredTransform(resetScale)
             isInitTransformed = true
         }
     }
 
-    
-    SystemBarIcons(darkStatusBarIcons = false)
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(TogedyTheme.colors.black),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            AsyncImage(
-                model = uri,
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onGloballyPositioned { coordinates ->
-                        viewWidth = coordinates.size.width.toFloat()
-                        viewHeight = coordinates.size.height.toFloat()
-                    }
-                    .graphicsLayer {
-                        alpha = if (isInitTransformed) 1f else 0f
-                        scaleX = scale
-                        scaleY = scale
-                        translationX = offset.x
-                        translationY = offset.y
-                    }
-                    .transformable(
-                        state = transformableState,
-                        enabled = isInitTransformed,
-                    ),
-                onSuccess = { state ->
-                    val drawable = state.result.drawable
-                    imageWidth = drawable.intrinsicWidth.toFloat()
-                    imageHeight = drawable.intrinsicHeight.toFloat()
-                }
-            )
-        }
-
-        Box(
-            Modifier
-                .matchParentSize()
-                .graphicsLayer { alpha = 0.99f }
-                .drawWithContent {
-                    val cropLeft = (size.width - cropWidth) / 2f
-                    val cropTop = (size.height - cropHeight) / 2f
-
-                    drawContent()
-                    drawRect(color = Color.Black.copy(alpha = 0.5f))
-                    cropShape.drawMask(
-                        drawScope = this,
-                        cropLeft = cropLeft,
-                        cropTop = cropTop,
-                        cropWidth = cropWidth,
-                        cropHeight = cropHeight,
-                    )
-                }
-        )
-
-        Box(
-            Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-                .aspectRatio(
-                    when (cropShape) {
-                        is CropShapeType.Rect -> 328f / 114f
-                        is CropShapeType.Circle -> 1f
-                    }
-                )
-                .border(
-                    width = 1.dp,
-                    color = TogedyTheme.colors.white,
-                    shape = cropShape.borderShape,
-                )
-                .clip(cropShape.borderShape)
-                .onGloballyPositioned { coordinates ->
-                    cropWidth = coordinates.size.width.toFloat()
-                    cropHeight = coordinates.size.height.toFloat()
-                }
-        )
-
-        if (!isInitTransformed) {
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(TogedyTheme.colors.black),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(color = TogedyTheme.colors.green)
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding(),
-    ) {
-        ImageCropTopBar(
-            onBackClick = onBackClick,
-            onDoneClick = {
-                val cropRequest = CropRequest(
-                    imageId = imageId,
-                    scale = scale,
-                    offsetX = offset.x,
-                    offsetY = offset.y,
-                    cropWidth = cropWidth,
-                    cropHeight = cropHeight,
-                    originalWidth = imageWidth,
-                    originalHeight = imageHeight,
-                    viewWidth = viewWidth,
-                    viewHeight = viewHeight,
-                )
-                viewModel.cropAndUpload(cropRequest)
-            },
-        )
-
-        Spacer(Modifier.weight(1f))
-
-        ImageCropBottomMenu(
-            onResetClick = {
-                applyCenteredTransform(resetScale)
-            },
-            onFitClick = {
-                if (fitScale > 0f) {
-                    applyCenteredTransform(minScale)
-                }
-            },
-        )
-    }
-
-    if (uiState is ImageCropUiState.Loading) {
+    Box(modifier = modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center,
+                .background(TogedyTheme.colors.black),
+            contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = TogedyTheme.colors.green)
-        }
-    }
-
-    LaunchedEffect(uiState) {
-        when (val state = uiState) {
-            is ImageCropUiState.Success -> {
-                val filePath = state.filePath
-                if (filePath != null && onCropSuccess != null) {
-                    onCropSuccess(filePath)
-                } else {
-                    onUploadSuccess()
-                }
-            }
-            is ImageCropUiState.Error -> {
-                TogedyUiEventBus.send(
-                    TogedyUiEvent.ShowToast(message = state.message)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                AsyncImage(
+                    model = uri,
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { coordinates ->
+                            viewWidth = coordinates.size.width.toFloat()
+                            viewHeight = coordinates.size.height.toFloat()
+                        }
+                        .graphicsLayer {
+                            alpha = if (isInitTransformed) 1f else 0f
+                            scaleX = scale
+                            scaleY = scale
+                            translationX = offset.x
+                            translationY = offset.y
+                        }
+                        .transformable(
+                            state = transformableState,
+                            enabled = isInitTransformed,
+                        ),
+                    onSuccess = { state ->
+                        val drawable = state.result.drawable
+                        imageWidth = drawable.intrinsicWidth.toFloat()
+                        imageHeight = drawable.intrinsicHeight.toFloat()
+                    }
                 )
             }
-            else -> {}
+
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .graphicsLayer { alpha = 0.99f }
+                    .drawWithContent {
+                        val cropLeft = (size.width - cropWidth) / 2f
+                        val cropTop = (size.height - cropHeight) / 2f
+
+                        drawContent()
+                        drawRect(color = Color.Black.copy(alpha = 0.5f))
+                        cropShape.drawMask(
+                            drawScope = this,
+                            cropLeft = cropLeft,
+                            cropTop = cropTop,
+                            cropWidth = cropWidth,
+                            cropHeight = cropHeight,
+                        )
+                    }
+            )
+
+            Box(
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(
+                        when (cropShape) {
+                            is CropShapeType.Rect -> 328f / 114f
+                            is CropShapeType.Circle -> 1f
+                        }
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = TogedyTheme.colors.white,
+                        shape = cropShape.borderShape,
+                    )
+                    .clip(cropShape.borderShape)
+                    .onGloballyPositioned { coordinates ->
+                        cropWidth = coordinates.size.width.toFloat()
+                        cropHeight = coordinates.size.height.toFloat()
+                    }
+            )
+
+            if (!isInitTransformed) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(TogedyTheme.colors.black),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(color = TogedyTheme.colors.green)
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding(),
+        ) {
+            ImageCropTopBar(
+                onBackClick = onBackClick,
+                onDoneClick = {
+                    val cropRequest = CropRequest(
+                        uri = uri.toString(),
+                        scale = scale,
+                        offsetX = offset.x,
+                        offsetY = offset.y,
+                        cropWidth = cropWidth,
+                        cropHeight = cropHeight,
+                        originalWidth = imageWidth,
+                        originalHeight = imageHeight,
+                        viewWidth = viewWidth,
+                        viewHeight = viewHeight,
+                    )
+                    onDoneClick(cropRequest)
+                },
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            ImageCropBottomMenu(
+                onResetClick = {
+                    applyCenteredTransform(resetScale)
+                },
+                onFitClick = {
+                    if (fitScale > 0f) {
+                        applyCenteredTransform(minScale)
+                    }
+                },
+            )
         }
     }
 }
@@ -407,26 +452,26 @@ private fun ImageCropBottomMenu(
 
 @Preview
 @Composable
-private fun RectImageCropScreenPreview() {
+private fun RectImageCropContentPreview() {
     TogedyTheme {
-        ImageCropScreen(
-            imageId = 1,
+        ImageCropContent(
+            uri = Uri.EMPTY,
             cropShape = CropShapeType.Rect(aspectRatio = 1f),
             onBackClick = { },
-            onUploadSuccess = { },
+            onDoneClick = { },
         )
     }
 }
 
 @Preview
 @Composable
-private fun CircleImageCropScreenPreview() {
+private fun CircleImageCropContentPreview() {
     TogedyTheme {
-        ImageCropScreen(
-            imageId = 1,
+        ImageCropContent(
+            uri = Uri.EMPTY,
             cropShape = CropShapeType.Circle,
             onBackClick = { },
-            onUploadSuccess = { },
+            onDoneClick = { },
         )
     }
 }

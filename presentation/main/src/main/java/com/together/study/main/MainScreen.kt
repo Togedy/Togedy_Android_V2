@@ -36,7 +36,7 @@ import com.together.study.designsystem.component.toast.ToastType
 import com.together.study.designsystem.component.toast.TogedyToast
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.gallery.ImageCropViewModel
-import com.together.study.gallery.navigation.TogedyGallery
+import com.together.study.gallery.navigation.TogedyCropImage
 import com.together.study.gallery.navigation.galleryGraph
 import com.together.study.gallery.navigation.navigateToGallery
 import com.together.study.login.navigation.Login
@@ -391,7 +391,7 @@ private fun MainNavHost(
         galleryGraph(
             navigateToUp = navigator.navController::popBackStack,
             onUploadSuccess = {
-                navigator.navController.popBackStack<TogedyGallery>(inclusive = true)
+                navigator.navController.popBackStack<TogedyCropImage>(inclusive = true)
                 togedyToast.makeText(
                     toastType = ToastType.COMMON,
                     message = "이미지가 업데이트 되었어요",
@@ -402,9 +402,8 @@ private fun MainNavHost(
             onProfileCropSuccess = { filePath ->
                 navigator.navController.getBackStackEntry<ProfileEdit>()
                     .savedStateHandle[CROPPED_IMAGE_PATH_KEY] = filePath
-                navigator.navController.popBackStack<TogedyGallery>(inclusive = true)
+                navigator.navController.popBackStack<TogedyCropImage>(inclusive = true)
             },
-            navController = navigator.navController,
             modifier = modifier,
         )
 
