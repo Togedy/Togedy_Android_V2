@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,6 +32,7 @@ private const val TAG = "TimerService"
 private const val HEARTBEAT_INTERVAL = 60_000L
 private const val WAKE_LOCK_TAG = "Togedy:timer"
 private const val WAKE_LOCK_TIMEOUT = 12 * 60 * 60 * 1000L
+private const val STOP_TIMEOUT = 5_000L
 
 @AndroidEntryPoint
 class TimerWorkingService : Service() {
@@ -57,6 +60,7 @@ class TimerWorkingService : Service() {
     private var timerId: Long? = null
     private var wakeLock: PowerManager.WakeLock? = null
     private var startRealtime = 0L // 도즈모드 경과시간
+    private var isStopping = false
 
     inner class BinderImpl : Binder() {
         fun getService() = this@TimerWorkingService
@@ -100,21 +104,32 @@ class TimerWorkingService : Service() {
         }
     }
 
+    /**
+     * 로컬 상태는 즉시 정리하고, 서버 종료 요청 후 서비스 종료
+     */
     fun stop() {
         val id = timerId ?: return
+        if (isStopping) return
+        isStopping = true
 
         heartbeatJob?.cancel()
         heartbeatJob = null
-
-        scope.launch { runCatching { stopTimerUseCase(id) } }
 
         stopTicking()
         _isPlaying.value = false
         timerId = null
 
-        releaseWakeLock()
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
+        scope.launch {
+            withTimeoutOrNull(STOP_TIMEOUT) { runCatching { stopTimerUseCase(id) } }
+            withContext(Dispatchers.Main) {
+                isStopping = false
+                if (_isPlaying.value) return@withContext
+
+                releaseWakeLock()
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf()
+            }
+        }
     }
 
     /**
