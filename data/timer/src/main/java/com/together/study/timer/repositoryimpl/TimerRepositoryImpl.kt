@@ -3,15 +3,14 @@ package com.together.study.timer.repositoryimpl
 import com.together.study.timer.datasource.TimerDataSource
 import com.together.study.timer.mapper.toDomain
 import com.together.study.timer.mapper.toDomainList
+import com.together.study.timer.mapper.toHeartbeatException
 import com.together.study.timer.model.RunningTimer
 import com.together.study.timer.model.SubjectTimer
 import com.together.study.timer.model.Timer
+import com.together.study.timer.model.TimerHeartbeatException
 import com.together.study.timer.repository.TimerRepository
-import retrofit2.HttpException
-import timber.log.Timber
+import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
-
-private const val TAG = "TimerHeartbeat"
 
 class TimerRepositoryImpl @Inject constructor(
     private val timerDataSource: TimerDataSource,
@@ -30,7 +29,6 @@ class TimerRepositoryImpl @Inject constructor(
             val response = timerDataSource.getRunningTimer().response
             response.toDomain()
         }
-
 
     override suspend fun getSummaryTimer(): Result<List<SubjectTimer>> =
         runCatching {
@@ -51,9 +49,16 @@ class TimerRepositoryImpl @Inject constructor(
         }
 
     override suspend fun sendHeartbeat(timerId: Long): Result<Unit> =
-        runCatching {
+        try {
             val response = timerDataSource.sendHeartbeat(timerId)
-            if (response.isSuccessful) return@runCatching
-            throw HttpException(response)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(response.toHeartbeatException())
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(TimerHeartbeatException.Transient(cause = e))
         }
 }
