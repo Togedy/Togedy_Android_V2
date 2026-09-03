@@ -110,6 +110,7 @@ internal fun TimerRoute(
         selectedSubject = uiState.selectedSubject,
         subjects = subjects,
         isPlaying = uiState.isPlaying,
+        isHeartbeatUnstable = uiState.isHeartbeatUnstable,
         modifier = modifier,
         onBackClick = handleBack,
         onPlayButtonClick = {
@@ -193,6 +194,7 @@ private fun TimerScreen(
     selectedSubject: SubjectTimer?,
     subjects: List<SubjectTimer>,
     isPlaying: Boolean,
+    isHeartbeatUnstable: Boolean,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onPlayButtonClick: () -> Unit,
@@ -326,6 +328,18 @@ private fun TimerScreen(
 
                     Spacer(Modifier.height(20.dp))
 
+                    if (isHeartbeatUnstable) {
+                        Text(
+                            text = "네트워크가 불안정해요\n연결이 복구되지 않으면 타이머가 자동 종료돼요",
+                            style = TogedyTheme.typography.body12m,
+                            color = TogedyTheme.colors.gray500,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 40.dp),
+                        )
+
+                        Spacer(Modifier.height(12.dp))
+                    }
+
                     TimerButton(
                         isPlaying = isPlaying,
                         onButtonClick = onPlayButtonClick,
@@ -390,6 +404,7 @@ private fun TimerScreenPreview() {
             ),
             subjects = emptyList(),
             isPlaying = false,
+            isHeartbeatUnstable = false,
             onBackClick = {},
             onPlayButtonClick = {},
             onSubjectChanged = {},

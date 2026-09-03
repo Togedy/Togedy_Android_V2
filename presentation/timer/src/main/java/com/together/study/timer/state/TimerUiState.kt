@@ -9,6 +9,7 @@ data class TimerUiState(
     val elapsedTime: Int = 0,
     val isPlaying: Boolean = false,
     val isConnectionLost: Boolean = false,
+    val isHeartbeatUnstable: Boolean = false,
     val totalStudyTime: UiState<Long> = UiState.Loading,
     val subjectTimers: UiState<List<SubjectTimer>> = UiState.Loading,
     val selectedSubject: SubjectTimer? = null,
