@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
+import com.together.study.timer.model.TimerHeartbeatException
 import com.together.study.timer.usecase.SendTimerHeartbeatUseCase
 import com.together.study.timer.usecase.StartTimerUseCase
 import com.together.study.timer.usecase.StopTimerUseCase
@@ -27,9 +28,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "TimerService"
 private const val HEARTBEAT_INTERVAL = 60_000L
+private const val HEARTBEAT_RETRY_INTERVAL = 20_000L
+private const val HEARTBEAT_GRACE_PERIOD = 150_000L
 private const val WAKE_LOCK_TAG = "Togedy:timer"
 private const val WAKE_LOCK_TIMEOUT = 12 * 60 * 60 * 1000L
 private const val STOP_TIMEOUT = 5_000L
@@ -55,11 +59,16 @@ class TimerWorkingService : Service() {
     private val _isConnectionLost = MutableStateFlow(false) // 서버 종료된 경우
     val isConnectionLost: StateFlow<Boolean> = _isConnectionLost
 
+    private val _isHeartbeatUnstable = MutableStateFlow(false) // 유예 시간 안에서 재시도 중인 경우
+    val isHeartbeatUnstable: StateFlow<Boolean> = _isHeartbeatUnstable
+
     private var timerJob: Job? = null
     private var heartbeatJob: Job? = null
     private var timerId: Long? = null
     private var wakeLock: PowerManager.WakeLock? = null
     private var startRealtime = 0L // 도즈모드 경과시간
+    private var lastHeartbeatRealtime = 0L // 마지막 하트비트 성공 시점
+    private var heartbeatFailureCount = 0
     private var isStopping = false
 
     inner class BinderImpl : Binder() {
@@ -114,6 +123,8 @@ class TimerWorkingService : Service() {
 
         heartbeatJob?.cancel()
         heartbeatJob = null
+        heartbeatFailureCount = 0
+        _isHeartbeatUnstable.value = false
 
         stopTicking()
         _isPlaying.value = false
@@ -137,6 +148,7 @@ class TimerWorkingService : Service() {
      */
     fun syncNow() {
         val id = timerId ?: return
+        if (!_isPlaying.value) return
         scope.launch { sendHeartbeat(id) }
     }
 
@@ -162,13 +174,25 @@ class TimerWorkingService : Service() {
         timerJob = null
     }
 
+    /**
+     * 하트비트 정책
+     * - 성공: 60초 뒤 다음 하트비트
+     * - 일시 실패(와이파이 끊김 / 서버 일시 장애): 20초 간격으로 재시도하고 타이머는 계속 진행
+     * - 마지막 성공으로부터 150초(CUTOFF_SECONDS) 지연 시 로컬 정리
+     */
     private fun startHeartbeat(id: Long) {
         heartbeatJob?.cancel()
+        lastHeartbeatRealtime = SystemClock.elapsedRealtime()
+        heartbeatFailureCount = 0
+        _isHeartbeatUnstable.value = false
+
         heartbeatJob = scope.launch {
-            sendHeartbeat(id)
             while (isActive) {
-                delay(HEARTBEAT_INTERVAL)
                 sendHeartbeat(id)
+                delay(
+                    (if (heartbeatFailureCount == 0) HEARTBEAT_INTERVAL
+                    else HEARTBEAT_RETRY_INTERVAL).milliseconds
+                )
             }
         }
     }
@@ -176,7 +200,9 @@ class TimerWorkingService : Service() {
     private suspend fun sendHeartbeat(id: Long) {
         sendTimerHeartbeatUseCase(id)
             .onSuccess {
-                Timber.tag(TAG).d("heartbeat 성공, timerId=$id")
+                lastHeartbeatRealtime = SystemClock.elapsedRealtime()
+                heartbeatFailureCount = 0
+                _isHeartbeatUnstable.value = false
             }
             .onFailure { e ->
                 handleHeartbeatFailure(id, e)
@@ -184,14 +210,50 @@ class TimerWorkingService : Service() {
     }
 
     /**
-     * 200 아닌 모든 응답과 네트워크 오류를 타이머 측정 중단으로 판단
-     * 추후 네트워크 오류 및 서버 내부 장애에 대한 판단 필요
+     * 403/404/409 는 서버 타이머 정리로 즉시 종료 / 그 외 재시도
      */
     private fun handleHeartbeatFailure(id: Long, e: Throwable) {
-        Timber.tag(TAG).w(e, "heartbeat 실패, timerId=$id")
-        _isConnectionLost.value = true
-        stop()
+        if (e is TimerHeartbeatException.Invalidated) {
+            stopByServer()
+            return
+        }
+
+        heartbeatFailureCount++
+        _isHeartbeatUnstable.value = true
+
+        val sinceLastSuccess = SystemClock.elapsedRealtime() - lastHeartbeatRealtime
+
+        if (sinceLastSuccess >= HEARTBEAT_GRACE_PERIOD) {
+            stopByServer()
+        }
     }
+
+    /**
+     * 이미 서버에서 종료된 타이머를 로컬 정리
+     */
+    private fun stopByServer() {
+        if (timerId == null) return
+
+        timerId = null
+        heartbeatJob?.cancel()
+        heartbeatJob = null
+        heartbeatFailureCount = 0
+        stopTicking()
+
+        _elapsedTime.value = elapsedTimeAtLastHeartbeat()
+        _isPlaying.value = false
+        _isHeartbeatUnstable.value = false
+        _isConnectionLost.value = true
+
+        scope.launch(Dispatchers.Main) {
+            releaseWakeLock()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
+    }
+
+    private fun elapsedTimeAtLastHeartbeat(): Int =
+        ((lastHeartbeatRealtime - startRealtime).coerceAtLeast(0L) / 1000).toInt()
 
     private fun acquireWakeLock() {
         if (wakeLock?.isHeld == true) return
