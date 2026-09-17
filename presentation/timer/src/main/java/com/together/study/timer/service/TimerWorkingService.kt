@@ -200,11 +200,13 @@ class TimerWorkingService : Service() {
     private suspend fun sendHeartbeat(id: Long) {
         sendTimerHeartbeatUseCase(id)
             .onSuccess {
+                if (timerId != id) return@onSuccess // 이전 타이머의 응답
                 lastHeartbeatRealtime = SystemClock.elapsedRealtime()
                 heartbeatFailureCount = 0
                 _isHeartbeatUnstable.value = false
             }
             .onFailure { e ->
+                if (timerId != id) return@onFailure // 이전 타이머의 응답
                 handleHeartbeatFailure(id, e)
             }
     }
