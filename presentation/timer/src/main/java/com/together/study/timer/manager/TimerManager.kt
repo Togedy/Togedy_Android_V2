@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
 import com.together.study.timer.service.TimerWorkingService
+import com.together.study.timer.state.TimerServiceState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,12 +42,8 @@ class TimerManager @Inject constructor(
     private val powerManager by lazy { context.getSystemService(PowerManager::class.java) }
     private val keyguardManager by lazy { context.getSystemService(KeyguardManager::class.java) }
 
-    private val _elapsedTime = MutableStateFlow(0)
-    val elapsedTime = _elapsedTime.asStateFlow()
-    private val _isPlaying = MutableStateFlow(false)
-    val isPlaying = _isPlaying.asStateFlow()
-    private val _isConnectionLost = MutableStateFlow(false)
-    val isConnectionLost = _isConnectionLost.asStateFlow()
+    private val _serviceState = MutableStateFlow(TimerServiceState())
+    val serviceState = _serviceState.asStateFlow()
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -93,7 +91,7 @@ class TimerManager @Inject constructor(
     }
 
     fun stop() {
-        accumulatedTime = _elapsedTime.value
+        accumulatedTime = _serviceState.value.elapsedTime
         service?.stop()
     }
 
@@ -101,7 +99,7 @@ class TimerManager @Inject constructor(
      * 화면이 켜져 있고 잠금도 걸려 있지 않은 채로 앱을 벗어난 경우(홈 / 다른 앱 / 최근앱) 정지
      */
     fun onEnterBackground() {
-        if (!_isPlaying.value) return
+        if (!_serviceState.value.isPlaying) return
         managerScope.launch {
             delay(SCREEN_STATE_SETTLE_DELAY)
 
@@ -125,22 +123,39 @@ class TimerManager @Inject constructor(
     }
 
     fun clearConnectionLost() {
-        _isConnectionLost.value = false
+        _serviceState.update { it.copy(isConnectionLost = false) }
         service?.clearConnectionLost()
     }
 
     fun resetAccumulatedTime() {
         accumulatedTime = 0
-        _elapsedTime.value = 0
+        _serviceState.update { it.copy(elapsedTime = 0) }
     }
 
     private fun observe() {
         service?.let { svc ->
             observeJob?.cancel()
             observeJob = managerScope.launch {
-                launch { svc.elapsedTime.collect { _elapsedTime.value = accumulatedTime + it } }
-                launch { svc.isPlaying.collect { _isPlaying.value = it } }
-                launch { svc.isConnectionLost.collect { _isConnectionLost.value = it } }
+                launch {
+                    svc.elapsedTime.collect { elapsed ->
+                        _serviceState.update { it.copy(elapsedTime = accumulatedTime + elapsed) }
+                    }
+                }
+                launch {
+                    svc.isPlaying.collect { playing ->
+                        _serviceState.update { it.copy(isPlaying = playing) }
+                    }
+                }
+                launch {
+                    svc.isConnectionLost.collect { connectionLost ->
+                        _serviceState.update { it.copy(isConnectionLost = connectionLost) }
+                    }
+                }
+                launch {
+                    svc.isHeartbeatUnstable.collect { unstable ->
+                        _serviceState.update { it.copy(isHeartbeatUnstable = unstable) }
+                    }
+                }
             }
         }
     }
