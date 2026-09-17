@@ -11,7 +11,6 @@ import com.together.study.timer.usecase.GetTotalStudyTimerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,18 +31,13 @@ internal class TimerViewModel @Inject constructor(
 
     private fun observeServiceState() {
         viewModelScope.launch {
-            combine(
-                timerManager.elapsedTime,
-                timerManager.isPlaying,
-                timerManager.isConnectionLost,
-            ) { time, playing, connectionLost ->
-                Triple(time, playing, connectionLost)
-            }.collect { (time, playing, connectionLost) ->
+            timerManager.serviceState.collect { serviceState ->
                 _uiState.update {
                     it.copy(
-                        elapsedTime = time,
-                        isPlaying = playing,
-                        isConnectionLost = connectionLost,
+                        elapsedTime = serviceState.elapsedTime,
+                        isPlaying = serviceState.isPlaying,
+                        isConnectionLost = serviceState.isConnectionLost,
+                        isHeartbeatUnstable = serviceState.isHeartbeatUnstable,
                     )
                 }
             }
