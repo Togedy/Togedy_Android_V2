@@ -403,14 +403,14 @@ private fun StudyDetailSuccessScreen(
 
             Spacer(Modifier.weight(1f))
 
-//            Icon(
-//                imageVector = ImageVector.vectorResource(ic_share_20),
-//                contentDescription = "공유 버튼",
-//                tint = iconColor,
-//                modifier = Modifier
-//                    .size(20.dp)
-//                    .noRippleClickable(onShareButtonClick),
-//            )
+            Icon(
+                imageVector = ImageVector.vectorResource(ic_share_20),
+                contentDescription = "공유 버튼",
+                tint = iconColor,
+                modifier = Modifier
+                    .size(20.dp)
+                    .noRippleClickable(onShareButtonClick),
+            )
 
             if (studyInfo.isJoined) {
                 Spacer(Modifier.width(8.dp))
