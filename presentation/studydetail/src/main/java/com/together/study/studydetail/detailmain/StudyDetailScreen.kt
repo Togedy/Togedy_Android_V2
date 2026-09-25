@@ -1,5 +1,6 @@
 package com.together.study.studydetail.detailmain
 
+import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +57,7 @@ import com.together.study.designsystem.R.drawable.ic_left_chevron
 import com.together.study.designsystem.R.drawable.ic_play_button
 import com.together.study.designsystem.R.drawable.ic_right_chevron_green
 import com.together.study.designsystem.R.drawable.ic_settings_24
+import com.together.study.designsystem.R.drawable.ic_share_20
 import com.together.study.designsystem.R.drawable.img_study_background
 import com.together.study.designsystem.component.button.TogedyButton
 import com.together.study.designsystem.component.loading.TogedyLoadingScreen
@@ -92,8 +94,24 @@ internal fun StudyDetailRoute(
     val passwordErrorMessage by viewModel.passwordError.collectAsStateWithLifecycle()
     val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         viewModel.getStudyDetailInfo()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is StudyDetailUiEvent.ShareStudy -> {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, event.link)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "스터디 공유"))
+                }
+            }
+        }
     }
 
     StudyDetailScreen(
@@ -105,7 +123,7 @@ internal fun StudyDetailRoute(
         dialogState = dialogState,
         modifier = modifier,
         onBackClick = onBackClick,
-        onShareButtonClick = {},
+        onShareButtonClick = viewModel::onShareClick,
         onSettingsButtonClick = onSettingsNavigate,
         onTabChange = viewModel::updateSelectedTab,
         onUserClick = { viewModel.updateDialogState(StudyDetailDialogType.USER) },

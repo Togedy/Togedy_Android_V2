@@ -1,5 +1,6 @@
 package com.together.study.studydetail.detailmain
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,14 +10,18 @@ import com.together.study.study.model.StudyAttendance
 import com.together.study.study.model.StudyDetailInfo
 import com.together.study.study.model.StudyMember
 import com.together.study.study.repository.StudyDetailRepository
+import com.together.study.study.usecase.CreateStudyShareLinkUseCase
 import com.together.study.study.usecase.GetStudyAttendanceUseCase
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.together.study.studydetail.detailmain.state.StudyDetailDialogState
 import com.together.study.studydetail.detailmain.state.StudyDetailUiState
 import com.together.study.studydetail.detailmain.type.StudyDetailDialogType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -27,11 +32,17 @@ import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
+internal sealed interface StudyDetailUiEvent {
+    data class ShareStudy(val link: String) : StudyDetailUiEvent
+}
+
 @HiltViewModel
 internal class StudyDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
     private val studyDetailRepository: StudyDetailRepository,
     private val getAttendanceUseCase: GetStudyAttendanceUseCase,
+    private val createStudyShareLinkUseCase: CreateStudyShareLinkUseCase,
 ) : ViewModel() {
     val studyId: Long = savedStateHandle.get<Long>(STUDY_ID_KEY) ?: 0
 
@@ -44,6 +55,9 @@ internal class StudyDetailViewModel @Inject constructor(
     private val _dialogState: MutableStateFlow<StudyDetailDialogState> =
         MutableStateFlow(StudyDetailDialogState())
     val dialogState: StateFlow<StudyDetailDialogState> = _dialogState.asStateFlow()
+
+    private val _uiEvent = MutableSharedFlow<StudyDetailUiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     private val _studyInfoState = MutableStateFlow<UiState<StudyDetailInfo>>(UiState.Loading)
     private val _membersState = MutableStateFlow<UiState<List<StudyMember>>>(UiState.Loading)
@@ -103,6 +117,13 @@ internal class StudyDetailViewModel @Inject constructor(
                 _passwordErrorMessage.value = "스터디 비밀번호가 일치하지 않습니다."
                 Timber.tag("okhttp-joinStudy").e(it.message.toString())
             }
+    }
+
+    fun onShareClick() {
+        val link = createStudyShareLinkUseCase(studyId, context.packageName)
+        viewModelScope.launch {
+            _uiEvent.emit(StudyDetailUiEvent.ShareStudy(link))
+        }
     }
 
     fun updateSelectedTab(new: StudyDetailTab) {
