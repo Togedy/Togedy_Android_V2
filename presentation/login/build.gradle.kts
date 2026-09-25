@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.util)
 
     implementation(projects.domain.auth)
+    implementation(projects.domain.study)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)

@@ -8,11 +8,13 @@ import kotlinx.serialization.Serializable
 fun NavGraphBuilder.splashGraph(
     onNavigateToLogin: () -> Unit,
     onNavigateToCalendar: () -> Unit,
+    onNavigateToStudy: (Long) -> Unit,
 ) {
     composable<Splash> {
         SplashRoute(
             onNavigateToLogin = onNavigateToLogin,
             onNavigateToCalendar = onNavigateToCalendar,
+            onNavigateToStudy = onNavigateToStudy,
         )
     }
 }

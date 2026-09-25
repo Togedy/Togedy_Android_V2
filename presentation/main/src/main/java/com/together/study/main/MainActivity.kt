@@ -1,6 +1,7 @@
 package com.together.study.main
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
@@ -28,5 +29,10 @@ class MainActivity : ComponentActivity() {
                 MainScreen()
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 }

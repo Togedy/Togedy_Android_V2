@@ -1,5 +1,7 @@
 package com.together.study.main
 
+import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
@@ -13,13 +15,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.core.util.Consumer
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
@@ -78,8 +84,33 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
+    deepLinkViewModel: StudyDeepLinkViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val activity = context as ComponentActivity
+
+    remember {
+        deepLinkViewModel.capture(activity.intent, openImmediately = false)
+        true
+    }
+
+    DisposableEffect(activity, navigator) {
+        val listener = Consumer<Intent> { intent ->
+            val destination = navigator.navController.currentDestination
+            val waitingForAuth = destination?.hasRoute(Splash::class) == true ||
+                destination?.hasRoute(Login::class) == true ||
+                destination?.hasRoute(Onboarding::class) == true
+            deepLinkViewModel.capture(intent, openImmediately = !waitingForAuth)
+        }
+        activity.addOnNewIntentListener(listener)
+        onDispose { activity.removeOnNewIntentListener(listener) }
+    }
+
+    LaunchedEffect(Unit) {
+        deepLinkViewModel.openStudy.collect { studyId ->
+            navigator.navController.navigateToStudyDetail(studyId)
+        }
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val togedyToast = remember { TogedyToast(context, lifecycleOwner) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -168,6 +199,7 @@ fun MainScreen(
             ) {
                 MainNavHost(
                     navigator = navigator,
+                    consumePendingStudyId = deepLinkViewModel::consumePending,
                     onChatBotChatModeChanged = { isChatModeState.value = it },
                     onChatBotRequestExit = {
                         pendingTabState.value = null
@@ -185,11 +217,20 @@ fun MainScreen(
 @Composable
 private fun MainNavHost(
     navigator: MainNavigator,
+    consumePendingStudyId: () -> Long?,
     onChatBotChatModeChanged: (Boolean) -> Unit,
     onChatBotRequestExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val togedyToast = LocalTogedyToast.current
+    val openHome: (Any) -> Unit = { popRoute ->
+        navigator.navController.navigateToCalendar(
+            navOptions {
+                popUpTo(popRoute) { inclusive = true }
+            }
+        )
+        consumePendingStudyId()?.let(navigator.navController::navigateToStudyDetail)
+    }
     NavHost(
         enterTransition = {
             EnterTransition.None
@@ -221,17 +262,19 @@ private fun MainNavHost(
                     }
                 )
             },
+            onNavigateToStudy = { studyId ->
+                navigator.navController.navigateToCalendar(
+                    navOptions {
+                        popUpTo(Splash) { inclusive = true }
+                    }
+                )
+                navigator.navController.navigateToStudyDetail(studyId)
+            },
         )
 
         loginGraph(
             modifier = modifier,
-            navigateToCalendar = {
-                navigator.navController.navigateToCalendar(
-                    navOptions {
-                        popUpTo(Login) { inclusive = true }
-                    }
-                )
-            },
+            navigateToCalendar = { openHome(Login) },
             navigateToOnboarding = {
                 navigator.navController.navigateToOnboarding(
                     navOptions {
@@ -243,13 +286,7 @@ private fun MainNavHost(
 
         onboardingGraph(
             modifier = modifier,
-            navigateToCalendar = {
-                navigator.navController.navigateToCalendar(
-                    navOptions {
-                        popUpTo(Onboarding) { inclusive = true }
-                    }
-                )
-            },
+            navigateToCalendar = { openHome(Onboarding) },
         )
 
         calendarGraph(

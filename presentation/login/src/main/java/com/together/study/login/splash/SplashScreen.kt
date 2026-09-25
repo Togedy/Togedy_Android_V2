@@ -16,6 +16,7 @@ import com.together.study.designsystem.theme.TogedyTheme
 internal fun SplashRoute(
     onNavigateToLogin: () -> Unit,
     onNavigateToCalendar: () -> Unit,
+    onNavigateToStudy: (Long) -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
@@ -23,6 +24,7 @@ internal fun SplashRoute(
             when (event) {
                 is SplashUiEvent.NavigateToLogin -> onNavigateToLogin()
                 is SplashUiEvent.NavigateToCalendar -> onNavigateToCalendar()
+                is SplashUiEvent.NavigateToStudy -> onNavigateToStudy(event.studyId)
             }
         }
     }
