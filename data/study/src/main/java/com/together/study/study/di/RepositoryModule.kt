@@ -1,10 +1,12 @@
 package com.together.study.study.di
 
+import com.together.study.study.repository.StudyBadgeRepository
 import com.together.study.study.repository.StudyDetailRepository
 import com.together.study.study.repository.StudyExploreRepository
 import com.together.study.study.repository.StudyMemberRepository
 import com.together.study.study.repository.StudySettingsRepository
 import com.together.study.study.repository.StudyUpdateRepository
+import com.together.study.study.repositoryimpl.StudyBadgeRepositoryImpl
 import com.together.study.study.repositoryimpl.StudyDetailRepositoryImpl
 import com.together.study.study.repositoryimpl.StudyExploreRepositoryImpl
 import com.together.study.study.repositoryimpl.StudyMemberRepositoryImpl
@@ -48,4 +50,10 @@ abstract class RepositoryModule {
     abstract fun bindStudyUpdateRepository(
         studyUpdateRepositoryImpl: StudyUpdateRepositoryImpl,
     ): StudyUpdateRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStudyBadgeRepository(
+        studyBadgeRepositoryImpl: StudyBadgeRepositoryImpl,
+    ): StudyBadgeRepository
 }
