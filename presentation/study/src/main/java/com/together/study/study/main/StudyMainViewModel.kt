@@ -7,10 +7,12 @@ import com.together.study.common.type.study.StudySortingType
 import com.together.study.common.type.study.StudyTagType
 import com.together.study.designsystem.component.tabbar.StudyMainTab
 import com.together.study.study.main.state.ExploreFilterState
+import com.together.study.study.main.state.StudyBadgeState
 import com.together.study.study.main.state.StudyMainUiState
 import com.together.study.study.model.ExploreStudyFilter
 import com.together.study.study.model.ExploreStudyItem
 import com.together.study.study.model.MyStudyInfo
+import com.together.study.study.repository.StudyBadgeRepository
 import com.together.study.study.repository.StudyExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,11 +22,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class StudyMainViewModel @Inject constructor(
     private val studyExploreRepository: StudyExploreRepository,
+    private val studyBadgeRepository: StudyBadgeRepository,
 ) : ViewModel() {
     private val _selectedTab = MutableStateFlow(StudyMainTab.MAIN)
     val selectedTab = _selectedTab.asStateFlow()
@@ -34,14 +38,18 @@ internal class StudyMainViewModel @Inject constructor(
         MutableStateFlow<UiState<List<ExploreStudyItem>>>(UiState.Loading)
     private val _exploreFilterState = MutableStateFlow(ExploreFilterState())
     val exploreFilterState = _exploreFilterState.asStateFlow()
+    private val _badgeState = MutableStateFlow<UiState<StudyBadgeState>>(UiState.Loading)
+    private val _hasNewBadge = MutableStateFlow(false)
+    val hasNewBadge = _hasNewBadge.asStateFlow()
 
     val studyMainUiState: StateFlow<StudyMainUiState> = combine(
-        _myStudyState, _exploreStudyState, _exploreFilterState
-    ) { myStudyState, exploreStudyState, exploreFilterState ->
+        _myStudyState, _exploreStudyState, _exploreFilterState, _badgeState
+    ) { myStudyState, exploreStudyState, exploreFilterState, badgeState ->
         StudyMainUiState(
             myStudyState = myStudyState,
             exploreStudyState = exploreStudyState,
             exploreFilterState = exploreFilterState,
+            badgeState = badgeState,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -50,6 +58,7 @@ internal class StudyMainViewModel @Inject constructor(
             myStudyState = UiState.Loading,
             exploreStudyState = UiState.Loading,
             exploreFilterState = ExploreFilterState(),
+            badgeState = UiState.Loading,
         )
     )
 
@@ -81,8 +90,35 @@ internal class StudyMainViewModel @Inject constructor(
             .onFailure { _exploreStudyState.value = UiState.Failure(it.message.toString()) }
     }
 
+    suspend fun getBadgeInfo() {
+        studyBadgeRepository.getStudyBadges()
+            .onSuccess { badges ->
+                val recentBadge = badges
+                    .filter { it.isAcquired }
+                    .maxByOrNull { it.acquiredAt.orEmpty() }
+
+                _badgeState.value = UiState.Success(
+                    StudyBadgeState(recentBadge = recentBadge, badges = badges)
+                )
+                _hasNewBadge.value = recentBadge != null &&
+                    recentBadge.badgeId != studyBadgeRepository.getLastCheckedBadgeId()
+
+                if (selectedTab.value == StudyMainTab.BADGE) checkRecentBadge()
+            }
+            .onFailure { _badgeState.value = UiState.Failure(it.message.toString()) }
+    }
+
     fun updateSelectedTab(new: StudyMainTab) {
         _selectedTab.value = new
+        if (new == StudyMainTab.BADGE) viewModelScope.launch { checkRecentBadge() }
+    }
+
+    private suspend fun checkRecentBadge() {
+        if (!_hasNewBadge.value) return
+        val recentBadge = (_badgeState.value as? UiState.Success)?.data?.recentBadge ?: return
+
+        studyBadgeRepository.updateLastCheckedBadgeId(recentBadge.badgeId)
+        _hasNewBadge.value = false
     }
 
     fun updateTagFilters(new: StudyTagType) {
