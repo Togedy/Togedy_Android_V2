@@ -48,12 +48,15 @@ import com.together.study.designsystem.theme.SystemBarIcons
 import com.together.study.designsystem.theme.TogedyTheme
 import com.together.study.study.component.SortBottomSheet
 import com.together.study.study.component.StudyItem
+import com.together.study.study.main.component.BadgeDetailDialog
+import com.together.study.study.main.component.BadgeSection
 import com.together.study.study.main.component.EmptyMyStudy
 import com.together.study.study.main.component.ExploreFilterSection
 import com.together.study.study.main.component.MainTabSection
 import com.together.study.study.main.component.MyStudyItem
 import com.together.study.study.main.component.TimerSection
 import com.together.study.study.main.state.StudyMainUiState
+import com.together.study.study.model.StudyBadge
 import com.together.study.util.noRippleClickable
 
 @Composable
@@ -68,9 +71,14 @@ internal fun StudyMainRoute(
     val uiState by viewModel.studyMainUiState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val exploreFilterState by viewModel.exploreFilterState.collectAsStateWithLifecycle()
+    val hasNewBadge by viewModel.hasNewBadge.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getMyStudyInfo()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getBadgeInfo()
     }
 
     LaunchedEffect(exploreFilterState) {
@@ -80,6 +88,7 @@ internal fun StudyMainRoute(
     StudyMainScreen(
         uiState = uiState,
         selectedTab = selectedTab,
+        hasNewBadge = hasNewBadge,
         modifier = modifier,
         onTabClick = viewModel::updateSelectedTab,
         onUpdateButtonClick = onStudyUpdateNavigate,
@@ -98,6 +107,7 @@ internal fun StudyMainRoute(
 private fun StudyMainScreen(
     uiState: StudyMainUiState,
     selectedTab: StudyMainTab,
+    hasNewBadge: Boolean,
     modifier: Modifier = Modifier,
     onTabClick: (StudyMainTab) -> Unit,
     onUpdateButtonClick: (Boolean) -> Unit,
@@ -111,6 +121,7 @@ private fun StudyMainScreen(
 ) {
     val context = LocalContext.current
     var isSortBottomSheetVisible by remember { mutableStateOf(false) }
+    var selectedBadge by remember { mutableStateOf<StudyBadge?>(null) }
 
     val animationDuration = 300
     val mainColor by animateColorAsState(
@@ -161,6 +172,7 @@ private fun StudyMainScreen(
 
                 MainTabSection(
                     selectedTab = selectedTab,
+                    hasNewBadge = hasNewBadge,
                     mainColor = mainColor,
                     subColor = subColor,
                     backgroundColor = backgroundColor,
@@ -279,9 +291,19 @@ private fun StudyMainScreen(
                     }
                 }
 
-//                /* 추후 스프린트 */
-//                StudyMainTab.BADGE -> {
-//                }
+                StudyMainTab.BADGE -> {
+                    when (uiState.badgeState) {
+                        is UiState.Empty -> {}
+                        is UiState.Failure -> {}
+                        is UiState.Loading -> TogedyLoadingScreen()
+                        is UiState.Success -> {
+                            BadgeSection(
+                                badgeState = uiState.badgeState.data,
+                                onBadgeClick = { selectedBadge = it },
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -294,6 +316,13 @@ private fun StudyMainScreen(
                 onSortOptionClick(it)
                 isSortBottomSheetVisible = false
             },
+        )
+    }
+
+    selectedBadge?.let { badge ->
+        BadgeDetailDialog(
+            badge = badge,
+            onDismissRequest = { selectedBadge = null },
         )
     }
 }

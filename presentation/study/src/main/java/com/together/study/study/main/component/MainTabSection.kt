@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +33,7 @@ import com.together.study.util.noRippleClickable
 @Composable
 internal fun MainTabSection(
     selectedTab: StudyMainTab,
+    hasNewBadge: Boolean,
     mainColor: Color,
     subColor: Color,
     backgroundColor: Color,
@@ -52,6 +55,7 @@ internal fun MainTabSection(
                 TabItem(
                     tabName = it.typeName,
                     isSelected = selectedTab == it,
+                    showNewDot = it == StudyMainTab.BADGE && hasNewBadge,
                     textColor = textColor,
                     backgroundColor = backgroundColor,
                     onTabClick = { onTabClick(it) },
@@ -67,6 +71,7 @@ internal fun MainTabSection(
 private fun TabItem(
     tabName: String,
     isSelected: Boolean,
+    showNewDot: Boolean,
     textColor: Color,
     backgroundColor: Color,
     onTabClick: () -> Unit,
@@ -88,21 +93,33 @@ private fun TabItem(
         modifier = Modifier.noRippleClickable(onTabClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = tabName,
-            style = TogedyTheme.typography.title16sb,
-            color = textColor,
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .layout { measurable, constraints ->
-                    val placeable = measurable.measure(constraints)
-                    textWidth = with(density) { placeable.width.toDp() }
+        Box {
+            Text(
+                text = tabName,
+                style = TogedyTheme.typography.title16sb,
+                color = textColor,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .layout { measurable, constraints ->
+                        val placeable = measurable.measure(constraints)
+                        textWidth = with(density) { placeable.width.toDp() }
 
-                    layout(placeable.width, placeable.height) {
-                        placeable.placeRelative(0, 0)
+                        layout(placeable.width, placeable.height) {
+                            placeable.placeRelative(0, 0)
+                        }
                     }
-                }
-        )
+            )
+
+            if (showNewDot) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 6.dp)
+                        .size(4.dp)
+                        .background(color = TogedyTheme.colors.green, shape = CircleShape),
+                )
+            }
+        }
 
         Spacer(Modifier.height(8.dp))
 
